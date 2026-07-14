@@ -1,11 +1,12 @@
 import React, { useState, Fragment, useEffect, useRef } from 'react';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
-import { ThemeIcon } from './ThemeIcon';
 import { PeopleSkills, peopleTabs } from '../constants/tags';
 import { getMajors, getJobTitles, getSkills } from '../api/users';
 import { StringDictionary, Role, Major, Skill, SkillType } from '@looking-for-group/shared';
 import MoreFiltersButton from './MoreFiltersButton';
+import { Tag } from './Tag';
+import TagDisplay from './TagDisplay';
 
 interface DiscoverFiltersProps {
   updateItemList: (skills: Skill[]) => void;
@@ -26,12 +27,8 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
   // --------------------
   // Global variables
   // --------------------
-  // All skills currently available in the active filter tab
-  const [currentSkills, setCurrentSkills] = useState<Skill[]>([]);
   // Skills currently filtered via search input
-  const [searchedSkills, setSearchedSkills] = useState<{ skills: Skill[], color: string }>({ skills: [], color: 'grey' });
-  // Skills that are selected in the popup before applying
-  const [enabledFilters, setEnabledFilters] = useState<EnabledFilter[]>([]);
+  const [searchedSkills, setSearchedSkills] = useState<Skill[]>([]);
   // Filters that have been applied and are displayed under the quick filter skills
   const [appliedFiltersDisplay, setAppliedFiltersDisplay] = useState<EnabledFilter[]>([]);
   // List of skill types to filter by with the horizontal quick filter
@@ -43,6 +40,8 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
   // Whether the popup is active; this effects popup filter arrows visibility
   const [activePopup, setActivePopup] = useState(false);
 
+  const [allSkills, setAllSkills] = useState<Skill[]>([]);
+  const [searchValue, setSearchValue] = useState("");
 
   // Dynamically show/hide arrows
   const skillFiltersRef = useRef<HTMLDivElement>(null);
@@ -53,10 +52,6 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
   const popupSkillFiltersRef = useRef<HTMLDivElement>(null);
   const [showPopupLeftArrow, setShowPopupLeftArrow] = useState(false);
   const [showPopupRightArrow, setShowPopupRightArrow] = useState(false);
-
-
-  // Formatted for SearchBar dataSets prop
-  const [dataSet, setDataSet] = useState([{ data: currentSkills }]);
 
   // Horizontal quick filter skills, changes based on category
   const skillList = Object.values(PeopleSkills) as string[];
@@ -72,11 +67,11 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
 
       // Get job titles and append it to full data
       const jobTitles = await getJobTitles();
-      jobTitles.data?.forEach((job: Role) => data?.push({ label: job.label, type: 'Role' })); //does it need the types
+      jobTitles.data?.forEach((job: Role) => data?.push({ label: job.label, skillId: job.roleId, type: 'Role', category: "Other" } as Skill)); //does it need the types
 
       // Get majors and append it to full data
       const majors = await getMajors();
-      majors.data?.forEach((major: Major) => data?.push({ label: major.label, type: 'Major' }));
+      majors.data?.forEach((major: Major) => data?.push({ label: major.label, skillId: major.majorId, type: 'Project Type', category: "Other" } as Skill));
 
       // Construct the finalized version of the data to be moved into filterPopupTabs
       const tabs = JSON.parse(JSON.stringify(peopleTabs));
@@ -92,6 +87,8 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
         Role: 'Role',
         Major: 'Major',
       };
+      
+      if (data) setAllSkills(data as Skill[]);
 
       const skillData: Skill[] = data as Skill[];
 
@@ -118,21 +115,26 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
    * @param event Click event
    * @param skill Skill object clicked
    */
-  const toggleSkill = (event: any, skill: Skill) => {
+  const toggleSkill = (id: number, type: string, update?: boolean) => {
     let newActiveSkills: Skill[];
+    let skill: Skill | undefined;
+    if (id === -1) {
+      skill = { skillId: id, label: type, type: type as SkillType, category: "Other"}
+    }
+    else
+      skill = allSkills.find(s => s.skillId === id && s.type === type);
+    if (!skill) return;
 
-    if (activeSkillFilters.some(s => s.label === skill.label)) {
+    if (activeSkillFilters.some(s => s.skillId === id && s.type === type)) {
       // Remove the skill from the active list
-      newActiveSkills = activeSkillFilters.filter(s => s.label !== skill.label);
-      event.currentTarget.classList.remove('discover-tag-filter-selected');
+      newActiveSkills = activeSkillFilters.filter(s => s.skillId !== id && s.type === type);
     } else {
       // Add the tag to the active list
       newActiveSkills = [...activeSkillFilters, skill];
-      event.currentTarget.classList.add('discover-tag-filter-selected');
     }
 
     setActiveSkillFilters(newActiveSkills);
-    updateItemList(newActiveSkills);
+    if (update) updateItemList(newActiveSkills);
   };
 
   /**
@@ -212,38 +214,12 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
     //  });
     //}
     setActivePopup(true);
-
-    // loads in current filters
-    const seeded: EnabledFilter[] = activeSkillFilters.map((skill) => {
-      const tab = filterPopupTabs.find((t) =>
-        t.categorySkills.some((ct) => ct.type === skill.type)
-      );
-      return { skill, color: tab?.color ?? 'grey' };
-    });
-    setEnabledFilters(seeded);
-  };
-
-  /**
-   * Checks if a skill is currently enabled in the popup filters.
-   */
-  const isSkillEnabled = (skill: Skill, color: string) => {
-    return enabledFilters.findIndex(f => f.skill === skill && f.color === color);
   };
 
   // Trigger initial data fetch
   useEffect(() => {
     getData();
   }, []);
-
-  //Displays the correct tabs depending on the value of activeTabId.
-  useEffect(() => {
-    if (filterPopupTabs[activeTabId]) {
-      const currentTab = filterPopupTabs[activeTabId];
-      setCurrentSkills(currentTab.categorySkills);
-      setDataSet([{ data: currentTab.categorySkills }]);
-      setSearchedSkills({ skills: currentTab.categorySkills, color: currentTab.color });
-    }
-  }, [activeTabId, filterPopupTabs]);
 
   // Checks arrow visibility when filters popup loads
   useEffect(() => {
@@ -269,58 +245,6 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // --------------------
-  // Component
-  // --------------------
-  let skillsToDisplay = searchedSkills.skills;
-  let currentTabName = filterPopupTabs[activeTabId]?.categoryName;
-  let discipline;
-
-  switch (currentTabName) {
-    case "Developer Skill":
-      //Developer
-      discipline = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Discipline");
-      let software = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Software");
-      let codingLanguage = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Coding Language");
-      let framework = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Framework");
-      let api = searchedSkills.skills.filter((tag) => (tag as Skill).category === "API");
-      let operatingSystem = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Operating System");
-      let gameEngine = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Game Engine");
-      skillsToDisplay = discipline.concat(software, codingLanguage, framework, api, operatingSystem, gameEngine);
-      break;
-    case "Designer Skill":
-      //Designer
-      discipline = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Discipline");
-      let videoSoftware = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Video Software");
-      let designSoftware = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Design Software");
-      let artAnimation = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Art and Animation");
-      let photoEditing = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Photo Editing");
-      skillsToDisplay = discipline.concat(videoSoftware, designSoftware, artAnimation, photoEditing);
-      break;
-    case "Soft Skill":
-      //Soft
-      discipline = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Discipline");
-      let team = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Team");
-      let personal = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Personal");
-      skillsToDisplay = discipline.concat(team, personal);
-      break;
-    case "Audio Skill":
-      //Audio
-      discipline = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Discipline");
-      let dawAudioEditor = searchedSkills.skills.filter((tag) => (tag as Skill).category === "DAW/Audio Editor");
-      let middleware = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Middleware");
-      let notation = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Notation");
-      skillsToDisplay = discipline.concat(dawAudioEditor, middleware, notation);
-      break;
-    case "Engineer Skill":
-      //Engineer
-      discipline = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Discipline");
-      let engineeringSoftware = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Engineering Software");
-      let hardware = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Hardware");
-      skillsToDisplay = discipline.concat(engineeringSoftware, hardware);
-      break;
-  }
-
   return (
     <>
       <div id="discover-filters-parent">
@@ -343,7 +267,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
               const trueType = Object.keys(PeopleSkills)[Object.values(PeopleSkills).indexOf(skillFilterType)]
               //template skill to be sent in for the broad horizontal filters
               const templateSkill = {
-                skillId: 0,
+                skillId: -1,
                 label: trueType,
                 type: trueType as SkillType,
                 category: 'Other',
@@ -351,9 +275,9 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
 
               return (
                 <button key={`${templateSkill.type}-${skillFilterType}`}
-                  className="discover-tag-filter"
+                  className={"discover-tag-filter" + (activeSkillFilters.find(s => s.skillId === templateSkill.skillId && s.label === trueType) ? " discover-tag-filter-selected" : "")}
                   data-type={templateSkill.label}
-                  onClick={(e) => toggleSkill(e, templateSkill)}>
+                  onClick={() => toggleSkill(templateSkill.skillId, templateSkill.type, true)}>
                   {skillFilterType}
                 </button>
               )
@@ -391,10 +315,12 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                   <h2>{'People Filters'}</h2>
                   <div id="filters" className="popup-section">
                     <SearchBar
-                      dataSets={dataSet}
+                      dataSets={[{data: allSkills}]}
                       onSearch={(results) => {
-                        setSearchedSkills({ skills: results[0] as Skill[], color: searchedSkills.color });
+                        setSearchedSkills(results[0] as Skill[]);
                       }}
+                      value={searchValue}
+                      setValue={setSearchValue}
                     ></SearchBar>
                     <div id="more-filters-scroll-container">
                       <button
@@ -441,99 +367,59 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                     </div>
                     <hr />
                     <div id="filter-tags">
-                      {searchedSkills.skills.length === 0 ? (
-                        <p>No skills found. Please try a different search term.</p>
-                      ) : (
-                        skillsToDisplay.map((skill, index, array) => (
-                          <Fragment key={`${skill.label}-${skill.type}`}>
-                            {(index === 0 || (array[index - 1].category != array[index].category)) && array[index].category != null
-                              ? <div id="tag-category-header">
-                                <p>{array[index].category}</p>
-                                <hr></hr>
-                              </div>
-                              : <></>}
-                            <button
-                              key={`${skill.label}-${skill.type}`}
-                              // className={`skill-button skill-button-${searchedSkills.color}-unselected`}
-                              className={`tag-button tag-button-${searchedSkills.color}-${isSkillEnabled(skill, searchedSkills.color) !== -1 ? 'selected' : 'unselected'}`}
-                              onClick={(e) => {
-                                const element = e.target as HTMLElement;
-                                const selectIndex = isSkillEnabled(skill, searchedSkills.color);
-                                const tempEnabled = enabledFilters;
-
-                                //if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
-                                //  // Remove all other tags of the same type except the one selected
-                                //  const filterSkills = document.querySelector('#filter-tags')!;
-                                //  const tagList: HTMLCollectionOf<HTMLElement> = filterSkills.getElementsByClassName(`tag-button-${searchedSkills.color}-selected`) as HTMLCollectionOf<HTMLElement>;
-                                //
-                                //  for (let i = 0; i < tagList.length; i++) {
-                                //    const tagObj: Skill = { label: tagList[i].innerText.trim(), type: tag.type, tagId: -1 };
-                                //    const tagTypeIndex = isSkillEnabled(tagObj, searchedSkills.color);
-                                //
-                                //    if (tagList[i].innerText.trim() !== tag.label) {
-                                //      tagList[i].classList.replace(
-                                //        `tag-button-${searchedSkills.color}-selected`,
-                                //        `tag-button-${searchedSkills.color}-unselected`
-                                //      );
-                                //
-                                //      tempEnabled = tempEnabled.toSpliced(tagTypeIndex, 1);
-                                //    }
-                                //  }
-                                //}
-
-                                if (selectIndex === -1) {
-                                  // Creates an object to store text and category
-                                  //setEnabledFilters([...enabledFilters, { tag, color: searchedSkills.color }]);
-                                  setEnabledFilters([
-                                    ...tempEnabled,
-                                    { skill, color: searchedSkills.color },
-                                  ]);
-                                  element.classList.replace(
-                                    `tag-button-${searchedSkills.color}-unselected`,
-                                    `tag-button-${searchedSkills.color}-selected`
-                                  );
-                                } else {
-                                  // Remove tag from list of enabled filters
-                                  setEnabledFilters(tempEnabled.toSpliced(selectIndex, 1));
-                                  element.classList.replace(
-                                    `tag-button-${searchedSkills.color}-selected`,
-                                    `tag-button-${searchedSkills.color}-unselected`
-                                  );
-                                }
-                              }}
-                            >
-                              <i
-                                className={
-                                  isSkillEnabled(skill, searchedSkills.color) !== -1
-                                    ? 'fa fa-check'
-                                    : 'fa fa-plus'
-                                }
-                              ></i>
-                              <p>{skill.label}</p>
-                            </button>
-                          </Fragment>
-                        ))
-                      )}
+                      <TagDisplay
+                        selected={activeSkillFilters.map(
+                          skill => ({
+                            ...skill,
+                            category: skill.type === "Project Type" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
+                            id: skill.skillId
+                          })
+                        )}
+                        toggleTag={toggleSkill}
+                        tabs={filterPopupTabs.map(tab => 
+                          tab.categoryName === "Developer Skill" ? "Developer" :
+                          tab.categoryName === 'Designer Skill' ? "Designer" :
+                          tab.categoryName === 'Audio Skill' ? "Audio" :
+                          tab.categoryName === 'Soft Skill' ? "Soft" :
+                          tab.categoryName === 'Engineer Skill' ? "Engineer" :
+                          tab.categoryName === 'Major' ? "Project Type" :
+                          tab.categoryName
+                        )}
+                        tabId={activeTabId}
+                        all={allSkills.map(
+                          skill => ({
+                            ...skill,
+                            category: skill.type === "Project Type" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
+                            id: skill.skillId
+                          })
+                        )}
+                        searchValue={searchValue}
+                        searchData={searchedSkills.map(
+                          skill => ({
+                            ...skill,
+                            category: skill.type === "Project Type" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
+                            id: skill.skillId
+                          })
+                        )}
+                      />
                     </div>
                   </div>
                   <div id="selected-section" className="popup-section">
                     <h3>Selected</h3>
                     <h4>Click to deselect</h4>
                     <div id="selected-filters">
-                      {enabledFilters.map((skill) => (
-                        <button
-                          key={`${skill.skill.label}-${skill.color}`}
-                          className={`tag-button tag-button-${skill.color}-selected`}
-                          onClick={() => {
-                            // Remove skill from list of enabled filters, re-rendering component
-                            setEnabledFilters(
-                              enabledFilters.toSpliced(isSkillEnabled(skill.skill, skill.color), 1)
-                            );
-                          }}
+                      {activeSkillFilters.map((skill) => (
+                        <Tag
+                        key={skill.skillId}
+                        type={skill.type.toLowerCase() + " skill"}
+                        onClick={() => 
+                          toggleSkill(skill.skillId, skill.type)
+                        }
+                        selected={true}
                         >
-                          <i className="fa fa-close"></i>
-                          <p>{skill.skill.label}</p>
-                        </button>
+                          <i className={true ? "fa fa-check" : "fa fa-plus"}></i>
+                          <p>{skill.label}</p>
+                        </Tag>
                       ))}
                     </div>
                   </div>
@@ -546,23 +432,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                         // Reset skill filters before adding results in
 
                         // Clears all active filters
-                        setEnabledFilters([]);
-                        const newActiveSkills = enabledFilters.map(f => f.skill);
-                        setActiveSkillFilters(newActiveSkills);
-                        const discoverFilters = document.getElementsByClassName('discover-tag-filter');
-
-                        // Remove any/all other clicked discover tags
-                        for (let i = 0; i < discoverFilters.length; i++) {
-                          discoverFilters[i].classList.remove('discover-tag-filter-selected');
-                        }
-
-                        // Sets active filters displayed to "none" 
-                        setAppliedFiltersDisplay(enabledFilters);
-
-                        //Add "Applied Filters" div if it is missing and if the paragraph exists
-                        if (newActiveSkills.length > 0) {
-                          setDisplayFiltersText(newActiveSkills.some(skill => skill.type !== 'Designer'));
-                        }
+                        setActiveSkillFilters([]);
                       }}
                     >
                       Reset Filters
@@ -571,8 +441,6 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                       buttonId={'primary-btn'}
                       callback={() => {
                         // Reset skill filters before adding results in
-                        const newActiveSkills = enabledFilters.map(f => f.skill)
-                        setActiveSkillFilters(newActiveSkills);
                         const discoverFilters = document.getElementsByClassName('discover-tag-filter');
 
                         // Remove any/all other clicked discover tags
@@ -594,14 +462,12 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                         //   }
                         // });
 
-                        setAppliedFiltersDisplay(enabledFilters);
-
                         // Update the project list
-                        updateItemList(newActiveSkills);
+                        updateItemList(activeSkillFilters);
 
                         //Add "Applied Filters" div if it is missing and if the paragraph exists
-                        if (newActiveSkills.length > 0) {
-                          setDisplayFiltersText(newActiveSkills.some(skill => skill.type !== 'Designer'));
+                        if (activeSkillFilters.length > 0) {
+                          setDisplayFiltersText(activeSkillFilters.some(skill => skill.type !== 'Designer'));
                         }
                       }}
                     >
