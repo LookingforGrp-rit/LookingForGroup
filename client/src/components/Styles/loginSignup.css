@@ -603,18 +603,18 @@ Signup process modal style rules
   }
 }
 
-#profile-details {
+#complete-profile-add-image {
+  grid-area: image;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
-  grid-area: profileImage;
-
-  #profile-editor-add-image {
-    width: 100%;
-    height: 100%;
-  }
+  align-self: center;
+  border: 2px dashed #424242;
+  border-radius: 10px;
+  width: min(50vw, 250px);
+  height: min(50vw, 250px);
+  aspect-ratio: 1 / 1;
 }
 
 #profile-pic {
@@ -820,18 +820,45 @@ Signup process modal style rules
 } */
 
 #completeProfile-input-container {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 1.5fr;
-  grid-template-rows: auto auto auto auto auto;
-  grid-template-areas:
-    'profileImage pronouns jobTitle'
-    'profileImage ritStatus major'
-    'profileImage phoneNumber location'
-    'profileImage headline headline'
-    'profileImage bio bio';
-  row-gap: 20px;
-  column-gap: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  /* height: 100%; */
   margin: 10px 0 20px 0;
+}
+
+#completeProfile-input-section-1 {
+  display: grid;
+  grid-template-areas:
+    'image row1'
+    'image row2'
+    'image row3';
+  grid-template-columns: 25% auto;
+  grid-template-rows: 1fr 1fr 1fr;
+  column-gap: 20px;
+  row-gap: 10px;
+}
+
+#complete-profile-row-1, 
+#complete-profile-row-2, 
+#complete-profile-row-3 {
+  display: grid;
+  gap: 10px;
+}
+
+#complete-profile-row-1 {
+  grid-area: row1;
+  grid-template-columns: 1.25fr 2fr;
+}
+
+#complete-profile-row-2 {
+  grid-area: row2;
+  grid-template-columns: 1.25fr 2fr;
+}
+
+#complete-profile-row-3 {
+  grid-area: row3;
+  grid-template-columns: 1.25fr 2fr;
 }
 
 #pronouns-input,
@@ -852,17 +879,7 @@ Signup process modal style rules
   }
 }
 
-#pronouns-input {
-  grid-area: pronouns;
-}
-
-#phoneNumber-input {
-  grid-area: phoneNumber;
-}
-
 #jobTitle-input {
-  grid-area: jobTitle;
-
   .select-container div {
     margin-top: 0px;
     background-color: var(--header-color);
@@ -871,16 +888,7 @@ Signup process modal style rules
   }
 }
 
-#location-input {
-  grid-area: location;
-}
-
-#funFact-input {
-  grid-area: funFact;
-}
-
 #ritStatus-input {
-  grid-area: ritStatus;
   height: 50px;
   display: flex;
   flex-direction: row;
@@ -907,7 +915,6 @@ Signup process modal style rules
 }
 
 #major-input {
-  grid-area: major;
   height: 50px;
   display: flex;
   flex-direction: row;
@@ -945,15 +952,6 @@ Signup process modal style rules
     outline: none;
   }
 }
-
-#bio-input {
-  grid-area: bio;
-}
-
-#headline-input {
-  grid-area: headline;
-}
-
 /* === Terms of Service === */
 
 #terms-of-service-text {
@@ -1130,7 +1128,7 @@ Signup process modal style rules
     }
 
     /* Profile picture editor */
-    #completeProfile-input-container #profile-details {
+    #completeProfile-input-container #complete-profile-add-image {
       width: 60%;
     }
   }

@@ -59,7 +59,7 @@ const LabelInputBox: React.FC<LabelInputBoxProps> = ({
 
   return (
     <div className='label-input-box' id={id} style={style}>
-      {hideUnsaved == false && (
+      {(
         <label className="input-combo-label">
         {label}
         {required && (
@@ -71,7 +71,7 @@ const LabelInputBox: React.FC<LabelInputBoxProps> = ({
             *
           </span>
         )}
-        {showUnsaved && (
+        {showUnsaved && hideUnsaved == false && (
           <span className="unsaved-indicator">
             (Unsaved)
           </span>
