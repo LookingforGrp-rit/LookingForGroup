@@ -79,13 +79,13 @@ export enum BaseSocialUrl {
   "Instagram" = 'https://instagram.com/',
   'Twitter' = 'https://x.com/',
   'Facebook' = 'https://facebook.com/',
-  'Discord' = '',
+  'Discord' = 'https://discord.gg/',
   'Bluesky' = 'https://bsky.app/profile/',
   'LinkedIn' = 'https://linkedin.com/in/',
-  'YouTube' = '',
-  'Steam' = '',
-  'Itch' = '',
-  'Other' = ''
+  'YouTube' = 'https://youtube.com/',
+  'Steam' = 'https://steamcommunity.com/',
+  'Itch' = 'https://', //because itch links might have the itch.io part later in the url
+  'Other' = 'https://'
 }
 export interface BaseUrlValidation { //a surprise tool that'll help us later
   Instagram: 'https://instagram.com/',
