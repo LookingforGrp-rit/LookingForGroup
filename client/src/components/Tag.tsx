@@ -24,7 +24,7 @@ interface TagsProps {
 export const Tag = ({ children, className = '', type = "", onClick, selected = false }: TagsProps) => {
   let color = "grey";
   switch (type) {
-    case "medium":
+    case "project type":
       color = "blue";
       break;
 
@@ -45,26 +45,34 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
       break;
 
     case 'other':
+    case 'purpose':
+    case 'role':
       color = 'grey';
       break;
 
+
     case "developer skill":
+    case "developer":
       color = "yellow";
       break;
 
     case "designer skill":
+    case "designer":
       color = "red";
       break;
 
     case "soft skill":
+    case "soft":
       color = "purple";
       break;
 
     case "audio skill":
+    case "audio":
       color = "periwinkle";
       break;
 
     case "engineer skill":
+    case "engineer":
       color = "cyan";
       break;
 
