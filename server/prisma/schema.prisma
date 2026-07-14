@@ -41,7 +41,7 @@ model Jobs {
   updatedAt     DateTime         @updatedAt @map("updated_at") @db.Timestamp(0)
   projects      Projects         @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK2_project_id")
   roles         Roles            @relation(fields: [roleId], references: [roleId], map: "FK_jobs_job_titles")
-  jobSkills     JobSkills[]
+  jobSkills     JobSkills[]      
 
   @@index([projectId], map: "FK2_project_id")
   @@index([roleId], map: "FK_jobs_job_titles")
@@ -301,8 +301,8 @@ model UserSkills {
   skillId     Int              @map("skill_id")
   position    Int
   proficiency SkillProficiency
-  skills      Skills           @relation(fields: [skillId], references: [skillId], onDelete: NoAction, map: "FK_user_skills_skills")
-  users       Users            @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "FK_user_skills_users")
+  skills      Skills           @relation(fields: [skillId], references: [skillId], map: "FK_user_skills_skills")
+  users       Users            @relation(fields: [userId], references: [userId], map: "FK_user_skills_users")
 
   @@id([userId, skillId])
   @@index([skillId], map: "FK_user_skills_skills")
@@ -315,7 +315,7 @@ model UserSocials {
   websiteId Int     @map("website_id")
   url       String  @db.VarChar(2000)
   socials   Socials @relation(fields: [websiteId], references: [websiteId], map: "FK_user_socials_socials")
-  users     Users   @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "FK_user_socials_users")
+  users     Users   @relation(fields: [userId], references: [userId], map: "FK_user_socials_users")
 
   @@id([userId, websiteId])
   @@index([websiteId], map: "FK_user_socials_socials")
@@ -370,11 +370,9 @@ model JobSkills {
   proficiency SkillProficiency
   position    Int
   skill       Skills           @relation(fields: [skillId], references: [skillId], onDelete: NoAction, map: "FK_job_skills_skills")
-  jobs        Jobs             @relation(fields: [jobId], references: [jobId])
+  jobs        Jobs             @relation(fields: [jobId], references: [jobId], map: "FK_job_skills_jobs")
 
   @@id([jobId, skillId])
-  @@index([skillId], map: "FK_job_skills_skills")
-  @@index([jobId], map: "FK_job_skills_jobs")
   @@map("job_skills")
 }
 
