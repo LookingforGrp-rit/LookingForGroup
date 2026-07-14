@@ -39,6 +39,7 @@ const Settings = (userProfile: any) => {
   const [themeOption, setThemeOption] = useState(theme === 'dark' ? 'Dark Mode' : 'Light Mode');
   // const [visibilityOption, setVisibilityOption] = useState('Public Account');
 
+  const [notValid, setNotValid] = useState(true);
 
   // If user is not logged in, redirect to login page
   useEffect(() => {
@@ -738,10 +739,22 @@ const Settings = (userProfile: any) => {
                       <div className="delete-user-extra-info">
                         Are you sure you want to delete your account? This action cannot be undone.
                       </div>
+                      <div className="delete-user-confirm-info">
+                        Type "DELETE" to confirm
+                        <input
+                          className='delete-user-confirm'
+                          type='text'
+                          placeholder='DELETE'
+                          onChange={(e) => {
+                            setNotValid(e.target.value !== "DELETE");
+                          }}
+                        >
+                        </input>
+                      </div>
                       <div className="delete-user-button-pair">
                         {/* Popup if user presses delete account to show successful delete action */}
                         <Popup>
-                          <PopupButton className="delete-button" callback={deleteAccountPressed}>Delete Account</PopupButton>
+                          <PopupButton className="delete-button" callback={deleteAccountPressed} disabled={notValid}>Delete Account</PopupButton>
                           <PopupContent>
                             <div className="small-popup">
                               <div id="delete-success-title">{
