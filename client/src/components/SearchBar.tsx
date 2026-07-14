@@ -1,4 +1,4 @@
-import { memo, FC, ChangeEvent, FocusEvent, useState, useCallback, useEffect } from 'react';
+import { memo, FC, ChangeEvent, FocusEvent, useState, useCallback } from 'react';
 
 export interface DataSet {
   data: unknown[];
@@ -28,6 +28,7 @@ interface SearchBarProps {
    */
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 
+  setValue?: React.Dispatch<React.SetStateAction<string>>;
   
   onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
 }
@@ -45,10 +46,9 @@ interface SearchBarProps {
  * @returns JSX element containing a styled search input with icon
  */
 //FIXME: create way to update results if a new dataset is provided: discover page filter and project editor tag filters do not save search state
-export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange, onFocus }) => {
+export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange, setValue, onFocus }) => {
   // Internal query state for uncontrolled mode
   const [internalQuery, setInternalQuery] = useState('');
-  const query = value ?? internalQuery;
 
   /**
    * Handles input changes:
@@ -66,7 +66,8 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
     } else {
       setInternalQuery(newQuery);
     }
-    handleSearch(newQuery);
+    if (setValue) setValue(newQuery);
+    if (newQuery.length > 0) handleSearch(newQuery);
   };
 
   /**
@@ -137,10 +138,6 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
     onSearch(filteredResults);
   }, [dataSets, onSearch]);
 
-  useEffect(() => {
-    handleSearch(query.toLowerCase());
-  }, [dataSets, query]);
-
   return (
     <div className="search-wrapper">
       {/* Prevent form submission from refreshing the page */}
@@ -153,7 +150,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
           className="search-input"
           type="text"
           placeholder="Search by Name"
-          value={query}
+          value={value ?? internalQuery}
           onChange={handleChange}
           onFocus={onFocus}
           tabIndex={2}
