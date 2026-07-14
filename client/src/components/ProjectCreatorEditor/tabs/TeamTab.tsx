@@ -16,7 +16,7 @@ import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import { Tag as TagElement } from "../../Tag";
+// import { Tag as TagElement } from "../../Tag";
 // import { SkillsTab } from "../../Profile/tabs/SkillsTab";
 import {
 	getJobTitles,
@@ -112,6 +112,7 @@ type TeamTabProps = {
 	updatePendingProject: (updatedPendingProject: PendingProject) => void;
 	saveable: boolean;
 	failCheck: boolean;
+	updateFailCheck: boolean;
 	message: string;
 	messages: string[];
 	setMessages: React.Dispatch<React.SetStateAction<string[]>>;
@@ -149,6 +150,7 @@ export const TeamTab = ({
 	updatePendingProject,
 	saveable,
 	failCheck,
+	updateFailCheck,
 	message,
 	messages,
 	setMessages
@@ -215,6 +217,8 @@ export const TeamTab = ({
 	const [contactName, setContactName] = useState("");
 
 	const [messageText, setMessageText] = useState("");
+
+	const [confirm, setConfirm] = useState(false);
 	/**
 	 * Handles invitation request in local and data manager
 	 */
@@ -2586,15 +2590,16 @@ export const TeamTab = ({
 						)}
 						<PopupButton
 							buttonId="project-editor-save"
-							doNotClose={() => failCheck || !saveable}
 							callback={() => {
 								// Incomplete form: still clickable so the save validation
 								// runs, shows the error, and auto-scrolls to the missing field.
 								if (!saveable) saveProject?.();
+								else setConfirm(true)
 							}}>
 							Save Changes
 						</PopupButton>
-						<PopupContent useClose={false}>
+						{confirm ?
+						<PopupContent useClose={false} callback={() => setConfirm(false)}>
 							<div id="confirm-editor-save-text">
 								Are you sure you want to save all changes?
 							</div>
@@ -2609,7 +2614,7 @@ export const TeamTab = ({
 									Cancel
 								</PopupButton>
 							</div>
-						</PopupContent>
+						</PopupContent> : "" }
 					</Popup>
 					<DeleteProjectButton
 						projectID={unmodifiedProject.projectId}
