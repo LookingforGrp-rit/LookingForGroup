@@ -11,7 +11,7 @@ export const updateProjectGlobalVisibility = async (
   };
 
   const res: ApiResponse = { status: 0 };
-  const projectId = parseInt(request.query.id as string);
+  const projectId = parseInt(request.params.id as string);
   const visibility = (request.body as UpdateVisibilityBody).visibility;
   const result = await updateProjectGlobalVisibilityService(projectId, visibility);
 

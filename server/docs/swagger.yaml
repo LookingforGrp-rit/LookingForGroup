@@ -3989,9 +3989,9 @@ paths:
                     nullable: true
                     example: null
         '403':
-          $ref: '#/components/response/Forbidden'
+          $ref: '#/components/responses/Forbidden'
         '404':
-          $ref: '#/components/response/NotFound'
+          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
