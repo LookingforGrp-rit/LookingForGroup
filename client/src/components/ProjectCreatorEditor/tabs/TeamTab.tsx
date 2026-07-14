@@ -104,7 +104,8 @@ type TeamTabProps = {
 		invitations: MemberRequests[];
 		applications: MemberRequests[];
 	}>>;
-	//setProjectData: (data: ProjectDetail) => void; because of the data manager we no longer directly update the projectData from here
+	//setProjectData: (data: ProjectDetail) => void; because of the data manager we no longer directly update the projectData 
+	// from here
 	setErrorMember: (error: string) => void;
 	setErrorPosition: (error: string) => void;
 	// permissions: number;
@@ -2322,7 +2323,7 @@ export const TeamTab = ({
 						</div>
 						<div id="project-team-add-member-info">
 							<label id="project-team-add-member-name">
-								Name
+								Name <span className="requiredAsterisk">*</span>
 							</label>
 							<div id="user-search-container">
 								<Dropdown>
@@ -2372,7 +2373,7 @@ export const TeamTab = ({
 								</Dropdown>
 							</div>
 							<label id="project-team-add-member-role">
-								Role
+								Role <span className="requiredAsterisk">*</span>
 							</label>
 							<Select key={selectKey}>
 								<SelectButton
@@ -2414,6 +2415,9 @@ export const TeamTab = ({
 								onChange={(e) =>
 									setMessageText(e.target.value)
 								}></textarea>
+						</div>
+						<div className="requiredText">
+							<span className="requiredAsterisk">*</span> Indicates required field
 						</div>
 						{/* Action buttons */}
 						<div className="project-editor-button-pair">
