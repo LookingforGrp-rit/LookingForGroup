@@ -758,7 +758,7 @@ Filters / Tags Style Rules
   border-radius: 30px;
   transition: all 0.2s ease-in-out;
   background-color: var(--header-color);
-  box-shadow: -17px 0px 10px var(--bg-color);
+  /* box-shadow: -17px 0px 10px var(--bg-color); */
 
   img {
     height: 30px;
@@ -780,6 +780,18 @@ Filters / Tags Style Rules
   gap: 5px;
   align-items: center;
   justify-content: center;
+}
+
+@media screen and (max-width: 799px) {
+  #discover-more-filters {
+    width: 70px;
+
+    #more-filters-button {
+      #more-filters-text {
+        display: none;
+      }
+    }
+  }
 }
 
 .applied-filters {
@@ -1367,118 +1379,80 @@ Filters / Tags Style Rules
 #filter-tabs [class*="filter-tab-"] {
   border: 3px solid transparent;
   background-image: none;
-}
-
-
-#filter-tabs [class*="filter-tab-"].selected {
-  color: var(--tag-text-selected) !important;
-}
-
-#filter-tabs .filter-tab-blue.selected {
-  background-color: var(--tag-blue-selected);
-  border-color: var(--tag-blue-selected);
-}
-
-#filter-tabs .filter-tab-green.selected {
-  background-color: var(--tag-green-selected);
-  border-color: var(--tag-green-selected);
-}
-
-#filter-tabs .filter-tab-pink.selected {
-  background-color: var(--tag-pink-selected);
-  border-color: var(--tag-pink-selected);
-}
-
-#filter-tabs .filter-tab-grey.selected {
-  background-color: var(--tag-grey-selected);
-  border-color: var(--tag-grey-selected);
-}
-
-#filter-tabs .filter-tab-yellow.selected {
-  background-color: var(--tag-yellow-selected);
-  border-color: var(--tag-yellow-selected);
-}
-
-#filter-tabs .filter-tab-red.selected {
-  background-color: var(--tag-red-selected);
-  border-color: var(--tag-red-selected);
-}
-
-#filter-tabs .filter-tab-orange.selected {
-  background-color: var(--tag-orange-selected);
-  border-color: var(--tag-orange-selected);
-}
-
-#filter-tabs .filter-tab-purple.selected {
-  background-color: var(--tag-purple-selected);
-  border-color: var(--tag-purple-selected);
-}
-
-#filter-tabs .filter-tab-periwinkle.selected {
-  background-color: var(--tag-periwinkle-selected);
-  border-color: var(--tag-periwinkle-selected);
-}
-
-#filter-tabs .filter-tab-cyan.selected {
-  background-color: var(--tag-cyan-selected);
-  border-color: var(--tag-cyan-selected);
+  color: black;
+  /*^^ both light and dark mode*/
 }
 
 
 #filter-tabs [class*="filter-tab-"]:not(.selected) {
+  opacity: .7;
+}
+
+#filter-tabs [class*="filter-tab-"] {
+  color: var(--tag-text-selected) !important;
+}
+
+#filter-tabs .filter-tab-blue {
+  background-color: var(--tag-blue-selected);
+  /* border-color: var(--tag-blue-selected); */
+}
+
+#filter-tabs .filter-tab-green {
+  background-color: var(--tag-green-selected);
+  /* border-color: var(--tag-green-selected); */
+}
+
+#filter-tabs .filter-tab-pink {
+  background-color: var(--tag-pink-selected);
+  /* border-color: var(--tag-pink-selected); */
+}
+
+#filter-tabs .filter-tab-grey {
+  background-color: var(--tag-grey-selected);
+  /* border-color: var(--tag-grey-selected); */
+}
+
+#filter-tabs .filter-tab-yellow {
+  background-color: var(--tag-yellow-selected);
+  /* border-color: var(--tag-yellow-selected); */
+}
+
+#filter-tabs .filter-tab-red {
+  background-color: var(--tag-red-selected);
+  /* border-color: var(--tag-red-selected); */
+}
+
+#filter-tabs .filter-tab-orange {
+  background-color: var(--tag-orange-selected);
+  /* border-color: var(--tag-orange-selected); */
+}
+
+#filter-tabs .filter-tab-purple {
+  background-color: var(--tag-purple-selected);
+  /* border-color: var(--tag-purple-selected); */
+}
+
+#filter-tabs .filter-tab-periwinkle {
+  background-color: var(--tag-periwinkle-selected);
+  /* border-color: var(--tag-periwinkle-selected); */
+}
+
+#filter-tabs .filter-tab-cyan {
+  background-color: var(--tag-cyan-selected);
+  /* border-color: var(--tag-cyan-selected); */
+}
+
+#filter-tabs [class*="filter-tab-"]:hover {
+  opacity: 1;
+}
+
+#filter-tabs [class*="filter-tab-"]:not(.selected) {
   /* --main-text is white in dark mode / black in light mode, matching the
      dark vs light unselected-tab backgrounds. */
-  color: var(--main-text) !important;
-}
+  /* color: var(--main-text) !important; */
 
-#filter-tabs .filter-tab-blue:not(.selected) {
-  background-color: var(--tag-blue-unselected);
-  border-color: var(--tag-blue-selected);
-}
-
-#filter-tabs .filter-tab-green:not(.selected) {
-  background-color: var(--tag-green-unselected);
-  border-color: var(--tag-green-selected);
-}
-
-#filter-tabs .filter-tab-pink:not(.selected) {
-  background-color: var(--tag-pink-unselected);
-  border-color: var(--tag-pink-selected);
-}
-
-#filter-tabs .filter-tab-grey:not(.selected) {
-  background-color: var(--tag-grey-unselected);
-  border-color: var(--tag-grey-selected);
-}
-
-#filter-tabs .filter-tab-yellow:not(.selected) {
-  background-color: var(--tag-yellow-unselected);
-  border-color: var(--tag-yellow-selected);
-}
-
-#filter-tabs .filter-tab-red:not(.selected) {
-  background-color: var(--tag-red-unselected);
-  border-color: var(--tag-red-selected);
-}
-
-#filter-tabs .filter-tab-orange:not(.selected) {
-  background-color: var(--tag-orange-unselected);
-  border-color: var(--tag-orange-selected);
-}
-
-#filter-tabs .filter-tab-purple:not(.selected) {
-  background-color: var(--tag-purple-unselected);
-  border-color: var(--tag-purple-selected);
-}
-
-#filter-tabs .filter-tab-periwinkle:not(.selected) {
-  background-color: var(--tag-periwinkle-unselected);
-  border-color: var(--tag-periwinkle-selected);
-}
-
-#filter-tabs .filter-tab-cyan:not(.selected) {
-  background-color: var(--tag-cyan-unselected);
-  border-color: var(--tag-cyan-selected);
+  color: black;
+  /*^^both light and dark mode*/
 }
 
 #filter-divider {
@@ -1613,4 +1587,12 @@ Filters / Tags Style Rules
   #selected-section.popup-section p {
     font-size: 0.85rem !important;
   }
+
+  #filter-settings {
+    width: 90%;
+  .select-container {
+    width: 48%;
+  }
+}
+
 }

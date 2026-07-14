@@ -2,7 +2,7 @@ import UserAccessLevel = require("@looking-for-group/shared/enums");
 import type { Request } from "express";
 
 // Enums for better typing
-export type SkillType = "Developer" | "Designer" | "Engineer" | "Soft" | "Audio";
+export type SkillType = "Developer" | "Designer" | "Engineer" | "Soft" | "Audio" | "Role" | "Project Type";
 export type TagType =
   | "Other"
   | 'Style'
@@ -12,7 +12,7 @@ export type TagType =
   | "Role"
   | "Major"
   | "Game Engine"
-  | "Position"
+  | "Positions"
 //wow.
 export type GenreCategory = 'Game' | "Story" | 'Music';
 export type StyleCategory = 'Visual' | 'Film/Video';
@@ -294,7 +294,7 @@ export interface UserSkill extends Skill {
 /**
  * Represents all info for a skill that a user has
  */
-export interface JobSkill extends Skill {  
+export interface JobSkill extends Skill {
 
   /**
    * The proficiency in the skill the job is searching for
@@ -617,11 +617,6 @@ export interface UserPreview {
   title: string;
 
   /**
-   * A fun fact about the user
-   */
-  funFact: string;
-
-  /**
    * The user's location, such as "Rochester, NY"
    */
   location: string;
@@ -792,11 +787,6 @@ export interface MeDetail extends MePreview {
    * The logged-in user's location, such as "Rochester, NY"
    */
   location: string;
-
-  /**
-   * A fun fact about the logged-in user
-   */
-  funFact: string;
 
   /**
    * The logged-in user's bio
@@ -1333,7 +1323,6 @@ export type UpdateUserInput = Partial<
     | "title"
     | "ritStatus"
     | "location"
-    | "funFact"
     | "bio"
     | "phoneNumber"
     | 'privacy'
@@ -1351,7 +1340,6 @@ export type CreateUserInput = Partial<
     | "title"
     | "ritStatus"
     | "location"
-    | "funFact"
     | "bio"
     | "phoneNumber"
     | 'username'
@@ -1640,4 +1628,4 @@ export type CreateSkillInput = Pick<Skill, "label" | "type" | "category">;
 /**
  * Data required to edit an existing skill
  */
-export type EditSkillInput = Partial <CreateSkillInput> & { skillId: number };
+export type EditSkillInput = Partial<CreateSkillInput> & { skillId: number };

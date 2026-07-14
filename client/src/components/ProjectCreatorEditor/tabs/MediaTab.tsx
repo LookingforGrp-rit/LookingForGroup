@@ -1,5 +1,5 @@
 // --- Imports ---
-import { useCallback, useEffect, useState, useContext} from "react";
+import { useCallback, useEffect, useState, useContext } from "react";
 import {
   CreateProjectImageInput,
   CreateProjectVideoInput,
@@ -122,18 +122,18 @@ export const MediaTab = ({
   }, []);
 
   useEffect(() => {
-      async function fetchVideos() {
-        const res = await getVideos(unmodifiedProject.projectId);
-        if (res.data) {
-          setVideos(res.data);
-        }
-        else {
-          setVideos(projectAfterMediaChanges.projectVideos as ProjectVideo[]);
-        }
+    async function fetchVideos() {
+      const res = await getVideos(unmodifiedProject.projectId);
+      if (res.data) {
+        setVideos(res.data);
       }
-  
-      fetchVideos();
-    }, [unmodifiedProject.projectId]);
+      else {
+        setVideos(projectAfterMediaChanges.projectVideos as ProjectVideo[]);
+      }
+    }
+
+    fetchVideos();
+  }, [unmodifiedProject.projectId]);
 
   // Checks whether a valid image has been uploaded and modifies modifiedProject
   const handleImageUpload = useCallback(async (file: File) => {
@@ -228,7 +228,7 @@ export const MediaTab = ({
     if (!getYouTubeEmbedURL(newVideoUrl)) return;
 
     const localId = ++localIdIncrement;
-    
+
     const newVideoData: CreateProjectVideoInput = {
       title: newVideoTitle,
       videoUrl: newVideoUrl,
@@ -267,18 +267,18 @@ export const MediaTab = ({
   const handleDeleteVideo = useCallback((video: any) => {
     // Delete it
     dataManager?.deleteVideo({
-      id: { 
-        value: video.videoId, 
-        type: video.isLocal ? "local" : "canon" 
+      id: {
+        value: video.videoId,
+        type: video.isLocal ? "local" : "canon"
       },
       data: null
     });
-    
+
     projectAfterMediaChanges.projectVideos =
       (projectAfterMediaChanges.projectVideos as ProjectVideo[]).filter(
         (projectVideo) =>
-        (video as ProjectVideo).videoId !==
-        (projectVideo)?.videoId
+          (video as ProjectVideo).videoId !==
+          (projectVideo)?.videoId
       );
 
     updatePendingProject(projectAfterMediaChanges);
@@ -561,9 +561,9 @@ export const MediaTab = ({
           const embedUrl = getYouTubeEmbedURL(video.videoUrl);
 
           return (
-            <div 
-              className="project-editor-image-container" 
-              key={video.videoId} 
+            <div
+              className="project-editor-image-container"
+              key={video.videoId}
             >
               {embedUrl ? (
                 <iframe
@@ -579,7 +579,7 @@ export const MediaTab = ({
                   <p style={{ fontSize: "0.8em", wordBreak: "break-all", margin: 0, opacity: 0.7 }}>{video.url}</p>
                 </div>
               )}
-              
+
               {/* Delete Overlay */}
               <div className="project-video-hover">
                 <ThemeIcon
@@ -595,14 +595,14 @@ export const MediaTab = ({
           );
         })}
 
-        {videoPopupOpen 
-        ? 
+        {videoPopupOpen
+          ?
           <div className="add-video">
             <div className="add-video-form">
               <div>
                 <label className="add-video-title">Video Title</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={newVideoTitle}
                   onChange={(e) => setNewVideoTitle(e.target.value)}
                   placeholder="e.g., Gameplay Trailer"
@@ -611,8 +611,8 @@ export const MediaTab = ({
               </div>
               <div>
                 <label className="add-video-title">YouTube URL</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={newVideoUrl}
                   onChange={(e) => setNewVideoUrl(e.target.value)}
                   placeholder="https://www.youtube.com/watch?v=..."
@@ -620,10 +620,10 @@ export const MediaTab = ({
                 />
               </div>
             </div>
-            
+
             <div className="confirm-deny-btns">
-              <button 
-                className="confirm-btn" 
+              <button
+                className="confirm-btn"
                 onClick={() => {
                   handleAddVideo();
                   setVideoPopupOpen(false);
@@ -631,7 +631,7 @@ export const MediaTab = ({
               >
                 Add Video
               </button>
-              <button 
+              <button
                 className="deny-btn"
                 onClick={() => {
                   setNewVideoTitle("");
@@ -643,12 +643,12 @@ export const MediaTab = ({
               </button>
             </div>
           </div>
-        : 
+          :
           <div id="project-editor-add-image">
             <button id="project-video-uploader" className="drop-area" onClick={() => setVideoPopupOpen(!videoPopupOpen)}>
               <div id="img-view" className="project-uploader">
                 <svg xmlns="http://www.w3.org/2000/svg" width={38} height={39} viewBox="0 0 448 512">
-                  <path d="M256 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 160-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l160 0 0 160c0 17.7 14.3 32 32 32s32-14.3 32-32l0-160 160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0 0-160z" fill="var(--neutral-gray)"/>
+                  <path d="M256 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 160-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l160 0 0 160c0 17.7 14.3 32 32 32s32-14.3 32-32l0-160 160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0 0-160z" fill="var(--neutral-gray)" />
                 </svg>
                 <p className="project-editor-extra-info">Click here to add a new video</p>
               </div>
@@ -660,35 +660,38 @@ export const MediaTab = ({
       {/* Save button */}
       <div id="general-save-info">
         <div className="editor-save-actions">
-        <Popup>
-          {saveable ? "" :
-            <div id="invalid-input-error" className={"save-error-msg-general"}>
-              <p>*{message}*</p>
-            </div>}
-          <PopupButton
-            buttonId="project-editor-save"
-            doNotClose={() => failCheck}
-            disabled={!saveable}
-            className={!saveable ? "disabled" : ""}
-          >
-            Save Changes
-          </PopupButton>
-          <PopupContent useClose={false}>
-            <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
-            <div id="confirm-editor-save">
-              <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
-                Confirm
-              </PopupButton>
-              <PopupButton buttonId="team-edit-member-cancel-button" >
-                Cancel
-              </PopupButton>
-            </div>
-          </PopupContent>
-        </Popup>
-        <DeleteProjectButton
-          projectID={unmodifiedProject.projectId}
-          projectTitle={unmodifiedProject.title}
-        />
+          <Popup>
+            {saveable ? "" :
+              <div id="invalid-input-error" className={"save-error-msg-general"}>
+                <p>*{message}*</p>
+              </div>}
+            <PopupButton
+              buttonId="project-editor-save"
+              doNotClose={() => failCheck || !saveable}
+              callback={() => {
+                // Incomplete form: still clickable so the save validation runs,
+                // shows the error, and auto-scrolls to the first missing field.
+                if (!saveable) saveProject?.();
+              }}
+            >
+              Save Changes
+            </PopupButton>
+            <PopupContent useClose={false}>
+              <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+              <div id="confirm-editor-save">
+                <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                  Confirm
+                </PopupButton>
+                <PopupButton buttonId="team-edit-member-cancel-button" >
+                  Cancel
+                </PopupButton>
+              </div>
+            </PopupContent>
+          </Popup>
+          <DeleteProjectButton
+            projectID={unmodifiedProject.projectId}
+            projectTitle={unmodifiedProject.title}
+          />
         </div>
       </div>
     </div>

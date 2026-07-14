@@ -72,15 +72,14 @@ const SideBar = () => {
     case "/profile":
       // Only the mobile layout specifically displays the "own profile" sidebar button
       // Default "profile" brings you to your own page
-      if (width < breakpoint && !window.location.href.includes("?")) {
+
+      if (width < breakpoint && window.location.href.endsWith(`userID=${userId}`)) {
         // Is it the mobile layout, and is it DEFINITELY your own page?
         startingPage = "My Profile";
         for (const i of sidebarBtns) {
           i.classList.remove("active");
         }
-        document
-          .querySelector("#my-profile-sidebar-btn")
-          ?.classList.add("active");
+        document.querySelector("#my-profile-sidebar-btn")?.classList.add("active");
       } else {
         // Otherwise, default to MEET
         // This behavior is not ideal! The desktop layout should likely also feature a "MY PROFILE" button, and one's own profile should have a unique URL.
@@ -89,7 +88,7 @@ const SideBar = () => {
         for (const i of sidebarBtns) {
           i.classList.remove("active");
         }
-        document.querySelector("#meet-sidebar-btn")?.classList.add("active");
+        //document.querySelector("#meet-sidebar-btn")?.classList.add("active");
       }
       break;
     case "/settings":
@@ -194,7 +193,7 @@ const SideBar = () => {
     }
   };
 
-  const returnProfileAccess = async () => {
+  const returnProfileLink = async () => {
     // navigate to Profile, attach userID
     const res = await getCurrentUsername();
     const userId = res.data?.userId;
@@ -238,7 +237,7 @@ const SideBar = () => {
   // Mobile layout
   if (width < breakpoint) {
     return (
-      <div>
+      <nav>
         <div className={active ? "sideBarContainer active" : "sideBarContainer"}>
           <div className="containerButtonSideBar">
             <div className="containerButtonSideBar">
@@ -287,9 +286,9 @@ const SideBar = () => {
                     : "sidebar-btn"
                 }
                 href={userId ? `${paths.routes.PROFILE}?userID=${userId}` : `${paths.routes.LOGIN}`}
-                //onClick={() =>
-                //  handleProfileAccess()
-                //}
+              //onClick={() =>
+              //  handleProfileAccess()
+              //}
               >
                 <ThemeIcon id={'profile'} width={30} height={30} className={'mono-fill'} ariaLabel={'my profile'} />
               </a>
@@ -299,13 +298,24 @@ const SideBar = () => {
         </div>
 
         {/* <Notifications show={showNotifications} onClose={() => { setShowNotifications(!showNotifications); }} /> */}
-      </div>
+      </nav>
     );
   }
 
   // Desktop layout
   return (
-    <div>
+    <nav>
+      <a
+        href="#main"
+        className="skip-link"
+        tabIndex={1}
+        onClick={(e) => {
+          e.preventDefault();
+          document.getElementById('main')?.focus();
+        }}
+      >
+        Skip to main content
+      </a>
       <div className={active ? "SideBarContainer active" : "SideBarContainer"}>
         <div className="headerContainer">
           {/* Must be a button to be focusable and meet accessibility guidelines */}
@@ -388,7 +398,7 @@ const SideBar = () => {
           setShowNotifications(false);
         }}
       /> */}
-    </div>
+    </nav>
   );
 };
 

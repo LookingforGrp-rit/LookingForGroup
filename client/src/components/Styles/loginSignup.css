@@ -827,11 +827,9 @@ Signup process modal style rules
     'profileImage pronouns ritStatus headline'
     'profileImage phoneNumber major bio'
     'profileImage jobTitle jobTitle bio'
-    'profileImage location location bio'
-    'profileImage funFact funFact bio';
+    'profileImage location location bio';
   row-gap: 20px;
   column-gap: 20px;
-
   margin: 10px 0 20px 0;
 }
 
@@ -847,6 +845,10 @@ Signup process modal style rules
   input {
     margin-top: 0px;
     background-color: var(--header-color);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 14px;
   }
 }
 
@@ -895,8 +897,16 @@ Signup process modal style rules
 
     div {
       background-color: var(--header-color);
-
     }
+  }
+}
+
+.CompleteProfile .select-container div {
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+
+  .value {
+    background-color: none;
+    box-shadow: none;
   }
 }
 
@@ -921,6 +931,10 @@ Signup process modal style rules
     background-color: var(--header-color);
 
     max-height: 710%;
+  }
+
+  .select {
+    height: 50px;
   }
 }
 
@@ -1054,6 +1068,14 @@ Signup process modal style rules
   font-weight: 750;
 }
 
+#completeProfile-input-container .select-options{
+  overflow-y: scroll;
+  max-height: 500%;
+  height: auto;
+  scrollbar-width: thick;
+    scrollbar-color: var(--header-color) rgba(0, 0, 0, 0);
+}
+
 /* Mobile css to individual signup pages */
 @media screen and (max-width: 1000px) {
 
@@ -1070,15 +1092,14 @@ Signup process modal style rules
       align-items: center;
       width: 100%;
       overflow-y: scroll;
-    
-      .required-asterisk
-      {
+
+      .required-asterisk {
         width: fit-content;
       }
 
     }
 
-    
+
     #completeProfile-input-container div {
       width: 100%;
     }
@@ -1086,17 +1107,21 @@ Signup process modal style rules
     #ritStatus-input,
     #major-input,
     #jobTitle-input {
-      height: 50px;
+      height: 45px;
 
       .select-container {
         height: 100%;
-        min-height: 45px;
+        min-height: 50px;
+
+        .select {
+          height: 45px;
+        }
       }
 
       .select-container div {
         margin-top: 0px;
         background-color: var(--header-color);
-        
+
         max-height: 400%;
       }
     }

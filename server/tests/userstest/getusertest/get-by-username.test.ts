@@ -48,7 +48,6 @@ describe('getUserByUsernameService', () => {
       headline: '',
       pronouns: '',
       title: '',
-      funFact: '',
       location: '',
       majors: [],
     };

@@ -19,7 +19,6 @@ export const UserDetailSelector = Object.freeze({
   bio: true,
   ritStatus: true,
   location: true,
-  funFact: true,
   title: true,
   members: {
     select: UserMemberSelector,

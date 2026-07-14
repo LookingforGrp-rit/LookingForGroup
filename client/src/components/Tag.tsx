@@ -24,10 +24,10 @@ interface TagsProps {
 export const Tag = ({ children, className = '', type = "", onClick, selected = false }: TagsProps) => {
   let color = "grey";
   switch (type) {
-    case "medium":
+    case "project type":
       color = "blue";
       break;
-    
+
     case "genre":
       color = "green";
       break;
@@ -35,35 +35,47 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
     case "style":
       color = "pink"
       break;
-    
+
+    case "positions":
+      color = "purple";
+      break;
+
     case "game engine":
       color = "yellow"
       break;
 
     case 'other':
+    case 'purpose':
+    case 'role':
       color = 'grey';
       break;
-    
+
+
     case "developer skill":
+    case "developer":
       color = "yellow";
       break;
-      
+
     case "designer skill":
+    case "designer":
       color = "red";
       break;
 
     case "soft skill":
+    case "soft":
       color = "purple";
       break;
 
     case "audio skill":
+    case "audio":
       color = "periwinkle";
       break;
 
     case "engineer skill":
-      color = "cyan"; 
+    case "engineer":
+      color = "cyan";
       break;
-      
+
     default:
       if (type == "") break;
 
@@ -79,15 +91,15 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
 
   if (onClick != undefined) {
     return (
-    <button className={"tag-button tag-" + color + " " + className + " " + tag_extra_classes} onClick={onClick} >
-      {children}
-    </button>
+      <button className={"tag-button tag-" + color + " " + className + " " + tag_extra_classes} onClick={onClick} >
+        {children}
+      </button>
     );
   }
-  
+
   return (
     <div className={"tag-button tag-label tag-" + color + " " + className + " " + tag_extra_classes} >
       {children}
     </div>
-    );
+  );
 };

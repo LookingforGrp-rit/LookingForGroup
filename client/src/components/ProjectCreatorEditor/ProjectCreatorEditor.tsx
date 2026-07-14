@@ -237,7 +237,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       setModifiedProject(newData);
     }
     else if (projectID) {
-      if (!dataManager && projectData === undefined)
+      // Closing the editor clears projectData but leaves `dataManager` set, so
+      // gating on `!dataManager` meant setup() never re-ran on reopen and the
+      // editor came up empty. Reload whenever the project data is missing.
+      if (projectData === undefined)
         setup();
     }
 
@@ -326,11 +329,16 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const toggleConfirm = async () => {
     if (saved) {
       buttonCallback(false);
-      setCurrentTab(0); 
+      setCurrentTab(0);
     }
-    else 
-      setConfirm(!confirm);
+    else
+      // Set (don't toggle): every close attempt with unsaved changes must SHOW
+      // the confirm. Toggling let a second outside-click silently dismiss it.
+      setConfirm(true);
   }
+
+  /** Dismisses the "exit without saving" dialog and stays in the editor. */
+  const cancelConfirm = () => setConfirm(false);
 
   /**
    *  Updates boolean value of isUniqueTitle based on if the desired title
@@ -363,6 +371,45 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     //   n++;
     // }
     // return `${base}(${n})`;
+  };
+
+  /**
+   * Jumps the editor to the first missing/invalid required field after a failed
+   * save: switches to the tab that contains it, scrolls it into view, and
+   * flashes a highlight so the user can see exactly what blocked the save.
+   */
+  const scrollToInvalidField = () => {
+    // First failing required field, checked in the same order the save
+    // validation reports them. [tab index, element id]
+    let tab: number;
+    let elementId: string;
+
+    if (!modifiedProject?.title || !isUniqueTitle) {
+      tab = 0; elementId = "project-editor-title-input";
+    } else if (!modifiedProject.hook) {
+      tab = 0; elementId = "project-editor-description-input";
+    } else if (!modifiedProject.description) {
+      tab = 0; elementId = "project-editor-long-description-input";
+    } else if (!modifiedProject.status) {
+      tab = 0; elementId = "project-editor-status-input";
+    } else if (modifiedProject.mediums.length === 0) {
+      tab = 2; elementId = "project-editor-type-tags";
+    } else if (modifiedProject.tags.length === 0) {
+      tab = 2; elementId = "project-editor-tag-search";
+    } else {
+      return;
+    }
+
+    setCurrentTab(tab);
+
+    // Wait a beat so the target tab's content is mounted before scrolling.
+    window.setTimeout(() => {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.classList.add("field-invalid-flash");
+      window.setTimeout(() => el.classList.remove("field-invalid-flash"), 2000);
+    }, 100);
   };
 
   /**
@@ -402,6 +449,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       if (errorText) {
         errorText.style.display = "block";
       }
+      // Take the user to the missing field instead of failing silently.
+      scrollToInvalidField();
       return;
     }
 
@@ -416,6 +465,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       if (errorText) {
         errorText.style.display = "block";
       }
+      // Take the user to the missing tags/medium section.
+      scrollToInvalidField();
       return;
     }
 
@@ -588,11 +639,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       setProjectData(dataManager.getSavedProject());
       // Remove the unload blocker before reloading the page, otherwise the prior
       // `saved === false` closure can still fire and trigger a browser prompt.
-      //window.onbeforeunload = null;
-      //this does not need to reload anymore, it updates without reloading
-      // projectID !== 0
-      //   ? window.location.reload()
-      //   : navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
+      window.onbeforeunload = null;
+      projectID !== 0
+        ? window.location.reload()
+        : navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
     } catch (err) {
       console.error(err);
     }
@@ -672,7 +722,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             <PopupButton doNotClose={() => false} callback={close} buttonId="project-editor-save">
               Confirm
             </PopupButton>
-            <PopupButton doNotClose={() => true} callback={toggleConfirm} buttonId="team-edit-member-cancel-button" >
+            <PopupButton doNotClose={() => true} callback={cancelConfirm} buttonId="team-edit-member-cancel-button" >
               Cancel
             </PopupButton>
           </div>

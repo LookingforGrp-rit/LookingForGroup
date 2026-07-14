@@ -182,7 +182,7 @@ router.get('/get-username', authenticated(getUsernameByGoogle));
 //Report user
 router.post(
   '/users/report/:id/:report',
-  projectExistsAt('path', 'id'),
+  userExistsAt('path', 'id'),
   authenticated(reportUserController),
 );
 

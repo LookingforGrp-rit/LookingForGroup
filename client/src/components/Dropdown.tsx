@@ -35,6 +35,7 @@ type DropdownButtonProps = {
   buttonId?: string; // Optional HTML id
   callback?: Function; // Optional function executed before toggling
   className?: string; // Optional CSS class
+  ariaLabel?: string; // Optional aria label
 };
 
 type DropdownContentProps = {
@@ -62,6 +63,7 @@ export const DropdownButton: React.FC<DropdownButtonProps> = ({
   children, 
   buttonId = '', 
   className = '', 
+  ariaLabel = '',
   callback = (_e : React.MouseEvent) => {} 
 }) => {
   const { open, setOpen } = useContext(DropdownContext); // Shared open/close state
@@ -79,7 +81,7 @@ export const DropdownButton: React.FC<DropdownButtonProps> = ({
   // }, [open]);
 
   return (
-    <button id={buttonId} className={className} onClick={(e) => {
+    <button aria-label={ariaLabel} id={buttonId} className={className} onClick={(e) => {
       callback(e); // Run optional callback
       toggleOpen(); // Toggle dropdown open/close
     }}>

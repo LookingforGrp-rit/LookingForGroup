@@ -10,11 +10,13 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Popup, PopupButton, PopupContent, PopupContext } from "../../Popup";
 import { DeleteProjectButton } from "../DeleteProjectButton";
+import { MergeProjectTeam } from "./MergeProjectTeam";
 import profileImage from "../../../images/lfrog.png";
 import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
+import { Tag as TagElement } from "../../Tag";
 // import { SkillsTab } from "../../Profile/tabs/SkillsTab";
 import {
 	getJobTitles,
@@ -637,19 +639,32 @@ export const TeamTab = ({
 			// const pendingRole =
 			// 	allRoles.find((r) => r.label === "Pending") ??
 			// 	currentMember.role;
-			const localProjectMember: PendingProjectMember = {
-				user: currentMember.user,
-				role: currentMember.role,
-				localId:
-					(currentMember as PendingProjectMember).localId ??
-					++localIdIncrement
+			// const localProjectMember: PendingProjectMember = {
+			// 	user: currentMember.user,
+			// 	role: currentMember.role,
+			// 	localId:
+			// 		(currentMember as PendingProjectMember).localId ??
+			// 		++localIdIncrement
+			// };
+
+			// projectAfterTeamChanges.members = [
+			// 	...projectAfterTeamChanges.members,
+			// 	localProjectMember
+			// ];
+			// updatePendingProject(projectAfterTeamChanges);
+
+			const newInvitation: MemberRequests = {
+				requestId: 0, // or a temporary local id if you have one
+				prospectiveMemberId: currentMember.user.userId,
+				projectId: projectAfterTeamChanges.projectId as number,
+				roleId: currentMember.role.roleId,
+				sentFromProject: true,
+				requestStatus: "Pending",
 			};
 
-			projectAfterTeamChanges.members = [
-				...projectAfterTeamChanges.members,
-				localProjectMember
-			];
-			updatePendingProject(projectAfterTeamChanges);
+			setPendingInvitations(prev => [...prev, newInvitation]);
+
+			updatePendingProject(structuredClone(projectAfterTeamChanges));
 
 			setCurrentMember(emptyMember);
 			resetFields();
@@ -1058,11 +1073,41 @@ export const TeamTab = ({
 					<div id="edit-position-skills-list">
 						{/* TODO: make displayed tags look like tags */}
 						{currentJob?.jobSkills &&
-							currentJob?.jobSkills?.length > 0
-							? currentJob?.jobSkills?.map(
-								(skill) => `${skill?.label} `
-							)
-							: "None"}
+							currentJob?.jobSkills?.length > 0 ?
+							currentJob?.jobSkills?.map((tag) => {
+								if (tag) {
+									let category: string;
+									switch (tag.type) {
+										case "Designer":
+											category = "red";
+											break;
+										case "Developer":
+											category = "yellow";
+											break;
+										case "Soft":
+											category = "purple";
+											break;
+										case "Audio":
+											category = "periwinkle";
+											break;
+										case "Engineer":
+											category = "cyan";
+											break;
+										default:
+											category = "grey";
+									}
+									return (
+										<div
+											key={`${tag.skillId}`}
+											className={`skill-tag-label label-${category}`}
+										>
+											{tag.label}
+										</div>
+									);
+								}
+								else return ""
+							}
+							) : "None"}
 					</div>
 				</div>
 				<div id="open-position-details">
@@ -1286,11 +1331,41 @@ export const TeamTab = ({
 				<div id="edit-position-skills-list">
 					{/* TODO: make displayed tags look like tags */}
 					{currentJob?.jobSkills &&
-						currentJob?.jobSkills?.length > 0
-						? currentJob?.jobSkills?.map(
-							(skill) => `${skill?.label} `
-						)
-						: "No skills selected"}
+						currentJob?.jobSkills?.length > 0 ?
+						currentJob?.jobSkills?.map((tag) => {
+							if (tag) {
+								let category: string;
+								switch (tag.type) {
+									case "Designer":
+										category = "red";
+										break;
+									case "Developer":
+										category = "yellow";
+										break;
+									case "Soft":
+										category = "purple";
+										break;
+									case "Audio":
+										category = "periwinkle";
+										break;
+									case "Engineer":
+										category = "cyan";
+										break;
+									default:
+										category = "grey";
+								}
+								return (
+									<div
+										key={`${tag.skillId}`}
+										className={`skill-tag-label label-${category}`}
+									>
+										{tag.label}
+									</div>
+								);
+							}
+							else return ""
+						}
+						) : "None"}
 				</div>
 			</div>
 
@@ -1424,83 +1499,7 @@ export const TeamTab = ({
 							/>
 						</Select>
 					</div>
-					<div className="edit-position-container">
-						<label className="edit-position-contact">
-							Main Contact
-							<span
-								className="required-asterisk"
-								aria-hidden="true"
-								title="Required">
-								*
-							</span>
-						</label>
-						{/* <select className="edit-position-contact"></select> */}
-						<Select>
-							<SelectButton
-								className="edit-position-contact"
-								placeholder="Select"
-								type="input"
-								initialVal={
-									currentJob?.contact
-										? `${currentJob.contact.firstName} ${currentJob.contact.lastName}`
-										: ""
-								}
-							/>
-							<SelectOptions
-								className="edit-position-contact"
-								callback={(e) => {
-									const selectedId = parseInt(
-										(e.currentTarget as HTMLButtonElement)
-											.value
-									);
-									setCurrentJob({
-										...currentJob,
-										contact:
-											allUsers.find(
-												({ userId }) =>
-													userId === selectedId
-											) ?? null
-									} as ProjectJob);
-								}}
-								options={projectAfterTeamChanges.members
-									.filter((member) => member.user !== null)
-									// .filter((member) => member.role?.label === "Owner") // TODO change when perms exist
-									.map(({ user }) => ({
-										markup: (
-											<>
-												<div className="project-editor-project-member-info">
-													<img
-														className="project-member-image"
-														src={
-															user!
-																.profileImage ??
-															profileImage
-														}
-														alt="profile"
-														title={
-															"Profile picture"
-														}
-														// Cannot use usePreloadedImage function because this is in a callback
-														onError={(e) => {
-															const profileImageElement =
-																e.target as HTMLImageElement;
-															profileImageElement.src =
-																profileImage;
-														}}
-													/>{" "}
-													<div className="project-editor-project-member-name">
-														{user!.firstName}{" "}
-														{user!.lastName}
-													</div>
-												</div>
-											</>
-										),
-										value: user!.userId.toString(),
-										disabled: false
-									}))}
-							/>
-						</Select>
-					</div>
+
 				</div>
 				<div id="edit-position-details-right">
 					<div className="edit-position-container">
@@ -1631,6 +1630,95 @@ export const TeamTab = ({
 							/>
 						</Select>
 					</div>
+				</div>
+				<div id="edit-position-details-right">
+					<div className="edit-position-container">
+						<label className="edit-position-contact">
+							Main Contact
+							<span
+								className="required-asterisk"
+								aria-hidden="true"
+								title="Required">
+								*
+							</span>
+						</label>
+						{/* <select className="edit-position-contact"></select> */}
+						<Select>
+							<SelectButton
+								className="edit-position-contact"
+								placeholder="Select"
+								type="input"
+								initialVal={
+									currentJob?.contact
+										? `${currentJob.contact.firstName} ${currentJob.contact.lastName}`
+										: ""
+								}
+							/>
+							<SelectOptions
+								className="edit-position-contact"
+								callback={(e) => {
+									const selectedId = parseInt(
+										(e.currentTarget as HTMLButtonElement)
+											.value
+									);
+									setCurrentJob({
+										...currentJob,
+										contact:
+											allUsers.find(
+												({ userId }) =>
+													userId === selectedId
+											) ?? null
+									} as ProjectJob);
+								}}
+								options={unmodifiedProject.members
+									.filter((member) => member.user !== null)
+									.filter(member => {
+										const pendingInvitation = pendingInvitations.find(req =>
+											req.prospectiveMemberId === member.user?.userId &&
+											req.roleId === member.role?.roleId &&
+											req.requestStatus !== 'Accepted');
+										const pendingApplication = pendingApplications.find(req =>
+											req.prospectiveMemberId === member.user?.userId &&
+											req.roleId === member.role?.roleId &&
+											req.requestStatus !== 'Accepted');
+										return !pendingInvitation && !pendingApplication;
+									})
+									// .filter((member) => member.role?.label === "Owner") // TODO change when perms exist
+									.map(({ user }) => ({
+										markup: (
+											<>
+												<div className="project-editor-project-member-info">
+													<img
+														className="project-member-image"
+														src={
+															user!
+																.profileImage ??
+															profileImage
+														}
+														alt="profile"
+														title={
+															"Profile picture"
+														}
+														// Cannot use usePreloadedImage function because this is in a callback
+														onError={(e) => {
+															const profileImageElement =
+																e.target as HTMLImageElement;
+															profileImageElement.src =
+																profileImage;
+														}}
+													/>{" "}
+													<div className="project-editor-project-member-name">
+														{user!.firstName}{" "}
+														{user!.lastName}
+													</div>
+												</div>
+											</>
+										),
+										value: user!.userId.toString(),
+										disabled: false
+									}))}
+							/>
+						</Select></div>
 				</div>
 			</div>
 			<div id="edit-position-buttons">
@@ -2468,7 +2556,21 @@ export const TeamTab = ({
 				</button>
 			</div>
 
-			<div id="project-editor-team-content">{teamTabContent}</div>
+			<div id="project-editor-team-content">
+				{teamTabContent}
+				{/* Merge another project's whole team into this one (invite-based) */}
+				{currentTeamTab === 0 && (
+					<MergeProjectTeam
+						dataManager={dataManager}
+						targetProjectId={projectAfterTeamChanges.projectId as number}
+						currentMembers={projectAfterTeamChanges.members}
+						ownerUserId={currentUserId ?? projectAfterTeamChanges.owner?.userId ?? null}
+						pendingInvitations={pendingInvitations}
+						setPendingInvitations={setPendingInvitations}
+						onInvitesQueued={() => updatePendingProject(structuredClone(projectAfterTeamChanges))}
+					/>
+				)}
+			</div>
 
 			<div id="team-save-info">
 				<div className="editor-save-actions">
@@ -2484,9 +2586,12 @@ export const TeamTab = ({
 						)}
 						<PopupButton
 							buttonId="project-editor-save"
-							doNotClose={() => failCheck}
-							disabled={!saveable}
-							className={!saveable ? "disabled" : ""}>
+							doNotClose={() => failCheck || !saveable}
+							callback={() => {
+								// Incomplete form: still clickable so the save validation
+								// runs, shows the error, and auto-scrolls to the missing field.
+								if (!saveable) saveProject?.();
+							}}>
 							Save Changes
 						</PopupButton>
 						<PopupContent useClose={false}>
