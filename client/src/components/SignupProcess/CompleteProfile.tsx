@@ -241,6 +241,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 
 								{/* Current Job Title */}
 								<div id="jobTitle-input">
+									<div className="dropdown-label">Job Title</div>
 									<Select>
 										<SelectButton
 											placeholder={"Job Title"}
@@ -272,6 +273,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 								{/* RIT Status */}
 								{/*TODO: fix styling on this, the text is at the top of the box and you can't see any of the dropdown*/}
 								<div id="ritStatus-input">
+									<div className="dropdown-label">RIT Status <span className="required-asterisk">{majorAsterisk()}</span></div>
 									<Select>
 										<SelectButton
 											placeholder="RIT Status (Required)"
@@ -297,11 +299,11 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 											)}
 										/>
 									</Select>
-									<span className="required-asterisk">{majorAsterisk()}</span>
 								</div>
 
 								{/* Major */}
 								<div id="major-input">
+									<div className="dropdown-label">Major <span className="required-asterisk">{majorAsterisk()}</span></div>
 									<Select>
 										<SelectButton
 											placeholder={majorRequired()}
@@ -327,7 +329,6 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 											}))}
 										/>
 									</Select>
-									<span className="required-asterisk">{majorAsterisk()}</span>
 								</div>
 							</div>
 
@@ -357,7 +358,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 
 								{/* Location */}
 								<LabelInputBox
-									label={"Add Location"}
+									label={"Location"}
 									inputType={"single"}
 									maxLength={50}
 									id="location-input"

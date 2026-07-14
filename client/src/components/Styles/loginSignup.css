@@ -824,6 +824,7 @@ Signup process modal style rules
   flex-direction: column;
   gap: 13px;
   /* height: 100%; */
+  width: 100%;
   margin: 10px 0 20px 0;
 }
 
@@ -877,6 +878,10 @@ Signup process modal style rules
     overflow: hidden;
     font-size: 14px;
   }
+
+  .input-combo-label {
+    padding-bottom: 4px;
+  }
 }
 
 #jobTitle-input {
@@ -891,17 +896,17 @@ Signup process modal style rules
 #ritStatus-input {
   height: 50px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 
-  .select-container,
-  .select-button-input {
-    height: 100%;
-    min-height: fit-content;
-    width: 100%;
+  .select-container div {
+    margin-top: 0px;
+    background-color: var(--header-color);
 
-    div {
-      background-color: var(--header-color);
-    }
+    max-height: 710%;
+  }
+
+  .select {
+    height: 50px;
   }
 }
 
@@ -917,18 +922,8 @@ Signup process modal style rules
 #major-input {
   height: 50px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 
-  /* .select-container,
-  .select-button-input {
-    height: 100%;
-    width: 100%;
-
-    div {
-      background-color: var(--header-color);
-      overflow: hidden;
-    }
-  } */
   .select-container div {
     margin-top: 0px;
     background-color: var(--header-color);
@@ -941,6 +936,13 @@ Signup process modal style rules
   }
 }
 
+.dropdown-label {
+  color: var(--primary-color);
+  font-size: 1.25rem;
+  font-weight: 600;
+  padding-bottom: 4px;
+}
+
 #bio-input, #headline-input {
   resize: none;
   font-size: 1rem;
@@ -950,6 +952,10 @@ Signup process modal style rules
     margin-top: 0px;
     background-color: var(--header-color);
     outline: none;
+  }
+
+  .label-info {
+    padding-bottom: 6px;
   }
 }
 /* === Terms of Service === */
