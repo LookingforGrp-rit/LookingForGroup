@@ -397,9 +397,9 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 								inputType={"multi"}
 								maxLength={20}
 								id="headline-input"
-								value={headline}
 								// placeholder={"Personal Quote"}
 								onChange={(e) => setHeadline(e.target.value)}
+								value={headline}
 								hideUnsaved={true}
 							/>
 						</div>
