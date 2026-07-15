@@ -16,6 +16,8 @@ interface LabelInputBoxProps {
   forceUnsaved?: boolean;
   hideUnsaved?: boolean;
   placeholder?: string;
+  htmlFor?: string;
+  labelId?: string;
 }
 
 /**
@@ -36,6 +38,8 @@ interface LabelInputBoxProps {
  * @param forceUnsaved Optional boolean to force the title to read "(Unsaved)"
  * @param hideUnsaved Optional boolean to hide the unsaved marker from showing
  * @param placeholder Optional boolean to have a placeholder value if there is no text in the field
+ * @param htmlFor Optional value for the id of the element is that is being labelled
+ * @param labelId Optional value for what id to use on the label
  * @returns A JSX element wrapping the label, input (if any), and children
  */
 const LabelInputBox: React.FC<LabelInputBoxProps> = ({ 
@@ -52,7 +56,9 @@ const LabelInputBox: React.FC<LabelInputBoxProps> = ({
   required=false, 
   forceUnsaved=false,
   hideUnsaved=false,
-  placeholder
+  placeholder,
+  htmlFor,
+  labelId
 }) => {
   // If the value is different than the start value
   const showUnsaved = forceUnsaved || value !== initialValue;
@@ -60,7 +66,7 @@ const LabelInputBox: React.FC<LabelInputBoxProps> = ({
   return (
     <div className='label-input-box' id={id} style={style}>
       {(
-        <label className="input-combo-label">
+        <label id={labelId} className="input-combo-label" htmlFor={htmlFor || undefined}>
         {label}
         {required && (
           <span 
@@ -83,6 +89,7 @@ const LabelInputBox: React.FC<LabelInputBoxProps> = ({
       
       {inputType !== 'none' && (
         <Input 
+          id={htmlFor}
           type={inputType} 
           maxLength={maxLength} 
           value={value} 
