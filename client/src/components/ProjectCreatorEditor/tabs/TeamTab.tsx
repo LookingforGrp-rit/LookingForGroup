@@ -953,6 +953,7 @@ export const TeamTab = ({
 			updatePendingProject(projectAfterTeamChanges);
 			setEditMode(false);
 			setIsCreatingNewPosition(false);
+			setErrorAddPosition("");
 			setCurrentJob(currentJob);
 			console.log(currentJob)
 			return;
