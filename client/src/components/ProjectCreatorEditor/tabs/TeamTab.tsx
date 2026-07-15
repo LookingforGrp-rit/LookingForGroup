@@ -919,10 +919,12 @@ export const TeamTab = ({
 					jobSkills: (currentJob.jobSkills as JobSkill[])
 				}
 			});
+
 			//passing in the associated job's localId to get this to work properly
 			if (currentJob.jobSkills) {
 				for (const skill of currentJob.jobSkills) {
 					console.log(skill)
+
 					dataManager?.addProjectJobSkill({
 						id: {
 							value:
@@ -945,12 +947,10 @@ export const TeamTab = ({
 			];
 
 			updatePendingProject(projectAfterTeamChanges);
-
 			setEditMode(false);
 			setIsCreatingNewPosition(false);
 			setCurrentJob(currentJob);
 			console.log(currentJob)
-
 			return;
 		} else {
 			const unmodifiedSkills = unmodifiedProject.jobs.find(

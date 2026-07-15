@@ -433,7 +433,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       return;
     }
 
-    if (modifiedProject?.title !== null && modifiedProject?.title !== "" && modifiedProject?.title !== undefined) { getUniqueProjectTitle(modifiedProject?.title, projectID); }
+    if (modifiedProject?.title !== null && modifiedProject?.title !== "" && modifiedProject?.title !== undefined) {
+      getUniqueProjectTitle(modifiedProject?.title, projectID);
+    }
 
     //pops up error text if required fields in general haven't been filled out
     if (
