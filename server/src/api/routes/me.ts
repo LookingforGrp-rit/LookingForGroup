@@ -158,14 +158,14 @@ router.get('/socials', authenticated(getSocials));
 router.post('/socials', attributeExistsAt('social', 'body', 'websiteId'), authenticated(addSocial));
 //Updates a social
 router.patch(
-  '/socials/:websiteId',
-  authenticated(userAttributeExistsAt('social', 'path', 'websiteId')),
+  '/socials/:id',
+  authenticated(userAttributeExistsAt('social', 'path', 'id')),
   authenticated(updateSocial),
 );
 //Deletes a social
 router.delete(
-  '/socials/:websiteId',
-  authenticated(userAttributeExistsAt('social', 'path', 'websiteId')),
+  '/socials/:id',
+  authenticated(userAttributeExistsAt('social', 'path', 'id')),
   authenticated(deleteSocial),
 );
 

@@ -13,12 +13,14 @@ vi.mock('#config/prisma.ts', () => ({
 }));
 
 const prismaSocial = {
+  id: 1,
   websiteId: 1,
   userId: 1,
-  url: '',
+  url: 'test.com',
+  alias: 'test',
   socials: {
     websiteId: 1,
-    label: '',
+    label: 'test',
   },
 };
 
@@ -30,7 +32,7 @@ describe('deleteSocialService', () => {
   it('returns NO_CONTENT after social deleted', async () => {
     vi.mocked(prisma.userSocials.delete).mockResolvedValue(prismaSocial);
 
-    const result = await deleteSocialService(1, 1);
+    const result = await deleteSocialService(1);
 
     expect(result).toBe('NO_CONTENT');
   });
@@ -38,7 +40,7 @@ describe('deleteSocialService', () => {
   it('returns NOT_FOUND if user social does not exist', async () => {
     vi.mocked(prisma.userSocials.delete).mockRejectedValue({ code: 'P2025' });
 
-    const result = await deleteSocialService(1, 1);
+    const result = await deleteSocialService(1);
 
     expect(result).toBe('NOT_FOUND');
   });
@@ -46,7 +48,7 @@ describe('deleteSocialService', () => {
   it('returns INTERNAL_ERROR when prisma throws', async () => {
     vi.mocked(prisma.userSocials.delete).mockRejectedValue(new Error('db cursed'));
 
-    const result = await deleteSocialService(1, 1);
+    const result = await deleteSocialService(1);
 
     expect(result).toBe('INTERNAL_ERROR');
   });

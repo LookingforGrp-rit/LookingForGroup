@@ -609,6 +609,7 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
   # ME
   /api/me:
     get:
@@ -1085,7 +1086,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/me/socials/{websiteId}:
+  /api/me/socials/{id}:
     patch:
       summary: Updates a user social
       description: Updates one of the socials specified by the current user
@@ -1094,10 +1095,10 @@ paths:
       tags:
         - Me
       parameters:
-        - name: websiteId
+        - name: id
           in: path
           required: true
-          description: The website being changed
+          description: The DB id of the user social being changed
           schema:
             type: integer
         - in: query
@@ -1144,10 +1145,10 @@ paths:
       tags:
         - Me
       parameters:
-        - name: websiteId
+        - name: id
           in: path
           required: true
-          description: ID of the social to be deleted
+          description: DB id of the social to be deleted
           schema:
             type: integer
         - in: query
@@ -3233,7 +3234,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/projects/{id}/socials/{websiteId}:
+  /api/projects/{id}/socials/{socialId}:
     patch:
       summary: Updates a project social
       description: Updates one of the project socials specified
@@ -3254,7 +3255,7 @@ paths:
             type: integer
           required: true
           description: The ID of the project
-        - name: websiteId
+        - name: socialId
           in: path
           required: true
           description: ID of the social to be deleted
@@ -3297,7 +3298,7 @@ paths:
       tags:
         - Projects
       parameters:
-        - name: websiteId
+        - name: socialId
           in: path
           required: true
           description: ID of the social to be deleted
@@ -4920,6 +4921,7 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
   #ADMIN
   /api/admin/promote:
     patch:
@@ -4969,6 +4971,7 @@ paths:
           $ref: '#components/responses/Conflict'
         '500':
           $ref: '#components/responses/InternalServerError'
+
   /api/admin/demote:
     patch:
       summary: Demotes a moderator.
@@ -5017,6 +5020,7 @@ paths:
           $ref: '#components/responses/Conflict'
         '500':
           $ref: '#components/responses/InternalServerError'
+
   /api/admin/tags:
     post:
       summary: Create a tag.
@@ -5056,6 +5060,7 @@ paths:
           $ref: '#components/responses/BadRequest'
         '500':
           $ref: '#components/responses/InternalServerError'
+
   /api/admin/tags/{id}:
     patch:
       summary: Modify a tag.
@@ -5138,6 +5143,7 @@ paths:
                     example: Tag deleted successfully
         '500':
           $ref: '#components/responses/InternalServerError'
+
   /api/admin/skills:
     post:
       summary: Create a skill.
@@ -5177,6 +5183,7 @@ paths:
           $ref: '#components/responses/BadRequest'
         '500':
           $ref: '#components/responses/InternalServerError'
+
   /api/admin/skills/{id}:
     patch:
       summary: Modify a skill.
@@ -5259,6 +5266,7 @@ paths:
                     example: Skill deleted successfully
         '500':
           $ref: '#components/responses/InternalServerError'
+
   /api/admin/status/{id}:
     get:
       summary: Gets the access level of a user

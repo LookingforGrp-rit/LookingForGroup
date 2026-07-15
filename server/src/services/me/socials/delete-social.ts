@@ -4,18 +4,14 @@ import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service
 type DeleteSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type DeleteSocialServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
-//DELETE api/me/socials/{websiteId}
+//DELETE api/me/socials/{id}
 export const deleteSocialService = async (
-  websiteId: number,
-  userId: number,
+  id: number,
 ): Promise<DeleteSocialServiceError | DeleteSocialServiceSuccess> => {
   try {
     await prisma.userSocials.delete({
       where: {
-        userId_websiteId: {
-          websiteId: websiteId,
-          userId: userId,
-        },
+        id: id,
       },
     });
 

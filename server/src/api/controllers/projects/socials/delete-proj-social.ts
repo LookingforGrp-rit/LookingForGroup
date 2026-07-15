@@ -2,13 +2,12 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { deleteProjectSocialService } from '#services/projects/socials/delete-proj-social.ts';
 
-//DELETE api/projects/{id}/socials/{websiteId}
+//DELETE api/projects/{id}/socials/{socialId}
 //deletes a project's social
 export const deleteProjectSocial = async (req: Request, res: Response): Promise<void> => {
-  const projId = parseInt(req.params.id as string);
-  const social = parseInt(req.params.websiteId as string);
+  const socialId = parseInt(req.params.socialId as string);
 
-  const result = await deleteProjectSocialService(social, projId);
+  const result = await deleteProjectSocialService(socialId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
