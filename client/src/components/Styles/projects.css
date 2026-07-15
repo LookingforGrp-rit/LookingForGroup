@@ -3952,6 +3952,28 @@ project-team-open-posiions-info: edit/create proj popup
   height: fit-content;
 }
 
+/* Editor's Open Positions area: one unified box. The container carries the
+   background so the list and details read as two sections INSIDE a single
+   container, instead of two separate boxes floating on the popup gradient. */
+#project-team-open-positions-info {
+  background-color: var(--bg-color);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* The two inner sections become lighter sub-boxes within the container. */
+#project-team-open-positions-info>.positions-popup-list {
+  background-color: var(--header-color);
+  box-shadow: none;
+}
+
+#project-team-open-positions-info .positions-popup-info-wrapper {
+  background-color: var(--header-color);
+  box-shadow: none;
+}
+
 #positions-popup-header {
   text-align: center;
   font-size: 3rem;
