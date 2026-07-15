@@ -80,7 +80,7 @@
         margin: auto min(1vw, 10px);
         font-weight: 700;
     }
-    #mod-edit-btn, #mod-kick-btn
+    .mod-edit-btn, #mod-kick-btn
     {
         border: none;
         border-radius: 30px;
@@ -135,5 +135,6 @@
     #mod-user-options
     {
         margin: 20px 0;
+
     }
 }

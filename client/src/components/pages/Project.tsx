@@ -19,12 +19,12 @@ import {
   leaveProject as leaveProjectApi,
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
-import { MePrivate, ProjectPreview, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
+import { MePrivate, ProjectDetail, ProjectPreview, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 //import { router } from "../../../../server/src/api/routes/me.ts"
 import { reportProject } from "../../api/projects";
 import { getCurrentAccount } from "../../api/users";
-import { getReportedProjects, getUserAccessLevel } from "../../api/mod-tools";
+import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel } from "../../api/mod-tools";
 
 //Main component for the project page
 /**
@@ -59,6 +59,9 @@ const Project = () => {
   const [isFollowing, setFollowing] = useState(false);
   const [isMember, setIsMember] = useState(false);
   const [viewedPosition, setViewedPosition] = useState(0);
+
+  const [deleteResponseText, setDeleteResponseText] = useState<string | null>(null);
+  const successMessage = "Success! You declined this project request."
 
   const [shownTags, setShownTags] = useState(3);
   const [videos, setVideos] = useState<ProjectVideo[]>();
@@ -191,6 +194,14 @@ const Project = () => {
 
   }, [projectID, isMember]);
 
+  // Approve a project request
+  const handleApproveRequest = async () => {
+    setApprovalStatus("approved");
+    if (displayedProject) {
+      const resp = await approveProjectRequest(projectID, displayedProject, userID ? userID : -1);
+    }
+  };
+
   // Checks mod permissions
   useEffect(() => {
     getUserPermissions();
@@ -265,6 +276,20 @@ const Project = () => {
     } else {
       console.error("Error leaving project:", res.error);
     }
+  };
+
+  // Decline a project request
+  const handleDeleteProjectRequest = async () => {
+    const response = await deleteProjectRequest(projectID);
+    let responseText = response.error?.toString();
+    if (responseText === null || responseText === undefined) {
+      responseText = successMessage;
+    }
+    else
+    {
+      responseText = "Uh oh! Something went wrong with your request."
+    }
+    setDeleteResponseText(responseText);
   };
 
   /**
@@ -897,9 +922,61 @@ const reportProjectPressed = async () => {
                 <h4>Approve?</h4>
                 <p>You can approve, request an edit, or decline this project.</p>
                 <div id="mod-options-btns">
-                  <button id="mod-approve-btn">Approve</button>
-                  <button id="mod-edit-btn">Edit</button>
-                  <button id="mod-decline-btn" className="delete-button">Decline</button>
+                  <button id="mod-approve-btn" onClick={ () => { if (displayedProject){ handleApproveRequest(); }}}>Approve</button>
+                      <Popup>
+                        <PopupButton className="mod-edit-btn">Edit</PopupButton>
+                        <PopupContent>
+                          <div className="small-popup" id="report-popup">
+                        <h3>Request Edits</h3>
+                        <p>What should the user change about their project before it can be approved?</p>
+                        <input type="text" placeholder="Write your reasoning here..." className="input input-multiline"></input>
+                          <div className="confirm-deny-btns">
+                            <button
+                              id="team-delete-member-cancel-button"
+                              className="button-reset"
+                            >
+                              Cancel
+                            </button>
+                            <button className="confirm-btn" onClick={() => true /* send msg to user here */}>Submit</button>
+                          </div>
+                        </div>
+                        </PopupContent>
+                      </Popup>
+                  <Popup>
+                        <PopupButton className="delete-button">Decline</PopupButton>
+                        <PopupContent>
+                          <div className="small-popup" id="report-popup">
+                        <h3>Decline Approval Request</h3>
+                        <p>Why are you declining {displayedProject?.title}?</p>
+                        <input type="text" placeholder="Write your reasoning here..." className="input input-multiline"></input>
+                          <div className="confirm-deny-btns">
+                            <button
+                              id="team-delete-member-cancel-button"
+                              className="button-reset"
+                            >
+                              Cancel
+                            </button>
+                            <Popup>
+                              <PopupButton className="confirm-btn">Submit</PopupButton>
+                              <PopupContent>
+                              <div className="small-popup">
+                                <div id="delete-success-title">{
+                                  deleteResponseText === null ? "Loading..." : (
+                                    deleteResponseText === successMessage ? "Success!" : "Error"
+                                  )
+                                }
+                                </div>
+                                <div id="delete-success-extra-info">
+                                  {deleteResponseText}
+                                </div>
+                                <PopupButton buttonId="continue-button">Continue</PopupButton>
+                              </div>
+                              </PopupContent>
+                          </Popup>
+                          </div>
+                        </div>
+                        </PopupContent>
+                      </Popup>
                 </div>
               </div>
             : ""}

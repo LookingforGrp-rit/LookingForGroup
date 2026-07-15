@@ -1,6 +1,9 @@
 import { GET, DELETE, PATCH } from "./index";
 import { ApiResponse, UserAccessLevel, UserPreview } from "@looking-for-group/shared";
-import { ProjectPreview } from "@looking-for-group/shared";
+import { ProjectPreview, ProjectDetail } from "@looking-for-group/shared";
+import { ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
+
+type ApprovalStatusKey = keyof typeof ApprovalStatus;
 
 /**
  * Gets a list of all reported projects
@@ -31,13 +34,18 @@ export const deleteProjectRequest = async (
 /**
  * Approves a pending project approval request
  * @param projectId The project that is being approved
+ * @param projectData The project with now approved status
  * @param userId The Admin/Mod user ID that is approving the project
  */
 export const approveProjectRequest = async (
-    projectId: number
+    projectId: number,
+    projectData: ProjectDetail,
+    modId: number
 ): Promise<ApiResponse> => {
-    const apiURL = `projects/${projectId}/approve`;
-    const response = await PATCH(apiURL, {});
+    const apiURL = `/projects/${projectId}/approve`;
+    
+    const response = await PATCH(apiURL, projectData);
+    console.log(response.status);
 
     if (response.error) console.log(`Error in approveProjectRequest: ${response.error}`);
     return response;
