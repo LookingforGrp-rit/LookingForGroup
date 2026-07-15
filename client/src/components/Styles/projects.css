@@ -862,6 +862,18 @@ Project Creator and Editor Popup style rules
   user-select: none;
 }
 
+.character-count-near {
+  color: rgb(255, 237, 73);
+}
+
+.character-count-close {
+  color: rgb(255, 166, 0);
+}
+
+.character-count-danger {
+  color: rgb(255, 0, 0);
+}
+
 #project-editor-title-input {
   grid-area: title;
 }
@@ -1785,6 +1797,18 @@ Project Creator and Editor Popup style rules
 
   #user-search-container>.dropdown-container {
     margin-left: 0px;
+  }
+
+  #project-editor-team-content {
+    flex-direction: column;
+  }
+
+  #project-editor-project-members {
+    justify-content: center;
+  }
+
+  .project-editor-team-tab {
+    font-size: 1rem;
   }
 }
 

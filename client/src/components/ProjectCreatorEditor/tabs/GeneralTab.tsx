@@ -7,7 +7,7 @@ import LabelInputBox from "../../LabelInputBox";
 import { DeleteProjectButton } from "../DeleteProjectButton";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { PendingProject } from "../../../../types/types";
-import { useContext, useRef } from "react";
+import { useContext, useRef, useState } from "react";
 
 // --- Variables ---
 let projectAfterGeneralChanges: PendingProject;
@@ -32,6 +32,7 @@ type GeneralTabProps = {
   updatePendingProject?: (updatedPendingProject: PendingProject) => void;
   saveable : boolean;
   failCheck: boolean;
+  updateFailCheck: boolean;
   message: string;
 };
 
@@ -55,6 +56,7 @@ export const GeneralTab = ({
   updatePendingProject = () => {},
   saveable,
   failCheck,
+  updateFailCheck,
   message,
 }: GeneralTabProps) => {
 
@@ -64,6 +66,8 @@ export const GeneralTab = ({
   const saveButtonRef = useRef<HTMLButtonElement>(null);
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
+
+  const [confirm, setConfirm] = useState(false);
 
   // // Textbox input callback: useRef to avoid unintended reset bugs TODO: is this needed? not used
   // const debouncedUpdatePendingProject = useRef(
@@ -317,7 +321,6 @@ export const GeneralTab = ({
           </div>}
           <PopupButton
             buttonId="project-editor-save"
-            doNotClose={() => failCheck || !saveable}
             callback={() => {
               // Incomplete form: still clickable so the save validation runs,
               // shows the error, and auto-scrolls to the first missing field.
@@ -325,24 +328,26 @@ export const GeneralTab = ({
                 saveProject?.();
                 return;
               }
+              else setConfirm(true);
               console.log(`Current save ref: ${saveButtonRef.current}`);
               saveButtonRef.current?.focus();
             }}
           >
             Save Changes
           </PopupButton>
-          <PopupContent useClose={false}>
+          {confirm ?
+          <PopupContent useClose={false} callback={() => setConfirm(false)}>
             <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
             <div id="confirm-editor-save">
               <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save"
                   ref={saveButtonRef} >
                 Confirm
               </PopupButton>
-              <PopupButton buttonId="team-edit-member-cancel-button" >
+              <PopupButton buttonId="team-edit-member-cancel-button">
                 Cancel
               </PopupButton>
             </div>
-          </PopupContent>
+          </PopupContent> : ""}
         </Popup>
         <DeleteProjectButton
           projectID={unmodifiedProject.projectId}
