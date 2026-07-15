@@ -21,6 +21,7 @@ type LinksTabProps = {
   saveProject?: () => void;
   saveable: boolean;
   failCheck: boolean;
+  updateFailCheck: boolean;
   message: string;
   currentUser: UserDetail;
 }
@@ -51,6 +52,7 @@ export const LinksTab = ({
   saveProject = () => { },
   saveable,
   failCheck,
+  updateFailCheck,
   message,
   currentUser,
 }: LinksTabProps) => {
@@ -66,6 +68,8 @@ export const LinksTab = ({
   const [projectOwner, setProjectOwner] = useState<UserDetail | null>(null);
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
+
+  const [confirm, setConfirm] = useState(false);
 
   // Checks if the current project socials differ in any way from the unmodified original data
   const isLinksUnsaved = useMemo(() => {
@@ -422,38 +426,39 @@ export const LinksTab = ({
       </div>
       <div id="link-save-info">
         <div className="editor-save-actions">
-          <Popup>
-            {saveable ? "" :
-              <div id="invalid-input-error" className={"save-error-msg-general"}>
-                <p>*{message}*</p>
-              </div>}
-            <PopupButton
-              buttonId="project-editor-save"
-              doNotClose={() => failCheck || !saveable}
-              callback={() => {
-                // Incomplete form: still clickable so the save validation runs,
-                // shows the error, and auto-scrolls to the first missing field.
-                if (!saveable) saveProject?.();
-              }}
-            >
-              Save Changes
-            </PopupButton>
-            <PopupContent useClose={false}>
-              <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
-              <div id="confirm-editor-save">
-                <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
-                  Confirm
-                </PopupButton>
-                <PopupButton buttonId="team-edit-member-cancel-button" >
-                  Cancel
-                </PopupButton>
-              </div>
-            </PopupContent>
-          </Popup>
-          <DeleteProjectButton
-            projectID={unmodifiedProject.projectId}
-            projectTitle={unmodifiedProject.title}
-          />
+        <Popup>
+          {saveable ? "" :
+          <div id="invalid-input-error" className={"save-error-msg-general"}>
+            <p>*{message}*</p>
+          </div>}
+          <PopupButton
+            buttonId="project-editor-save"
+            callback={() => {
+              // Incomplete form: still clickable so the save validation runs,
+              // shows the error, and auto-scrolls to the first missing field.
+              if (!saveable) saveProject?.();
+              else setConfirm(true);
+            }}
+          >
+            Save Changes
+          </PopupButton>
+          {confirm ?
+          <PopupContent useClose={false} callback={() => setConfirm(false)}>
+            <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+            <div id="confirm-editor-save">
+              <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                Confirm
+              </PopupButton>
+              <PopupButton buttonId="team-edit-member-cancel-button" >
+                Cancel
+              </PopupButton>
+            </div>
+          </PopupContent> : "" }
+        </Popup>
+        <DeleteProjectButton
+          projectID={unmodifiedProject.projectId}
+          projectTitle={unmodifiedProject.title}
+        />
         </div>
       </div>
     </div>

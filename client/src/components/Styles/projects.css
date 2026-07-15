@@ -1798,6 +1798,18 @@ Project Creator and Editor Popup style rules
   #user-search-container>.dropdown-container {
     margin-left: 0px;
   }
+
+  #project-editor-team-content {
+    flex-direction: column;
+  }
+
+  #project-editor-project-members {
+    justify-content: center;
+  }
+
+  .project-editor-team-tab {
+    font-size: 1rem;
+  }
 }
 
 .success {

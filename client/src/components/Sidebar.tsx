@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as paths from "../constants/routes";
 import { useSelector } from "react-redux";
 // import Notifications from "./pages/Notifications";
@@ -45,7 +45,7 @@ const SideBar = () => {
   // Here, the sidebar buttons are updated on page load (so that they work with browser back/forward)
   // BOTH manual class managing lines & startingPage lines are necessary for the buttons to work with site features AND browser features
   switch (window.location.pathname) {
-    case "/discover":
+    case "/projects":
     case "/":
       startingPage = "Discover";
       for (const i of sidebarBtns) {
@@ -53,7 +53,7 @@ const SideBar = () => {
       }
       document.querySelector("#discover-sidebar-btn")?.classList.add("active");
       break;
-    case "/meet":
+    case "/people":
       startingPage = "Meet";
       for (const i of sidebarBtns) {
         i.classList.remove("active");
@@ -241,57 +241,57 @@ const SideBar = () => {
         <div className={active ? "sideBarContainer active" : "sideBarContainer"}>
           <div className="containerButtonSideBar">
             <div className="containerButtonSideBar">
-              <a
+              <Link
                 id={"discover-sidebar-btn"}
                 className={
                   activePage === "Discover"
                     ? "active sidebar-btn"
                     : "sidebar-btn"
                 }
-                href={paths.routes.HOME}
+                to={paths.routes.HOME}
               >
                 <ThemeIcon id={'compass'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'} />
-              </a>
-              <a
+              </Link>
+              <Link
                 id={"meet-sidebar-btn"}
                 className={
                   activePage === "Meet" ? "active sidebar-btn" : "sidebar-btn"
                 }
-                href={paths.routes.MEET}
+                to={paths.routes.MEET}
               >
                 <ThemeIcon id={'meet'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'} />
-              </a>
+              </Link>
               <div className="my-projects-create-btn">
                 <ProjectCreatorEditor
                   newProject={true}
                   mobileView={true}
                 />
               </div>
-              <a
+              <Link
                 id={"my-projects-sidebar-btn"}
                 className={
                   activePage === "My Projects"
                     ? "active sidebar-btn"
                     : "sidebar-btn"
                 }
-                href={paths.routes.MYPROJECTS}
+                to={paths.routes.MYPROJECTS}
               >
                 <ThemeIcon id={'folder'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'} />
-              </a>
-              <a
+              </Link>
+              <Link
                 id={"my-profile-sidebar-btn"}
                 className={
                   activePage === "My Profile"
                     ? "active sidebar-btn"
                     : "sidebar-btn"
                 }
-                href={userId ? `${paths.routes.PROFILE}?userID=${userId}` : `${paths.routes.LOGIN}`}
+                to={userId ? `${paths.routes.PROFILE}?userID=${userId}` : `${paths.routes.LOGIN}`}
               //onClick={() =>
               //  handleProfileAccess()
               //}
               >
                 <ThemeIcon id={'profile'} width={30} height={30} className={'mono-fill'} ariaLabel={'my profile'} />
-              </a>
+              </Link>
 
             </div>
           </div>
@@ -308,7 +308,6 @@ const SideBar = () => {
       <a
         href="#main"
         className="skip-link"
-        tabIndex={1}
         onClick={(e) => {
           e.preventDefault();
           document.getElementById('main')?.focus();
@@ -319,48 +318,48 @@ const SideBar = () => {
       <div className={active ? "SideBarContainer active" : "SideBarContainer"}>
         <div className="headerContainer">
           {/* Must be a button to be focusable and meet accessibility guidelines */}
-          <a
-            href={paths.routes.HOME}
+          <Link
+            to={paths.routes.HOME}
           >
             <h1>
               lfg.
             </h1>
-          </a>
+          </Link>
         </div>
 
         <div className="containerButtonSideBar">
-          <a
+          <Link
             id={"discover-sidebar-btn"}
             className={
               activePage === "Discover" ? "active sidebar-btn" : "sidebar-btn"
             }
-            href={paths.routes.HOME}
+            to={paths.routes.HOME}
           >
             <ThemeIcon id={'compass'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'} />
-            Discover
-          </a>
-          <a
+            Projects
+          </Link>
+          <Link
             id={"meet-sidebar-btn"}
             className={
               activePage === "Meet" ? "active sidebar-btn" : "sidebar-btn"
             }
-            href={paths.routes.MEET}
+            to={paths.routes.MEET}
           >
             <ThemeIcon id={'meet'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'} />
-            Meet
-          </a>
-          <a
+            People
+          </Link>
+          <Link
             id={"my-projects-sidebar-btn"}
             className={
               activePage === "My Projects"
                 ? "active sidebar-btn"
                 : "sidebar-btn"
             }
-            href={paths.routes.MYPROJECTS}
+            to={paths.routes.MYPROJECTS}
           >
             <ThemeIcon id={'folder'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'} />
             My Projects
-          </a>
+          </Link>
           {/* <button className={activePage === 'Following' ? 'active' : ''} onClick={() => handleTextChange('Following', paths.routes.SETTINGS)}>
             // If implementing, use SVG sprite sheet instead of hard-coded png
             <img
