@@ -16,6 +16,7 @@ const getProjectsService = async (): Promise<ProjectPreview[] | GetServiceError>
       },
       where: {
         approved: true,
+        globalVisibility: 'public',
       },
     });
 
