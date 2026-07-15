@@ -132,6 +132,7 @@ export const AboutTab = ({
 				<div className="about-row row-1">
 					<LabelInputBox
 						label={"Preferred Name"}
+						htmlFor="preferred-name-input"
 						required
 						inputType={"single"}
 						maxLength={50}
@@ -157,6 +158,7 @@ export const AboutTab = ({
 					/>
 					<LabelInputBox
 						label={"Last Name"}
+						htmlFor="last-name-input"
 						required
 						inputType={"single"}
 						maxLength={50}
@@ -182,6 +184,7 @@ export const AboutTab = ({
 					/>
 					<LabelInputBox
 						label={"Pronouns"}
+						htmlFor="pronouns-input"
 						inputType={"single"}
 						maxLength={25}
 						value={profile.pronouns}
@@ -209,12 +212,14 @@ export const AboutTab = ({
 					{
 						<LabelInputBox
 							label={"Title"}
+							labelId="title-label"
 							inputType={"none"}
 							forceUnsaved={
 								profile.title !== unmodifiedProfile.title
 							}>
 							<Select>
 								<SelectButton
+									ariaLabelledBy="title-label"
 									placeholder={"Select"}
 									initialVal={profile.title ?? ""}
 									callback={(e) => e.preventDefault()}
@@ -257,6 +262,7 @@ export const AboutTab = ({
 						//major (will need a ui change to accept multiple majors)
 						<LabelInputBox
 							label={"Major"}
+							labelId="major-label"
 							inputType={"none"}
 							forceUnsaved={
 								profile.majors[0]?.majorId !==
@@ -264,6 +270,7 @@ export const AboutTab = ({
 							}>
 							<Select>
 								<SelectButton
+									ariaLabelledBy="major-label"
 									placeholder="Select"
 									initialVal={`${currentMajor?.label}` || ""}
 									callback={(e) => e.preventDefault()}
@@ -342,6 +349,7 @@ export const AboutTab = ({
 
 					<LabelInputBox
 						label={"RIT Status"}
+						labelId="status-label"
 						inputType={"none"}
 						forceUnsaved={
 							profile.ritStatus !==
@@ -349,6 +357,7 @@ export const AboutTab = ({
 						}>
 						<Select>
 							<SelectButton
+								ariaLabelledBy="status-label"
 								placeholder="Select"
 								initialVal={
 									profile.ritStatus
@@ -403,6 +412,7 @@ export const AboutTab = ({
 				<div className="about-row row-3">
 					<LabelInputBox
 						label={"Location"}
+						htmlFor="location-input"
 						inputType={"single"}
 						maxLength={150}
 						value={profile.location}
@@ -428,12 +438,14 @@ export const AboutTab = ({
 
 					<LabelInputBox
 						label={"Mentorship Status"}
+						labelId="mentorship-label"
 						inputType={"none"}
 						forceUnsaved={
 							profile.mentor !== unmodifiedProfile.mentor
 						}>
 						<Select>
 							<SelectButton
+								ariaLabelledBy="mentorship-label"
 								placeholder="Select"
 								initialVal={
 									profile.mentor === true
@@ -485,6 +497,7 @@ export const AboutTab = ({
 			<div id="edit-profile-section-2">
 				<LabelInputBox
 					label={"Personal Quote"}
+					htmlFor="personal-quote-input"
 					labelInfo="Write a fun and catchy phrase that captures your unique personality!"
 					inputType={"multi"}
 					maxLength={100}
@@ -538,6 +551,7 @@ export const AboutTab = ({
 
 			<LabelInputBox
 				label={"About Me"}
+				htmlFor="about-me-input"
 				labelInfo="Share a brief overview of who you are, your interests, and what drives you!"
 				inputType={"multi"}
 				maxLength={600}
