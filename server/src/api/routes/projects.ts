@@ -389,28 +389,28 @@ router.post(
 router.get('/:id/socials', projectExistsAt('path', 'id'), PROJECT.getProjectSocials);
 //Updates a project social
 router.patch(
-  '/:id/socials/:websiteId',
+  '/:id/socials/:socialId',
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
   projectAttributeExistsAt(
     'social',
     { type: 'path', key: 'id' },
-    { type: 'path', key: 'websiteId' },
+    { type: 'path', key: 'socialId' },
   ),
   authenticated(requiresProjectOwner),
   PROJECT.updateProjectSocial,
 );
 //Deletes a project social
 router.delete(
-  '/:id/socials/:websiteId',
+  '/:id/socials/:socialId',
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
   projectAttributeExistsAt(
     'social',
     { type: 'path', key: 'id' },
-    { type: 'path', key: 'websiteId' },
+    { type: 'path', key: 'socialId' },
   ),
   authenticated(requiresProjectOwner),
   PROJECT.deleteProjectSocial,

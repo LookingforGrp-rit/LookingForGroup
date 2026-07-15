@@ -253,7 +253,7 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                     cursor: !social.label ? "not-allowed" : "text",
                   }}
                   placeholder={'Label'}
-                  value={social.alias}
+                  value={social.alias || ''}
                   maxLength={45}
                   onChange={(e) => {
                     handleSocialChange(index, "alias", e.target.value, url);

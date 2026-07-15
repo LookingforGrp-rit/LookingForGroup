@@ -14,11 +14,13 @@ type ProjectSocialGetPayload = Awaited<typeof sampleSocial>[number];
 //map to shared type
 export const transformProjectSocial = (
   projectId: number,
-  { url, socials: { websiteId, label } }: ProjectSocialGetPayload,
+  { id, url, alias, socials: { websiteId, label } }: ProjectSocialGetPayload,
 ): ProjectSocial => {
   return {
+    id,
     url,
-    apiUrl: `/api/projects/${projectId.toString()}/socials/${websiteId.toString()}`,
+    alias,
+    apiUrl: `/api/projects/${projectId.toString()}/socials/${id.toString()}`,
     ...transformSocial({ websiteId, label }),
   };
 };

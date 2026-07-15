@@ -20,7 +20,7 @@ export const transformMySocial = ({
 }: UserSkillsGetPayload): MySocial => {
   return {
     id,
-    apiUrl: `api/me/socials/${websiteId.toString()}`,
+    apiUrl: `api/me/socials/${id.toString()}`,
     url,
     alias,
     ...transformSocial({ label, websiteId }),

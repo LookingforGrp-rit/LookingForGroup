@@ -811,9 +811,10 @@ const reportProjectPressed = async () => {
                             }
                             width={25}
                             height={25}
-                            className={"color-fill"}
+                            className={"mono-fill"}
                             ariaLabel={social.label}
                           />
+                          {social.alias}
                         </a>
                       ))}
                     </div>

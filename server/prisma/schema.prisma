@@ -150,13 +150,15 @@ model ProjectVideos {
 }
 
 model ProjectSocials {
+  id        Int      @id @default(autoincrement())
   projectId Int      @map("project_id")
   websiteId Int      @map("website_id")
   url       String   @db.VarChar(2000)
+  alias     String   @db.VarChar(45)
   projects  Projects @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_socials_projects")
   socials   Socials  @relation(fields: [websiteId], references: [websiteId], map: "FK_project_socials_socials")
 
-  @@id([projectId, websiteId])
+  @@index([projectId], map: "FK_project_socials_projects")
   @@index([websiteId], map: "FK_project_socials_socials")
   @@map("project_socials")
 }

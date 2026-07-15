@@ -1023,9 +1023,19 @@ export interface ProjectMember {
  */
 export interface ProjectSocial extends Social {
   /**
+   * DB id of the project social
+   */
+  id: number;
+
+  /**
    * The url to the project's social media account
    */
   url: string;
+
+  /**
+  * Alias of the url
+  */
+  alias: string;
 
   /**
    * The location of this resource on the server
@@ -1545,12 +1555,12 @@ type GetMemberRequest = {
 /**
  * Data required to add a social media link to a project
  */
-export type AddProjectSocialInput = Pick<ProjectSocial, "websiteId" | "url">;
+export type AddProjectSocialInput = Pick<ProjectSocial, "websiteId" | "url" | "alias">;
 
 /**
  * Data required to update the url of an existing social media link on a project
  */
-export type UpdateProjectSocialInput = Partial<Pick<ProjectSocial, "url">>;
+export type UpdateProjectSocialInput = Partial<Pick<ProjectSocial, "url" | "alias" | "websiteId">>;
 
 /**
  * Data required to change which project image is used as the thumbnail
