@@ -38,6 +38,7 @@ type TagsTabProps = {
   updatePendingProject: (updatedPendingProject: PendingProject) => void;
   saveable: boolean;
   failCheck: boolean;
+  updateFailCheck: boolean;
   message: string;
 };
 
@@ -68,6 +69,7 @@ export const TagsTab = ({
   updatePendingProject,
   saveable,
   failCheck,
+  updateFailCheck,
   message,
 }: TagsTabProps) => {
 
@@ -92,6 +94,8 @@ export const TagsTab = ({
   const [searchValue, setSearchValue] = useState("");
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
+
+  const[confirm, setConfirm] = useState(false);
 
   /* ONLY used for the deleting tags button. This is needed to re-render
     the selected mediums and tags section when reseting */
@@ -535,16 +539,17 @@ export const TagsTab = ({
             </div>}
           <PopupButton
             buttonId="project-editor-save"
-            doNotClose={() => failCheck || !saveable}
             callback={() => {
               // Incomplete form: still clickable so the save validation runs,
               // shows the error, and auto-scrolls to the first missing field.
               if (!saveable) saveProject?.();
+              else setConfirm(true);
             }}
           >
             Save Changes
           </PopupButton>
-          <PopupContent useClose={false}>
+          {confirm ?
+          <PopupContent useClose={false} callback={() => setConfirm(false)}>
             <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
             <div id="confirm-editor-save">
               <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
@@ -554,7 +559,7 @@ export const TagsTab = ({
                 Cancel
               </PopupButton>
             </div>
-          </PopupContent>
+          </PopupContent> : "" }
         </Popup>
         <DeleteProjectButton
           projectID={unmodifiedProject.projectId}

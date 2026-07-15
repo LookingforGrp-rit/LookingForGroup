@@ -1,4 +1,4 @@
-import { useState, useRef, FC, Dispatch, SetStateAction, useEffect, useCallback } from "react";
+import { useState, useRef, FC, Dispatch, SetStateAction, useEffect, useCallback, useMemo } from "react";
 import { Popup, PopupButton, PopupContent } from "../Popup";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { MediaTab } from "./tabs/MediaTab";
@@ -412,6 +412,52 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     }, 100);
   };
 
+  const updateFailCheck = useMemo(() => {
+    console.log("asdasd");
+    if (!saveable) return true;
+    // default to no errors
+    setFailCheck(false);
+    console.log("bababa");
+
+    // save if on link tab
+    //if (currentTab === 4) await updateLinks();
+
+    //Error Handling
+    if (errorAddMember !== "" || errorAddPosition !== "" || errorLinks !== "") {
+      setFailCheck(true);
+      return true;
+    }
+
+    if (modifiedProject?.title !== null && modifiedProject?.title !== "" && modifiedProject?.title !== undefined) { 
+      setFailCheck(true); 
+      return true;
+    }
+
+    //pops up error text if required fields in general haven't been filled out
+    if (
+      !modifiedProject?.title ||
+      !isUniqueTitle ||
+      !modifiedProject.description ||
+      !modifiedProject.status ||
+      !modifiedProject.hook
+    ) {
+      setFailCheck(true);
+      return true;
+    }
+
+    //pops up error text if no tags have been chosen
+    if (
+      modifiedProject.tags.length == 0 ||
+      modifiedProject.mediums.length == 0
+    ) {
+      setFailCheck(true);
+      return true;
+    }
+
+    return false;
+
+  }, [setFailCheck, modifiedProject, errorAddMember, errorAddPosition, errorLinks, isUniqueTitle, saveable]);
+
   /**
    * Handles saving project changes to the server, validates input data before saving
    * For existing projects: updates thumbnails, images, positions, and project information
@@ -468,6 +514,18 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       // Take the user to the missing tags/medium section.
       scrollToInvalidField();
       return;
+    }
+
+    if(modifiedProject?.projectSocials){
+      for(let i: number = 0; i < modifiedProject.projectSocials.length; i++){
+        if(!modifiedProject.projectSocials[i].url || modifiedProject.projectSocials[i].url?.trim() == ""){
+          continue;
+        }
+        else if(!(modifiedProject.projectSocials[i].url?.startsWith("https://") ||
+        modifiedProject.projectSocials[i].url?.startsWith("http://"))){
+          modifiedProject.projectSocials[i].url = "https://" + modifiedProject.projectSocials[i].url;
+        }
+      }
     }
 
     setCurrentTab(0);
@@ -787,6 +845,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 saveProject={saveProject}
                 saveable={saveable}
                 failCheck={failCheck}
+                updateFailCheck={updateFailCheck}
                 message={message}
               />
             ) : currentTab === 1 ? (
@@ -798,6 +857,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 saveProject={saveProject}
                 saveable={saveable}
                 failCheck={failCheck}
+                updateFailCheck={updateFailCheck}
                 message={message}
               />
             ) : currentTab === 2 ? (
@@ -809,6 +869,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 saveProject={saveProject}
                 saveable={saveable}
                 failCheck={failCheck}
+                updateFailCheck={updateFailCheck}
                 message={message}
               />
             ) : currentTab === 3 ? (
@@ -830,6 +891,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/
                 saveable={saveable}
                 failCheck={failCheck}
+                updateFailCheck={updateFailCheck}
                 message={message}
                 messages={projectMessages}
                 setMessages={setProjectMessages}
@@ -844,6 +906,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 setErrorLinks={setErrorLinks}
                 saveable={saveable}
                 failCheck={failCheck}
+                updateFailCheck={updateFailCheck}
                 message={message}
                 currentUser={currentUser as UserDetail}
               />
