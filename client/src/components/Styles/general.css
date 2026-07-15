@@ -139,7 +139,7 @@ General style rules
     Should be black for all tags in light mode
     and match the tag color in dark mode
     */
-    
+
 }
 
 /*light mode color scheme*/
@@ -836,7 +836,7 @@ Sidebar Nav style rules
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: calc(70px + env(safe-area-inset-bottom));
+    height: calc(61px + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
     box-sizing: border-box;
     z-index: 100;
@@ -869,8 +869,8 @@ Sidebar Nav style rules
 
   .containerButtonSideBar>.my-projects-create-btn>#project-info-create {
     background-image: var(--create-gradient);
-    width: 90px !important;
-    height: 90px !important;
+    width: 70px !important;
+    height: 70px !important;
     border-radius: 50% !important;
     padding: 0% !important;
     margin-bottom: 30%;
@@ -883,8 +883,8 @@ Sidebar Nav style rules
   .containerButtonSideBar>.my-projects-create-btn>#project-info-create>#create {
     margin: 0% !important;
     padding: 0% !important;
-    width: 55px !important;
-    height: 55px !important;
+    width: 45px !important;
+    height: 45px !important;
   }
 
   .containerButtonSideBar>button,
@@ -1413,6 +1413,15 @@ body.modal-open {
   #filter-tabs {
     column-gap: min(6vw, 45px);
   }
+}
+
+/* Styles for required fields */
+.requiredAsterisk {
+  color: red;
+}
+
+.requiredText {
+  font-style: italic;
 }
 
 /* Mobile styling */
@@ -2082,6 +2091,7 @@ Select style rules
   width: 100%;
   border-radius: 10px;
 }
+
 
 
 /* Universal styles for Select component */

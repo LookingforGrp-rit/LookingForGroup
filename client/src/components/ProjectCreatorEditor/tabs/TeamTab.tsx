@@ -16,7 +16,7 @@ import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import { Tag as TagElement } from "../../Tag";
+// import { Tag as TagElement } from "../../Tag";
 // import { SkillsTab } from "../../Profile/tabs/SkillsTab";
 import {
 	getJobTitles,
@@ -104,7 +104,8 @@ type TeamTabProps = {
 		invitations: MemberRequests[];
 		applications: MemberRequests[];
 	}>>;
-	//setProjectData: (data: ProjectDetail) => void; because of the data manager we no longer directly update the projectData from here
+	//setProjectData: (data: ProjectDetail) => void; because of the data manager we no longer directly update the projectData 
+	// from here
 	setErrorMember: (error: string) => void;
 	setErrorPosition: (error: string) => void;
 	// permissions: number;
@@ -112,6 +113,7 @@ type TeamTabProps = {
 	updatePendingProject: (updatedPendingProject: PendingProject) => void;
 	saveable: boolean;
 	failCheck: boolean;
+	updateFailCheck: boolean;
 	message: string;
 	messages: string[];
 	setMessages: React.Dispatch<React.SetStateAction<string[]>>;
@@ -149,6 +151,7 @@ export const TeamTab = ({
 	updatePendingProject,
 	saveable,
 	failCheck,
+	updateFailCheck,
 	message,
 	messages,
 	setMessages
@@ -215,6 +218,8 @@ export const TeamTab = ({
 	const [contactName, setContactName] = useState("");
 
 	const [messageText, setMessageText] = useState("");
+
+	const [confirm, setConfirm] = useState(false);
 	/**
 	 * Handles invitation request in local and data manager
 	 */
@@ -2318,7 +2323,7 @@ export const TeamTab = ({
 						</div>
 						<div id="project-team-add-member-info">
 							<label id="project-team-add-member-name">
-								Name
+								Name <span className="requiredAsterisk">*</span>
 							</label>
 							<div id="user-search-container">
 								<Dropdown>
@@ -2368,7 +2373,7 @@ export const TeamTab = ({
 								</Dropdown>
 							</div>
 							<label id="project-team-add-member-role">
-								Role
+								Role <span className="requiredAsterisk">*</span>
 							</label>
 							<Select key={selectKey}>
 								<SelectButton
@@ -2410,6 +2415,9 @@ export const TeamTab = ({
 								onChange={(e) =>
 									setMessageText(e.target.value)
 								}></textarea>
+						</div>
+						<div className="requiredText">
+							<span className="requiredAsterisk">*</span> Indicates required field
 						</div>
 						{/* Action buttons */}
 						<div className="project-editor-button-pair">
@@ -2586,15 +2594,16 @@ export const TeamTab = ({
 						)}
 						<PopupButton
 							buttonId="project-editor-save"
-							doNotClose={() => failCheck || !saveable}
 							callback={() => {
 								// Incomplete form: still clickable so the save validation
 								// runs, shows the error, and auto-scrolls to the missing field.
 								if (!saveable) saveProject?.();
+								else setConfirm(true)
 							}}>
 							Save Changes
 						</PopupButton>
-						<PopupContent useClose={false}>
+						{confirm ?
+						<PopupContent useClose={false} callback={() => setConfirm(false)}>
 							<div id="confirm-editor-save-text">
 								Are you sure you want to save all changes?
 							</div>
@@ -2609,7 +2618,7 @@ export const TeamTab = ({
 									Cancel
 								</PopupButton>
 							</div>
-						</PopupContent>
+						</PopupContent> : "" }
 					</Popup>
 					<DeleteProjectButton
 						projectID={unmodifiedProject.projectId}

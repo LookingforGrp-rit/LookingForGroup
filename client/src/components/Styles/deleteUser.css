@@ -20,6 +20,14 @@
     color: var(--neutral-gray);
 }
 
+.delete-user-confirm-info {
+  text-align: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 /* Successfully deleted user popup button */
 #continue-button {
   width: fit-content;
