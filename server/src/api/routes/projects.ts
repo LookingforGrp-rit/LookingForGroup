@@ -4,6 +4,8 @@ import { upload } from '#config/multer.ts';
 import PROJECT from '#controllers/projects/index.ts';
 import { isUserBlocked } from '#middleware/validators/is-user-blocked.ts';
 import { BodyParameterLocation } from '#middleware/validators/parameter-location/body-param-location.ts';
+import { MeParameterLocation } from '#middleware/validators/parameter-location/me-param-location.ts';
+import { ProjectInPathParameterLocation } from '#middleware/validators/parameter-location/project-in-path-param-location.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresModerator from '../middleware/authorization/requires-mod.ts';
 import requiresProjectOwner from '../middleware/authorization/requires-project-owner.ts';
@@ -59,10 +61,19 @@ router.get('/paginated/:count/:id/:method', PROJECT.getPaginatedProjects);
 router.post('/', requiresLogin, injectCurrentUser, authenticated(PROJECT.createProject));
 
 //Get a specific project
-router.get('/:id', PROJECT.getProjectByID);
+router.get(
+  '/:id',
+  isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  PROJECT.getProjectByID,
+);
 
 //Get a specific project's members
-router.get('/:id/members', projectExistsAt('path', 'id'), PROJECT.getMembers);
+router.get(
+  '/:id/members',
+  projectExistsAt('path', 'id'),
+  isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  PROJECT.getMembers,
+);
 
 //Edits a project through a specific id
 router.patch(
@@ -85,12 +96,22 @@ router.delete(
 );
 
 //Gets the followers of a project
-router.get('/:id/followers', projectExistsAt('path', 'id'), PROJECT.getProjectFollowers);
+router.get(
+  '/:id/followers',
+  projectExistsAt('path', 'id'),
+  isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  PROJECT.getProjectFollowers,
+);
 
 // IMAGE ROUTES
 
 //Receives pictures from project through id
-router.get('/:id/images', projectExistsAt('path', 'id'), PROJECT.getProjectImages);
+router.get(
+  '/:id/images',
+  projectExistsAt('path', 'id'),
+  isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  PROJECT.getProjectImages,
+);
 //Creates a new picture for a project
 router.post(
   '/:id/images',
@@ -144,7 +165,12 @@ router.post(
   PROJECT.addVideo,
 );
 
-router.get('/:id/videos', projectExistsAt('path', 'id'), PROJECT.getVideos);
+router.get(
+  '/:id/videos',
+  projectExistsAt('path', 'id'),
+  isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  PROJECT.getVideos,
+);
 
 router.delete(
   '/:id/videos/:videoId',
@@ -183,7 +209,12 @@ router.delete(
 // MEDIUMS ROUTES
 
 //Gets a project's mediums
-router.get('/:id/mediums', projectExistsAt('path', 'id'), PROJECT.getProjectMediums);
+router.get(
+  '/:id/mediums',
+  projectExistsAt('path', 'id'),
+  isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  PROJECT.getProjectMediums,
+);
 //Adds mediums to a project
 router.post(
   '/:id/mediums',
@@ -350,7 +381,12 @@ router.post(
   PROJECT.addProjectSocial,
 );
 //Gets all project socials
-router.get('/:id/socials', projectExistsAt('path', 'id'), PROJECT.getProjectSocials);
+router.get(
+  '/:id/socials',
+  projectExistsAt('path', 'id'),
+  isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  PROJECT.getProjectSocials,
+);
 //Updates a project social
 router.patch(
   '/:id/socials/:websiteId',
@@ -383,7 +419,12 @@ router.delete(
 // TAGS ROUTES
 
 //Get a project's tags
-router.get('/:id/tags', projectExistsAt('path', 'id'), PROJECT.getTags);
+router.get(
+  '/:id/tags',
+  projectExistsAt('path', 'id'),
+  isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  PROJECT.getTags,
+);
 //Deletes a project tag
 router.delete(
   '/:id/tags/:tagId',
@@ -418,7 +459,12 @@ router.patch(
 // JOBS ROUTES
 
 // gets all of a project's jobs
-router.get('/:id/jobs', projectExistsAt('path', 'id'), PROJECT.getJobsController);
+router.get(
+  '/:id/jobs',
+  projectExistsAt('path', 'id'),
+  isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  PROJECT.getJobsController,
+);
 // creates a new project job
 router.post(
   '/:id/jobs',
@@ -468,7 +514,12 @@ router.delete(
 );
 
 //gets all of a project job's skills
-router.get('/:id/jobs/:jobId/skills', projectExistsAt('path', 'id'), PROJECT.getJobSkills);
+router.get(
+  '/:id/jobs/:jobId/skills',
+  projectExistsAt('path', 'id'),
+  isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  PROJECT.getJobSkills,
+);
 //adds a skill to a job
 router.post(
   '/:id/jobs/:jobId/skills',
