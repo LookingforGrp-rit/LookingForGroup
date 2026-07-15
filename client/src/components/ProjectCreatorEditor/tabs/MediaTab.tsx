@@ -30,6 +30,7 @@ type MediaTabProps = {
   updatePendingProject: (updatedPendingProject: PendingProject) => void;
   saveable: boolean;
   failCheck: boolean;
+  updateFailCheck: boolean;
   message: string;
 };
 
@@ -65,6 +66,7 @@ export const MediaTab = ({
   updatePendingProject,
   saveable,
   failCheck,
+  updateFailCheck,
   message,
 }: MediaTabProps) => {
 
@@ -82,6 +84,8 @@ export const MediaTab = ({
   const [newVideoTitle, setNewVideoTitle] = useState("");
   const [newVideoUrl, setNewVideoUrl] = useState("");
   const [videoPopupOpen, setVideoPopupOpen] = useState(false);
+
+  const [confirm, setConfirm] = useState(false);
 
   projectAfterMediaChanges = structuredClone(projectData);
   const projectId = projectData.projectId!;
@@ -667,16 +671,17 @@ export const MediaTab = ({
               </div>}
             <PopupButton
               buttonId="project-editor-save"
-              doNotClose={() => failCheck || !saveable}
               callback={() => {
                 // Incomplete form: still clickable so the save validation runs,
                 // shows the error, and auto-scrolls to the first missing field.
                 if (!saveable) saveProject?.();
+                else setConfirm(true);
               }}
             >
               Save Changes
             </PopupButton>
-            <PopupContent useClose={false}>
+            {confirm ?
+            <PopupContent useClose={false} callback={() => setConfirm(false)}>
               <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
               <div id="confirm-editor-save">
                 <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
@@ -686,7 +691,7 @@ export const MediaTab = ({
                   Cancel
                 </PopupButton>
               </div>
-            </PopupContent>
+            </PopupContent> : "" }
           </Popup>
           <DeleteProjectButton
             projectID={unmodifiedProject.projectId}
