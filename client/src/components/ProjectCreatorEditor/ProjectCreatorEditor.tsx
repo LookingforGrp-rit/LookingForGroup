@@ -513,6 +513,18 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       return;
     }
 
+    if(modifiedProject?.projectSocials){
+      for(let i: number = 0; i < modifiedProject.projectSocials.length; i++){
+        if(!modifiedProject.projectSocials[i].url || modifiedProject.projectSocials[i].url?.trim() == ""){
+          continue;
+        }
+        else if(!(modifiedProject.projectSocials[i].url?.startsWith("https://") ||
+        modifiedProject.projectSocials[i].url?.startsWith("http://"))){
+          modifiedProject.projectSocials[i].url = "https://" + modifiedProject.projectSocials[i].url;
+        }
+      }
+    }
+
     setCurrentTab(0);
 
     // Prevent duplicate project names in the user's project list.
