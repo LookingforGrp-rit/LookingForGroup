@@ -45,7 +45,7 @@ const SideBar = () => {
   // Here, the sidebar buttons are updated on page load (so that they work with browser back/forward)
   // BOTH manual class managing lines & startingPage lines are necessary for the buttons to work with site features AND browser features
   switch (window.location.pathname) {
-    case "/discover":
+    case "/projects":
     case "/":
       startingPage = "Discover";
       for (const i of sidebarBtns) {
@@ -53,7 +53,7 @@ const SideBar = () => {
       }
       document.querySelector("#discover-sidebar-btn")?.classList.add("active");
       break;
-    case "/meet":
+    case "/people":
       startingPage = "Meet";
       for (const i of sidebarBtns) {
         i.classList.remove("active");
