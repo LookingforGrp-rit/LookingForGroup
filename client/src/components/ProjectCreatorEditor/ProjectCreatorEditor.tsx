@@ -428,8 +428,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       return true;
     }
 
-    if (modifiedProject?.title !== null && modifiedProject?.title !== "" && modifiedProject?.title !== undefined) { 
-      setFailCheck(true); 
+    if (modifiedProject?.title !== null && modifiedProject?.title !== "" && modifiedProject?.title !== undefined) {
+      setFailCheck(true);
       return true;
     }
 
@@ -518,13 +518,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       return;
     }
 
-    if(modifiedProject?.projectSocials){
-      for(let i: number = 0; i < modifiedProject.projectSocials.length; i++){
-        if(!modifiedProject.projectSocials[i].url || modifiedProject.projectSocials[i].url?.trim() == ""){
+    if (modifiedProject?.projectSocials) {
+      for (let i: number = 0; i < modifiedProject.projectSocials.length; i++) {
+        if (!modifiedProject.projectSocials[i].url || modifiedProject.projectSocials[i].url?.trim() == "") {
           continue;
         }
-        else if(!(modifiedProject.projectSocials[i].url?.startsWith("https://") ||
-        modifiedProject.projectSocials[i].url?.startsWith("http://"))){
+        else if (!(modifiedProject.projectSocials[i].url?.startsWith("https://") ||
+          modifiedProject.projectSocials[i].url?.startsWith("http://"))) {
           modifiedProject.projectSocials[i].url = "https://" + modifiedProject.projectSocials[i].url;
         }
       }

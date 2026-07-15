@@ -926,7 +926,7 @@ export const TeamTab = ({
 
 			//passing in the associated job's localId to get this to work properly
 			if (currentJob.jobSkills) {
-				for (const skill of currentJob.jobSkills) {
+				for (let skill of currentJob.jobSkills) {
 					console.log(skill)
 
 					dataManager?.addProjectJobSkill({
@@ -2611,22 +2611,22 @@ export const TeamTab = ({
 							Save Changes
 						</PopupButton>
 						{confirm ?
-						<PopupContent useClose={false} callback={() => setConfirm(false)}>
-							<div id="confirm-editor-save-text">
-								Are you sure you want to save all changes?
-							</div>
-							<div id="confirm-editor-save">
-								<PopupButton
-									callback={saveProject}
-									closeParent={closeOuterPopup}
-									buttonId="project-editor-save">
-									Confirm
-								</PopupButton>
-								<PopupButton buttonId="team-edit-member-cancel-button">
-									Cancel
-								</PopupButton>
-							</div>
-						</PopupContent> : "" }
+							<PopupContent useClose={false} callback={() => setConfirm(false)}>
+								<div id="confirm-editor-save-text">
+									Are you sure you want to save all changes?
+								</div>
+								<div id="confirm-editor-save">
+									<PopupButton
+										callback={saveProject}
+										closeParent={closeOuterPopup}
+										buttonId="project-editor-save">
+										Confirm
+									</PopupButton>
+									<PopupButton buttonId="team-edit-member-cancel-button">
+										Cancel
+									</PopupButton>
+								</div>
+							</PopupContent> : ""}
 					</Popup>
 					<DeleteProjectButton
 						projectID={unmodifiedProject.projectId}
