@@ -14,6 +14,7 @@ import { SortableTag } from "./SortableItem";
 import { clampDragWithinContainer } from "./dragModifiers";
 import { Fragment } from "react";
 import TagDisplay from "../../TagDisplay";
+import { ThemeIcon } from "../../ThemeIcon";
 
 // --- holds the possible tabs from tag types ---
 const tagTabs = ['Project Type', 'Genre', 'Style', 'Game Engine'] as TagType[]
@@ -363,9 +364,11 @@ export const TagsTab = ({
             </TagElement>
           ))}
         </div>
+        <div id="clear-all-trash-row">
+        <p id="clear-all-trash-text">Clear All</p>
         <button 
             type="button" 
-            className="delete-tags-btn"
+            className="delete-position-button-alt button-reset"
             hidden={projectAfterTagsChanges.mediums.length === 0 || projectAfterTagsChanges.mediums.length == undefined} 
             onClick={() => {
               /* deletes all mediums in the data manager for the project */
@@ -387,8 +390,14 @@ export const TagsTab = ({
             }}
             title="Remove all selected tags"
           >
-            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+            <ThemeIcon
+              id="trash"
+              width={21}
+              height={21}
+              ariaLabel="Delete position"
+            />
         </button>
+        </div>
       </div>
 
       <div id="project-editor-selected-tags">
@@ -436,9 +445,11 @@ export const TagsTab = ({
             </div>
           </SortableContext>
         </DndContext>
+        <div id="clear-all-trash-row">
+        <p id="clear-all-trash-text">Clear All</p>
         <button 
             type="button" 
-            className="delete-tags-btn"
+            className="delete-position-button-alt button-reset"
             hidden={projectAfterTagsChanges.tags.length === 0 || projectAfterTagsChanges.tags.length == undefined} 
             onClick={() => {
               /* deletes all tags in the data manager for the project */
@@ -460,8 +471,14 @@ export const TagsTab = ({
             }}
             title="Remove all selected tags"
           >
-            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+            <ThemeIcon
+							id="trash"
+							width={21}
+							height={21}
+							ariaLabel="Delete position"
+						/>
         </button>
+        </div>
       </div>
 
       <div id="project-editor-tag-search">
