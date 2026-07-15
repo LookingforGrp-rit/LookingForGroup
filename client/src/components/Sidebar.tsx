@@ -333,7 +333,7 @@ const SideBar = () => {
             href={paths.routes.HOME}
           >
             <ThemeIcon id={'compass'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'} />
-            Discover
+            Projects
           </a>
           <a
             id={"meet-sidebar-btn"}
@@ -343,7 +343,7 @@ const SideBar = () => {
             href={paths.routes.MEET}
           >
             <ThemeIcon id={'meet'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'} />
-            Meet
+            People
           </a>
           <a
             id={"my-projects-sidebar-btn"}

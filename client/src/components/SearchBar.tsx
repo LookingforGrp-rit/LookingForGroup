@@ -149,7 +149,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
         <input
           className="search-input"
           type="text"
-          placeholder="Search by Name"
+          placeholder="Search by Project"
           value={value ?? internalQuery}
           onChange={handleChange}
           onFocus={onFocus}
