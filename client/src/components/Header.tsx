@@ -178,7 +178,7 @@ export const Header: React.FC<HeaderProps> = ({
   }, [theme]);
 
   return (
-    <div id="header" className={active ? 'active' : ''}>
+    <header id="header" className={active ? 'active' : ''}>
       {/* Conditional rendering for search bar */}
       {(!hideSearchBar) && (
         <div id="header-searchbar">
@@ -230,6 +230,7 @@ export const Header: React.FC<HeaderProps> = ({
                 id={'profile-img-icon'}
                 className={'rounded'}
                 title={'Profile picture'}
+                alt='avatar'
                 // Cannot use usePreloadedImage function because this is in a callback
                 onError={() => {
                   setProfileImg(profilePicture);
@@ -332,6 +333,6 @@ export const Header: React.FC<HeaderProps> = ({
           </DropdownContent>
         </Dropdown>
       </div>
-    </div >
+    </header >
   );
 };
