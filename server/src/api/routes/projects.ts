@@ -499,6 +499,17 @@ router.delete(
   PROJECT.deleteJobSkill,
 );
 
+// VISIBILITY ROUTES
+
+//changes the visibility of a project.
+router.patch(
+  '/:id/visibility',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  authenticated(PROJECT.updateProjectGlobalVisibility),
+);
 //---UNAPPROVED PROJECTS---\\
 
 //Get all unapproved projects
