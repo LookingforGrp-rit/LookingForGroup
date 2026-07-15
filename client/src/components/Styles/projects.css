@@ -4406,14 +4406,30 @@ button#positions-popup-list-item-active {
   margin: 15px 0;
 
   #project-overview-links {
+    margin-top: 10px;
     display: flex;
     flex-direction: row;
-    gap: 7px;
+    flex-wrap: wrap;
+    gap: 15px;
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
     button {
       background-color: transparent;
       border: none;
       padding: 0;
+    }
+
+    a:link, a:visited {
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
   }
 }

@@ -820,7 +820,7 @@ const reportProjectPressed = async () => {
                     </div>
                   </>
                 ) : (
-                  <p>No contacts yet</p>
+                  <p>No social links yet</p>
                 )}
               </div>
             </div>
