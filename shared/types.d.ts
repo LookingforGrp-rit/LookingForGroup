@@ -320,6 +320,11 @@ export interface JobSkill extends Skill {
  */
 export interface UserSocial extends Social {
   /**
+   * The DB id of this user social
+   */
+  id: number;
+
+  /**
    * The url to the user's social media account
    */
   url: string;
@@ -1380,7 +1385,7 @@ export type AddUserSocialInput = Pick<UserSocial, "websiteId" | "url" | "alias">
 /**
  * Data required to update an existing social media link on a user's profile
  */
-export type UpdateUserSocialInput = Partial<Pick<UserSocial, "url" | "alias">>;
+export type UpdateUserSocialInput = Partial<Pick<UserSocial, "url" | "alias" | "websiteId">>;
 
 /**
  * Data required to add a skill to a user's profile

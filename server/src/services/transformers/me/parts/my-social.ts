@@ -13,11 +13,13 @@ type UserSkillsGetPayload = Awaited<typeof sampleSocials>[number];
 
 //map to shared type
 export const transformMySocial = ({
+  id,
   url,
   alias,
   socials: { label, websiteId },
 }: UserSkillsGetPayload): MySocial => {
   return {
+    id,
     apiUrl: `api/me/socials/${websiteId.toString()}`,
     url,
     alias,

@@ -408,14 +408,14 @@ export const addUserSocial = async (
 
 // Update socials specified by the current user
 /**
- * @param websiteId - ID of the social to be updated
+ * @param id - DB id of the social to be updated
  * @param socialData - Data used to update the social
  */
 export const updateUserSocial = async (
-  websiteId: number,
+  id: number,
   socialData: UpdateUserSocialInput
 ): Promise<ApiResponse<MySocial>> => {
-  const apiURL = `/me/socials/${websiteId}`;
+  const apiURL = `/me/socials/${id}`;
   const response = await PATCH(apiURL, socialData);
 
   if (response.error)
@@ -426,12 +426,12 @@ export const updateUserSocial = async (
 
 // Delete user socials
 /**
- * @param websiteId - ID of the social to be deleted
+ * @param id - DB id of the social to be deleted
  */
 export const deleteUserSocial = async (
-  websiteId: number
+  id: number
 ): Promise<ApiResponse> => {
-  const url = `/me/socials/${websiteId}`;
+  const url = `/me/socials/${id}`;
   const response = await DELETE(url);
 
   //console.log(response);
