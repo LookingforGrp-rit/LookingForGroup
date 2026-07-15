@@ -44,7 +44,7 @@ General style rules
   /* primary color for buttons, etc. */
   --panel-hover: rgba(254, 173, 129, 0.9);
   /* hover color for profile cards */
-  --header-color: #1a1921;
+  --header-color: #21202b;
   /* search bar, header button background, profile page background, etc. */
   --tab-color: rgba(26, 25, 33, 0.500);
   --second-tab-color: rgba(26, 25, 33, 0.650);
@@ -319,6 +319,8 @@ section {
   border: 2px solid black;
   box-shadow: 10px 10px 5px lightblue; */
 }
+
+
 
 /* Content areas to take up entire height of viewport
    to push the Footer to the bottom */
@@ -2621,6 +2623,18 @@ Theme Icons style rules
   fill: none;
   stroke: var(--invert-text);
 }
+/* Default tag text color follows theme */
+.tag-button,
+.tag-label {
+  color: var(--main-text) !important;
+}
+
+/* Light-background tags override text color */
+.tag-yellow,
+.tag-periwinkle,
+.tag-cyan {
+  color: black !important;
+}
 
 .project-image-hover>.filled-star>use,
 .star:hover>use {
@@ -2638,6 +2652,7 @@ Theme Icons style rules
   stroke: var(--main-text);
 }
 
+
 /* Fallback using CSS media queries */
 @media (prefers-color-scheme: light) {
   .svg-color-icon {
@@ -2650,5 +2665,6 @@ Theme Icons style rules
     /* filter: none; */
   }
 }
+
 
 /* #endregion */

@@ -866,7 +866,7 @@ Filters / Tags Style Rules
   p {
     margin: 0px;
     border: 0px;
-    color: var(--tag-text-selected);
+    color: var(--main-text);
   }
 
   i {
@@ -878,6 +878,22 @@ Filters / Tags Style Rules
   }
 }
 
+/* Light-colored background tags will have dark text color */
+.tag-yellow p,
+.tag-periwinkle p,
+.tag-cyan p {
+  color: black !important;
+}
+
+/* Dark-colored background tags follow theme text color */
+.tag-blue p,
+.tag-green p,
+.tag-red p,
+.tag-purple p,
+.tag-pink p,
+.tag-grey p {
+  color: var(--main-text) !important;
+}
 .tag-unselected {
   /*
   p {
@@ -1594,5 +1610,6 @@ Filters / Tags Style Rules
     width: 48%;
   }
 }
+
 
 }
