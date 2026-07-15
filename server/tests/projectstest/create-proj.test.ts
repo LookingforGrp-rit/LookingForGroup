@@ -28,6 +28,9 @@ vi.mock('#config/prisma.ts', () => ({
     roles: {
       findMany: vi.fn(),
     },
+    blocklist: {
+      findMany: vi.fn(),
+    },
   },
 }));
 

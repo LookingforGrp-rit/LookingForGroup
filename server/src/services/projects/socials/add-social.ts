@@ -21,21 +21,12 @@ export const addProjectSocialService = async (
 
     if (!socialExists) return 'NOT_FOUND';
 
-    //can't add multiple socials of the same type
-    const hasSocial = await prisma.projectSocials.findFirst({
-      where: {
-        projectId: projectId,
-        websiteId: data.websiteId,
-      },
-    });
-
-    if (hasSocial) return 'CONFLICT';
-
     const social = await prisma.projectSocials.create({
       data: {
         projectId: projectId,
         websiteId: data.websiteId,
         url: data.url,
+        alias: data.alias,
       },
       select: ProjectSocialSelector,
     });
