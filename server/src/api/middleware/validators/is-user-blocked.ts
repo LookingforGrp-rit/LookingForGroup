@@ -21,6 +21,11 @@ export const isUserBlocked = (
     // Target Id
     const targetResult = await targetParamLocation.getId(targetKey, request);
     if (typeof targetResult !== 'number') {
+      // There was no user, but this is not a problem, so keep going.
+      // 200 will be returned by MeParamLocation.getId() if there is no user.
+      if (targetResult.status === 200) {
+        next();
+      }
       response.status(targetResult.status).json(targetResult);
       return;
     }
