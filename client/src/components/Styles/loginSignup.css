@@ -826,6 +826,10 @@ Signup process modal style rules
   /* height: 100%; */
   width: 100%;
   margin: 10px 0 20px 0;
+
+  div {
+    width: 100%;
+  }
 }
 
 #completeProfile-input-section-1 {
@@ -1098,17 +1102,12 @@ Signup process modal style rules
       flex-direction: column;
       align-items: center;
       width: 100%;
-      overflow-y: scroll;
+      /* overflow-y: scroll; */
 
       .required-asterisk {
         width: fit-content;
       }
 
-    }
-
-
-    #completeProfile-input-container div {
-      width: 100%;
     }
 
     #ritStatus-input,
@@ -1127,7 +1126,6 @@ Signup process modal style rules
 
       .select-container div {
         margin-top: 0px;
-        background-color: var(--header-color);
 
         max-height: 400%;
       }
@@ -1135,7 +1133,7 @@ Signup process modal style rules
 
     /* Profile picture editor */
     #completeProfile-input-container #complete-profile-add-image {
-      width: 60%;
+      width: 100%;
     }
   }
 
