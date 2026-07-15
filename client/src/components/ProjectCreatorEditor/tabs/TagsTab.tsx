@@ -24,6 +24,7 @@ const tagTabColors: Record<string, string> = {
   Genre: 'green',
   Style: 'pink',
   'Game Engine': 'yellow',
+  'Project Type': 'blue'
 };
 
 let projectAfterTagsChanges: PendingProject;
