@@ -287,9 +287,10 @@ Project Panel component style rules
   background-color: var(--header-color);
   color: var(--main-text);
   position: absolute;
+  top: 0px;
   left: 0px;
   right: 0px;
-  bottom: 0;
+  bottom: 0px;
   height: auto;
   max-height: 100%;
   visibility: visible;
