@@ -5,6 +5,7 @@ import placeholderThumbnail from '../images/project_temp.png';
 import { ProjectWithFollowers } from "@looking-for-group/shared";
 
 import usePreloadedImage from '../functions/imageLoad.tsx';
+import { Link } from "react-router-dom";
 
 type DiscoverCarouselProps = {
   dataList?: ProjectWithFollowers[]
@@ -55,7 +56,7 @@ export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [
     return (
       <>
         <div className='discover-project-image'>
-          <a href={`${paths.routes.PROJECT}?projectID=${project.projectId}`} tabIndex={-1}>
+          <Link to={`${paths.routes.PROJECT}?projectID=${project.projectId}`} tabIndex={-1}>
             <img
             // This checks if the image value for the project is null, and if so, uses a placeholder image
             // If there is a project image value, but the image doesnt exist or the value leads to nothing, 
@@ -65,12 +66,12 @@ export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [
             // src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
               alt={project.title}
             />
-          </a>
+          </Link>
         </div>
         <div className='discover-project-about'>
-          <a className='discover-link' href={`${paths.routes.PROJECT}?projectID=${project.projectId}`}>
+          <Link className='discover-link' to={`${paths.routes.PROJECT}?projectID=${project.projectId}`}>
             <h2>{project.title}</h2>
-          </a>
+          </Link>
           <p>{project.hook}</p>
           <div className="project-tags">
             {
@@ -97,10 +98,10 @@ export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [
                 <></>
             }
           </div>
-          <a
+          <Link
             className='discover-link learn-more'
-            href={`${paths.routes.PROJECT}?projectID=${project.projectId}`}
-          >Learn more -&gt;</a>
+            to={`${paths.routes.PROJECT}?projectID=${project.projectId}`}
+          >Learn more -&gt;</Link>
 
         </div>
       </>
