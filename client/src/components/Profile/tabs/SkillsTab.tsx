@@ -9,6 +9,7 @@ import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSo
 import { SortableTag } from "../../ProjectCreatorEditor/tabs/SortableItem";
 import { clampDragWithinContainer } from "../../ProjectCreatorEditor/tabs/dragModifiers";
 import TagDisplay from "../../TagDisplay";
+import { ThemeIcon } from "../../ThemeIcon";
 
 const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
 
@@ -328,9 +329,11 @@ export const SkillsTab = ({
             </div>
           </SortableContext>
         </DndContext>
+        <div id="clear-all-trash-row">
+        <p id="clear-all-trash-text">Clear All</p>
         <button
           type="button"
-          className="delete-tags-btn"
+          className="delete-position-button-alt button-reset"
           hidden={profile.skills.length === 0 || profile.skills == undefined}
           onClick={() => {
             /* deletes all skills in the data manager for the user */
@@ -360,8 +363,14 @@ export const SkillsTab = ({
           }}
           title="Remove all selected tags"
         >
-          <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+          <ThemeIcon
+            id="trash"
+            width={21}
+            height={21}
+            ariaLabel="Delete position"
+          />
         </button>
+        </div>
       </div>
 
       <div id="project-editor-tag-search">
