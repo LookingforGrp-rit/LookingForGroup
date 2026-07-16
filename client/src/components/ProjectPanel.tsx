@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 import { addProjectFollowing, deleteProjectFollowing, getCurrentAccount, getProjectFollowing } from '../api/users.ts';
@@ -143,7 +143,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
   };
 
   return (
-    <Link to={projectURL} className='project-link'>
+    <a href={projectURL} className='project-link'>
       <div className={'project-panel'}>
         <div className="project-image-container">
           <img
@@ -184,7 +184,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
           <ProjectPanelMeta project={project}/>
         </div>
       </div>
-    </Link>
+    </a>
   );
 };
 

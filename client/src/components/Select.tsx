@@ -22,7 +22,6 @@ type SelectButtonProps = {
     type: 'input' | 'dropdown'; // Determines button style
     searchable?: boolean; // Option for a searchable dropdown
     callback?: (e: React.MouseEvent<HTMLDivElement | HTMLInputElement>) => void; // Optional onClick
-    ariaLabelledBy?: string; // Optional aria-labelledBy
 }
 
 type SelectOptions = {
@@ -69,7 +68,6 @@ export const SelectContext = createContext<SelectContextProps>({
  * @param className: Additional classes for styling
  * @param type: 'input' | 'dropdown' to style button appropriately
  * @param callback: Optional function triggered on click
- * @param ariaLabelledBy: Optional aria-labelledby argument
  * @returns JSX button element for selecting a value
  */
 export const SelectButton: React.FC<SelectButtonProps> = ({
@@ -79,8 +77,7 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
     className = '',
     type = 'input' ,
     searchable = false,
-    callback = () => { },
-    ariaLabelledBy,
+    callback = () => { }
 }) => {
     const { open, value, setOpen, searchTerm, setSearchTerm } = useContext(SelectContext);
 
@@ -92,7 +89,6 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
         <div
             id={buttonId}
             role="button"
-            aria-labelledby={ariaLabelledBy}
             tabIndex={0}
             className={`${className} select select-button-${type}`}
             onClick={(e) => {

@@ -72,10 +72,8 @@ export const DiscoverPage = () => {
   }, [fullProjectList]);
 
   // When passing in data for project carousel, pass in the first three projects after getting their details
-// Hide the carousel while the user has an active search (non-empty search input)
-  const heroContent = currentSearch.trim() === '' ? (
-    <DiscoverCarousel dataList={heroProjectList} />
-  ) : null;
+  // Hide the carousel while the user has an active search (non-empty search input)
+  const heroContent = <DiscoverCarousel dataList={heroProjectList} />
 
   const [loadObj, setLoadObj] = useState<React.ReactElement>(<p>No More Projects!</p>);
 

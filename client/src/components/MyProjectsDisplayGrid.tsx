@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, ReactNode } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import * as paths from "../constants/routes";
 import { Dropdown, DropdownButton, DropdownContent } from "./Dropdown";
 import { Popup, PopupButton, PopupContent } from "./Popup";
@@ -128,9 +128,9 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
 
       <div className="grid-card-details">
         {/* Title */}
-        <Link className="grid-card-title" to={projectURL}>
+        <a className="grid-card-title" href={projectURL}>
           {projectData.title}
-        </Link>
+        </a>
 
         {/* Options */}
         <Dropdown>

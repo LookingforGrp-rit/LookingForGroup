@@ -1,7 +1,7 @@
 import { SearchBar, DataSet } from './SearchBar';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { NotificationsDropdown } from './NotificationsDropdown';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useContext, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import * as paths from '../constants/routes';
 import { ThemeIcon } from './ThemeIcon';
@@ -200,7 +200,7 @@ export const Header: React.FC<HeaderProps> = ({
   }, [theme]);
 
   return (
-    <header id="header" className={active ? 'active' : ''}>
+    <div id="header" className={active ? 'active' : ''}>
       {/* Conditional rendering for search bar */}
       {(!hideSearchBar) && (
         <div id="header-searchbar">
@@ -235,9 +235,9 @@ export const Header: React.FC<HeaderProps> = ({
 
       <div id="header-buttons">
         {/* About button */}
-        <Link aria-label="About" id="about-btn" to={paths.routes.ABOUT} title="About">
+        <a aria-label="About" id="about-btn" href={paths.routes.ABOUT} title="About">
           <ThemeIcon id={'info'} width={30} height={30} className={'color-stroke'} ariaLabel={'about'} />
-        </Link>
+        </a>
 
         {/* Notifications bell + dropdown. Only renders/polls when logged in. */}
         <NotificationsDropdown enabled={Boolean(userId && userId > 0)} theme={theme} />
@@ -252,7 +252,6 @@ export const Header: React.FC<HeaderProps> = ({
                 id={'profile-img-icon'}
                 className={'rounded'}
                 title={'Profile picture'}
-                alt='avatar'
                 // Cannot use usePreloadedImage function because this is in a callback
                 onError={() => {
                   setProfileImg(profilePicture);
@@ -309,7 +308,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div id="header-profile-dropdown">
 
                 {/* Profile Icon (if user has one) */}
-                <Link to={`${returnProfileAccess()}`} id="header-profile-user">
+                <a href={`${returnProfileAccess()}`} id="header-profile-user">
                   {
                     <img
                       src={`${profileImg || profilePicture}`}
@@ -323,7 +322,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <p id="header-profile-username">{firstName} {lastName}</p>
                     <p id="header-profile-email">{email}</p>
                   </div>
-                </Link>
+                </a>
 
                 <hr />
                 {/* Moderation Page Link */}
@@ -342,10 +341,10 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>{' '}
 
                 {/* Settings Link */}
-                <Link to={paths.routes.SETTINGS}>
+                <a href={paths.routes.SETTINGS}>
                   <ThemeIcon id={'settings'} width={25} height={25} className={'mono-stroke'} ariaLabel={'settings'} />
                   Settings
-                </Link>
+                </a>
 
                 {/* LOG OUT Button */}
                 <button onClick={async () => {
@@ -363,6 +362,6 @@ export const Header: React.FC<HeaderProps> = ({
           </DropdownContent>
         </Dropdown>
       </div>
-    </header >
+    </div >
   );
 };

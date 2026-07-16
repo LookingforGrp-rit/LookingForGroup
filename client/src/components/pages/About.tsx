@@ -263,7 +263,12 @@ const AboutPage = () => {
                                 </ul>
                             </li>
                             <li className="about-text">
-                                Sensitive content such as Suicide, real or disturbing depictions of violence, content that exploits children in any way and sexually explicit content should not be displayed in promotional images/videos.  
+                                Sensitive content such as Suicide, real or disturbing depictions of violence, content that exploits children in any way and sexually explicit content should be tagged with the appropriate filters and should not be displayed in promotional images/videos. 
+                                <ul>
+                                    <li>
+                                        Refer to <a href="https://www.esrb.org/ratings-guide/">ESRB Rating Guides on how to tag your project.</a>
+                                    </li>
+                                </ul>
                             </li>
                          </ul>
                          <h3 className="about-header-three">Ai Content</h3>

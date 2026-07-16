@@ -7,7 +7,7 @@ interface CustomInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, '
   maxLength?: number;
   onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   onClick?: React.MouseEventHandler<HTMLElement>;
-  placeholder?: string;
+  placeholder?: string
 }
 
 /**
