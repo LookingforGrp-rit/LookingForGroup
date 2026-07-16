@@ -1319,6 +1319,36 @@ export interface ProjectWithFollowers extends ProjectDetail {
   followers: ProjectFollowers;
 }
 
+/**
+ * The full data of a project report
+ */
+export type ProjectReport = {
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+
+  /**
+   * Report ID in the DB
+   */
+  reportId: number;
+
+  /**
+   * Reporter ID
+   */
+  userId: number;
+
+  /**
+   * Reported project ID
+   */
+  projectId: number;
+
+  /**
+   * Reason for the report
+   */
+  reason: string;
+}
+
 // IMAGES
 
 /**

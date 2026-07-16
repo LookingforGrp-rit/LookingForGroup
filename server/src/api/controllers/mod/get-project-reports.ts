@@ -1,6 +1,6 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import getProjectReportService from '#services/projects/get-project-reports.ts';
+import getProjectReportService from '#services/projects/mod/get-project-reports.ts';
 
 //GET api/mod/project-report/
 //gets all project reports
