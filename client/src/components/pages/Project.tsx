@@ -67,7 +67,6 @@ const Project = () => {
   const [videos, setVideos] = useState<ProjectVideo[]>();
 
   const reportMessage = useRef<HTMLInputElement>(null);
-  const deleteMessage = useRef<HTMLInputElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>("");
 
   /**
@@ -197,9 +196,9 @@ const Project = () => {
 
   // Approve a project request
   const handleApproveRequest = async () => {
+    setApprovalStatus("approved");
     if (displayedProject) {
-      setApprovalStatus("approved");
-      await approveProjectRequest(projectID, displayedProject, userID ? userID : -1);
+      const resp = await approveProjectRequest(projectID, displayedProject, userID ? userID : -1);
     }
   };
 
@@ -279,28 +278,18 @@ const Project = () => {
     }
   };
 
-  /**
-   * Decline a pending project request
-   * @param message The message sent to the user about why their project was declined
-   * if (displayedProject) {
-      setApprovalStatus("approved");
-      await approveProjectRequest(projectID, displayedProject, userID ? userID : -1);
+  // Decline a project request
+  const handleDeleteProjectRequest = async () => {
+    const response = await deleteProjectRequest(projectID);
+    let responseText = response.error?.toString();
+    if (responseText === null || responseText === undefined) {
+      responseText = successMessage;
     }
-   */
-  const handleDeleteProjectRequest = async (message: string) => {
-    if (displayedProject){
-      setApprovalStatus('not-approved');
-      const response = await deleteProjectRequest(projectID, message);
-      let responseText = response.error;
-      if (responseText === null || responseText === undefined) {
-        responseText = successMessage;
-      }
-      else
-      {
-        responseText = "Uh oh! Something went wrong with your request."
-      }
-      setDeleteResponseText(responseText);
+    else
+    {
+      responseText = "Uh oh! Something went wrong with your request."
     }
+    setDeleteResponseText(responseText);
   };
 
   /**
@@ -959,7 +948,7 @@ const reportProjectPressed = async () => {
                           <div className="small-popup" id="report-popup">
                         <h3>Decline Approval Request</h3>
                         <p>Why are you declining {displayedProject?.title}?</p>
-                        <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={deleteMessage}></input>
+                        <input type="text" placeholder="Write your reasoning here..." className="input input-multiline"></input>
                           <div className="confirm-deny-btns">
                             <button
                               id="team-delete-member-cancel-button"
@@ -968,7 +957,7 @@ const reportProjectPressed = async () => {
                               Cancel
                             </button>
                             <Popup>
-                              <PopupButton className="confirm-btn" callback={() => handleDeleteProjectRequest(deleteMessage?.current ? deleteMessage.current.value : "No message provided.")}>Submit</PopupButton>
+                              <PopupButton className="confirm-btn">Submit</PopupButton>
                               <PopupContent>
                               <div className="small-popup">
                                 <div id="delete-success-title">{
