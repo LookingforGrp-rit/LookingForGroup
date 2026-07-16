@@ -313,3 +313,23 @@ components:
         label: C++
         type: Developer
         category: Programming Language
+
+    AddUserReportInput:
+      type: object
+      properties:
+        reason:
+          type: string
+      required:
+        - reason
+      example:
+        reason: 'Inappropriate behavior in the community.'
+
+    AddProjectReportInput:
+      type: object
+      properties:
+        reason:
+          type: string
+      required:
+        - reason
+      example:
+        reason: 'This project contains offensive content.'

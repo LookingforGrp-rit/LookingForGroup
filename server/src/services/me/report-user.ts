@@ -4,7 +4,7 @@ import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONFLICT' | 'NOT_FOUND'>;
 type GetServiceSuccess = ServiceSuccessSubset<'OK'>;
 
-//POST api/me/users/report/{id}/{report}
+//POST api/me/users/report/{id}
 export const reportUserService = async (
   reporterId: number,
   reportedId: number,

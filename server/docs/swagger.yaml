@@ -944,7 +944,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/me/projects/report/{id}/{report}:
+  /api/me/projects/report/{id}:
     post:
       summary: Report a project
       security:
@@ -958,18 +958,18 @@ paths:
           description: ID of the project to report
           schema:
             type: integer
-        - name: report
-          in: path
-          required: true
-          description: Report message
-          schema:
-            type: string
         - in: query
           name: devId
           schema:
             type: integer
           required: false
           description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddProjectReportInput'
       responses:
         '200':
           description: Project reported successfully
@@ -1174,7 +1174,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/me/users/report/{id}/{report}:
+  /api/me/users/report/{id}:
     post:
       summary: Report a user
       security:
@@ -1188,18 +1188,18 @@ paths:
           description: ID of the user to report
           schema:
             type: integer
-        - name: report
-          in: path
-          required: true
-          description: Report message
-          schema:
-            type: string
         - in: query
           name: devId
           schema:
             type: integer
           required: false
           description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddUserReportInput'
       responses:
         '200':
           description: User reported successfully
@@ -5442,6 +5442,10 @@ components:
       $ref: 'schemas/inputs.yaml#/components/schemas/TagInput'
     SkillInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/SkillInput'
+    AddUserReportInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddUserReportInput'
+    AddProjectReportInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectReportInput'
 
     ErrorMessage:
       type: object

@@ -1655,3 +1655,17 @@ export type CreateSkillInput = Pick<Skill, "label" | "type" | "category">;
  * Data required to edit an existing skill
  */
 export type EditSkillInput = Partial<CreateSkillInput> & { skillId: number };
+
+/**
+ * Data required to add a user report
+ */
+export type AddUserReportInput = {
+  reason: string;
+};
+
+/**
+ * Data required to add a project report
+ */
+export type AddProjectReportInput = {
+  reason: string;
+};
