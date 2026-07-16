@@ -391,14 +391,24 @@ export const LinksTab = ({
                 value={social.url && social.label ? social.url.substring(url.length) : ''}
                 onChange={(e) => handleSocialChange(index, 'url', e.target.value, url)}
               />
+              <div id="clear-all-trash-row">
               <button
                 type="button"
-                className="delete-social-btn"
+                className="delete-position-button-alt button-reset"
                 onClick={() => handleDeleteSocial(index)}
                 title="Remove social link"
               >
-                <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+                <div id="clear-all-trash-row">
+                <p id="clear-all-trash-text">Clear All</p>
+                <ThemeIcon
+                  id="trash"
+                  width={18}
+                  height={18}
+                  ariaLabel="Delete position"
+                />
+                </div>
               </button>
+              </div>
             </div>
           );
         })}

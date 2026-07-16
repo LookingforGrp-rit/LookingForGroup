@@ -329,8 +329,7 @@ export const SkillsTab = ({
             </div>
           </SortableContext>
         </DndContext>
-        <div id="clear-all-trash-row">
-        <p id="clear-all-trash-text">Clear All</p>
+        <div id="clear-all-button-align">
         <button
           type="button"
           className="delete-position-button-alt button-reset"
@@ -363,12 +362,15 @@ export const SkillsTab = ({
           }}
           title="Remove all selected tags"
         >
+          <div id="clear-all-trash-row">
+          <p id="clear-all-trash-text">Clear All</p>
           <ThemeIcon
             id="trash"
-            width={21}
-            height={21}
+            width={18}
+            height={18}
             ariaLabel="Delete position"
           />
+          </div>
         </button>
         </div>
       </div>

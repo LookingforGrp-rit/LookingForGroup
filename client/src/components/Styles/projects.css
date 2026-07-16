@@ -2113,9 +2113,12 @@ Project Creator and Editor Popup style rules
   }
 }
 
-#clear-all-trash-row{
+#clear-all-button-align{
   display: flex;
+  flex-direction: row;
   justify-content: end;
+  margin-right: 0;
+  margin-left: 0;
 }
 
 .delete-position-button-alt {
@@ -2123,6 +2126,16 @@ Project Creator and Editor Popup style rules
   #trash {
     stroke: #FF3859;
   }
+
+  svg{
+    margin-left: 0.5em;
+  }
+}
+
+#clear-all-trash-row{
+  display: flex;
+  justify-content: end;
+  align-items: center;
 }
 
 #clear-all-trash-text{
@@ -2130,8 +2143,8 @@ Project Creator and Editor Popup style rules
   height: fit-content;
   color: #FF3859;
   font-weight: bold;
+  font-size: medium;
   margin: 0;
-  margin-top: 1em;
   margin-right: 0.15em;
 }
 
