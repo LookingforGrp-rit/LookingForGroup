@@ -415,11 +415,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   };
 
   const updateFailCheck = useMemo(() => {
-    console.log("asdasd");
     if (!saveable) return true;
     // default to no errors
     setFailCheck(false);
-    console.log("bababa");
 
     // save if on link tab
     //if (currentTab === 4) await updateLinks();
