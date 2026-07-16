@@ -50,12 +50,18 @@ components:
         - $ref: 'datasets.yaml#/components/schemas/Social'
         - type: object
           properties:
+            id:
+              type: integer
             url:
               type: string
+            alias:
+              type: string
       example:
+        id: 1
         websiteId: 1
         label: Instagram
         url: https://www.instagram.com/rittigers/
+        alias: '@rittigers'
 
     ProjectFollowsList:
       type: object

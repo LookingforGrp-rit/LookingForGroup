@@ -5,13 +5,11 @@ import { updateProjectSocialService } from '#services/projects/socials/update-pr
 //PATCH api/projects/{id}/socials/{socialId}
 //updates a social associated with a project
 export const updateProjectSocial = async (req: Request, res: Response): Promise<void> => {
-  const websiteId = parseInt(req.params.websiteId as string);
   const projectId = parseInt(req.params.id as string);
+  const socialId = parseInt(req.params.socialId as string);
   const social: UpdateProjectSocialInput = req.body as UpdateProjectSocialInput;
 
-  const url = social.url;
-
-  if (!url || Number.isNaN(projectId) || Number.isNaN(websiteId)) {
+  if (Number.isNaN(projectId) || Number.isNaN(socialId)) {
     res.status(400).json({
       status: 400,
       error: 'Invalid request data',
@@ -20,7 +18,7 @@ export const updateProjectSocial = async (req: Request, res: Response): Promise<
     return;
   }
 
-  const result = await updateProjectSocialService(url, projectId, websiteId);
+  const result = await updateProjectSocialService(social, projectId, socialId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

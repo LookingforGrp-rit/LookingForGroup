@@ -27,19 +27,24 @@ vi.mock('#services/transformers/projects/parts/project-social.ts', () => ({
 const data: AddProjectSocialInput = {
   websiteId: 29,
   url: 'www.test.com',
+  alias: 'url label',
 };
 
 const testSocial = {
+  id: 1,
   projectId: 1,
   websiteId: 29,
   url: 'www.test.com',
   label: 'Test',
+  alias: 'url label',
 };
 
 const transformedSocial: ProjectSocial = {
+  id: 1,
   websiteId: 29,
   url: 'www.test.com',
   label: 'Test',
+  alias: 'url label',
   apiUrl: 'api/project/1/socials/29',
 };
 
@@ -66,19 +71,6 @@ describe('addProjectSocialService', async () => {
     const result = await addProjectSocialService(data, 1);
 
     expect(result).toBe('NOT_FOUND');
-  });
-  it('returns CONFLICT when social already exists', async () => {
-    vi.mocked(prisma.socials.findFirst).mockResolvedValue({ websiteId: 29, label: 'Test' });
-    vi.mocked(prisma.projectSocials.findFirst).mockResolvedValue({
-      websiteId: 29,
-      projectId: 1,
-      url: 'www.test.com',
-    });
-    vi.mocked(prisma.projectSocials.create).mockResolvedValue(testSocial);
-    vi.mocked(transformProjectSocial).mockReturnValue(transformedSocial);
-    const result = await addProjectSocialService(data, 1);
-
-    expect(result).toBe('CONFLICT');
   });
   it('returns INTERNAL_ERROR when prisma throws', async () => {
     vi.mocked(prisma.socials.findFirst).mockRejectedValue(new Error('womp womp'));

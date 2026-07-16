@@ -277,30 +277,32 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
       // Process each social in the modified project
       for (const social of modifiedProject?.projectSocials || []) {
-        if (!social.url || !social.websiteId || social.websiteId === 0) continue; // Skip empty/invalid socials
+        if (!social.url || !social.websiteId || !social.alias || social.websiteId === 0) continue;
 
-        // Check if this social already exists
-        const existingSocial = currentSocials.find(s => s.websiteId === social.websiteId);
-
-        if (existingSocial) {
-          // Update existing social if URL changed
-          if (existingSocial.url !== social.url) {
-            await updateProjectSocial(projectID, social.websiteId, { url: social.url });
-          }
+        // If there is an existing social ID, update it; otherwise, add a new social
+        if (social.id) {
+          await updateProjectSocial(projectID, social.id, {
+            url: social.url,
+            alias: social.alias,
+            websiteId: social.websiteId,
+          });
         } else {
-          // Create new social
-          await addProjectSocial(projectID, { websiteId: social.websiteId, url: social.url });
+          await addProjectSocial(projectID, {
+            websiteId: social.websiteId,
+            alias: social.alias,
+            url: social.url,
+          });
         }
-      }
 
-      // Delete socials that were removed
-      const modifiedSocialIds = (modifiedProject?.projectSocials || [])
-        .filter(s => s.url && s.websiteId && s.websiteId !== 0)
-        .map(s => s.websiteId);
+        // Delete socials that were removed
+        const modifiedSocialIds = (modifiedProject?.projectSocials || [])
+          .filter(s => s.url && s.websiteId && s.websiteId !== 0)
+          .map(s => s.id);
 
-      for (const currentSocial of currentSocials) {
-        if (!modifiedSocialIds.includes(currentSocial.websiteId)) {
-          await deleteProjectSocial(projectID, currentSocial.websiteId);
+        for (const currentSocial of currentSocials) {
+          if (!modifiedSocialIds.includes(currentSocial.id)) {
+            await deleteProjectSocial(projectID, currentSocial.id);
+          }
         }
       }
     } catch (error) {
@@ -425,8 +427,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       return true;
     }
 
-    if (modifiedProject?.title !== null && modifiedProject?.title !== "" && modifiedProject?.title !== undefined) { 
-      setFailCheck(true); 
+    if (modifiedProject?.title !== null && modifiedProject?.title !== "" && modifiedProject?.title !== undefined) {
+      setFailCheck(true);
       return true;
     }
 
@@ -476,7 +478,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       return;
     }
 
-    if (modifiedProject?.title !== null && modifiedProject?.title !== "" && modifiedProject?.title !== undefined) { getUniqueProjectTitle(modifiedProject?.title, projectID); }
+    if (modifiedProject?.title !== null && modifiedProject?.title !== "" && modifiedProject?.title !== undefined) {
+      getUniqueProjectTitle(modifiedProject?.title, projectID);
+    }
 
     //pops up error text if required fields in general haven't been filled out
     if (
@@ -513,13 +517,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       return;
     }
 
-    if(modifiedProject?.projectSocials){
-      for(let i: number = 0; i < modifiedProject.projectSocials.length; i++){
-        if(!modifiedProject.projectSocials[i].url || modifiedProject.projectSocials[i].url?.trim() == ""){
+    if (modifiedProject?.projectSocials) {
+      for (let i: number = 0; i < modifiedProject.projectSocials.length; i++) {
+        if (!modifiedProject.projectSocials[i].url || modifiedProject.projectSocials[i].url?.trim() == "") {
           continue;
         }
-        else if(!(modifiedProject.projectSocials[i].url?.startsWith("https://") ||
-        modifiedProject.projectSocials[i].url?.startsWith("http://"))){
+        else if (!(modifiedProject.projectSocials[i].url?.startsWith("https://") ||
+          modifiedProject.projectSocials[i].url?.startsWith("http://"))) {
           modifiedProject.projectSocials[i].url = "https://" + modifiedProject.projectSocials[i].url;
         }
       }
@@ -679,7 +683,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             await dataManager.addSocial({
               id: {
                 type: "local",
-                value: link.websiteId as number,
+                value: link.id as number,
               },
               data: link as ProjectSocial,
             })

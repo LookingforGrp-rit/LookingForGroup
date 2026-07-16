@@ -7,9 +7,10 @@ import { StringDictionary, Role, Major, Skill, SkillType } from '@looking-for-gr
 import MoreFiltersButton from './MoreFiltersButton';
 import { Tag } from './Tag';
 import TagDisplay from './TagDisplay';
+import { Select, SelectButton, SelectOptions } from './Select';
 
 interface DiscoverFiltersProps {
-  updateItemList: (skills: Skill[]) => void;
+  updateItemList: (skills: Skill[], filterMode: "Match All" | "Match Any", sortMode: sortModes) => void;
 }
 
 interface FilterTab {
@@ -21,6 +22,15 @@ interface FilterTab {
 interface EnabledFilter {
   skill: Skill;
   color: string;
+}
+
+enum sortModes {
+    "A-Z" = "A-Z",
+    "Z-A" = "Z-A",
+    "Newest" = "Newest",
+    "Oldest" = "Oldest",
+    "Followers (NOT IMPLEMENTED)" = "Followers (NOT IMPLEMENTED)",
+    "Followers Acending (NOT IMPLEMENTED)" = "Followers Acending (NOT IMPLEMENTED)",
 }
 
 export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemList }) => {
@@ -58,7 +68,9 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
 
   // Tabs shown in the popup, dynamically created after fetching data
   const [filterPopupTabs, setFilterPopupTabs] = useState<FilterTab[]>([]);
-
+  
+  const [filterMode, setFilterMode] = useState<"Match All" | "Match Any">("Match All");
+  const [sortMode, setSortMode] = useState<sortModes>(sortModes.Newest);
 
   const getData = async () => {
     try {
@@ -127,14 +139,14 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
 
     if (activeSkillFilters.some(s => s.skillId === id && s.type === type)) {
       // Remove the skill from the active list
-      newActiveSkills = activeSkillFilters.filter(s => s.skillId !== id && s.type === type);
+      newActiveSkills = activeSkillFilters.filter(s => s !== skill);
     } else {
       // Add the tag to the active list
       newActiveSkills = [...activeSkillFilters, skill];
     }
 
     setActiveSkillFilters(newActiveSkills);
-    if (update) updateItemList(newActiveSkills);
+    if (update) updateItemList(newActiveSkills, filterMode, sortMode);
   };
 
   /**
@@ -313,6 +325,38 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                 </PopupButton>
                 <div id="filters-popup">
                   <h2>{'People Filters'}</h2>
+                    <div id='filter-settings'>
+                      <button id='match-button'
+                        onClick={() => {
+                          setFilterMode(filterMode === "Match All" ? "Match Any" : "Match All");
+                        }}>
+                        {filterMode}
+                      </button>
+                      <Select>
+                        <SelectButton buttonId='sort-button'
+                          placeholder="Sorting Mode"
+                          type={"input"}
+                          initialVal={sortMode}
+                        />
+                        <SelectOptions
+                          callback={(e) =>
+                            setSortMode(
+                              (e.target as HTMLButtonElement)
+                                .value as sortModes
+                            )
+                          }
+                          options={Object.keys(sortModes).map(
+                            (key) => {
+                              return {
+                                value: key,
+                                markup: <>{key}</>,
+                                disabled: false
+                              };
+                            }
+                          )}
+                        />
+                      </Select>
+                    </div>
                   <div id="filters" className="popup-section">
                     <SearchBar
                       dataSets={[{data: allSkills}]}
@@ -463,7 +507,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                         // });
 
                         // Update the project list
-                        updateItemList(activeSkillFilters);
+                        updateItemList(activeSkillFilters, filterMode, sortMode);
 
                         //Add "Applied Filters" div if it is missing and if the paragraph exists
                         if (activeSkillFilters.length > 0) {
@@ -498,7 +542,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                     const newActiveSkills = tempList.map((filter) => filter.skill);
                     setAppliedFiltersDisplay(tempList);
                     setActiveSkillFilters(newActiveSkills);
-                    updateItemList(newActiveSkills);
+                    updateItemList(newActiveSkills, filterMode, sortMode);
 
                     if (newActiveSkills.length === 0 || (newActiveSkills.length === 1 && newActiveSkills[0].label === 'Filter')) {
                       setDisplayFiltersText(false);

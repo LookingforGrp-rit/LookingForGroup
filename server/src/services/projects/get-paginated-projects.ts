@@ -1,4 +1,4 @@
-import type { ProjectPreview, ProjectSortMethod } from '@looking-for-group/shared';
+import type { ProjectPreview, ProjectSortMethod, Visibility } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectPreviewSelector } from '#services/selectors/projects/project-preview.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
@@ -41,6 +41,7 @@ const getPaginatedProjectsService = async (
       orderBy: orderByInput,
       where: {
         approved: true,
+        globalVisibility: 'public' as Visibility,
       },
       ...(lastProjectId
         ? {
