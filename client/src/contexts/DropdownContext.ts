@@ -1,8 +1,9 @@
-import { createContext } from 'react';
+import { createContext, createRef, RefObject } from 'react';
 
 type DropdownContextProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
+  buttonRef: RefObject<HTMLButtonElement | null>;
 };
 
 /**
@@ -11,4 +12,5 @@ type DropdownContextProps = {
 export const DropdownContext = createContext<DropdownContextProps>({
   open: false,
   setOpen: () => {},
+  buttonRef: createRef<HTMLButtonElement | null>(),
 });

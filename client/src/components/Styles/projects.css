@@ -3547,6 +3547,7 @@ New Project Page style rules
   display: grid;
   grid-template:
     'carousel info' auto
+    'overview mod' auto
     'overview positions' auto
     'overview people' auto / 17fr 15fr;
   margin: 0 auto;
@@ -3559,6 +3560,7 @@ New Project Page style rules
       'carousel' auto
       'info' auto
       'overview' auto
+      'mod' auto
       'positions' auto
       'people' auto;
   }
@@ -3696,8 +3698,50 @@ Project Carousel style rules
 
 }
 
+.mod-project-options, #mod-user-options {
+  grid-area: mod;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    min-width: fit-content;
+    max-width: 100%;
+    gap: 10px;
+    background-color: var(--header-color);
+    border-radius: 10px;
+    text-align: left;
+    padding: 20px;
+    max-width: calc(100vw - 340px);
+    margin-bottom: 1vw;
+    align-self: start;
+    min-height: fit-content;
+
+    h4 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 5px;
+    }
+
+    #mod-options-btns
+    {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      justify-content: center;
+      gap: 20px;
+      button {
+        width: fit-content;
+      }
+    }
+}
+
 @media only screen and (max-width: 1200px) {
   #project-info-panel {
+    max-width: calc(100vw - 80px);
+  }
+  .mod-project-options, #mod-user-options
+  {
     max-width: calc(100vw - 80px);
   }
 }
@@ -4457,6 +4501,7 @@ button#positions-popup-list-item-active {
   grid-area: overview;
   text-align: left;
   margin-top: 10px;
+  width: 95%;
 
   overflow-wrap: anywhere;
   hyphens: auto;

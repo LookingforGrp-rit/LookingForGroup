@@ -35,8 +35,8 @@ enum sortModes {
     "Z-A" = "Z-A",
     "Newest" = "Newest",
     "Oldest" = "Oldest",
-    "Followers (NOT IMPLEMENTED)" = "Followers (NOT IMPLEMENTED)",
-    "Followers Acending (NOT IMPLEMENTED)" = "Followers Acending (NOT IMPLEMENTED)",
+    "Followers" = "Followers",
+    "Followers Ascending" = "Followers Ascending",
 }
 
 

@@ -25,12 +25,12 @@ interface EnabledFilter {
 }
 
 enum sortModes {
-  "A-Z" = "A-Z",
-  "Z-A" = "Z-A",
-  "Newest" = "Newest",
-  "Oldest" = "Oldest",
-  "Followers (NOT IMPLEMENTED)" = "Followers (NOT IMPLEMENTED)",
-  "Followers Acending (NOT IMPLEMENTED)" = "Followers Acending (NOT IMPLEMENTED)",
+    "A-Z" = "A-Z",
+    "Z-A" = "Z-A",
+    "Newest" = "Newest",
+    "Oldest" = "Oldest",
+    "Followers" = "Followers",
+    "Followers Ascending" = "Followers Ascending",
 }
 
 export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemList }) => {
