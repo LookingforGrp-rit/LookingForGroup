@@ -274,14 +274,23 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                     handleSocialChange(index, "url", e.target.value, url);
                   }}
                 />
+                <div id="clear-all-trash-row">
                 <button
                   type="button"
-                  className="delete-social-btn"
+                  className="delete-position-button-alt button-reset"
                   onClick={() => handleDeleteSocial(index)}
                   title="Remove social link"
                 >
-                  <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+                  <div id="clear-all-trash-row">
+                  <ThemeIcon
+                    id="trash"
+                    width={18}
+                    height={18}
+                    ariaLabel="Delete position"
+                  />
+                  </div>
                 </button>
+                </div>
               </div>
             );
           })}

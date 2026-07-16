@@ -68,7 +68,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
 
   // Tabs shown in the popup, dynamically created after fetching data
   const [filterPopupTabs, setFilterPopupTabs] = useState<FilterTab[]>([]);
-  
+
   const [filterMode, setFilterMode] = useState<"Match All" | "Match Any">("Match All");
   const [sortMode, setSortMode] = useState<sortModes>(sortModes.Newest);
 
@@ -99,7 +99,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
         Role: 'Role',
         Major: 'Major',
       };
-      
+
       if (data) setAllSkills(data as Skill[]);
 
       const skillData: Skill[] = data as Skill[];
@@ -131,7 +131,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
     let newActiveSkills: Skill[];
     let skill: Skill | undefined;
     if (id === -1) {
-      skill = { skillId: id, label: type, type: type as SkillType, category: "Other"}
+      skill = { skillId: id, label: type, type: type as SkillType, category: "Other" }
     }
     else
       skill = allSkills.find(s => s.skillId === id && s.type === type);
@@ -325,46 +325,47 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                 </PopupButton>
                 <div id="filters-popup">
                   <h2>{'People Filters'}</h2>
-                    <div id='filter-settings'>
-                      <button id='match-button'
-                        onClick={() => {
-                          setFilterMode(filterMode === "Match All" ? "Match Any" : "Match All");
-                        }}>
-                        {filterMode}
-                      </button>
-                      <Select>
-                        <SelectButton buttonId='sort-button'
-                          placeholder="Sorting Mode"
-                          type={"input"}
-                          initialVal={sortMode}
-                        />
-                        <SelectOptions
-                          callback={(e) =>
-                            setSortMode(
-                              (e.target as HTMLButtonElement)
-                                .value as sortModes
-                            )
+                  <div id='filter-settings'>
+                    <button id='match-button'
+                      onClick={() => {
+                        setFilterMode(filterMode === "Match All" ? "Match Any" : "Match All");
+                      }}>
+                      {filterMode}
+                    </button>
+                    <Select>
+                      <SelectButton buttonId='sort-button'
+                        placeholder="Sorting Mode"
+                        type={"input"}
+                        initialVal={sortMode}
+                      />
+                      <SelectOptions
+                        callback={(e) =>
+                          setSortMode(
+                            (e.target as HTMLButtonElement)
+                              .value as sortModes
+                          )
+                        }
+                        options={Object.keys(sortModes).map(
+                          (key) => {
+                            return {
+                              value: key,
+                              markup: <>{key}</>,
+                              disabled: false
+                            };
                           }
-                          options={Object.keys(sortModes).map(
-                            (key) => {
-                              return {
-                                value: key,
-                                markup: <>{key}</>,
-                                disabled: false
-                              };
-                            }
-                          )}
-                        />
-                      </Select>
-                    </div>
+                        )}
+                      />
+                    </Select>
+                  </div>
                   <div id="filters" className="popup-section">
                     <SearchBar
-                      dataSets={[{data: allSkills}]}
+                      dataSets={[{ data: allSkills }]}
                       onSearch={(results) => {
                         setSearchedSkills(results[0] as Skill[]);
                       }}
                       value={searchValue}
                       setValue={setSearchValue}
+                      placeholderText='Search for Tag'
                     ></SearchBar>
                     <div id="more-filters-scroll-container">
                       <button
@@ -420,14 +421,14 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                           })
                         )}
                         toggleTag={toggleSkill}
-                        tabs={filterPopupTabs.map(tab => 
+                        tabs={filterPopupTabs.map(tab =>
                           tab.categoryName === "Developer Skill" ? "Developer" :
-                          tab.categoryName === 'Designer Skill' ? "Designer" :
-                          tab.categoryName === 'Audio Skill' ? "Audio" :
-                          tab.categoryName === 'Soft Skill' ? "Soft" :
-                          tab.categoryName === 'Engineer Skill' ? "Engineer" :
-                          tab.categoryName === 'Major' ? "Project Type" :
-                          tab.categoryName
+                            tab.categoryName === 'Designer Skill' ? "Designer" :
+                              tab.categoryName === 'Audio Skill' ? "Audio" :
+                                tab.categoryName === 'Soft Skill' ? "Soft" :
+                                  tab.categoryName === 'Engineer Skill' ? "Engineer" :
+                                    tab.categoryName === 'Major' ? "Project Type" :
+                                      tab.categoryName
                         )}
                         tabId={activeTabId}
                         all={allSkills.map(
@@ -454,12 +455,12 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                     <div id="selected-filters">
                       {activeSkillFilters.map((skill) => (
                         <Tag
-                        key={skill.skillId}
-                        type={skill.type.toLowerCase() + " skill"}
-                        onClick={() => 
-                          toggleSkill(skill.skillId, skill.type)
-                        }
-                        selected={true}
+                          key={skill.skillId}
+                          type={skill.type.toLowerCase() + " skill"}
+                          onClick={() =>
+                            toggleSkill(skill.skillId, skill.type)
+                          }
+                          selected={true}
                         >
                           <i className={true ? "fa fa-check" : "fa fa-plus"}></i>
                           <p>{skill.label}</p>

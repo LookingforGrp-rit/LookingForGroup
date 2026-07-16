@@ -1083,6 +1083,12 @@ export interface ProjectJob {
   duration: JobDuration;
 
   /**
+   * The number of duration units for the position, such as 3 (to pair with a
+   * `duration` of "Months" for "3 Months"). Optional pending backend support.
+   */
+  durationCount?: number | null;
+
+  /**
    * The on/off-site location of the job, such as "Remote"
    */
   location: JobLocation;
@@ -1591,7 +1597,7 @@ export type AddProjectMediumInput = Pick<ProjectMedium, "mediumId">;
 export type CreateProjectJobInput = Required<
   Pick<ProjectJob, "availability" | "duration" | "location" | "compensation">
 > &
-  Partial<Pick<ProjectJob, "description" | "jobSkills">> & {
+  Partial<Pick<ProjectJob, "description" | "jobSkills" | "durationCount">> & {
     roleId: number;
     contactUserId: number;
   };

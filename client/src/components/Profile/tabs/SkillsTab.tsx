@@ -9,6 +9,7 @@ import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSo
 import { SortableTag } from "../../ProjectCreatorEditor/tabs/SortableItem";
 import { clampDragWithinContainer } from "../../ProjectCreatorEditor/tabs/dragModifiers";
 import TagDisplay from "../../TagDisplay";
+import { ThemeIcon } from "../../ThemeIcon";
 
 const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
 
@@ -175,21 +176,21 @@ export const SkillsTab = ({
         //   return
         // } else {
 
-          updatePendingProfile({
-            ...profile,
-            skills: remaining,
-          });
+        updatePendingProfile({
+          ...profile,
+          skills: remaining,
+        });
 
-          // only delete saved skills
-          dataManager.deleteSkill({
-            id: {
-              type: "canon",
-              value: skillId,
-            },
-            data: null,
-          });
+        // only delete saved skills
+        dataManager.deleteSkill({
+          id: {
+            type: "canon",
+            value: skillId,
+          },
+          data: null,
+        });
 
-          return;
+        return;
         //}
 
       } else {
@@ -328,9 +329,10 @@ export const SkillsTab = ({
             </div>
           </SortableContext>
         </DndContext>
+        <div id="clear-all-button-align">
         <button
           type="button"
-          className="delete-tags-btn"
+          className="delete-position-button-alt button-reset"
           hidden={profile.skills.length === 0 || profile.skills == undefined}
           onClick={() => {
             /* deletes all skills in the data manager for the user */
@@ -360,19 +362,30 @@ export const SkillsTab = ({
           }}
           title="Remove all selected tags"
         >
-          <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+          <div id="clear-all-trash-row">
+          <p id="clear-all-trash-text">Clear All</p>
+          <ThemeIcon
+            id="trash"
+            width={18}
+            height={18}
+            ariaLabel="Delete position"
+          />
+          </div>
         </button>
+        </div>
       </div>
 
       <div id="project-editor-tag-search">
         <SearchBar
           key={currentSkillsTab}
-          dataSets={[{data: allSkills}]}
+          dataSets={[{ data: allSkills }]}
           onSearch={(results) =>
             handleSearch(results as unknown[][] as Skill[][])
           }
           value={searchValue}
           setValue={setSearchValue}
+          placeholderText='Search for Tag'
+
         />
         <div id="project-editor-tag-wrapper">
           <SkillSearchTabs />
