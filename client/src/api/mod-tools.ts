@@ -24,7 +24,7 @@ export const deleteProjectRequest = async (
     message: string
 ): Promise<ApiResponse> => {
     const apiURL = `/projects/unapproved/${projectId}`;
-    const response = await DELETE(apiURL, {message});
+    const response = await DELETE(apiURL, {reason: message});
 
     if (response.error) console.log(`Error in deleteProjectRequest: ${response.error}`);
     return response;
