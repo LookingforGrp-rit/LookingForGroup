@@ -141,6 +141,15 @@ Project Panel component style rules
   }
 
 
+   hr {
+    /* color: var(--header-color); */
+    border: 1px solid var(--liked-section-bg);
+    margin: 0;
+    margin-bottom: min(1.73vh, 17px);
+    margin-top: min(1vh, 17px);
+  }
+
+  
   a {
     text-decoration: none;
   }
