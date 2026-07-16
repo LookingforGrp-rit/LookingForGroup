@@ -2113,6 +2113,43 @@ Project Creator and Editor Popup style rules
   }
 }
 
+#clear-all-button-align{
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  margin-right: 0;
+  margin-left: 0;
+  margin-top: auto;
+  align-self: flex-end;
+}
+
+.delete-position-button-alt {
+  margin-top: 1em;
+  #trash {
+    stroke: #FF3859;
+  }
+
+  svg{
+    margin-left: 0.5em;
+  }
+}
+
+#clear-all-trash-row{
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+#clear-all-trash-text{
+  width: fit-content;
+  height: fit-content;
+  color: #FF3859;
+  font-weight: bold;
+  font-size: small;
+  margin: 0;
+  margin-right: 0.15em;
+}
+
 #team-positions-popup-list-buttons {
   display: flex;
   flex-direction: column;
