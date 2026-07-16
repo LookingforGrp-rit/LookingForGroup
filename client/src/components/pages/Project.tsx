@@ -61,14 +61,13 @@ const Project = () => {
   const [viewedPosition, setViewedPosition] = useState(0);
 
   const [deleteResponseText, setDeleteResponseText] = useState<string | null>(null);
-  const successMessage = "Success! You declined this project request.";
+  const successMessage = "Success! You declined this project request."
 
   const [shownTags, setShownTags] = useState(3);
   const [videos, setVideos] = useState<ProjectVideo[]>();
 
   const reportMessage = useRef<HTMLInputElement>(null);
   const deleteMessage = useRef<HTMLInputElement>(null);
-  const editMessage = useRef<HTMLInputElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>("");
 
   /**
@@ -291,7 +290,16 @@ const Project = () => {
   const handleDeleteProjectRequest = async (message: string) => {
     if (displayedProject){
       setApprovalStatus('not-approved');
-      await deleteProjectRequest(projectID, message);
+      const response = await deleteProjectRequest(projectID, message);
+      let responseText = response.error;
+      if (responseText === null || responseText === undefined) {
+        responseText = successMessage;
+      }
+      else
+      {
+        responseText = "Uh oh! Something went wrong with your request."
+      }
+      setDeleteResponseText(responseText);
     }
   };
 
@@ -932,7 +940,7 @@ const reportProjectPressed = async () => {
                           <div className="small-popup" id="report-popup">
                         <h3>Request Edits</h3>
                         <p>What should the user change about their project before it can be approved?</p>
-                        <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={editMessage}></input>
+                        <input type="text" placeholder="Write your reasoning here..." className="input input-multiline"></input>
                           <div className="confirm-deny-btns">
                             <button
                               id="team-delete-member-cancel-button"
@@ -940,30 +948,46 @@ const reportProjectPressed = async () => {
                             >
                               Cancel
                             </button>
-                            <button className="confirm-btn" onClick={() => true /* send msg to user here -- im not sure how to do this */}>Submit</button>
+                            <button className="confirm-btn" onClick={() => true /* send msg to user here */}>Submit</button>
                           </div>
                         </div>
                         </PopupContent>
                       </Popup>
                   <Popup>
-                    <PopupButton className="delete-button">Decline</PopupButton>
-                    <PopupContent>
-                    <div className="small-popup" id="report-popup">
-                      <h3>Decline Approval Request</h3>
-                      <p>Why are you declining {displayedProject?.title}?</p>
-                      <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={deleteMessage}></input>
-                        <div className="confirm-deny-btns">
-                          <button
-                            id="team-delete-member-cancel-button"
-                            className="button-reset"
-                          >
-                            Cancel
-                          </button>
-                          <button className="confirm-btn" onClick={() => {handleDeleteProjectRequest(deleteMessage?.current ? deleteMessage.current.value : "No message provided.");}}>Submit</button>
-                      </div>
-                    </div>
-                    </PopupContent>
-                  </Popup>
+                        <PopupButton className="delete-button">Decline</PopupButton>
+                        <PopupContent>
+                          <div className="small-popup" id="report-popup">
+                        <h3>Decline Approval Request</h3>
+                        <p>Why are you declining {displayedProject?.title}?</p>
+                        <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={deleteMessage}></input>
+                          <div className="confirm-deny-btns">
+                            <button
+                              id="team-delete-member-cancel-button"
+                              className="button-reset"
+                            >
+                              Cancel
+                            </button>
+                            <Popup>
+                              <PopupButton className="confirm-btn" callback={() => handleDeleteProjectRequest(deleteMessage?.current ? deleteMessage.current.value : "No message provided.")}>Submit</PopupButton>
+                              <PopupContent>
+                              <div className="small-popup">
+                                <div id="delete-success-title">{
+                                  deleteResponseText === null ? "Loading..." : (
+                                    deleteResponseText === successMessage ? "Success!" : "Error"
+                                  )
+                                }
+                                </div>
+                                <div id="delete-success-extra-info">
+                                  {deleteResponseText}
+                                </div>
+                                <PopupButton buttonId="continue-button">Continue</PopupButton>
+                              </div>
+                              </PopupContent>
+                          </Popup>
+                          </div>
+                        </div>
+                        </PopupContent>
+                      </Popup>
                 </div>
               </div>
             : ""}
