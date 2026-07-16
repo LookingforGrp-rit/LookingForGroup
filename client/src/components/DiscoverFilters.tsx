@@ -408,6 +408,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                       onSearch={(results) => {
                         setSearchedTags({ tags: results[0] as Tag[], color: searchedTags.color });
                       }}
+                      placeholderText='Search for Tag'
                     ></SearchBar>
                     <div id="more-filters-scroll-container">
                       <button
