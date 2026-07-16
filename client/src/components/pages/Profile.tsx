@@ -74,7 +74,7 @@ const Profile = (userProfile: any) => {
 
   const [majorsArr, setMajorsArr] = useState<string[]>([]);
 
-  const reportMessage = useRef<HTMLInputElement>(null);
+  const reportMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>('');
 
   // ---- Invite-to-project popup state (only used when viewing someone else) ----
@@ -495,7 +495,7 @@ const Profile = (userProfile: any) => {
                     <div className="small-popup" id="report-popup">
                       <h3>Report {displayedProfile?.firstName ?? "User"} {displayedProfile?.lastName ?? ""}</h3>
                       <p>You are about to report {displayedProfile?.firstName ?? "User"}. Please provide your reasoning below.</p>
-                      <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></input>
+                      <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></textarea>
                       <div className="confirm-deny-btns">
                         <PopupButton
                           buttonId="team-delete-member-cancel-button"
