@@ -111,8 +111,8 @@ const ModeratorPage = () => {
         <div className="page mod-page">
             <Header /* bypassing search bar */
                 dataSets={[]}
-                onSearch={() => {true
-                }}
+                onSearch={() => {true}}
+                placeholderText="Search by Name"    /* change later */
                 value={""}
                 hideSearchBar={true}
                 hideBackButton={false}
