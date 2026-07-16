@@ -9,6 +9,10 @@ type ReportedUsersProps = {
   currentTab: number
 };
 
+/**
+ * Gets all reported users for the tab in Mod Page
+ * @param ReportedUsersProps current user ID and the current tab of Mod Page
+ */
 const ReportedUsers = ({currentUserId, currentTab}: ReportedUsersProps) => {
 
     const [reportedUsers, setReportedUsers] = useState<UserPreview[]>([]);
@@ -26,7 +30,7 @@ const ReportedUsers = ({currentUserId, currentTab}: ReportedUsersProps) => {
               const userPreview = await getUsersById(userId);
               tempPendingUserArray.push(userPreview.data as UserPreview);
           }
-          setReportedUsers(tempPendingUserArray);           /* not exactly sure what's causing this error */
+          setReportedUsers(tempPendingUserArray);
         }};
 
         displayReportedUsers();

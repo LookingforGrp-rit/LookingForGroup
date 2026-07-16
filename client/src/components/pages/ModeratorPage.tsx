@@ -10,8 +10,11 @@ import "../../components/Styles/projects.css";
 import { getCurrentAccount } from "../../api/users";
 import { getUserAccessLevel } from "../../api/mod-tools";
 import * as paths from '../../constants/routes';
-import type { UserAccessLevel } from "@looking-for-group/shared";
 
+/**
+ * The Moderator Page, only accessible by Moderators and Administrators
+ * Found in User Profile dropdown and /moderation path
+ */
 const ModeratorPage = () => {
 
 // Components

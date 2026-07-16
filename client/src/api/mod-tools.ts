@@ -1,12 +1,9 @@
 import { GET, DELETE, PATCH } from "./index";
-import { ApiResponse, UserAccessLevel, UserPreview } from "@looking-for-group/shared";
+import { ApiResponse, UserAccessLevel } from "@looking-for-group/shared";
 import { ProjectPreview, ProjectDetail } from "@looking-for-group/shared";
-import { ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
-
-type ApprovalStatusKey = keyof typeof ApprovalStatus;
 
 /**
- * Gets a list of all reported projects
+ * Gets a list of all pending projects
  */
 export const getPendingProjects = async (): 
 Promise<ApiResponse<ProjectPreview[]>> => {
@@ -83,5 +80,19 @@ export const getUserAccessLevel = async (userId: number): Promise<ApiResponse<Us
     const response = await GET(apiURL);
 
     if (response.error) console.log(`Error in getUserAccessLevel: ${response.error}`);
+    return response;
+};
+
+/**
+ * Deletes a project report
+ * @param reportId The id of the report to delete
+ */
+export const deleteProjectReport = async (
+    reportId: number,
+): Promise<ApiResponse> => {
+    const apiURL = `/mod/project-report/${reportId}`;
+    const response = await DELETE(apiURL, {});
+
+    if (response.error) console.log(`Error in deleteProjectRequest: ${response.error}`);
     return response;
 };

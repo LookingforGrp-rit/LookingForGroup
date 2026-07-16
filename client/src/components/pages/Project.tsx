@@ -268,6 +268,10 @@ const Project = () => {
     }
   };
 
+  const handleDeleteProjectReport = async () => {
+    //const reportedProjects = ((await getReportedProjects()).data);
+  };
+
   /**
    * Leaves the project and returns to the My Projects page.
    */
@@ -974,8 +978,8 @@ const reportProjectPressed = async () => {
                 <h4>Unapprove?</h4>
                 <p>You can ignore this request, request an edit, or unapprove this project.</p>
                 <div id="mod-options-btns">
-                  <button id="mod-ignore-btn">Ignore</button>
-                  <button id="mod-edit-btn">Edit</button> 
+                  <button id="mod-ignore-btn" callback={handleDeleteProjectReport}>Ignore</button>
+                  <button className="mod-edit-btn">Edit</button> 
                   <button id="mod-decline-btn" className="delete-button">Unapprove</button>
                 </div>
               </div>

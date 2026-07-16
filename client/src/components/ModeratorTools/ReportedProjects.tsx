@@ -9,6 +9,10 @@ type ReportedProjectsProps = {
   currentTab: number
 };
 
+/**
+ * Gets all reported projects for the tab in Mod Page
+ * @param ReportedProjectsProps current user ID and the current tab of Mod Page
+ */
 const ReportedProjects = ({currentUserId, currentTab}: ReportedProjectsProps) => {
 
     const [reportedProjects, setReportedProjects] = useState<ProjectWithFollowers[]>([]);
@@ -30,7 +34,7 @@ const ReportedProjects = ({currentUserId, currentTab}: ReportedProjectsProps) =>
             }
             setReportedProjectsIds(tempIds);
           }
-          setReportedProjects(tempPendingProjectArray);     /* not exactly sure what's causing this error */
+          setReportedProjects(tempPendingProjectArray);
         }
 
         displayReportedProjects();
