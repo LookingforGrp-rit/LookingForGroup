@@ -308,6 +308,11 @@ input:checked+.slider:before {
     padding: 0;
   }
 
+  #header {
+    padding: 0;
+    margin: 0 auto;
+  }
+
   @media (max-width: 500px) {
     #back {
       position: absolute;
@@ -329,9 +334,16 @@ input:checked+.slider:before {
     }
 
     #header {
-      margin-bottom: 20px;
       min-height: min-content;
     }
+  }
+
+  .settings-title {
+    font-size: 3rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+    align-self: center;
   }
 
   .settings-row {
@@ -672,6 +684,7 @@ input:checked+.slider:before {
 
   #settings-page {
     width: 100%;
+    min-height: 90vh;
 
     .subsection {
       width: 100%;
