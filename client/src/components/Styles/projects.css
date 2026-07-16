@@ -641,8 +641,12 @@ Project Creator and Editor Popup style rules
     font-size: 1.125rem;
   }
 
-  input {
+  textarea {
     margin: 20px;
+  }
+
+  textarea:focus{
+    outline: 0px;
   }
 }
 
