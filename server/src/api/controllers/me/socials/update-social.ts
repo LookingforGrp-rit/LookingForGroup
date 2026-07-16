@@ -6,15 +6,14 @@ import type {
 import type { Response } from 'express';
 import { updateSocialService } from '#services/me/socials/update-social.ts';
 
-//PATCH api/me/socials/{websiteId}
+//PATCH api/me/socials/{id}
 //update one of current user's social
 export const updateSocial = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   //current user ID
   const body = req.body as UpdateUserSocialInput;
-  const social: UpdateUserSocialInput = { url: body.url };
-  const websiteId = parseInt(req.params.websiteId as string);
+  const id = parseInt(req.params.id as string);
 
-  const result = await updateSocialService({ ...social, websiteId }, req.currentUser.userId);
+  const result = await updateSocialService(body, id);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

@@ -99,10 +99,10 @@ export const getCurrentUsername = async (): Promise<UsernameResponse> => {
  * Gets all data on all public users. Does not return private ones
  * @returns result - JSONified data of all users, else if error, '400'.
  */
-export const getUsers = async (): Promise<ApiResponse<UserPreview[]>> => {
+export const getUsers = async (method?: string): Promise<ApiResponse<UserPreview[]>> => {
   //NOTE: the "A-Z" is a default implementation of sorting method
   //CHANGE THIS WHEN SORTING METHOD FRONTEND IS IMPLEMENTED!!
-  const apiURL = `/users/all/A-Z`;
+  const apiURL = `/users/all/${method ?? 'A-Z'}`;
   const response = await GET(apiURL);
   //TODO: revisit this to make it include filters
   //but filters are a stretch goal anyway so it's not too important
@@ -146,7 +146,7 @@ export const editUser = async (
   const form = new FormData();
 
   for (const [name, value] of Object.entries(userData)) {
-    if (value !== null) form.append(name, value);
+    if (value !== null) form.append(name, value as string);
     //ohhhh i see, it auto appends a string for the displayPhone because this can't take booleans for some reason...
     //this has to be a FormData to allow images so i can't change that, guess i'll have to stick with the weird parse on the backend
   }
@@ -408,14 +408,14 @@ export const addUserSocial = async (
 
 // Update socials specified by the current user
 /**
- * @param websiteId - ID of the social to be updated
+ * @param id - DB id of the social to be updated
  * @param socialData - Data used to update the social
  */
 export const updateUserSocial = async (
-  websiteId: number,
+  id: number,
   socialData: UpdateUserSocialInput
 ): Promise<ApiResponse<MySocial>> => {
-  const apiURL = `/me/socials/${websiteId}`;
+  const apiURL = `/me/socials/${id}`;
   const response = await PATCH(apiURL, socialData);
 
   if (response.error)
@@ -426,12 +426,12 @@ export const updateUserSocial = async (
 
 // Delete user socials
 /**
- * @param websiteId - ID of the social to be deleted
+ * @param id - DB id of the social to be deleted
  */
 export const deleteUserSocial = async (
-  websiteId: number
+  id: number
 ): Promise<ApiResponse> => {
-  const url = `/me/socials/${websiteId}`;
+  const url = `/me/socials/${id}`;
   const response = await DELETE(url);
 
   //console.log(response);

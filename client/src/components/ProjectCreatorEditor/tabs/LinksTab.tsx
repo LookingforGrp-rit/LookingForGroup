@@ -48,8 +48,8 @@ export const LinksTab = ({
   projectData,
   unmodifiedProject,
   updatePendingProject,
-  setErrorLinks = () => {},
-  saveProject = () => {},
+  setErrorLinks = () => { },
+  saveProject = () => { },
   saveable,
   failCheck,
   updateFailCheck,
@@ -57,7 +57,7 @@ export const LinksTab = ({
   currentUser,
 }: LinksTabProps) => {
 
-projectAfterLinkChanges = structuredClone(projectData);
+  projectAfterLinkChanges = structuredClone(projectData);
 
   // --- Hooks --- 
   // List of available social platforms fetched from the backend
@@ -81,11 +81,12 @@ projectAfterLinkChanges = structuredClone(projectData);
     // Check each link entirely
     return currentLinks.some((current, index) => {
       const original = originalLinks[index];
-      if (!original) 
+      if (!original)
         return true;
 
       return (
         current.label !== original.label ||
+        current.alias !== original.alias ||
         current.url !== original.url ||
         current.websiteId !== original.websiteId
       );
@@ -109,7 +110,7 @@ projectAfterLinkChanges = structuredClone(projectData);
           const other = response.data.splice(otherIndex, 1)[0];
           response.data.push(other);
         }
-      setAllSocials(response.data);
+        setAllSocials(response.data);
       }
 
     };
@@ -144,6 +145,54 @@ projectAfterLinkChanges = structuredClone(projectData);
     updatePendingProject({ ...projectData, projectSocials: filteredSocials });
   };
 
+  // Helper for handling changes to alias or url
+  const handleSocialChange = (
+    index: number,
+    field: 'alias' | 'url',
+    value: string,
+    baseUrl: string
+  ) => {
+    // Copy socials array
+    const socials = [...(projectData.projectSocials || [])];
+    const oldSocial = socials[index];
+    if (!oldSocial) return;
+
+    // Create updated social object
+    let updatedSocial = { ...oldSocial };
+    if (field === 'alias') {
+      updatedSocial.alias = value;
+    } else if (field === 'url') {
+      updatedSocial.url = baseUrl + value;
+    }
+    socials[index] = updatedSocial;
+
+    updatePendingProject({ ...projectData, projectSocials: socials });
+
+    // Check if the updated social has alias, websiteId, and url, and if dataManager is available
+    if (!updatedSocial.id || !updatedSocial.alias || !updatedSocial.url || !updatedSocial.websiteId || !dataManager) return;
+
+    // Validation for both fields
+    const hasAlias = updatedSocial.alias.trim() !== '';
+    const hasUrl = updatedSocial.url.trim() !== baseUrl;
+    if (!hasAlias || !hasUrl) return;
+
+    // Determine if local or canon
+    if ('localId' in updatedSocial && updatedSocial.localId) {
+      // Local: addSocial
+      dataManager.addSocial({
+        id: { type: 'local', value: updatedSocial.localId },
+        data: { alias: updatedSocial.alias, url: updatedSocial.url, websiteId: updatedSocial.websiteId }
+      });
+    } else if (updatedSocial.id) {
+      // Canon: updateSocial
+      dataManager.updateSocial({
+        id: { type: 'canon', value: updatedSocial.id },
+        data: { alias: updatedSocial.alias, url: updatedSocial.url, websiteId: updatedSocial.websiteId }
+      });
+    }
+  };
+
+
   const handleCleanAndSave = () => {
     const tempSocials = [...(projectData.projectSocials || [])];
     const cleanedSocials: Pending<ProjectSocial>[] = [];
@@ -160,9 +209,9 @@ projectAfterLinkChanges = structuredClone(projectData);
             id: { type: 'local', value: social.localId as number },
             data: null
           });
-        } else if (social.websiteId) {
+        } else if (social.id) {
           dataManager?.deleteSocial({
-            id: { type: 'canon', value: social.websiteId },
+            id: { type: 'canon', value: social.id },
             data: null
           });
         }
@@ -190,7 +239,7 @@ projectAfterLinkChanges = structuredClone(projectData);
           <div className="editor-extra-info">
             Connect with {projectOwner.firstName} {projectOwner.lastName} through their social profiles.
           </div>
-          
+
           {/* User Social Links */}
           {projectOwner.socials && projectOwner.socials.length > 0 ? (
             <div className="contact-socials-grid">
@@ -208,7 +257,7 @@ projectAfterLinkChanges = structuredClone(projectData);
                     height={20}
                     id={
                       social.label === 'Other' ? 'link' :
-                      social.label.toLowerCase()
+                        social.label.toLowerCase()
                     }
                     className="mono-fill"
                     ariaLabel={social.label}
@@ -240,9 +289,9 @@ projectAfterLinkChanges = structuredClone(projectData);
 
       <div id="editor-link-list">
         {/* Social URL inputs */}
-        { projectAfterLinkChanges.projectSocials && projectAfterLinkChanges.projectSocials.map((social, index) => {
+        {projectAfterLinkChanges.projectSocials && projectAfterLinkChanges.projectSocials.map((social, index) => {
           const url = BaseSocialUrl[social.label as keyof typeof BaseSocialUrl];
-          
+
           return (
             <div className="editor-link-item" key={index}>
               {/* Social type dropdown */}
@@ -251,17 +300,17 @@ projectAfterLinkChanges = structuredClone(projectData);
                   placeholder='Select'
                   initialVal={social.label ? //silence linter, it works how it should
                     <>
-                        <ThemeIcon
-                          width={20}
-                          height={20}
-                          id={
-                            social.label === 'Other' ? 'link' :
+                      <ThemeIcon
+                        width={20}
+                        height={20}
+                        id={
+                          social.label === 'Other' ? 'link' :
                             social.label.toLowerCase()
-                          }
-                          className={'mono-fill'}
-                          ariaLabel={social.label}
-                        />
-                        {social.label}
+                        }
+                        className={'mono-fill'}
+                        ariaLabel={social.label}
+                      />
+                      {social.label}
                     </> as unknown as string //this is how i've silenced the linter
                     : undefined}
                   className='link-select'
@@ -271,11 +320,11 @@ projectAfterLinkChanges = structuredClone(projectData);
                   callback={(e) => {
                     const selectedLabel = (e.target as HTMLInputElement).value;
                     const selectedSocial = allSocials.find(s => s.label === selectedLabel);
-                    
+
                     const tempSocials = projectAfterLinkChanges.projectSocials;
                     tempSocials[index].label = selectedLabel;
                     tempSocials[index].websiteId = selectedSocial?.websiteId || 0;
-                    
+
                     projectAfterLinkChanges = {
                       ...projectAfterLinkChanges,
                       projectSocials: tempSocials
@@ -296,19 +345,19 @@ projectAfterLinkChanges = structuredClone(projectData);
                     .map(website => {
                       return {
                         markup:
-                        <>
-                          <ThemeIcon
-                            width={20}
-                            height={20}
-                            id={
-                              website.label === 'Other' ? 'link' :
-                              website.label.toLowerCase()
-                            }
-                            className={'mono-fill'}
-                            ariaLabel={website.label}
-                          />
-                          {website.label}
-                        </>,
+                          <>
+                            <ThemeIcon
+                              width={20}
+                              height={20}
+                              id={
+                                website.label === 'Other' ? 'link' :
+                                  website.label.toLowerCase()
+                              }
+                              className={'mono-fill'}
+                              ariaLabel={website.label}
+                            />
+                            {website.label}
+                          </>,
                         value: website.label,
                         disabled: false,
                       };
@@ -316,7 +365,19 @@ projectAfterLinkChanges = structuredClone(projectData);
                   }
                 />
               </Select>
-
+              <Input
+                type="single"
+                id="alias-input"
+                style={{
+                  opacity: !social.label ? 0.4 : 1,
+                  cursor: !social.label ? 'not-allowed' : 'text'
+                }}
+                disabled={!social.label} // Disable textbox until site category selected
+                placeholder={'Label'}
+                value={social.alias || ''}
+                maxLength={45}
+                onChange={(e) => handleSocialChange(index, 'alias', e.target.value, url)}
+              />
               {url && (<div id="base-url">{url}</div>)}
               <Input
                 type="single"
@@ -328,21 +389,15 @@ projectAfterLinkChanges = structuredClone(projectData);
                 disabled={!social.label} // Disable textbox until site category selected
                 placeholder={url === '' || !social.label ? "URL" : 'Username'}
                 value={social.url && social.label ? social.url.substring(url.length) : ''}
-                onChange={(e) => {
-                  const tempSocials = projectAfterLinkChanges.projectSocials;
-                  const inputValue = e.target.value;
-                  tempSocials[index].url = url + inputValue;
-
-                  updatePendingProject({ ...projectAfterLinkChanges, projectSocials: tempSocials });
-                }}
+                onChange={(e) => handleSocialChange(index, 'url', e.target.value, url)}
               />
-              <button 
-                  type="button" 
-                  className="delete-social-btn" 
-                  onClick={() => handleDeleteSocial(index)}
-                  title="Remove social link"
-                >
-                  <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+              <button
+                type="button"
+                className="delete-social-btn"
+                onClick={() => handleDeleteSocial(index)}
+                title="Remove social link"
+              >
+                <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
               </button>
             </div>
           );
@@ -353,15 +408,17 @@ projectAfterLinkChanges = structuredClone(projectData);
               updatePendingProject({
                 ...projectAfterLinkChanges,
                 projectSocials: [...projectAfterLinkChanges.projectSocials || [], {
+                  id: 0,
                   label: '',
                   url: '',
+                  alias: '',
                   apiUrl: "",
                   websiteId: 0,
                   localId: ++localIdIncrement
                 }]
               });
             }}
-            >
+          >
             <i className="fa fa-plus" />
             <p>Add social profile</p>
           </button>
