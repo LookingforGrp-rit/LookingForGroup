@@ -3,7 +3,7 @@ import { DiscoverCarousel } from '../DiscoverCarousel';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
 import ToTopButton from '../ToTopButton';
-import { getByID } from '../../api/projects';
+import { getByID, getProjectFollowers } from '../../api/projects';
 import { getProjectFollowing } from '../../api/users';
 
 import {
@@ -34,8 +34,8 @@ enum sortModes {
   "Z-A" = "Z-A",
   "Newest" = "Newest",
   "Oldest" = "Oldest",
-  "Followers (NOT IMPLEMENTED)" = "Followers (NOT IMPLEMENTED)",
-  "Followers Acending (NOT IMPLEMENTED)" = "Followers Acending (NOT IMPLEMENTED)",
+  "Followers" = "Followers",
+  "Followers Ascending" = "Followers Ascending",
 }
 
 type FilterData = {
@@ -223,9 +223,7 @@ export const DiscoverPage = () => {
         projects.push(returnedProjects[i]);
       }
     }
-
-    console.log(projects);
-
+    
     if (!projects) {
       return;
     }
@@ -264,6 +262,40 @@ export const DiscoverPage = () => {
       <p style={{ color: 'red' }}>No More Projects!</p> :
       <button id='btn-loadmore' onClick={() => sortProjects()}>Load More Projects</button>);
 
+    
+
+    //sort projects
+    switch (method) {
+      case 'Newest':
+        projects = projects.toSorted(
+          (project1, project2) => project2.projectId - project1.projectId,
+        );
+        break;
+      case 'A-Z':
+        projects = projects.toSorted(
+          (project1, project2) => project1.title.localeCompare(project2.title),
+        );
+        break;
+      case 'Popular':
+        const followersList = await Promise.all(projects.map(
+          project => getProjectFollowers(project.projectId)
+        ));
+        const projectsWithFollowers = projects.map((project, index) => {
+          console.log(project.title + " " + followersList[index]);
+          return {
+            project,
+            followers: followersList[index].data,
+          };
+        });
+        projects = projectsWithFollowers.toSorted((project1, project2) => {
+          const p1followers = project1.followers?.count ?? 0;
+          const p2followers = project2.followers?.count ?? 0;
+          return p2followers - p1followers;
+        })
+          .map(item => item.project);
+        break;
+    }
+    
     if (invert) {
       setFullProjectList(projects.toReversed());
       syncFullProjectList = projects.toReversed();
@@ -416,13 +448,11 @@ export const DiscoverPage = () => {
         // Compare age inverted
         setupProjectData("Newest", true);
         break;
-      case 'Followers (NOT IMPLEMENTED)':
-        // TO IMPLIMENT once backend 
-        setupProjectData("A-Z", false);
+      case 'Followers':
+        setupProjectData("Popular", false);
         break;
-      case "Followers Acending (NOT IMPLEMENTED)":
-        // TO IMPLIMENT
-        setupProjectData("A-Z", true);
+      case "Followers Ascending":
+        setupProjectData("Popular", true);
         break;
       default:
         //default to newest first
