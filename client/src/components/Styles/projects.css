@@ -582,6 +582,13 @@ Project Creator and Editor Popup style rules
   margin-bottom: 28px;
 }
 
+/* Inside the profile editor's actions row the container supplies the bottom
+   spacing; the Save button's own 28px bottom margin would otherwise make its
+   box taller than the Delete button and drop Delete ~half a button lower. */
+.editor-save-actions #project-editor-save.profile-editor-save {
+  margin-bottom: 0;
+}
+
 /* #project-editor-save:hover {
   color: var(--create-text) !important;
   background-color: var(--create-bg) !important;
