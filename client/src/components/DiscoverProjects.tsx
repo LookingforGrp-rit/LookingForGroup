@@ -502,7 +502,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     <hr />
                                     <div id="filter-tags">
                                         <TagDisplay
-                                            selected={[...activeTagFilters, ...activeExclusionFilters].map(
+                                            selected={[activeTagFilters.map(
                                                 (tag) => ({
                                                     id: tag.tagId,
                                                     label: tag.label,
@@ -512,7 +512,17 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                                             tag.type === "Positions" ? "Position" :
                                                                 tag.category,
                                                 })
-                                            )}
+                                            ), activeExclusionFilters.map(
+                                                (tag) => ({
+                                                    id: tag.tagId,
+                                                    label: tag.label,
+                                                    type: tag.type,
+                                                    category:
+                                                        tag.type === "Project Type" ? "Medium" :
+                                                            tag.type === "Positions" ? "Position" :
+                                                                tag.category,
+                                                })
+                                            )]}
                                             toggleTag={toggleTag}
                                             tabs={filterPopupTabs.map(tab => tab.categoryName)}
                                             tabId={activeTabId}

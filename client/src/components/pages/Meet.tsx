@@ -174,8 +174,7 @@ export const ProfileMeetPage = () => {
  * Changes what items are shown to the user whenever a filter has been added or changed
  * @param activeTagFilters Tags that are shown to the user now
  */
-  const updateUserList = async (activeSkillFilters: Skill[], filterMode: "Match All" | "Match Any", sortMode: sortModes) => {
-    console.log(activeSkillFilters, filterMode, sortMode)
+  const updateUserList = async (activeSkillFilters: Skill[], activeExclusionFilters: Skill[], filterMode: "Match All" | "Match Any", sortMode: sortModes) => {
     if (filterData.sortMode !== sortMode) {
       sortPeople(sortMode);
     }
@@ -203,6 +202,12 @@ export const ProfileMeetPage = () => {
     }
 
     let tagFilteredList = items.filter((item) => {
+      for (let tag of activeExclusionFilters) {
+        if ((item.title === tag.label && tag.type === "Role") ||
+            item.majors.some(major => major.label === tag.label && major.majorId === tag.skillId) ||
+            item.skills.some(skill => skill.skillId === tag.skillId))
+          return false;
+      }
       if (activeSkillFilters.length === 0) return true;
       let matchesAny = false;
       let matchesAll = true;
