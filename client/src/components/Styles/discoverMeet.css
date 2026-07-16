@@ -1390,10 +1390,7 @@ Filters / Tags Style Rules
 
 .filter-tab {
   margin-bottom: 0px;
-  padding-top: 2% !important;
-  padding-bottom: 2% !important;
-  padding-left: 1%;
-  padding-right: 1%;
+  padding: 8px 16px !important;
   background-color: var(--header-color);
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
@@ -1595,10 +1592,9 @@ Filters / Tags Style Rules
   }
 
   .filter-tab {
-    width: fit-content !important;
-    padding-left: 1% !important;
-    padding-right: 1% !important;
-  }
+  width: fit-content !important;
+  padding: 6px 12px !important;
+}
 
   #filter-tags {
     /* height: 80% !important; */
