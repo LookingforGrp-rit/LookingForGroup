@@ -32,7 +32,6 @@ import {
 	UserPreview,
 	ProjectMember,
 	JobAvailability,
-	JobDuration,
 	JobLocation,
 	JobCompensation,
 	Role,
@@ -42,7 +41,6 @@ import {
 } from "@looking-for-group/shared";
 import {
 	JobAvailability as JobAvailabilityEnums,
-	JobDuration as JobDurationEnums,
 	JobLocation as JobLocationEnums,
 	JobCompensation as JobCompensationEnums,
 } from "@looking-for-group/shared/enums";
@@ -77,8 +75,8 @@ const emptyJob: Pending<ProjectJob> = {
 	compensation: null,
 	contact: null,
 	description: "",
-	duration: null,
-	durationCount: null,
+	jobStart: null,
+	jobEnd: null,
 	localId: null,
 	location: null,
 	role: null,
@@ -319,8 +317,8 @@ export const TeamTab = ({
 				current.role?.roleId !== original.role?.roleId ||
 				current.availability !== original.availability ||
 				current.location !== original.location ||
-				current.duration !== original.duration ||
-				current.durationCount !== original.durationCount ||
+				current.jobStart !== original.jobStart ||
+				current.jobEnd !== original.jobEnd ||
 				current.compensation !== original.compensation ||
 				current.description !== original.description ||
 				current.contact?.userId !== original.contact?.userId
@@ -897,7 +895,6 @@ export const TeamTab = ({
 				isNullOrUndefined(currentJob.role?.roleId) ||
 				isNullOrUndefined(currentJob.availability) ||
 				isNullOrUndefined(currentJob.location) ||
-				isNullOrUndefined(currentJob.duration) ||
 				isNullOrUndefined(currentJob.compensation) ||
 				isNullOrUndefined(currentJob.contact?.userId) ||
 				currentJob.jobSkills?.length === 0
@@ -918,8 +915,8 @@ export const TeamTab = ({
 					availability: currentJob.availability,
 					compensation: currentJob.compensation,
 					contactUserId: currentJob.contact.userId,
-					duration: currentJob.duration,
-					durationCount: currentJob.durationCount ?? undefined,
+					jobStart: currentJob.jobStart,
+					jobEnd: currentJob.jobEnd,
 					location: currentJob.location,
 					roleId: currentJob.role.roleId,
 					description: currentJob.description ?? undefined,
@@ -1012,8 +1009,8 @@ export const TeamTab = ({
 					compensation: currentJob.compensation ?? undefined,
 					contactUserId: currentJob.contact?.userId ?? undefined,
 					description: currentJob.description ?? undefined,
-					duration: currentJob.duration ?? undefined,
-					durationCount: currentJob.durationCount ?? undefined,
+					jobStart: currentJob.jobStart ?? undefined,
+					jobEnd: currentJob.jobEnd ?? undefined,
 					location: currentJob.location ?? undefined,
 					roleId: currentJob.role?.roleId ?? undefined
 				}
@@ -1173,15 +1170,7 @@ export const TeamTab = ({
 					</div>
 					<div id="open-position-details-right">
 						<div id="position-duration">
-							<span className="position-detail-indicator">
-								Duration:{" "}
-							</span>
-							{currentJob?.durationCount
-								? `${currentJob.durationCount} `
-								: ""}
-							{currentJob &&
-								currentJob?.duration &&
-								JobDurationEnums[currentJob.duration]}
+							{/* Put start/end date UI here */}
 						</div>
 						<div id="position-compensation">
 							<span className="position-detail-indicator">
@@ -1524,8 +1513,8 @@ export const TeamTab = ({
 				</div>
 				<div id="edit-position-details-right">
 					<div className="edit-position-container">
-						<label className="edit-position-duration">
-							Duration
+						<label className="edit-position-job-start">
+							Job Start
 							<span
 								className="required-asterisk"
 								aria-hidden="true"
@@ -1533,80 +1522,17 @@ export const TeamTab = ({
 								*
 							</span>
 						</label>
-						<input
-							className="edit-position-duration-count"
-							type="number"
-							min={1}
-							placeholder="#"
-							aria-label="Duration amount"
-							value={currentJob?.durationCount ?? ""}
-							onChange={(e) => {
-								const raw = e.target.value;
-								setCurrentJob({
-									...currentJob,
-									durationCount:
-										raw === ""
-											? null
-											: Math.max(
-												1,
-												Math.floor(Number(raw))
-											)
-								} as ProjectJob);
-							}}
-						/>
-						<Select>
-							<SelectButton
-								placeholder="Select"
-								initialVal={
-									isCreatingNewPosition
-										? ""
-										: getProjectJob(
-											currentJob?.role
-												?.roleId as number
-										) &&
-											getProjectJob(
-												currentJob?.role
-													?.roleId as number
-											)?.duration
-											? JobDurationEnums[
-											getProjectJob(
-												currentJob?.role
-													?.roleId as number
-											)!.duration!
-											] // explicit because its checked for before
-											: ""
-								}
-								type="input"
-							/>
-							<SelectOptions
-								callback={(e) => {
-									const key = Object.keys(
-										JobDurationEnums
-									).find(
-										(key) =>
-											JobDurationEnums[
-											key as keyof typeof JobDurationEnums
-											] ===
-											(e.target as HTMLButtonElement)
-												.value
-									);
-
-									setCurrentJob({
-										...currentJob,
-										duration: key as JobDuration
-									} as ProjectJob);
-								}}
-								options={Object.values(JobDurationEnums).map(
-									(option) => {
-										return {
-											markup: <>{option}</>,
-											value: option,
-											disabled: false
-										};
-									}
-								)}
-							/>
-						</Select>
+						{/* Put start/end calendar input here */}
+						<label className="edit-position-job-end">
+							Job End
+							<span
+								className="required-asterisk"
+								aria-hidden="true"
+								title="Required">
+								*
+							</span>
+						</label>
+						{/* Put start/end calendar input here */}
 					</div>
 					<div className="edit-position-container">
 						<label className="edit-position-compensation">

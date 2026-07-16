@@ -1,7 +1,6 @@
 import type {
   ProjectJob,
   JobAvailability,
-  JobDuration,
   JobLocation,
   JobCompensation,
 } from '@looking-for-group/shared';
@@ -16,7 +15,8 @@ export type JobInput = {
   roleId: number;
   contactUserId: number;
   availability: JobAvailability;
-  duration: JobDuration;
+  jobStart: Date;
+  jobEnd: Date;
   location: JobLocation;
   compensation: JobCompensation;
   description: string;
@@ -50,7 +50,8 @@ const addJobService = async (
         roleId: data.roleId,
         contactUserId: data.contactUserId,
         availability: data.availability,
-        duration: data.duration,
+        jobStart: data.jobStart,
+        jobEnd: data.jobEnd,
         location: data.location,
         compensation: data.compensation,
         description: data.description,

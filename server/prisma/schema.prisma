@@ -42,7 +42,8 @@ model Jobs {
   roleId        Int              @map("role_id")
   contactUserId Int              @map("contact_user_id")
   availability  JobsAvailability
-  duration      JobsDuration
+  jobStart      DateTime
+  jobEnd        DateTime
   location      JobsLocation
   compensation  JobsCompensation
   contact       Members          @relation(fields: [projectId, contactUserId], references: [projectId, userId])
