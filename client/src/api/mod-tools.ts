@@ -1,5 +1,5 @@
 import { GET, DELETE, PATCH } from "./index";
-import { ApiResponse, UserAccessLevel } from "@looking-for-group/shared";
+import { ApiResponse, UserAccessLevel, UnapproveProjectInput } from "@looking-for-group/shared";
 import { ProjectPreview, ProjectDetail, ProjectReport } from "@looking-for-group/shared";
 
 /**
@@ -47,6 +47,23 @@ export const approveProjectRequest = async (
 
     if (response.error) console.log(`Error in approveProjectRequest: ${response.error}`);
     return response;
+};
+
+export const unapproveProject = async (projectId: number, data: UnapproveProjectInput) => {
+    const apiURL = `/projects/${projectId}/unapprove`;
+
+    const response = await PATCH(apiURL, data);
+
+    if (response.error) console.log(`Error in unapproveProject: ${response.error}`);
+    return response;
+};
+
+export const approveProjectReport = async(
+    reportId: number, 
+    projectId: number, 
+    data: UnapproveProjectInput
+) => {
+    const res = unapproveProject(projectId, data);
 };
 
 /**

@@ -19,12 +19,12 @@ import {
   leaveProject as leaveProjectApi,
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
-import { MePrivate, ProjectPreview, ProjectVideo, ProjectWithFollowers, ProjectReport } from "@looking-for-group/shared";
+import { MePrivate, ProjectPreview, ProjectVideo, ProjectWithFollowers, ProjectReport, UnapproveProjectInput } from "@looking-for-group/shared";
 import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 //import { router } from "../../../../server/src/api/routes/me.ts"
 import { reportProject } from "../../api/projects";
 import { getCurrentAccount } from "../../api/users";
-import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport } from "../../api/mod-tools";
+import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport, approveProjectReport } from "../../api/mod-tools";
 
 //Main component for the project page
 /**
@@ -267,15 +267,25 @@ const Project = () => {
 
   /**
    * Resolves a project report
-   * @param action The action to take on the report ('dismiss' or 'unapprove')
+   * @param action The action to take on the report ('dismiss' or 'unapprove project')
    */
-  const resolveReport = async (action: 'dismiss' | 'unapprove') => {
+  const resolveReport = async (action: 'dismiss' | 'unapprove project') => {
     if (!reportedProject) return;
 
-    const res = await deleteProjectReport(reportedProject.reportId);
-    if (res.status === 200) {
-      // refresh page
-      window.location.reload();
+    if (action === 'dismiss') {
+      const res = await deleteProjectReport(reportedProject.reportId);
+      if (res.status === 200) {
+        // refresh page
+        window.location.reload();
+      }
+    } else if (action === 'unapprove project') {
+      const res = await approveProjectReport(
+        reportedProject.reportId, 
+        reportedProject.projectId, 
+        { 
+          reason: editMessage.current?.value
+        } as UnapproveProjectInput
+      );
     }
   };
 
@@ -999,7 +1009,7 @@ const Project = () => {
                           >
                             Cancel
                           </button>
-                          <button className="confirm-btn" onClick={() => { resolveReport('unapprove'); }}>Submit</button>
+                          <button className="confirm-btn" onClick={() => { resolveReport('unapprove project'); }}>Submit</button>
                         </div>
                       </div>
                     </PopupContent>
