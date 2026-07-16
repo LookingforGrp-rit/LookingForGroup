@@ -386,26 +386,13 @@ const Project = () => {
                               setApprovalStatus("under-review");
                             }}
                           >
-                            request review
+                            Request Review
                           </PopupButton>
                           <PopupButton buttonId="request-cancel-button">
-                            cancel
+                            Cancel
                           </PopupButton>
                         </div>
                       </div>
-                    </div>
-                    <div id="project-request-buttons">
-                      <PopupButton buttonId="request-confirm-button"
-                      callback={() => {
-                        if (displayedProject) requestProjectReview(projectID);
-                        setApprovalStatus("under-review");
-                      }}
-                      >
-                        Request Review
-                      </PopupButton>
-                      <PopupButton buttonId="request-cancel-button">
-                        Cancel
-                      </PopupButton>
                     </div>
                 </PopupContent>
               </Popup> : "" }
