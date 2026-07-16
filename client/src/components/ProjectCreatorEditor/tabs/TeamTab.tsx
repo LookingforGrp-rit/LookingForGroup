@@ -78,6 +78,7 @@ const emptyJob: Pending<ProjectJob> = {
 	contact: null,
 	description: "",
 	duration: null,
+	durationCount: null,
 	localId: null,
 	location: null,
 	role: null,
@@ -319,6 +320,7 @@ export const TeamTab = ({
 				current.availability !== original.availability ||
 				current.location !== original.location ||
 				current.duration !== original.duration ||
+				current.durationCount !== original.durationCount ||
 				current.compensation !== original.compensation ||
 				current.description !== original.description ||
 				current.contact?.userId !== original.contact?.userId
@@ -917,6 +919,7 @@ export const TeamTab = ({
 					compensation: currentJob.compensation,
 					contactUserId: currentJob.contact.userId,
 					duration: currentJob.duration,
+					durationCount: currentJob.durationCount ?? undefined,
 					location: currentJob.location,
 					roleId: currentJob.role.roleId,
 					description: currentJob.description ?? undefined,
@@ -1010,6 +1013,7 @@ export const TeamTab = ({
 					contactUserId: currentJob.contact?.userId ?? undefined,
 					description: currentJob.description ?? undefined,
 					duration: currentJob.duration ?? undefined,
+					durationCount: currentJob.durationCount ?? undefined,
 					location: currentJob.location ?? undefined,
 					roleId: currentJob.role?.roleId ?? undefined
 				}
@@ -1172,6 +1176,9 @@ export const TeamTab = ({
 							<span className="position-detail-indicator">
 								Duration:{" "}
 							</span>
+							{currentJob?.durationCount
+								? `${currentJob.durationCount} `
+								: ""}
 							{currentJob &&
 								currentJob?.duration &&
 								JobDurationEnums[currentJob.duration]}
@@ -1526,6 +1533,27 @@ export const TeamTab = ({
 								*
 							</span>
 						</label>
+						<input
+							className="edit-position-duration-count"
+							type="number"
+							min={1}
+							placeholder="#"
+							aria-label="Duration amount"
+							value={currentJob?.durationCount ?? ""}
+							onChange={(e) => {
+								const raw = e.target.value;
+								setCurrentJob({
+									...currentJob,
+									durationCount:
+										raw === ""
+											? null
+											: Math.max(
+												1,
+												Math.floor(Number(raw))
+											)
+								} as ProjectJob);
+							}}
+						/>
 						<Select>
 							<SelectButton
 								placeholder="Select"
