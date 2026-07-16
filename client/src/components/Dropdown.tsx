@@ -41,7 +41,7 @@ type DropdownButtonProps = {
 type DropdownContentProps = {
   children: React.ReactNode; // Content inside the dropdown panel
   rightAlign?: boolean; // Align dropdown to right edge if true
-  openUpward?: boolean; // Align dropdown to top edge if true
+  openUpward?: boolean; // Open the dropdown content upward when there's not enough space in the bottom if true
 };
 
 type DropdownProps = {
