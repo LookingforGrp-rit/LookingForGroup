@@ -1232,6 +1232,16 @@ Project Creator and Editor Popup style rules
   margin: 0px;
 }
 
+#vertical-line{
+  width: 1px;
+  border-style: solid;
+  border-width: 3px;
+  color: var(--header-color);
+  margin: 0;
+  margin-left: -2.5%;
+  margin-right: 2.5%;
+}
+
 @media only screen and (max-width: 799px) {
   #project-editor-tag-search-tabs {
     flex-direction: row;
