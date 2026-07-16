@@ -632,7 +632,9 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       <Header dataSets={category == 'projects' ? projectDataSet : userDataSet}
         onSearch={category == 'projects' ? searchProjects : searchUsers}
         value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
-        setCurrentUserId={getAuth} />
+        setCurrentUserId={getAuth}
+        placeholderText={category == 'projects' ? "Search by Project" : "Search by Name"}
+      />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {heroContent}
 

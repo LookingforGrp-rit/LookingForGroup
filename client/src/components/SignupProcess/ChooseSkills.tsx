@@ -11,12 +11,12 @@ const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
 
 // Category color for each skill tab, matching the tag/filter-tab colors.
 const skillTabColors: Record<string, string> = {
-  Developer: "yellow",
-  Designer: "red",
-  Design: "red",
-  Soft: "purple",
-  Audio: "periwinkle",
-  Engineer: "cyan",
+	Developer: "yellow",
+	Designer: "red",
+	Design: "red",
+	Soft: "purple",
+	Audio: "periwinkle",
+	Engineer: "cyan",
 };
 
 // list of skills to choose from
@@ -228,28 +228,29 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 									</div>
 								</SortableContext>
 							</DndContext>
-							<button 
-            					type="button"
-								hidden={selectedSkills.length === 0} 
-            					className="delete-tags-btn" 
-            					onClick={() => {
+							<button
+								type="button"
+								hidden={selectedSkills.length === 0}
+								className="delete-tags-btn"
+								onClick={() => {
 									setSelectedSkills([]);
 									setSelectedSkillIds([]);
 								}}
-            					title="Remove all selected tags"
-          					>
-        					    <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
-        					</button>
+								title="Remove all selected tags"
+							>
+								<i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+							</button>
 						</div>
 						<div id="project-editor-tag-search">
 							<SearchBar
 								key={currentSkillsTab}
-								dataSets={[{data: allSkills}]}
+								dataSets={[{ data: allSkills }]}
 								onSearch={(results) =>
 									handleSearch(results as Skill[][])
 								}
 								value={searchValue}
 								setValue={setSearchValue}
+								placeholderText='Search for Tag'
 							/>
 							<div id="project-editor-tag-wrapper">
 								<SkillSearchTabs />
