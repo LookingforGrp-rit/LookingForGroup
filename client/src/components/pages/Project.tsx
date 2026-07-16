@@ -58,7 +58,7 @@ const Project = () => {
   const [shownTags, setShownTags] = useState(3);
   const [videos, setVideos] = useState<ProjectVideo[]>();
 
-  const reportMessage = useRef<HTMLInputElement>(null);
+  const reportMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>("");
 
   /**
@@ -484,7 +484,7 @@ const Project = () => {
                     <div className="small-popup" id="report-popup">
                       <h3>Report {displayedProject?.title ?? "Project"}</h3>
                       <p>You are about to report {displayedProject?.title ?? "Project"}. Please provide your reasoning below.</p>
-                      <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></input>
+                      <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></textarea>
                       <div className="confirm-deny-btns">
                         <PopupButton
                           buttonId="team-delete-member-cancel-button"
