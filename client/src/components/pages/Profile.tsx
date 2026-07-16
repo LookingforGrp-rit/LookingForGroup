@@ -596,7 +596,7 @@ const Profile = (userProfile: any) => {
               <img
                 src={usePreloadedImage(`${displayedProfile?.profileImage}`, profilePicture)}
                 id="profile-image"
-                alt="profile image"
+                alt={`${displayedProfile?.firstName} ${displayedProfile?.lastName}'s avatar`}
                 onError={(e) => {
                   const profileImg = e.target as HTMLImageElement;
                   profileImg.src = profilePicture;
@@ -609,12 +609,12 @@ const Profile = (userProfile: any) => {
               <div id="profile-info-text">
                 <div id="profile-top-row">
                   <div id="profile-names">
-                    <p id="profile-fullname">
+                    <h1 id="profile-fullname">
                       {displayedProfile?.firstName} {displayedProfile?.lastName}
-                    </p>
-                    <p id="profile-username">
+                    </h1>
+                    <h2 id="profile-username">
                       @{displayedProfile?.username}
-                    </p>
+                    </h2>
                   </div>
                   <div id="profile-buttons">{aboutMeButtons}</div>
                 </div>
@@ -683,7 +683,7 @@ const Profile = (userProfile: any) => {
             <div id="contact-and-skills">
               <div id="socials">
                 <div className="contact-skills-edit-label-btn">
-                  <p id="title">Contact Me</p>
+                  <h1 id="title">Contact Me</h1>
                   {isUsersProfile ? <ProfileEditPopup editContact={true} />
                     : ""}</div>
                 <div id="profile-email">
@@ -859,7 +859,7 @@ const Profile = (userProfile: any) => {
 
               <div id="skills">
                 <div className="contact-skills-edit-label-btn">
-                  <p id="title">Skills</p>
+                  <h1 id="title">Skills</h1>
                   {isUsersProfile ? <ProfileEditPopup editSkills={true} />
                     : ""}</div>
                 <div id="skill-block">
@@ -902,7 +902,7 @@ const Profile = (userProfile: any) => {
             </div>
             {isUsersProfile ?
               <div id="profile-likes">
-                <p id="title">Likes</p>
+                <h1 id="title">Likes</h1>
                 <div id="likes-block">
                   <div id="likes-tabs">
                     <button id="likes-projects" onClick={() => switchTab(true)}>Projects</button>
