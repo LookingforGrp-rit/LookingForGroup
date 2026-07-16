@@ -34,9 +34,6 @@ const SideBar = () => {
 
   const [active, setActive] = useState(false);
 
-  // const [headerText, setHeaderText] = useState('Group'); // State to manage the h1 text
-  const navigate = useNavigate(); // Hook for navigation
-
   let startingPage: string;
 
   const sidebarBtns = document.getElementsByClassName("sidebar-btn");
@@ -172,7 +169,7 @@ const SideBar = () => {
    *
    * @param text - Name of the page (e.g., "Discover")
    * @param path - URL path to navigate to (e.g., "/discover")
-   */
+   
   const handleTextChange = (text: string, path: string) => {
     // setHeaderText(text);
     setActivePage(text);
@@ -204,7 +201,7 @@ const SideBar = () => {
     if (window.location.href.includes("profile")) {
       window.location.reload();
     }
-  };
+  };**/
 
   /**
    * Handles window resize events and updates width state.

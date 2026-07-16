@@ -3,7 +3,7 @@ import { DiscoverCarousel } from '../DiscoverCarousel';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
 import ToTopButton from '../ToTopButton';
-import { getByID } from '../../api/projects';
+import { getByID, getProjectFollowers } from '../../api/projects';
 import { getProjectFollowing } from '../../api/users';
 
 import {
@@ -27,25 +27,25 @@ let index = 0;
 let count = 10;
 
 //Synchronous storing of the full project list for quick reference
-let syncFullProjectList : ProjectPreview[] = [];
+let syncFullProjectList: ProjectPreview[] = [];
 
 enum sortModes {
   "A-Z" = "A-Z",
   "Z-A" = "Z-A",
   "Newest" = "Newest",
   "Oldest" = "Oldest",
-  "Followers (NOT IMPLEMENTED)" = "Followers (NOT IMPLEMENTED)",
-  "Followers Acending (NOT IMPLEMENTED)" = "Followers Acending (NOT IMPLEMENTED)",
+  "Followers" = "Followers",
+  "Followers Ascending" = "Followers Ascending",
 }
 
 type FilterData = {
-    tags: Tag[],
-    filterMode: 'Match All' | 'Match Any'
-    sortMode: sortModes,
-  }
+  tags: Tag[],
+  filterMode: 'Match All' | 'Match Any'
+  sortMode: sortModes,
+}
 
 //Stores current filter settings
-let filterData: FilterData = {tags: [], filterMode: 'Match All', sortMode: sortModes.Newest};
+let filterData: FilterData = { tags: [], filterMode: 'Match All', sortMode: sortModes.Newest };
 
 export const DiscoverPage = () => {
   // --------------------
@@ -72,7 +72,7 @@ export const DiscoverPage = () => {
   }, [fullProjectList]);
 
   // When passing in data for project carousel, pass in the first three projects after getting their details
-// Hide the carousel while the user has an active search (non-empty search input)
+  // Hide the carousel while the user has an active search (non-empty search input)
   const heroContent = currentSearch.trim() === '' ? (
     <DiscoverCarousel dataList={heroProjectList} />
   ) : null;
@@ -223,9 +223,7 @@ export const DiscoverPage = () => {
         projects.push(returnedProjects[i]);
       }
     }
-
-    console.log(projects);
-
+    
     if (!projects) {
       return;
     }
@@ -264,6 +262,40 @@ export const DiscoverPage = () => {
       <p style={{ color: 'red' }}>No More Projects!</p> :
       <button id='btn-loadmore' onClick={() => sortProjects()}>Load More Projects</button>);
 
+    
+
+    //sort projects
+    switch (method) {
+      case 'Newest':
+        projects = projects.toSorted(
+          (project1, project2) => project2.projectId - project1.projectId,
+        );
+        break;
+      case 'A-Z':
+        projects = projects.toSorted(
+          (project1, project2) => project1.title.localeCompare(project2.title),
+        );
+        break;
+      case 'Popular':
+        const followersList = await Promise.all(projects.map(
+          project => getProjectFollowers(project.projectId)
+        ));
+        const projectsWithFollowers = projects.map((project, index) => {
+          console.log(project.title + " " + followersList[index]);
+          return {
+            project,
+            followers: followersList[index].data,
+          };
+        });
+        projects = projectsWithFollowers.toSorted((project1, project2) => {
+          const p1followers = project1.followers?.count ?? 0;
+          const p2followers = project2.followers?.count ?? 0;
+          return p2followers - p1followers;
+        })
+          .map(item => item.project);
+        break;
+    }
+    
     if (invert) {
       setFullProjectList(projects.toReversed());
       syncFullProjectList = projects.toReversed();
@@ -291,13 +323,13 @@ export const DiscoverPage = () => {
   * @param activeTagFilters Tags that are shown to the user now
   */
   const updateProjectList = async (activeTagFilters: Tag[], filterMode: "Match All" | "Match Any", sortMode: sortModes) => {
-    if(filterData.sortMode !== sortMode){
+    if (filterData.sortMode !== sortMode) {
       sortProjects(sortMode);
     }
 
     //save filters
-    filterData = {tags: activeTagFilters, filterMode, sortMode};
-    
+    filterData = { tags: activeTagFilters, filterMode, sortMode };
+
     const projectList = syncFullProjectList;
     // Get project and user info to match with tags
     const items: ProjectWithFollowers[] = [];
@@ -416,13 +448,11 @@ export const DiscoverPage = () => {
         // Compare age inverted
         setupProjectData("Newest", true);
         break;
-      case 'Followers (NOT IMPLEMENTED)':
-        // TO IMPLIMENT once backend 
-        setupProjectData("A-Z", false);
+      case 'Followers':
+        setupProjectData("Popular", false);
         break;
-      case "Followers Acending (NOT IMPLEMENTED)":
-        // TO IMPLIMENT
-        setupProjectData("A-Z", true);
+      case "Followers Ascending":
+        setupProjectData("Popular", true);
         break;
       default:
         //default to newest first
@@ -551,7 +581,9 @@ export const DiscoverPage = () => {
         onSearch={searchProjects}
         value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
         setCurrentUserId={getAuth}
-        searchOnFocus={handleSearchFocus} />
+        searchOnFocus={handleSearchFocus}
+        placeholderText="Search by Project"
+      />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {heroContent}
 

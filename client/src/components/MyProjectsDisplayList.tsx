@@ -141,7 +141,7 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
           <DropdownButton buttonId="list-card-options-button">
             <ThemeIcon id={'menu'} width={35} height={15} className={'color-fill dropdown-menu'} ariaLabel={'More options'} />
           </DropdownButton>
-          <DropdownContent rightAlign={true}>
+          <DropdownContent rightAlign={true} openUpward={true}>
             <div className={`card-options-list ${optionsShown ? 'show' : ''}`}>
               <button className="card-leave-button" onClick={() => navigate(projectURL)}>
                 <ThemeIcon

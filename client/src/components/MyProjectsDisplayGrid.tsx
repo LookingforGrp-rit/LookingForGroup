@@ -143,7 +143,7 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
               ariaLabel={"More options"}
             />
           </DropdownButton>
-          <DropdownContent rightAlign={true}>
+          <DropdownContent rightAlign={true} openUpward={true}>
             <div className={`card-options-list ${optionsShown ? "show" : ""}`}>
               <button className="card-leave-button" onClick={() => navigate(projectURL)}>
                 <ThemeIcon
