@@ -31,25 +31,19 @@ vi.mock('#services/transformers/projects/parts/project-social.ts', () => ({
 const now = new Date();
 
 const testSocial1 = {
-  id: 1,
   websiteId: 29,
   url: 'www.test.com',
   label: 'Test',
-  alias: 'Click here to test',
   socials: {
-    websiteId: 29,
     label: 'Test',
   },
 };
 
 const testSocial2 = {
-  id: 2,
   websiteId: 42,
   url: 'www.test2.com',
   label: 'Test 2',
-  alias: 'Click here to test 2',
   socials: {
-    websiteId: 42,
     label: 'Test 2',
   },
 };
@@ -73,19 +67,15 @@ const prismaProject = {
 
 const transformedSocials: ProjectSocial[] = [
   {
-    id: 1,
     websiteId: 29,
     url: 'www.test.com',
     label: 'Test',
-    alias: 'Click here to test',
     apiUrl: '/api/projects/1/socials/29',
   },
   {
-    id: 2,
     websiteId: 42,
     url: 'www.test2.com',
     label: 'Test 2',
-    alias: 'Click here to test 2',
     apiUrl: '/api/projects/1/socials/42',
   },
 ];
@@ -94,12 +84,10 @@ describe('getProjectSocialsService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (transformProjectSocial as Mock).mockImplementation(
-      (projectId: number, { id, url, alias, websiteId, label }) => ({
-        id: id,
+      (projectId: number, { url, websiteId, label }) => ({
+        label: label,
         websiteId: websiteId,
         url: url,
-        label: label,
-        alias: alias,
         apiUrl: `/api/projects/${projectId.toString()}/socials/${websiteId.toString()}`,
       }),
     );

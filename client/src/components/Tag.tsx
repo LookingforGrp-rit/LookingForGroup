@@ -25,7 +25,6 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
   let color = "grey";
   switch (type) {
     case "project type":
-    case "medium":
       color = "blue";
       break;
 

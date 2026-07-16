@@ -320,19 +320,9 @@ export interface JobSkill extends Skill {
  */
 export interface UserSocial extends Social {
   /**
-   * The DB id of this user social
-   */
-  id: number;
-
-  /**
    * The url to the user's social media account
    */
   url: string;
-
-  /**
-   * Alias for the link
-   */
-  alias: string;
 }
 
 /**
@@ -1023,19 +1013,9 @@ export interface ProjectMember {
  */
 export interface ProjectSocial extends Social {
   /**
-   * DB id of the project social
-   */
-  id: number;
-
-  /**
    * The url to the project's social media account
    */
   url: string;
-
-  /**
-  * Alias of the url
-  */
-  alias: string;
 
   /**
    * The location of this resource on the server
@@ -1390,12 +1370,12 @@ export type SessionUserData = Partial<{
 /**
  * Data required to add a social media link to a user's profile
  */
-export type AddUserSocialInput = Pick<UserSocial, "websiteId" | "url" | "alias">;
+export type AddUserSocialInput = Pick<UserSocial, "websiteId" | "url">;
 
 /**
  * Data required to update an existing social media link on a user's profile
  */
-export type UpdateUserSocialInput = Partial<Pick<UserSocial, "url" | "alias" | "websiteId">>;
+export type UpdateUserSocialInput = Partial<Pick<UserSocial, "url">>;
 
 /**
  * Data required to add a skill to a user's profile
@@ -1555,12 +1535,12 @@ type GetMemberRequest = {
 /**
  * Data required to add a social media link to a project
  */
-export type AddProjectSocialInput = Pick<ProjectSocial, "websiteId" | "url" | "alias">;
+export type AddProjectSocialInput = Pick<ProjectSocial, "websiteId" | "url">;
 
 /**
  * Data required to update the url of an existing social media link on a project
  */
-export type UpdateProjectSocialInput = Partial<Pick<ProjectSocial, "url" | "alias" | "websiteId">>;
+export type UpdateProjectSocialInput = Partial<Pick<ProjectSocial, "url">>;
 
 /**
  * Data required to change which project image is used as the thumbnail

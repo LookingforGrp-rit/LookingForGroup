@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, ChangeEvent} from 'react';
-// import { DiscoverFilters } from '../DiscoverFilters';
+import { DiscoverFilters } from '../DiscoverFilters';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
 import { ThemeImage } from '../ThemeIcon';
@@ -14,24 +14,6 @@ import {
   Skill
 } from '@looking-for-group/shared';
 import { DiscoverProfiles } from '../DiscoverProfiles';
-
-enum sortModes {
-  "A-Z" = "A-Z",
-  "Z-A" = "Z-A",
-  "Newest" = "Newest",
-  "Oldest" = "Oldest",
-  "Followers (NOT IMPLEMENTED)" = "Followers (NOT IMPLEMENTED)",
-  "Followers Acending (NOT IMPLEMENTED)" = "Followers Acending (NOT IMPLEMENTED)",
-}
-
-type FilterData = {
-    skills: Skill[],
-    filterMode: 'Match All' | 'Match Any'
-    sortMode: sortModes,
-  }
-
-//Stores current filter settings
-let filterData: FilterData = {skills: [], filterMode: 'Match All', sortMode: sortModes.Newest};
 
 export const ProfileMeetPage = () => {
   //banner for the meets page
@@ -110,8 +92,8 @@ export const ProfileMeetPage = () => {
   };
 
   // Set the necessary data for user mode
-  const setupUserData = async (method: string, invert: boolean) => {
-    const userRes = await getUsers(method);
+  const setupUserData = async () => {
+    const userRes = await getUsers();
 
     if (!userRes.data) {
       return;
@@ -131,14 +113,8 @@ export const ProfileMeetPage = () => {
     }
     setUserCache(newUserCache);
 
-    if (invert) {
-      setFullUserList(userRes.data.toReversed());
-      setFilteredUserList(userRes.data.toReversed());
-    }
-    else {
-      setFullUserList(userRes.data);
-      setFilteredUserList(userRes.data);
-    }
+    setFullUserList(userRes.data);
+    setFilteredUserList(userRes.data);
 
     setLoaded(true);
   };
@@ -174,14 +150,7 @@ export const ProfileMeetPage = () => {
  * Changes what items are shown to the user whenever a filter has been added or changed
  * @param activeTagFilters Tags that are shown to the user now
  */
-  const updateUserList = async (activeSkillFilters: Skill[], filterMode: "Match All" | "Match Any", sortMode: sortModes) => {
-    console.log(activeSkillFilters, filterMode, sortMode)
-    if (filterData.sortMode !== sortMode) {
-      sortPeople(sortMode);
-    }
-
-    filterData = {skills: activeSkillFilters, filterMode, sortMode};
-
+  const updateUserList = async (activeSkillFilters: Skill[] | {label: string, type: string}[]) => {
     const userList = fullUserList;
 
     // Get user info to match with tags
@@ -204,78 +173,63 @@ export const ProfileMeetPage = () => {
 
     let tagFilteredList = items.filter((item) => {
       if (activeSkillFilters.length === 0) return true;
-      let matchesAny = false;
+      //let matchesAny = false;
+      //TODO: change to accept a match any/match all setting (currently it's match all)
       let matchesAll = true;
 
       for (const tag of activeSkillFilters) {
+        console.log(tag)
+          console.log(item.designer);
         // Check for broad filter label Developer
         if (tag.label === 'Developer') {
           matchesAll = item.developer;
-          matchesAny = item.developer;
         }
         else if (tag.label === 'Designer') {
-          if (item.designer)
-            matchesAny = true;
-          else
-            matchesAll = false;
+          matchesAll = item.designer;
         }
         else if (tag.label === 'Audio') {
           //TODO: replace with an item boolean like with designer or developer, probably a backend task
           const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
             .filter((s) => typeof s === 'string');
 
-          if (userSkills.includes(tag.label.toLowerCase().trim())) 
-            matchesAny = true;
-          else
-            matchesAll = false;
+          matchesAll = userSkills.includes(tag.label.toLowerCase().trim());
+        }
+        else if (tag.label === 'Soft') {
+          //TODO: replace with an item boolean like with designer or developer, probably a backend task
+          const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
+            .filter((s) => typeof s === 'string');
+
+          matchesAll = userSkills.includes(tag.label.toLowerCase().trim());
         }
         else if (tag.label === 'Engineer') {
           //TODO: replace with an item boolean like with designer or developer, probably a backend task
           const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
             .filter((s) => typeof s === 'string');
 
-          if (userSkills.includes(tag.label.toLowerCase().trim()))
-            matchesAny = true;
-          else
-            matchesAll = false;
+          matchesAll = userSkills.includes(tag.label.toLowerCase().trim());
         }
-        else if (tag.label === 'Other') {
-          const types = item.skills?.map(s => s.type);
-          if (types.includes("Audio") || types.includes("Designer") || types.includes("Developer") || types.includes("Engineer"))
-            matchesAll = false;
-          else
-            matchesAny = true;
+        else if (tag.label === 'Other' && (item.designer || item.developer)) {
+          matchesAll = false;
         }
         // Check role and major by name since IDs are not unique relative to tags
-        else if (tag.type === 'Role') { 
-          if (item.title === tag.label)
-            matchesAny = true;
-          else 
-            matchesAll = false;  
+        else if ((tag as {label: string, type: string}).type === 'Role') { 
+          matchesAll = item.title === tag.label;  
         }
         else if ((tag as {label: string, type: string}).type === 'Major') {
           const userMajors = item.majors?.map((s) => s?.label?.toLowerCase())
             .filter((s) => typeof s === 'string');
-          if (userMajors.includes(tag.label.toLowerCase()))
-            matchesAny = true;
-          else
-            matchesAll = false;
+          matchesAll = userMajors.includes(tag.label.toLowerCase());
         }
         // Check for specific skills
-        else {
+        else if ((tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft' || tag.type === 'Audio' || tag.type === 'Engineer')) {
           const userSkills = item.skills?.map((s) => s?.label?.toLowerCase())
             .filter((s) => typeof s === 'string');
+            console.log(tag)
 
-          if (userSkills.includes(tag.label.toLowerCase().trim()))
-            matchesAny = true;
-          else
-            matchesAll = false
+          matchesAll = userSkills.includes(tag.label.toLowerCase().trim());
         }
       }
-      if (filterMode === "Match All")
-        return matchesAll;
-      else
-        return matchesAny;
+      return matchesAll;
     });
 
     // If no tags are currently selected, render all projects
@@ -292,42 +246,8 @@ export const ProfileMeetPage = () => {
     // Set displayed projects
     setFilteredUserList(tagFilteredList);
   };
-  
-  const sortPeople = useCallback((newSortMode?: sortModes) => {
-    switch (newSortMode ?? filterData.sortMode) {
-      case "A-Z":
-        setupUserData("A-Z", false);
-        // Compare names
-        break;
-      case "Z-A":
-        // Compare names inverted
-        setupUserData("A-Z", true);
-        break;
-      case "Newest":
-        // Compare age
-        setupUserData("Newest", false);
-        break;
-      case "Oldest":
-        // Compare age inverted
-        setupUserData("Newest", true);
-        break;
-      case 'Followers (NOT IMPLEMENTED)':
-        // TO IMPLIMENT once backend 
-        setupUserData("A-Z", false);
-        break;
-      case "Followers Acending (NOT IMPLEMENTED)":
-        // TO IMPLIMENT
-        setupUserData("A-Z", true);
-        break;
-      default:
-        //default to newest first
-        setupUserData("Newest", false);
-        break;
-    }
-    if (newSortMode) filterData = {...filterData, sortMode: newSortMode};
-  }, [filterData]);
-  
-  useMemo(() => sortPeople(), []);
+
+  useMemo(() => setupUserData(), []);
 
   let discoverPanelContents: React.ReactElement;
   if (!loaded) {

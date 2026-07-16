@@ -19,24 +19,20 @@ vi.mock('#services/transformers/me/parts/my-social.ts', () => ({
 }));
 
 const prismaSocial = {
-  id: 1,
   websiteId: 1,
   userId: 1,
-  url: 'test.com',
-  alias: 'click here to test',
+  url: '',
   socials: {
     websiteId: 1,
-    label: 'test',
+    label: '',
   },
 };
 
 const transformed: MySocial = {
-  id: 1,
   apiUrl: 'api/me/socials/1',
-  url: 'test.com',
-  alias: 'click here to test',
+  url: '',
   websiteId: 1,
-  label: 'test',
+  label: '',
 };
 
 describe('addSocialService', () => {
@@ -48,10 +44,7 @@ describe('addSocialService', () => {
     vi.mocked(prisma.userSocials.create).mockResolvedValue(prismaSocial);
     vi.mocked(transformMySocial).mockReturnValue(transformed);
 
-    const result = await addSocialService(
-      { url: 'test.com', websiteId: 1, alias: 'click here to test' },
-      1,
-    );
+    const result = await addSocialService({ url: '', websiteId: 1 }, 1);
 
     expect(result).toBe(transformed);
   });
@@ -59,10 +52,7 @@ describe('addSocialService', () => {
   it('returns INTERNAL_ERROR when prisma throws', async () => {
     vi.mocked(prisma.userSocials.create).mockRejectedValue(new Error('db cursed'));
 
-    const result = await addSocialService(
-      { url: 'test.com', websiteId: 1, alias: 'click here to test' },
-      1,
-    );
+    const result = await addSocialService({ url: '', websiteId: 1 }, 1);
 
     expect(result).toBe('INTERNAL_ERROR');
   });

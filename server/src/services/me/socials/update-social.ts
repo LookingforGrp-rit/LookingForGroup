@@ -6,17 +6,20 @@ import { transformMySocial } from '#services/transformers/me/parts/my-social.ts'
 
 type UpdateSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
-//PATCH api/me/socials/{id}
+//PATCH api/me/socials/{websiteId}
 export const updateSocialService = async (
-  data: UpdateUserSocialInput,
-  id: number,
+  data: UpdateUserSocialInput & { websiteId: number },
+  userId: number,
 ): Promise<MySocial | UpdateSocialServiceError> => {
   try {
     const social = await prisma.userSocials.update({
       where: {
-        id: id,
+        userId_websiteId: {
+          userId: userId,
+          websiteId: data.websiteId,
+        },
       },
-      data: data,
+      data: data.url ? { url: data.url } : {},
       select: MySocialSelector,
     });
 

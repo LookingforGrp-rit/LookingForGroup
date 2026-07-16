@@ -565,15 +565,15 @@ export const addProjectSocial = async (
 // Update project socials
 /**
  * @param projectID - ID of the project
- * @param socialId - ID of the social to be updated
+ * @param websiteId - ID of the social to be updated
  * @param socialData - Data with which to update the social
  */
 export const updateProjectSocial = async (
   projectID: number,
-  socialId: number,
+  websiteId: number,
   socialData: UpdateProjectSocialInput
 ): Promise<ApiResponse<ProjectSocial>> => {
-  const apiURL = `/projects/${projectID}/socials/${socialId}`;
+  const apiURL = `/projects/${projectID}/socials/${websiteId}`;
   const response = await PATCH(apiURL, socialData);
 
   if (response.error)
@@ -584,13 +584,13 @@ export const updateProjectSocial = async (
 // Delete project socials
 /**
  * @param projectID - ID of the project
- * @param socialId - ID of the social to be deleted
+ * @param websiteId - ID of the social to be deleted
  */
 export const deleteProjectSocial = async (
   projectID: number,
-  socialId: number
+  websiteId: number
 ): Promise<ApiResponse<null>> => {
-  const apiURL = `/projects/${projectID}/socials/${socialId}`;
+  const apiURL = `/projects/${projectID}/socials/${websiteId}`;
   const response = await DELETE(apiURL);
 
   if (response.error)

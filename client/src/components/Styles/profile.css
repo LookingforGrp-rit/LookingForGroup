@@ -1869,12 +1869,12 @@ New Profile page style rules
   grid-area:header;
 } */
 #links-and-invite-project {
-  /* height: 100%; */
+  height: 100%;
   display: flex;
   flex-wrap: nowrap;
   flex-direction: column;
   align-items: end;
-  /* justify-content: flex-end; */
+  justify-content: flex-end;
 }
 
 #about-me-buttons {
@@ -1882,21 +1882,9 @@ New Profile page style rules
   display: flex;
   align-items: center;
   height: fit-content;
-  gap: 15px;
+  gap: 7px;
   flex-wrap: wrap;
   width: 100%;
-}
-
-#about-me-buttons a:link, #about-me-buttons a:visited {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-
-  text-decoration: none;
-}
-
-#about-me-buttons a:hover {
-  text-decoration: underline;
 }
 
 #about-me-buttons.about-me-buttons-minimal {

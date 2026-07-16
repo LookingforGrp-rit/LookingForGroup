@@ -209,174 +209,178 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 				<div className="CompleteProfile">
 					<h1 id="signupProcess-title">Complete Your Profile!</h1>
 					<p id="signupProcess-subTitle">
-						You can edit and add more later in your profile page
+						You can add more and edit later
 					</p>
 
 					<div className="error">{errorMsg}</div>
 
 					<div id="completeProfile-input-container">
-						<div id="completeProfile-input-section-1">						
+						<div id="profile-details">
 							<div
-								id="complete-profile-add-image"
+								id="profile-editor-add-image"
 								className="edit-profile-image">
 								<ProfileImageUploader
 									onFileSelected={handleUploadPfp}
 									initialImageFile={profileImage}
 								/>
 							</div>
-
-							<div id="complete-profile-row-1">
-
-								{/* Pronouns */}
-								<LabelInputBox
-									label={"Pronouns"}
-									inputType={"single"}
-									maxLength={20}
-									id="pronouns-input"
-									value={pronouns}
-									placeholder={"Pronouns"}
-									onChange={(e) => setPronouns(e.target.value)}
-									hideUnsaved={true}
-								/>
-
-								{/* Current Job Title */}
-								<div id="jobTitle-input">
-									<div className="dropdown-label">Job Title</div>
-									<Select>
-										<SelectButton
-											placeholder={"Job Title"}
-											initialVal={title ?? ""}
-											callback={(e) => e.preventDefault()}
-											buttonId="jobTitle-input"
-											type={"input"}
-											searchable={true}
-										/>
-										<SelectOptions
-											callback={(e) => {
-												const newTitle = (
-													e.target as HTMLButtonElement
-												).value;
-
-												setTitle(newTitle)
-											}}
-											options={(roles as Role[]).map((r) => ({
-												value: r.label,
-												markup: <>{r.label}</>,
-												disabled: false
-											}))}
-										/>
-									</Select>
-								</div>
-							</div>
-
-							<div id="complete-profile-row-2">
-								{/* RIT Status */}
-								{/*TODO: fix styling on this, the text is at the top of the box and you can't see any of the dropdown*/}
-								<div id="ritStatus-input">
-									<div className="dropdown-label">RIT Status <span className="required-asterisk">{majorAsterisk()}</span></div>
-									<Select>
-										<SelectButton
-											placeholder="RIT Status (Required)"
-											type={"input"}
-											initialVal={ritStatus}
-										/>
-										<SelectOptions
-											callback={(e) =>
-												setRitStatus(
-													(e.target as HTMLButtonElement)
-														.value as RitStatus
-												)
-											}
-											options={Object.keys(RitStatuses).map(
-												(key) => {
-													const val = RitStatuses[key as keyof typeof RitStatuses];
-													return {
-														value: key,
-														markup: <>{val}</>,
-														disabled: false
-													};
-												}
-											)}
-										/>
-									</Select>
-								</div>
-
-								{/* Major */}
-								<div id="major-input">
-									<div className="dropdown-label">Major <span className="required-asterisk">{majorAsterisk()}</span></div>
-									<Select>
-										<SelectButton
-											placeholder={majorRequired()}
-											type={"input"}
-											initialVal={major[0]?.label}
-											searchable={true}
-										/>
-										<SelectOptions
-											callback={(e) => {
-												//praying this works so i can migrate it to users
-												const maj = allMajors.find(
-													(m) =>
-														m.label ===
-														(e.target as HTMLButtonElement)
-															.value
-												);
-												if (maj) setMajor([maj]);
-											}}
-											options={allMajors.map((m) => ({
-												value: m.label,
-												markup: <>{m.label}</>,
-												disabled: false
-											}))}
-										/>
-									</Select>
-								</div>
-							</div>
-
-							<div id="complete-profile-row-3">
-								
-								{/* Phone Number */}
-								<LabelInputBox
-									label={"Phone Number"}
-									inputType={"single"}
-									maxLength={15}
-									id="phoneNumber-input"
-									value={phoneNumber}
-									placeholder={"Phone Number"}
-									onChange={(e) => {
-										const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
-										if (e.target.value.length != 0 && !phoneRegex.test(e.target.value)) {
-											setError('*Please enter a valid phone number.');
-											setValidPhoneNum(false);
-										} else {
-											setError('');
-											setValidPhoneNum(true);
-										}
-										setPhoneNumber(e.target.value);
-									}}
-									hideUnsaved={true}
-								/>
-
-								{/* Location */}
-								<LabelInputBox
-									label={"Location"}
-									inputType={"single"}
-									maxLength={50}
-									id="location-input"
-									value={location}
-									placeholder={"Location"}
-									onChange={(e) => setLocation(e.target.value)}
-									hideUnsaved={true}
-								/>
-							</div>
-							{/* <div className="signup-fullname">
-							<h2>
-								{userInfo.firstName} {userInfo.lastName}{' '}
-							</h2>
-
-							<p>@{userInfo.username}</p>
-							</div> */}
-							
 						</div>
+
+						{/* <div className="signup-fullname">
+              <h2>
+                {userInfo.firstName} {userInfo.lastName}{' '}
+              </h2>
+
+              <p>@{userInfo.username}</p>
+            </div> */}
+
+						{/* Pronouns */}
+						<LabelInputBox
+							label={"Add Pronouns"}
+							inputType={"single"}
+							maxLength={20}
+							id="pronouns-input"
+							value={pronouns}
+							placeholder={"Pronouns"}
+							onChange={(e) => setPronouns(e.target.value)}
+							hideUnsaved={true}
+						/>
+
+						{/* Headline */}
+						<LabelInputBox
+							label={"Add Headline"}
+							inputType={"single"}
+							maxLength={20}
+							id="headline-input"
+							value={headline}
+							placeholder={"Personal Quote"}
+							onChange={(e) => setHeadline(e.target.value)}
+							hideUnsaved={true}
+						/>
+
+						{/* Current Job Title */}
+						<div id="jobTitle-input">
+							<Select>
+								<SelectButton
+									placeholder={"Job Title"}
+									initialVal={title ?? ""}
+									callback={(e) => e.preventDefault()}
+									buttonId="jobTitle-input"
+									type={"input"}
+									searchable={true}
+								/>
+								<SelectOptions
+									callback={(e) => {
+										const newTitle = (
+											e.target as HTMLButtonElement
+										).value;
+
+										setTitle(newTitle)
+									}}
+									options={(roles as Role[]).map((r) => ({
+										value: r.label,
+										markup: <>{r.label}</>,
+										disabled: false
+									}))}
+								/>
+							</Select>
+						</div>
+
+						{/* RIT Status */}
+						{/*TODO: fix styling on this, the text is at the top of the box and you can't see any of the dropdown*/}
+						<div id="ritStatus-input">
+							<Select>
+								<SelectButton
+									placeholder="RIT Status (Required)"
+									type={"input"}
+									initialVal={ritStatus}
+								/>
+								<SelectOptions
+									callback={(e) =>
+										setRitStatus(
+											(e.target as HTMLButtonElement)
+												.value as RitStatus
+										)
+									}
+									options={Object.keys(RitStatuses).map(
+										(key) => {
+											const val = RitStatuses[key as keyof typeof RitStatuses];
+											return {
+												value: key,
+												markup: <>{val}</>,
+												disabled: false
+											};
+										}
+									)}
+								/>
+							</Select>
+							<div className="required-asterisk">*</div>
+						</div>
+
+						{/* Major */}
+						<div id="major-input">
+							<Select>
+								<SelectButton
+									placeholder={majorRequired()}
+									type={"input"}
+									initialVal={major[0]?.label}
+									searchable={true}
+								/>
+								<SelectOptions
+									callback={(e) => {
+										//praying this works so i can migrate it to users
+										const maj = allMajors.find(
+											(m) =>
+												m.label ===
+												(e.target as HTMLButtonElement)
+													.value
+										);
+										if (maj) setMajor([maj]);
+									}}
+									options={allMajors.map((m) => ({
+										value: m.label,
+										markup: <>{m.label}</>,
+										disabled: false
+									}))}
+								/>
+							</Select>
+							<div className="required-asterisk">{majorAsterisk()}</div>
+						</div>
+
+						{/* Phone Number */}
+						<LabelInputBox
+							label={"Add Phone Number"}
+							inputType={"single"}
+							maxLength={15}
+							id="phoneNumber-input"
+							value={phoneNumber}
+							placeholder={"Phone Number"}
+							onChange={(e) => {
+								const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+								if (e.target.value.length != 0 && !phoneRegex.test(e.target.value)) {
+									setError('*Please enter a valid phone number.');
+									setValidPhoneNum(false);
+								} else {
+									setError('');
+									setValidPhoneNum(true);
+								}
+								setPhoneNumber(e.target.value);
+							}}
+							hideUnsaved={true}
+						/>
+
+						{/* Location */}
+						<LabelInputBox
+							label={"Add Location"}
+							inputType={"single"}
+							maxLength={50}
+							id="location-input"
+							value={location}
+							placeholder={"Location"}
+							onChange={(e) => setLocation(e.target.value)}
+							hideUnsaved={true}
+						/>
+
 						{/* Fun Fact
 						<LabelInputBox
 							label={"Add Fun Fact"}
@@ -389,36 +393,17 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							hideUnsaved={true}
 						/> */}
 
-						<div id="completeProfile-input-section-2">
-							{/* Personal Quote */}
-							<LabelInputBox
-								label={"Personal Quote"}
-								labelInfo="Write a fun and catchy phrase that captures your unique personality! (Quotation marks already included)"
-								inputType={"multi"}
-								maxLength={20}
-								id="headline-input"
-								// placeholder={"Personal Quote"}
-								onChange={(e) => setHeadline(e.target.value)}
-								value={headline}
-								hideUnsaved={true}
-							/>
-						</div>
-
-						<div id="completeProfile-input-section-3">
-							{/* Bio */}
-							<LabelInputBox
-								label={"Bio"}
-								labelInfo="Share a brief overview of who you are, your interests, and what drives you!"
-								inputType={"multi"}
-								maxLength={100}
-								id="bio-input"
-								// placeholder={"Bio"}
-								onChange={(e) => setBio(e.target.value)}
-								value={bio}
-								hideUnsaved={true}
-							/>
-						</div>
-						
+						{/* Bio */}
+						<LabelInputBox
+							label={"Bio"}
+							inputType={"multi"}
+							maxLength={100}
+							id="bio-input"
+							placeholder={"Bio"}
+							onChange={(e) => setBio(e.target.value)}
+							value={bio}
+							hideUnsaved={true}
+						/>
 					</div>
 					<div id="signupProcess-btns">
 						<button id="signup-backBtn" onClick={onBack}>

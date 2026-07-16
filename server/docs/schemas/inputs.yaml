@@ -38,21 +38,14 @@ components:
           type: number
         url:
           type: string
-        alias:
-          type: string
       required:
         - websiteId
         - url
-        - alias
 
     UpdateUserSocialInput:
       type: object
       properties:
-        website:
-          type: integer
         url:
-          type: string
-        alias:
           type: string
 
     AddUserSkillsInput:
@@ -183,21 +176,14 @@ components:
           type: number
         url:
           type: string
-        alias:
-          type: string
       required:
         - websiteId
         - url
-        - alias
 
     UpdateProjectSocialInput:
       type: object
       properties:
-        websiteId:
-          type: number
         url:
-          type: string
-        alias:
           type: string
 
     AddProjectTagInput:

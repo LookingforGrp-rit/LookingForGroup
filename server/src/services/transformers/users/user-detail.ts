@@ -21,17 +21,19 @@ export const transformUserToDetail = (user: UsersGetPayload): UserDetail => {
     ...transformUserToPreview(user),
     bio: user.bio,
     ritStatus: user.ritStatus,
-    skills: user.userSkills.map(({ position, proficiency, skills }): UserSkill => ({
-      ...transformSkill(skills),
-      proficiency,
-      position,
-    })),
-    socials: user.userSocials.map(({ id, url, alias, socials }): UserSocial => ({
-      ...transformSocial(socials),
-      id,
-      url,
-      alias,
-    })),
+    skills: user.userSkills.map(
+      ({ position, proficiency, skills }): UserSkill => ({
+        ...transformSkill(skills),
+        proficiency,
+        position,
+      }),
+    ),
+    socials: user.userSocials.map(
+      ({ url, socials }): UserSocial => ({
+        ...transformSocial(socials),
+        url,
+      }),
+    ),
     projects: user.members.map(transformUserMember),
     followers: {
       users: user.followers.map(({ senderUser, followedAt }) => ({

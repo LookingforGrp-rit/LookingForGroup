@@ -19,19 +19,15 @@ vi.mock('#services/transformers/me/parts/my-social.ts', () => ({
 }));
 
 const prismaUserSocial = {
-  id: 1,
   userId: 1,
   websiteId: 1,
   url: 'old.com',
-  alias: 'old',
 };
 
 const transformed: MySocial = {
-  id: 1,
   apiUrl: 'api/me/socials',
   label: '',
   url: 'new.com',
-  alias: 'new',
   websiteId: 2,
 };
 
@@ -44,7 +40,7 @@ describe('updateSocialService', () => {
     vi.mocked(prisma.userSocials.update).mockResolvedValue(prismaUserSocial);
     vi.mocked(transformMySocial).mockReturnValue(transformed);
 
-    const result = await updateSocialService({ websiteId: 2, url: 'new.com', alias: 'new' }, 1);
+    const result = await updateSocialService({ websiteId: 2, url: 'new.com' }, 1);
 
     expect(result).toBe(transformed);
   });
@@ -52,7 +48,7 @@ describe('updateSocialService', () => {
   it('returns NOT_FOUND if website not found', async () => {
     vi.mocked(prisma.userSocials.update).mockRejectedValue({ code: 'P2025' });
 
-    const result = await updateSocialService({ websiteId: 20000, url: 'new.com', alias: 'new' }, 1);
+    const result = await updateSocialService({ websiteId: 20000, url: 'new.com' }, 1);
 
     expect(result).toBe('NOT_FOUND');
   });
@@ -60,7 +56,7 @@ describe('updateSocialService', () => {
   it('returns INTERNAL_ERROR when prisma throws', async () => {
     vi.mocked(prisma.userSocials.update).mockRejectedValue(new Error('db cursed'));
 
-    const result = await updateSocialService({ websiteId: 2, url: 'new.com', alias: 'new' }, 1);
+    const result = await updateSocialService({ websiteId: 2, url: 'new.com' }, 1);
 
     expect(result).toBe('INTERNAL_ERROR');
   });

@@ -54,11 +54,10 @@ export const Input: React.FC<CustomInputProps> = ({
     };
 
     const charsLeft = (props.maxLength || 0) - value.toString().length;
-    const percentLeft = charsLeft / props.maxLength!;
     let className = 'character-count';
-    if (percentLeft <= .3) className += ' character-count-near';
-    if (percentLeft <= .2) className += ' character-count-close';
-    if (percentLeft <= .1) className += ' character-count-danger';
+    if (charsLeft <= 30) className += ' character-count-near';
+    if (charsLeft <= 20) className += ' character-count-close';
+    if (charsLeft <= 10) className += ' character-count-danger';
 
     return (
       <div className="input-multiline-container" style={{ position: 'relative', height: '100%' }}>

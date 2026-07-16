@@ -50,7 +50,6 @@ import updateTag from './tags/update-tag.ts';
 import getThumbnail from './thumbnail/get-thumbnail.ts';
 import removeThumbnail from './thumbnail/remove-thumbnail.ts';
 import updateThumbnail from './thumbnail/update-thumbnail.ts';
-import { updateProjectGlobalVisibility } from './update-project-global-visibility.ts';
 import updateProject from './update-project.ts';
 import addVideo from './videos/add-video.ts';
 import deleteVideo from './videos/delete-video.ts';
@@ -116,6 +115,5 @@ export default {
   getMemberRequest,
   getMemberRequests,
   updateMemberRequest,
-  updateProjectGlobalVisibility,
   changeOwner,
 };

@@ -45,9 +45,7 @@ export const LinksTab: React.FC<LinksTabProps> = ({
   // complete list of socials
   const [allSocials, setAllSocials] = useState<Social[]>([]);
 
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
+  useEffect(() =>{
     setLocalProfile(structuredClone(profile))
   }, [profile]);
 
@@ -81,7 +79,7 @@ export const LinksTab: React.FC<LinksTabProps> = ({
       });
     } else if (targetSocial.websiteId) {
       dataManager.deleteSocial({
-        id: { type: 'canon', value: targetSocial.id },
+        id: { type: 'canon', value: targetSocial.websiteId },
         data: null
       });
     }
@@ -90,58 +88,8 @@ export const LinksTab: React.FC<LinksTabProps> = ({
     updatePendingProfile({ ...profileAfterLinkChanges, socials: filteredSocials });
   };
 
-  const handleSocialChange = (
-    index: number,
-    field: "alias" | "url",
-    value: string,
-    baseUrl: string,
-  ) => {
-    const socials = [...profileAfterLinkChanges.socials];
 
-    const updatedSocial = {
-      ...socials[index],
-      [field]: field === "url" ? baseUrl + value : value,
-    };
-
-    socials[index] = updatedSocial;
-
-    updatePendingProfile({
-      ...profileAfterLinkChanges,
-      socials,
-    });
-
-    const hasAlias = updatedSocial.alias.trim() !== "";
-    const hasUrl = updatedSocial.url.trim() !== baseUrl;
-
-    if (!hasAlias || !hasUrl) {
-      setError("Both Label and URL must be filled in to save changes.");
-      return;
-    }
-    setError('');
-
-    if ("localId" in updatedSocial) {
-      dataManager.addSocial({
-        id: {
-          type: "local",
-          value: updatedSocial.localId ?? ++localIdIncrement,
-        },
-        data: updatedSocial as AddUserSocialInput,
-      });
-    } else {
-      dataManager.updateSocial({
-        id: {
-          type: "canon",
-          value: updatedSocial.id,
-        },
-        data: {
-          alias: updatedSocial.alias,
-          url: updatedSocial.url,
-          websiteId: updatedSocial.websiteId,
-        },
-      });
-    }
-  };
-
+  //console.log(allSocials);
   // Otherwise render the editable profile socials UI
   return (
     <div id="editor-links">
@@ -149,7 +97,7 @@ export const LinksTab: React.FC<LinksTabProps> = ({
       <div className="editor-extra-info">
         Provide the links to pages you wish to include on your page.
       </div>
-      <div className='error'>{error}</div>
+      {/* <div className='error'>{error}</div> */}
 
       <div id="editor-link-list">
         {/* Social URL inputs */}
@@ -208,8 +156,8 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                     }}
                     // Hide duplicates, but always show 'Other'
                     options={
-                      allSocials ?
-                        allSocials
+                      allSocials ? 
+                      allSocials
                           // .filter((website) => {
                           //   if (website.label === "Other") return true;
                           //   if (website.label === social.label) return true; // Show currently selected platform
@@ -240,25 +188,10 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                               disabled: false,
                             };
                           })
-                        : []
+                         : []
                     }
                   />
                 </Select>
-                {/* Social Label input */}
-                <Input
-                  type='single'
-                  disabled={!social.label}
-                  style={{
-                    opacity: !social.label ? 0.4 : 1,
-                    cursor: !social.label ? "not-allowed" : "text",
-                  }}
-                  placeholder={'Label'}
-                  value={social.alias || ''}
-                  maxLength={45}
-                  onChange={(e) => {
-                    handleSocialChange(index, "alias", e.target.value, url);
-                  }}
-                ></Input>
                 {/* Social URL input */}
                 {url && <div id="base-url">{url}</div>}
                 <Input
@@ -271,7 +204,48 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                   placeholder={url === '' || !social.label ? "URL" : 'Username'}
                   value={social.url && social.label ? social.url.substring(url.length) : ''}
                   onChange={(e) => {
-                    handleSocialChange(index, "url", e.target.value, url);
+                    // TODO: Implement some sort of security check for URLs.
+                    // Could be as simple as checking the URL matches the social media
+                    // But since 'Other' is an option, might be good to just find some
+                    // external list of suspicious sites and make sure it's not one of those.
+                    const tempSocials = [...profileAfterLinkChanges.socials];
+                    const inputValue = e.target.value;
+                    tempSocials[index] = {
+                      ...tempSocials[index],
+                      url: url + inputValue
+                    };
+
+                    if (inputValue.trim() !== "") {
+                      if ("localId" in social) {
+                        dataManager.addSocial({
+                          id: {
+                            type: "local",
+                            value: social.localId ?? ++localIdIncrement
+                          },
+                          data: tempSocials[index] as AddUserSocialInput
+                        })
+                      }
+                      else {
+                        dataManager.updateSocial({
+                          id: {
+                            type: "canon",
+                            value: social.websiteId
+                          },
+                          data: {
+                            url: tempSocials[index].url
+                          }
+                        })
+                      }
+                    }
+                    console.log("PATCHING SOCIAL:", tempSocials[index]);
+                    updatePendingProfile({ ...profileAfterLinkChanges, socials: tempSocials });
+                  }}
+                  onBlur={(e) => {
+                    // Automatically clean empty entries when the user clicks away
+                    const inputValue = e.target.value;
+                    if (inputValue.trim() === "") {
+                      handleDeleteSocial(index);
+                    }
                   }}
                 />
                 <button
@@ -296,7 +270,6 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                 {
                   label: '',
                   url: '',
-                  alias: '',
                   apiUrl: "",
                   websiteId: 0,
                   localId: ++localIdIncrement,

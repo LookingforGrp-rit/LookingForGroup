@@ -2,13 +2,13 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import { deleteSocialService } from '#services/me/socials/delete-social.ts';
 
-//DELETE api/me/socials/{id}
+//DELETE api/me/socials/{websiteId}
 //delete a social from user profile
 export const deleteSocial = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   //the one you're deleting
-  const id = parseInt(req.params.id as string);
+  const social = parseInt(req.params.websiteId as string);
 
-  const result = await deleteSocialService(id);
+  const result = await deleteSocialService(social, req.currentUser.userId);
 
   //not found
   if (result === 'NOT_FOUND') {

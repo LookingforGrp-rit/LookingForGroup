@@ -80,7 +80,10 @@ const getAttributeById = async (userId: number, attributeId: number, attribute: 
     case 'social':
       return await prisma.userSocials.findUnique({
         where: {
-          id: attributeId,
+          userId_websiteId: {
+            userId,
+            websiteId: attributeId,
+          },
         },
       });
     case 'skill':

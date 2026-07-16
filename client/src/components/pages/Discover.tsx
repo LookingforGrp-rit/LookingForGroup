@@ -291,13 +291,12 @@ export const DiscoverPage = () => {
   * @param activeTagFilters Tags that are shown to the user now
   */
   const updateProjectList = async (activeTagFilters: Tag[], filterMode: "Match All" | "Match Any", sortMode: sortModes) => {
+    //save filters
+    filterData = {tags: activeTagFilters, filterMode, sortMode};
+
     if(filterData.sortMode !== sortMode){
       sortProjects(sortMode);
     }
-
-    //save filters
-    filterData = {tags: activeTagFilters, filterMode, sortMode};
-    
     const projectList = syncFullProjectList;
     // Get project and user info to match with tags
     const items: ProjectWithFollowers[] = [];

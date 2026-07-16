@@ -291,7 +291,6 @@ const Profile = (userProfile: any) => {
 
       // Only run this if profile data exists for user
       if (data) {
-        console.log(data);
         setDisplayedProfile(data);
         setMajorsArr(data.majors.map((maj) => maj.label));
         await getProfileProjectData();
@@ -719,16 +718,15 @@ const Profile = (userProfile: any) => {
                             id={link.label === "Other" ? "link" : link.label.toLowerCase()}
                             width={25}
                             height={25}
-                            className={"mono-fill"}
+                            className={"color-fill"}
                             ariaLabel={link.label}
                           />
-                          {link.alias}
                         </a>
                       ))}
                     </div>
                   )}
-                </div>
-                {/* Invite-to-project: only shown when a logged-in user is
+
+                  {/* Invite-to-project: only shown when a logged-in user is
                   viewing someone else's profile. */}
                   {(!isUsersProfile) && userID !== undefined && userID !== -1 && (
                     <Popup>
@@ -854,7 +852,9 @@ const Profile = (userProfile: any) => {
                         </div>
                       </PopupContent>
                     </Popup>
+
                   )}
+                </div>
               </div>
 
               <div id="skills">

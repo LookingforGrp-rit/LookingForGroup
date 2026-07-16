@@ -1,4 +1,4 @@
-import type { ProjectSocial, UpdateProjectSocialInput } from '@looking-for-group/shared';
+import type { ProjectSocial } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectSocialSelector } from '#services/selectors/projects/parts/project-social.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
@@ -6,26 +6,34 @@ import { transformProjectSocial } from '#services/transformers/projects/parts/pr
 
 type UpdateProjectSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
-//PATCH api/projects/{id}/socials/{socialId}
+//PATCH api/projects/{id}/socials/{websiteId}
 export const updateProjectSocialService = async (
-  data: UpdateProjectSocialInput,
+  url: string,
   projectId: number,
-  socialId: number,
+  websiteId: number,
 ): Promise<ProjectSocial | UpdateProjectSocialServiceError> => {
   try {
     //social validation (does it have this social)
     const socialExists = await prisma.projectSocials.findUnique({
       where: {
-        id: socialId,
+        projectId_websiteId: {
+          projectId,
+          websiteId,
+        },
       },
     });
     if (!socialExists) return 'NOT_FOUND';
 
     const social = await prisma.projectSocials.update({
       where: {
-        id: socialId,
+        projectId_websiteId: {
+          projectId,
+          websiteId,
+        },
       },
-      data: data,
+      data: {
+        url,
+      },
       select: ProjectSocialSelector,
     });
 
