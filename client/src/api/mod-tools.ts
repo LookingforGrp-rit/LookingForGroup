@@ -20,12 +20,14 @@ Promise<ApiResponse<ProjectPreview[]>> => {
 /**
  * Rejects (deletes) a pending approval request for a project
  * @param projectId The project request to delete
+ * @param message The message to send to the user that explains why the project request was declined
  */
 export const deleteProjectRequest = async (
-    projectId: number
+    projectId: number,
+    message: string
 ): Promise<ApiResponse> => {
     const apiURL = `/projects/unapproved/${projectId}`;
-    const response = await DELETE(apiURL);
+    const response = await DELETE(apiURL, {message});
 
     if (response.error) console.log(`Error in deleteProjectRequest: ${response.error}`);
     return response;
