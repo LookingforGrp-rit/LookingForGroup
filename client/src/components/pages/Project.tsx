@@ -224,34 +224,30 @@ const Project = () => {
    * Sends a report of the project if no report exists and
    * tells the user the result
    */
-const reportProjectPressed = async () => {
-  /* a loop hole around an empty string */
-  let message = "";
-  if (reportMessage?.current?.value == "")
-  {
-    message = "No message given.";
-  }
-  else
-  {
-    message = reportMessage?.current?.value ?? "No message given.";
-  }
+  const reportProjectPressed = async () => {
+    /* a loop hole around an empty string */
+    let message = "";
+    if (reportMessage?.current?.value == "") {
+      message = "No message given.";
+    }
+    else {
+      message = reportMessage?.current?.value ?? "No message given.";
+    }
 
-  const response = await reportProject(projectID, message);
-  let responseText = response.error;
-  if (responseText === null || responseText === undefined) {
-    responseText = "Your report was sent! Your request will be processed and receive an update shortly.";
-  }
-  /* A report on the project already exists */
-  else if (response.status === 409)
-  {
-    responseText = "This project has already been reported!";
-  }
-  else
-  {
-    responseText = "Uh oh! Something went wrong with your report!";
-  }
-  setReportResponseText(responseText);
-};
+    const response = await reportProject(projectID, message);
+    let responseText = response.error;
+    if (responseText === null || responseText === undefined) {
+      responseText = "Your report was sent! Your request will be processed and receive an update shortly.";
+    }
+    /* A report on the project already exists */
+    else if (response.status === 409) {
+      responseText = "This project has already been reported!";
+    }
+    else {
+      responseText = "Uh oh! Something went wrong with your report!";
+    }
+    setReportResponseText(responseText);
+  };
 
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
@@ -280,47 +276,47 @@ const reportProjectPressed = async () => {
               {/* Share Button */}
               <ShareButton />
               {approvalStatus == 'not-approved' ?
-              <Popup>
-                {/* Request Review button */}
-                <PopupButton className='project-info-dropdown-option'>
-                  <ThemeIcon
-                    id={"request-review"}
-                    width={27}
-                    height={27}
-                    ariaLabel={"request-Review"}
-                    className="mono-fill"
-                  />
-                  Request Review
-                </PopupButton>
-                <PopupContent>
-                  <div className="small-popup">
-                  <div id="project-request-review">
-                    <label id="project-request-label">
-                      Would you like to submit your project for review?
-                    </label>
-                    <div id="project-request-info">
-                      Submiting a request will make your project visible to moderators who will choose to either
-                      accept and make your project visible to all, request changes for you to make, 
-                      or reject it for various reasons. <br/>
-                      <strong>(moderators are not capable of directly altering or deleting your projects)</strong>
+                <Popup>
+                  {/* Request Review button */}
+                  <PopupButton className='project-info-dropdown-option'>
+                    <ThemeIcon
+                      id={"request-review"}
+                      width={27}
+                      height={27}
+                      ariaLabel={"request-Review"}
+                      className="mono-fill"
+                    />
+                    Request Review
+                  </PopupButton>
+                  <PopupContent>
+                    <div className="small-popup">
+                      <div id="project-request-review">
+                        <label id="project-request-label">
+                          Would you like to submit your project for review?
+                        </label>
+                        <div id="project-request-info">
+                          Submiting a request will make your project visible to moderators who will choose to either
+                          accept and make your project visible to all, request changes for you to make,
+                          or reject it for various reasons. <br />
+                          <strong>(moderators are not capable of directly altering or deleting your projects)</strong>
+                        </div>
+                        <div id="project-request-buttons">
+                          <PopupButton buttonId="request-confirm-button"
+                            callback={() => {
+                              if (displayedProject) requestProjectReview(projectID);
+                              setApprovalStatus("under-review");
+                            }}
+                          >
+                            request review
+                          </PopupButton>
+                          <PopupButton buttonId="request-cancel-button">
+                            cancel
+                          </PopupButton>
+                        </div>
+                      </div>
                     </div>
-                    <div id="project-request-buttons">
-                      <PopupButton buttonId="request-confirm-button"
-                      callback={() => {
-                        if (displayedProject) requestProjectReview(projectID);
-                        setApprovalStatus("under-review");
-                      }}
-                      >
-                        request review
-                      </PopupButton>
-                      <PopupButton buttonId="request-cancel-button">
-                        cancel
-                      </PopupButton>
-                    </div>
-                  </div>
-                  </div>
-                </PopupContent>
-              </Popup> : "" }
+                  </PopupContent>
+                </Popup> : ""}
               {/* Leave Project */}
               <Popup>
                 <PopupButton className="project-info-dropdown-option">
@@ -473,19 +469,19 @@ const reportProjectPressed = async () => {
                   <></>
                 }
                 <Popup>
-                <PopupButton
-                  className="project-info-dropdown-option"
-                >
-                  <ThemeIcon
-                    id={"warning"}
-                    width={27}
-                    height={27}
-                    ariaLabel={"Report"}
-                  />
-                  Report
-                </PopupButton>
-                <PopupContent>
-                  <div className="small-popup" id="report-popup">
+                  <PopupButton
+                    className="project-info-dropdown-option"
+                  >
+                    <ThemeIcon
+                      id={"warning"}
+                      width={27}
+                      height={27}
+                      ariaLabel={"Report"}
+                    />
+                    Report
+                  </PopupButton>
+                  <PopupContent>
+                    <div className="small-popup" id="report-popup">
                       <h3>Report {displayedProject?.title ?? "Project"}</h3>
                       <p>You are about to report {displayedProject?.title ?? "Project"}. Please provide your reasoning below.</p>
                       <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></textarea>
@@ -502,7 +498,7 @@ const reportProjectPressed = async () => {
                             className="delete-button"
                             callback={reportProjectPressed}
                             closeParent={() => true}> {/* doesnt work*/}
-                              Report
+                            Report
                           </PopupButton>
                           <PopupContent>
                             <div className="small-popup">
@@ -514,9 +510,9 @@ const reportProjectPressed = async () => {
                           </PopupContent>
                         </Popup>
                       </div>
-                  </div>
-                </PopupContent>
-              </Popup>
+                    </div>
+                  </PopupContent>
+                </Popup>
               </div>
             </DropdownContent>
           </Dropdown>
@@ -676,6 +672,7 @@ const reportProjectPressed = async () => {
         onChange={undefined}
         setCurrentUserId={getProjectData}
         hideBackButton={false}
+        placeholderText=''
       />
 
       {displayedProject === undefined ? (

@@ -582,6 +582,13 @@ Project Creator and Editor Popup style rules
   margin-bottom: 28px;
 }
 
+/* Inside the profile editor's actions row the container supplies the bottom
+   spacing; the Save button's own 28px bottom margin would otherwise make its
+   box taller than the Delete button and drop Delete ~half a button lower. */
+.editor-save-actions #project-editor-save.profile-editor-save {
+  margin-bottom: 0;
+}
+
 /* #project-editor-save:hover {
   color: var(--create-text) !important;
   background-color: var(--create-bg) !important;
@@ -2117,6 +2124,43 @@ Project Creator and Editor Popup style rules
   }
 }
 
+#clear-all-button-align{
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  margin-right: 0;
+  margin-left: 0;
+  margin-top: auto;
+  align-self: flex-end;
+}
+
+.delete-position-button-alt {
+  margin-top: 1em;
+  #trash {
+    stroke: #FF3859;
+  }
+
+  svg{
+    margin-left: 0.5em;
+  }
+}
+
+#clear-all-trash-row{
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+#clear-all-trash-text{
+  width: fit-content;
+  height: fit-content;
+  color: #FF3859;
+  font-weight: bold;
+  font-size: small;
+  margin: 0;
+  margin-right: 0.15em;
+}
+
 #team-positions-popup-list-buttons {
   display: flex;
   flex-direction: column;
@@ -2248,6 +2292,15 @@ Project Creator and Editor Popup style rules
   gap: 5px;
   width: 100%;
   justify-content: left;
+}
+
+.edit-position-duration-count {
+  width: 60px;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 15px 10px;
+  text-align: center;
 }
 
 button.edit-position-contact {

@@ -279,7 +279,7 @@ const Profile = (userProfile: any) => {
     if (switchTo === true) { //   
       profileTabElement.style.opacity = String(.5);
       projectsTabElement.style.opacity = String(1);
-     // console.log("project select");
+      // console.log("project select");
 
     } else {
       projectsTabElement.style.opacity = String(.5);
@@ -545,6 +545,7 @@ const Profile = (userProfile: any) => {
         onChange={() => { }}
         setCurrentUserId={getProfileData} //brother you're not even passing anything
         hideBackButton={false}
+        placeholderText=''
       />
 
       {/* Checks if we have profile data to use, then determines what to render */}
@@ -677,131 +678,131 @@ const Profile = (userProfile: any) => {
                 </div>
                 {/* Invite-to-project: only shown when a logged-in user is
                   viewing someone else's profile. */}
-                  {!isUsersProfile && userID !== undefined && userID !== -1 && (
-                    <Popup>
-                      <PopupButton
-                        buttonId="profile-invite-button"
-                        callback={resetInviteForm}
-                      >
-                        Invite to Project
-                      </PopupButton>
-                      <PopupContent useClose={true}>
-                        <div className="small-popup">
-                          <div id="profile-invite-title">
-                            Invite {displayedProfile?.firstName} to a project
-                          </div>
-                          {myOwnedProjects.length === 0 ? (
-                            <div id="profile-invite-empty">
-                              You don't own any projects yet. Create one to start
-                              inviting people.
-                            </div>
-                          ) : inviteSuccess ? (
-                            <div id="profile-invite-success">
-                              Invite sent! {displayedProfile?.firstName} will get an
-                              email to accept or decline.
-                            </div>
-                          ) : (
-                            <>
-                              <div id="profile-invite-form">
-                                <label
-                                  className="profile-invite-label"
-                                  htmlFor="profile-invite-project"
-                                >
-                                  Project
-                                </label>
-                                <div id="profile-invite-project">
-                                  <Select>
-                                    <SelectButton
-                                      placeholder="Select a project"
-                                      searchable={true}
-                                      type="input"
-                                    />
-                                    <SelectOptions
-                                      callback={(e) => {
-                                        const value = (e.target as HTMLButtonElement)
-                                          .value;
-                                        const proj = myOwnedProjects.find(
-                                          (p) => p.title === value
-                                        );
-                                        setInviteProjectId(proj?.projectId ?? null);
-                                      }}
-                                      options={myOwnedProjects.map((proj) => ({
-                                        markup: <>{proj.title}</>,
-                                        value: proj.title,
-                                        disabled: false,
-                                      }))}
-                                    />
-                                  </Select>
-                                </div>
-
-                                <label
-                                  className="profile-invite-label"
-                                  htmlFor="profile-invite-role"
-                                >
-                                  Role
-                                </label>
-                                <div id="profile-invite-role">
-                                  <Select>
-                                    <SelectButton
-                                      placeholder="Select a role"
-                                      searchable={true}
-                                      type="input"
-                                    />
-                                    <SelectOptions
-                                      callback={(e) => {
-                                        const value = (e.target as HTMLButtonElement)
-                                          .value;
-                                        const role = allRoles.find(
-                                          (r) => r.label === value
-                                        );
-                                        setInviteRoleId(role?.roleId ?? null);
-                                      }}
-                                      options={allRoles.map((role) => ({
-                                        markup: <>{role.label}</>,
-                                        value: role.label,
-                                        disabled: false,
-                                      }))}
-                                    />
-                                  </Select>
-                                </div>
-
-                                <label
-                                  className="profile-invite-label"
-                                  htmlFor="profile-invite-message"
-                                >
-                                  Message
-                                </label>
-                                <textarea
-                                  id="profile-invite-message"
-                                  placeholder={`Optional note to ${displayedProfile?.firstName ?? "them"}...`}
-                                  value={inviteMessage}
-                                  onChange={(e) => setInviteMessage(e.target.value)}
-                                  maxLength={500}
-                                />
-                              </div>
-
-                              {inviteError && (
-                                <div className="error" id="profile-invite-error">
-                                  {inviteError}
-                                </div>
-                              )}
-
-                              <div className="project-editor-button-pair">
-                                <PopupButton
-                                  buttonId="profile-invite-send"
-                                  callback={handleSendInvite}
-                                  doNotClose={() => !inviteSuccess}
-                                  disabled={inviteSending}
-                                >
-                                  {inviteSending ? "Sending..." : "Send Invite"}
-                                </PopupButton>
-                              </div>
-                            </>
-                          )}
+                {!isUsersProfile && userID !== undefined && userID !== -1 && (
+                  <Popup>
+                    <PopupButton
+                      buttonId="profile-invite-button"
+                      callback={resetInviteForm}
+                    >
+                      Invite to Project
+                    </PopupButton>
+                    <PopupContent useClose={true}>
+                      <div className="small-popup">
+                        <div id="profile-invite-title">
+                          Invite {displayedProfile?.firstName} to a project
                         </div>
-                      </PopupContent>
-                    </Popup>
-                  )}
+                        {myOwnedProjects.length === 0 ? (
+                          <div id="profile-invite-empty">
+                            You don't own any projects yet. Create one to start
+                            inviting people.
+                          </div>
+                        ) : inviteSuccess ? (
+                          <div id="profile-invite-success">
+                            Invite sent! {displayedProfile?.firstName} will get an
+                            email to accept or decline.
+                          </div>
+                        ) : (
+                          <>
+                            <div id="profile-invite-form">
+                              <label
+                                className="profile-invite-label"
+                                htmlFor="profile-invite-project"
+                              >
+                                Project
+                              </label>
+                              <div id="profile-invite-project">
+                                <Select>
+                                  <SelectButton
+                                    placeholder="Select a project"
+                                    searchable={true}
+                                    type="input"
+                                  />
+                                  <SelectOptions
+                                    callback={(e) => {
+                                      const value = (e.target as HTMLButtonElement)
+                                        .value;
+                                      const proj = myOwnedProjects.find(
+                                        (p) => p.title === value
+                                      );
+                                      setInviteProjectId(proj?.projectId ?? null);
+                                    }}
+                                    options={myOwnedProjects.map((proj) => ({
+                                      markup: <>{proj.title}</>,
+                                      value: proj.title,
+                                      disabled: false,
+                                    }))}
+                                  />
+                                </Select>
+                              </div>
+
+                              <label
+                                className="profile-invite-label"
+                                htmlFor="profile-invite-role"
+                              >
+                                Role
+                              </label>
+                              <div id="profile-invite-role">
+                                <Select>
+                                  <SelectButton
+                                    placeholder="Select a role"
+                                    searchable={true}
+                                    type="input"
+                                  />
+                                  <SelectOptions
+                                    callback={(e) => {
+                                      const value = (e.target as HTMLButtonElement)
+                                        .value;
+                                      const role = allRoles.find(
+                                        (r) => r.label === value
+                                      );
+                                      setInviteRoleId(role?.roleId ?? null);
+                                    }}
+                                    options={allRoles.map((role) => ({
+                                      markup: <>{role.label}</>,
+                                      value: role.label,
+                                      disabled: false,
+                                    }))}
+                                  />
+                                </Select>
+                              </div>
+
+                              <label
+                                className="profile-invite-label"
+                                htmlFor="profile-invite-message"
+                              >
+                                Message
+                              </label>
+                              <textarea
+                                id="profile-invite-message"
+                                placeholder={`Optional note to ${displayedProfile?.firstName ?? "them"}...`}
+                                value={inviteMessage}
+                                onChange={(e) => setInviteMessage(e.target.value)}
+                                maxLength={500}
+                              />
+                            </div>
+
+                            {inviteError && (
+                              <div className="error" id="profile-invite-error">
+                                {inviteError}
+                              </div>
+                            )}
+
+                            <div className="project-editor-button-pair">
+                              <PopupButton
+                                buttonId="profile-invite-send"
+                                callback={handleSendInvite}
+                                doNotClose={() => !inviteSuccess}
+                                disabled={inviteSending}
+                              >
+                                {inviteSending ? "Sending..." : "Send Invite"}
+                              </PopupButton>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </PopupContent>
+                  </Popup>
+                )}
               </div>
 
               <div id="skills">

@@ -32,6 +32,7 @@ type HeaderProps = {
   pageTitle?: string;
   setCurrentUserId?: (data: MePrivate | undefined) => Promise<void>;
   searchOnFocus?: (e: FocusEvent<HTMLInputElement>) => void;
+  placeholderText: string;
 };
 
 /**
@@ -49,16 +50,17 @@ type HeaderProps = {
  * @returns A fully featured header containing the search bar, 
  * user dropdown menu, theme toggle, and navigation controls.
  */
-export const Header: React.FC<HeaderProps> = ({ 
-  dataSets, 
-  onSearch, 
-  value = "", 
-  onChange, 
-  hideSearchBar = false, 
-  hideBackButton = true, 
+export const Header: React.FC<HeaderProps> = ({
+  dataSets,
+  onSearch,
+  value = "",
+  onChange,
+  hideSearchBar = false,
+  hideBackButton = true,
   pageTitle = "",
-  setCurrentUserId, 
-  searchOnFocus }) => {
+  setCurrentUserId,
+  searchOnFocus,
+  placeholderText = "" }) => {
   // User info state
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
@@ -188,13 +190,14 @@ export const Header: React.FC<HeaderProps> = ({
             value={value}
             onChange={onChange}
             onFocus={searchOnFocus}
+            placeholderText={placeholderText}
           />
         </div>
       )}
 
       {/* Conditional rendering for back button*/}
       {(!hideBackButton) && (<div className="project-back-btn-header">
-        <ThemeIcon 
+        <ThemeIcon
           role="button"
           id={'back'}
           width={70}
@@ -205,11 +208,11 @@ export const Header: React.FC<HeaderProps> = ({
         />
       </div>)}
 
-      {hideSearchBar && pageTitle !== "" ? 
+      {hideSearchBar && pageTitle !== "" ?
         <div id='title'>
           <h1 className="page-title">{pageTitle}</h1>
         </div>
-      : ""}
+        : ""}
 
       <div id="header-buttons">
         {/* About button */}
@@ -270,13 +273,13 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>{' '}
 
                 {/* Single unified auth entry point (logs in existing users, signs up new ones) */}
-                <button 
-                onClick={() =>
-                  navigate(paths.routes.LOGIN, {
-                    state: {from: location.pathname + location.search}
-                  })
-                }
-                className="header-login-btn"
+                <button
+                  onClick={() =>
+                    navigate(paths.routes.LOGIN, {
+                      state: { from: location.pathname + location.search }
+                    })
+                  }
+                  className="header-login-btn"
                 >
                   <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in or sign up'} />
                   Log In / Sign Up

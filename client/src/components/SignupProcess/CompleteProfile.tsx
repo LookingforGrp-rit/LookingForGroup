@@ -215,7 +215,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 					<div className="error">{errorMsg}</div>
 
 					<div id="completeProfile-input-container">
-						<div id="completeProfile-input-section-1">						
+						<div id="completeProfile-input-section-1">
 							<div
 								id="complete-profile-add-image"
 								className="edit-profile-image">
@@ -333,7 +333,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							</div>
 
 							<div id="complete-profile-row-3">
-								
+
 								{/* Phone Number */}
 								<LabelInputBox
 									label={"Phone Number"}
@@ -375,7 +375,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 
 							<p>@{userInfo.username}</p>
 							</div> */}
-							
+
 						</div>
 						{/* Fun Fact
 						<LabelInputBox
@@ -390,35 +390,38 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 						/> */}
 
 						<div id="completeProfile-input-section-2">
-							{/* Personal Quote */}
-							<LabelInputBox
-								label={"Personal Quote"}
-								labelInfo="Write a fun and catchy phrase that captures your unique personality! (Quotation marks already included)"
-								inputType={"multi"}
-								maxLength={20}
-								id="headline-input"
-								// placeholder={"Personal Quote"}
-								onChange={(e) => setHeadline(e.target.value)}
-								value={headline}
-								hideUnsaved={true}
-							/>
+							<div id="completeProfile-personal-quote">
+								{/* Personal Quote */}
+								<LabelInputBox
+									label={"Personal Quote"}
+									labelInfo="Write a fun and catchy phrase that captures your unique personality!"
+									inputType={"multi"}
+									maxLength={20}
+									id="headline-input"
+									// placeholder={"Personal Quote"}
+									onChange={(e) => setHeadline(e.target.value)}
+									value={headline}
+									hideUnsaved={true}
+								/>
+							</div>
+							<div id="completeProfile-bio">
+								{/* Bio */}
+								<LabelInputBox
+									label={"Bio"}
+									labelInfo="Share a brief overview of who you are, your interests, and what drives you!"
+									inputType={"multi"}
+									maxLength={100}
+									id="bio-input"
+									// placeholder={"Bio"}
+									onChange={(e) => setBio(e.target.value)}
+									value={bio}
+									hideUnsaved={true}
+								/>
+							</div>
 						</div>
 
-						<div id="completeProfile-input-section-3">
-							{/* Bio */}
-							<LabelInputBox
-								label={"Bio"}
-								labelInfo="Share a brief overview of who you are, your interests, and what drives you!"
-								inputType={"multi"}
-								maxLength={100}
-								id="bio-input"
-								// placeholder={"Bio"}
-								onChange={(e) => setBio(e.target.value)}
-								value={bio}
-								hideUnsaved={true}
-							/>
-						</div>
-						
+
+
 					</div>
 					<div id="signupProcess-btns">
 						<button id="signup-backBtn" onClick={onBack}>
