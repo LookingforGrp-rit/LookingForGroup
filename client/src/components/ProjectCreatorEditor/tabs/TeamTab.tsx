@@ -2350,7 +2350,9 @@ export const TeamTab = ({
 												handleSearch(
 													results as UserPreview[][]
 												);
-											}}></SearchBar>
+											}}
+											placeholderText='Search by Name'>
+										</SearchBar>
 									</DropdownButton>
 									<DropdownContent>
 										<div id="user-search-results">

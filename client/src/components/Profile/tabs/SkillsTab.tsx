@@ -175,21 +175,21 @@ export const SkillsTab = ({
         //   return
         // } else {
 
-          updatePendingProfile({
-            ...profile,
-            skills: remaining,
-          });
+        updatePendingProfile({
+          ...profile,
+          skills: remaining,
+        });
 
-          // only delete saved skills
-          dataManager.deleteSkill({
-            id: {
-              type: "canon",
-              value: skillId,
-            },
-            data: null,
-          });
+        // only delete saved skills
+        dataManager.deleteSkill({
+          id: {
+            type: "canon",
+            value: skillId,
+          },
+          data: null,
+        });
 
-          return;
+        return;
         //}
 
       } else {
@@ -367,12 +367,14 @@ export const SkillsTab = ({
       <div id="project-editor-tag-search">
         <SearchBar
           key={currentSkillsTab}
-          dataSets={[{data: allSkills}]}
+          dataSets={[{ data: allSkills }]}
           onSearch={(results) =>
             handleSearch(results as unknown[][] as Skill[][])
           }
           value={searchValue}
           setValue={setSearchValue}
+          placeholderText='Search for Tag'
+
         />
         <div id="project-editor-tag-wrapper">
           <SkillSearchTabs />

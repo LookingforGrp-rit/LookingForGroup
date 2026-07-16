@@ -96,7 +96,7 @@ export const TagsTab = ({
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
-  const[confirm, setConfirm] = useState(false);
+  const [confirm, setConfirm] = useState(false);
 
   /* ONLY used for the deleting tags button. This is needed to re-render
     the selected mediums and tags section when reseting */
@@ -363,31 +363,30 @@ export const TagsTab = ({
             </TagElement>
           ))}
         </div>
-        <button 
-            type="button" 
-            className="delete-tags-btn"
-            hidden={projectAfterTagsChanges.mediums.length === 0 || projectAfterTagsChanges.mediums.length == undefined} 
-            onClick={() => {
-              /* deletes all mediums in the data manager for the project */
-                for (let i = 0; i < projectAfterTagsChanges.mediums.length; i++)
-                {
-                    dataManager?.deleteMedium({
-                    id: {
-                      type: "canon",
-                      value: projectAfterTagsChanges.mediums[i].mediumId,
-                    },
-                    data: null,
-                  })
-                }
-              
-              /* re-renders the current popup with 0 mediums remaining and updates
-                project */
-              setMediums(projectAfterTagsChanges.mediums.splice(0));
-              updatePendingProject(projectAfterTagsChanges);
-            }}
-            title="Remove all selected tags"
-          >
-            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+        <button
+          type="button"
+          className="delete-tags-btn"
+          hidden={projectAfterTagsChanges.mediums.length === 0 || projectAfterTagsChanges.mediums.length == undefined}
+          onClick={() => {
+            /* deletes all mediums in the data manager for the project */
+            for (let i = 0; i < projectAfterTagsChanges.mediums.length; i++) {
+              dataManager?.deleteMedium({
+                id: {
+                  type: "canon",
+                  value: projectAfterTagsChanges.mediums[i].mediumId,
+                },
+                data: null,
+              })
+            }
+
+            /* re-renders the current popup with 0 mediums remaining and updates
+              project */
+            setMediums(projectAfterTagsChanges.mediums.splice(0));
+            updatePendingProject(projectAfterTagsChanges);
+          }}
+          title="Remove all selected tags"
+        >
+          <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
         </button>
       </div>
 
@@ -422,13 +421,13 @@ export const TagsTab = ({
                 <Fragment key={t.tagId}>
                   {/* Divider marks the cutoff: the first two tags appear on the discover card */}
                   {index === 2 && <hr id="selected-tag-divider" />}
-                  <SortableTag 
+                  <SortableTag
                     id={t.tagId} tag={{
-                    skillId: t.tagId,
-                    label: t.label,
-                    type: t.type as SkillType,
-                    category: t.category as SkillCategory,
-                    }} 
+                      skillId: t.tagId,
+                      label: t.label,
+                      type: t.type as SkillType,
+                      category: t.category as SkillCategory,
+                    }}
                     onRemove={(id) => handleTagSelect(id, t.type)}
                   />
                 </Fragment>
@@ -436,50 +435,50 @@ export const TagsTab = ({
             </div>
           </SortableContext>
         </DndContext>
-        <button 
-            type="button" 
-            className="delete-tags-btn"
-            hidden={projectAfterTagsChanges.tags.length === 0 || projectAfterTagsChanges.tags.length == undefined} 
-            onClick={() => {
-              /* deletes all tags in the data manager for the project */
-                for (let i = 0; i < projectAfterTagsChanges.tags.length; i++)
-                {
-                    dataManager?.deleteTag({
-                    id: {
-                      type: "canon",
-                      value: projectAfterTagsChanges.tags[i].tagId,
-                    },
-                    data: null,
-                  })
-                }
-              
-              /* re-renders the current popup with 0 mediums remaining and updates
-                project */
-              setTags(projectAfterTagsChanges.tags.splice(0));
-              updatePendingProject(projectAfterTagsChanges);
-            }}
-            title="Remove all selected tags"
-          >
-            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+        <button
+          type="button"
+          className="delete-tags-btn"
+          hidden={projectAfterTagsChanges.tags.length === 0 || projectAfterTagsChanges.tags.length == undefined}
+          onClick={() => {
+            /* deletes all tags in the data manager for the project */
+            for (let i = 0; i < projectAfterTagsChanges.tags.length; i++) {
+              dataManager?.deleteTag({
+                id: {
+                  type: "canon",
+                  value: projectAfterTagsChanges.tags[i].tagId,
+                },
+                data: null,
+              })
+            }
+
+            /* re-renders the current popup with 0 mediums remaining and updates
+              project */
+            setTags(projectAfterTagsChanges.tags.splice(0));
+            updatePendingProject(projectAfterTagsChanges);
+          }}
+          title="Remove all selected tags"
+        >
+          <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
         </button>
       </div>
 
       <div id="project-editor-tag-search">
         <SearchBar
           key={currentTagsTab}
-          dataSets={[{data: [...allTags.filter((tag) => tag.type != "Positions" && tag.type != "Purpose" && tag.type != "Style" && tag.type != "Major"), ...allMediums]}]}
+          dataSets={[{ data: [...allTags.filter((tag) => tag.type != "Positions" && tag.type != "Purpose" && tag.type != "Style" && tag.type != "Major"), ...allMediums] }]}
           onSearch={handleSearch}
           value={searchValue}
           setValue={setSearchValue}
+          placeholderText='Search for Tag'
         />
         <div id="project-editor-tag-wrapper">
           <div id="project-editor-tag-search-tabs">
-            {tagTabs.map((type, index) => 
-            <button
-            onClick={() => setCurrentTagsTab(index)}
-            className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${tagTabColors[type as string] ?? 'grey'} ${currentTagsTab === index && searchValue === "" ? "tag-search-tab-active" : ""}`}>
-              {type}
-            </button>)}
+            {tagTabs.map((type, index) =>
+              <button
+                onClick={() => setCurrentTagsTab(index)}
+                className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${tagTabColors[type as string] ?? 'grey'} ${currentTagsTab === index && searchValue === "" ? "tag-search-tab-active" : ""}`}>
+                {type}
+              </button>)}
           </div>
           <hr id="tag-search-divider" />
         </div>
@@ -491,7 +490,7 @@ export const TagsTab = ({
                   ...tag,
                   category:
                     tag.type === "Game Engine" ? "Game Engine" :
-                    tag.category,
+                      tag.category,
                   id: tag.tagId
                 })
               ),
@@ -508,12 +507,12 @@ export const TagsTab = ({
             tabs={tagTabs}
             tabId={currentTagsTab}
             all={[...allTags, ...allMediums].map(
-              tag =>({
+              tag => ({
                 ...tag,
-                category: 
+                category:
                   tag.type === "Project Type" ? "Medium" :
-                  tag.type === "Game Engine" ? "Game Engine" :
-                  tag.category,
+                    tag.type === "Game Engine" ? "Game Engine" :
+                      tag.category,
                 id: tag.tagId
               })
             )}
@@ -521,10 +520,10 @@ export const TagsTab = ({
             searchData={(searchedTags as Tag[]).map(
               tag => ({
                 ...tag,
-                category: 
+                category:
                   tag.type === "Project Type" ? "Medium" :
-                  tag.type === "Game Engine" ? "Game Engine" :
-                  tag.category,
+                    tag.type === "Game Engine" ? "Game Engine" :
+                      tag.category,
                 id: tag.tagId
               })
             )}
@@ -533,39 +532,39 @@ export const TagsTab = ({
       </div>
       <div id="tags-save-info">
         <div className="editor-save-actions">
-        <Popup>
-          {saveable ? "" :
-            <div id="invalid-input-error" className={"save-error-msg-general"}>
-              <p>*{message}*</p>
-            </div>}
-          <PopupButton
-            buttonId="project-editor-save"
-            callback={() => {
-              // Incomplete form: still clickable so the save validation runs,
-              // shows the error, and auto-scrolls to the first missing field.
-              if (!saveable) saveProject?.();
-              else setConfirm(true);
-            }}
-          >
-            Save Changes
-          </PopupButton>
-          {confirm ?
-          <PopupContent useClose={false} callback={() => setConfirm(false)}>
-            <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
-            <div id="confirm-editor-save">
-              <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
-                Confirm
-              </PopupButton>
-              <PopupButton buttonId="team-edit-member-cancel-button" >
-                Cancel
-              </PopupButton>
-            </div>
-          </PopupContent> : "" }
-        </Popup>
-        <DeleteProjectButton
-          projectID={unmodifiedProject.projectId}
-          projectTitle={unmodifiedProject.title}
-        />
+          <Popup>
+            {saveable ? "" :
+              <div id="invalid-input-error" className={"save-error-msg-general"}>
+                <p>*{message}*</p>
+              </div>}
+            <PopupButton
+              buttonId="project-editor-save"
+              callback={() => {
+                // Incomplete form: still clickable so the save validation runs,
+                // shows the error, and auto-scrolls to the first missing field.
+                if (!saveable) saveProject?.();
+                else setConfirm(true);
+              }}
+            >
+              Save Changes
+            </PopupButton>
+            {confirm ?
+              <PopupContent useClose={false} callback={() => setConfirm(false)}>
+                <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+                <div id="confirm-editor-save">
+                  <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                    Confirm
+                  </PopupButton>
+                  <PopupButton buttonId="team-edit-member-cancel-button" >
+                    Cancel
+                  </PopupButton>
+                </div>
+              </PopupContent> : ""}
+          </Popup>
+          <DeleteProjectButton
+            projectID={unmodifiedProject.projectId}
+            projectTitle={unmodifiedProject.title}
+          />
         </div>
       </div>
     </div>

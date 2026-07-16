@@ -34,7 +34,7 @@ export const JobSkillPopup = ({
 
   const skillLimit = 5;
   //the limit imposer (not used as you can see)
-  
+
   //i need to refresh the skills selection whenever a new job is created
   //it does refresh when an existing skill is selected so that works as intended
   //but between like skill creation and selection it should reset to no skills selected
@@ -137,8 +137,8 @@ export const JobSkillPopup = ({
     );
 
     modifiedJob = {
-        ...modifiedJob,
-        jobSkills: reorderedSkills
+      ...modifiedJob,
+      jobSkills: reorderedSkills
     };
 
     updateJob(modifiedJob);
@@ -166,28 +166,28 @@ export const JobSkillPopup = ({
         const newSkills = modifiedJob.jobSkills;
         const lengthPreAdd = modifiedJob.jobSkills?.length
         //limit-imposing if statement
-        if((newSkills as JobSkill[]).length >= skillLimit) newSkills?.shift();
-        
+        if ((newSkills as JobSkill[]).length >= skillLimit) newSkills?.shift();
+
         newSkills?.push({
-              ...skillToToggle,
-              proficiency: "Novice",
-              position: lengthPreAdd ?? 0,
-              apiUrl: "",
-            })
+          ...skillToToggle,
+          proficiency: "Novice",
+          position: lengthPreAdd ?? 0,
+          apiUrl: "",
+        })
         modifiedJob = {
           ...modifiedJob,
           jobSkills: newSkills as JobSkill[],
         }
         //fix the positions right after they're changed
-        for(let i = 0; i < (newSkills as JobSkill[]).length; i++){
+        for (let i = 0; i < (newSkills as JobSkill[]).length; i++) {
           (newSkills as JobSkill[])[i].position = i;
         }
-        
+
       }
 
       updateJob(modifiedJob);
     },
-    [allSkills, isSkillSelected, job, ]
+    [allSkills, isSkillSelected, job,]
   );
 
   const selectedSkills = job.jobSkills ? (job.jobSkills as JobSkill[]).sort((a, b) => a.position - b.position) : [];
@@ -203,62 +203,72 @@ export const JobSkillPopup = ({
 
       //The final list of skills displayed to the screen.
       let skillsToDisplay = searchedSkills;
-      
+
       //Since discipline appears multiple times, it's defined here.
       let discipline;
 
-      switch (currentSkillsTab){
+      switch (currentSkillsTab) {
         case 0:
           //Developer
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const software = searchedSkills.filter((tag) => (tag as Skill).category === "Software");
-          const codingLanguage = searchedSkills.filter((tag) => (tag as Skill).category === "Coding Language");
-          const framework = searchedSkills.filter((tag) => (tag as Skill).category === "Framework");
-          const operatingSystem = searchedSkills.filter((tag) => (tag as Skill).category === "Operating System");
-          const gameEngine = searchedSkills.filter((tag) => (tag as Skill).category === "Game Engine");
-          skillsToDisplay = discipline.concat(software, codingLanguage, framework, operatingSystem, gameEngine);
-          break; }
+          {
+            discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+            const software = searchedSkills.filter((tag) => (tag as Skill).category === "Software");
+            const codingLanguage = searchedSkills.filter((tag) => (tag as Skill).category === "Coding Language");
+            const framework = searchedSkills.filter((tag) => (tag as Skill).category === "Framework");
+            const operatingSystem = searchedSkills.filter((tag) => (tag as Skill).category === "Operating System");
+            const gameEngine = searchedSkills.filter((tag) => (tag as Skill).category === "Game Engine");
+            skillsToDisplay = discipline.concat(software, codingLanguage, framework, operatingSystem, gameEngine);
+            break;
+          }
         case 1:
           //Designer
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const videoSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Video Software");
-          const designSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Design Software");
-          const artAnimation = searchedSkills.filter((tag) => (tag as Skill).category === "Art and Animation");
-          const photoEditing = searchedSkills.filter((tag) => (tag as Skill).category === "Photo Editing");
-          skillsToDisplay = discipline.concat(videoSoftware, designSoftware, artAnimation, photoEditing);
-          break; }
+          {
+            discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+            const videoSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Video Software");
+            const designSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Design Software");
+            const artAnimation = searchedSkills.filter((tag) => (tag as Skill).category === "Art and Animation");
+            const photoEditing = searchedSkills.filter((tag) => (tag as Skill).category === "Photo Editing");
+            skillsToDisplay = discipline.concat(videoSoftware, designSoftware, artAnimation, photoEditing);
+            break;
+          }
         case 2:
           //Soft
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const team = searchedSkills.filter((tag) => (tag as Skill).category === "Team");
-          const personal = searchedSkills.filter((tag) => (tag as Skill).category === "Personal");
-          skillsToDisplay = discipline.concat(team, personal);
-          break; }
+          {
+            discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+            const team = searchedSkills.filter((tag) => (tag as Skill).category === "Team");
+            const personal = searchedSkills.filter((tag) => (tag as Skill).category === "Personal");
+            skillsToDisplay = discipline.concat(team, personal);
+            break;
+          }
         case 3:
           //Audio
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const dawAudioEditor = searchedSkills.filter((tag) => (tag as Skill).category === "DAW/Audio Editor");
-          const middleware = searchedSkills.filter((tag) => (tag as Skill).category === "Middleware");
-          const notation = searchedSkills.filter((tag) => (tag as Skill).category === "Notation");
-          skillsToDisplay = discipline.concat(dawAudioEditor, middleware, notation);
-          break; }
+          {
+            discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+            const dawAudioEditor = searchedSkills.filter((tag) => (tag as Skill).category === "DAW/Audio Editor");
+            const middleware = searchedSkills.filter((tag) => (tag as Skill).category === "Middleware");
+            const notation = searchedSkills.filter((tag) => (tag as Skill).category === "Notation");
+            skillsToDisplay = discipline.concat(dawAudioEditor, middleware, notation);
+            break;
+          }
         case 4:
           //Engineer
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const engineeringSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Engineering Software");
-          const hardware = searchedSkills.filter((tag) => (tag as Skill).category === "Hardware");
-          skillsToDisplay = discipline.concat(engineeringSoftware, hardware);
-          break; }
+          {
+            discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+            const engineeringSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Engineering Software");
+            const hardware = searchedSkills.filter((tag) => (tag as Skill).category === "Hardware");
+            skillsToDisplay = discipline.concat(engineeringSoftware, hardware);
+            break;
+          }
       }
 
       return skillsToDisplay.map((skill, index, array) => (
         <Fragment key={skill.skillId}>
           {index === 0 || ((array[index - 1] as Skill).category != (array[index] as Skill).category)
-          ? <div id="tag-category-header">
+            ? <div id="tag-category-header">
               <p>{(array[index] as Skill).category}</p>
               <hr></hr>
             </div>
-          : <></>}
+            : <></>}
           <Tag
             key={skill.skillId}
             onClick={() => handleSkillToggle(skill.skillId)}
@@ -484,25 +494,25 @@ export const JobSkillPopup = ({
             </div>
           </SortableContext>
         </DndContext>
-        <button 
-            type="button" 
-            className="delete-tags-btn"
-            hidden={(job.jobSkills as JobSkill[])?.length === 0 || job.jobSkills == undefined}
-            onClick={() => {
-              /* deletes all skills for the user */
-                modifiedJob = {
-                  ...modifiedJob,
-                  jobSkills: [],
-                }
+        <button
+          type="button"
+          className="delete-tags-btn"
+          hidden={(job.jobSkills as JobSkill[])?.length === 0 || job.jobSkills == undefined}
+          onClick={() => {
+            /* deletes all skills for the user */
+            modifiedJob = {
+              ...modifiedJob,
+              jobSkills: [],
+            }
 
-                /* re-renders the current popup with 0 skills remaining and updates
-                user profile */
-                setSkills((job.jobSkills as JobSkill[]).splice(0));
-                updateJob(modifiedJob);
-            }}
-            title="Remove all selected tags"
-          >
-            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+            /* re-renders the current popup with 0 skills remaining and updates
+            user profile */
+            setSkills((job.jobSkills as JobSkill[]).splice(0));
+            updateJob(modifiedJob);
+          }}
+          title="Remove all selected tags"
+        >
+          <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
         </button>
       </div>
 
@@ -513,6 +523,8 @@ export const JobSkillPopup = ({
           onSearch={(results) =>
             handleSearch(results as unknown[][] as Skill[][])
           }
+          placeholderText='Search for Tag'
+
         />
         <div id="project-editor-tag-wrapper">
           <SkillSearchTabs />
