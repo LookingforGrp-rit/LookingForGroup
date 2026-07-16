@@ -297,7 +297,10 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
 
               return (
                 <button key={`${templateSkill.type}-${skillFilterType}`}
-                  className={"discover-tag-filter" + (activeSkillFilters.find(s => s.skillId === templateSkill.skillId && s.label === trueType) ? " discover-tag-filter-selected" : "")}
+                  className={"discover-tag-filter" + 
+                    (activeSkillFilters.some(s => s.skillId === -1 && s.label === trueType) ? " discover-tag-filter-selected" : 
+                    activeExclusionFilters.some(s => s.skillId === -1 && s.label === trueType) ? " discover-tag-filter-excluded " :
+                    "")}
                   data-type={templateSkill.label}
                   onClick={() => toggleSkill(templateSkill.skillId, templateSkill.type, true)}>
                   {skillFilterType}

@@ -20,8 +20,8 @@ enum sortModes {
   "Z-A" = "Z-A",
   "Newest" = "Newest",
   "Oldest" = "Oldest",
-  "Followers (NOT IMPLEMENTED)" = "Followers (NOT IMPLEMENTED)",
-  "Followers Acending (NOT IMPLEMENTED)" = "Followers Acending (NOT IMPLEMENTED)",
+  "Followers" = "Followers",
+  "Followers Ascending" = "Followers Ascending",
 }
 
 type FilterData = {
@@ -316,11 +316,11 @@ export const ProfileMeetPage = () => {
         // Compare age inverted
         setupUserData("Newest", true);
         break;
-      case 'Followers (NOT IMPLEMENTED)':
+      case 'Followers':
         // TO IMPLIMENT once backend 
         setupUserData("A-Z", false);
         break;
-      case "Followers Acending (NOT IMPLEMENTED)":
+      case "Followers Ascending":
         // TO IMPLIMENT
         setupUserData("A-Z", true);
         break;

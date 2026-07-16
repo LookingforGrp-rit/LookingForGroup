@@ -374,7 +374,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                         return (
                             <button key={`${type}-${label}`}
                                 className={"discover-tag-filter" + 
-                                    (activeTagFilters.find(t => t.tagId === tagObj.tagId && t.type === tagObj.type) ? " discover-tag-filter-selected" : 
+                                    (activeTagFilters.some(t => t.tagId === tagObj.tagId && t.type === tagObj.type) ? " discover-tag-filter-selected" : 
                                     activeExclusionFilters.some(t => t.tagId === tagObj.tagId && t.type === tagObj.type) ? " discover-tag-filter-excluded " :
                                     "")}
                                 data-type={type}
