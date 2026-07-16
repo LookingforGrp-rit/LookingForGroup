@@ -14,6 +14,7 @@ import { SortableTag } from "./SortableItem";
 import { clampDragWithinContainer } from "./dragModifiers";
 import { Fragment } from "react";
 import TagDisplay from "../../TagDisplay";
+import { ThemeIcon } from "../../ThemeIcon";
 
 // --- holds the possible tabs from tag types ---
 const tagTabs = ['Project Type', 'Genre', 'Style', 'Game Engine'] as TagType[]
@@ -363,31 +364,42 @@ export const TagsTab = ({
             </TagElement>
           ))}
         </div>
-        <button
-          type="button"
-          className="delete-tags-btn"
-          hidden={projectAfterTagsChanges.mediums.length === 0 || projectAfterTagsChanges.mediums.length == undefined}
-          onClick={() => {
-            /* deletes all mediums in the data manager for the project */
-            for (let i = 0; i < projectAfterTagsChanges.mediums.length; i++) {
-              dataManager?.deleteMedium({
-                id: {
-                  type: "canon",
-                  value: projectAfterTagsChanges.mediums[i].mediumId,
-                },
-                data: null,
-              })
-            }
-
-            /* re-renders the current popup with 0 mediums remaining and updates
-              project */
-            setMediums(projectAfterTagsChanges.mediums.splice(0));
-            updatePendingProject(projectAfterTagsChanges);
-          }}
-          title="Remove all selected tags"
-        >
-          <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+        <div id="clear-all-button-align">
+        <button 
+            type="button" 
+            className="delete-position-button-alt button-reset"
+            hidden={projectAfterTagsChanges.mediums.length === 0 || projectAfterTagsChanges.mediums.length == undefined} 
+            onClick={() => {
+              /* deletes all mediums in the data manager for the project */
+                for (let i = 0; i < projectAfterTagsChanges.mediums.length; i++)
+                {
+                    dataManager?.deleteMedium({
+                    id: {
+                      type: "canon",
+                      value: projectAfterTagsChanges.mediums[i].mediumId,
+                    },
+                    data: null,
+                  })
+                }
+              
+              /* re-renders the current popup with 0 mediums remaining and updates
+                project */
+              setMediums(projectAfterTagsChanges.mediums.splice(0));
+              updatePendingProject(projectAfterTagsChanges);
+            }}
+            title="Remove all selected tags"
+          >
+            <div id="clear-all-trash-row">
+            <p id="clear-all-trash-text">Clear All</p>
+            <ThemeIcon
+              id="trash"
+              width={18}
+              height={18}
+              ariaLabel="Delete position"
+            />
+            </div>
         </button>
+        </div>
       </div>
 
       <div id="project-editor-selected-tags">
@@ -435,31 +447,42 @@ export const TagsTab = ({
             </div>
           </SortableContext>
         </DndContext>
-        <button
-          type="button"
-          className="delete-tags-btn"
-          hidden={projectAfterTagsChanges.tags.length === 0 || projectAfterTagsChanges.tags.length == undefined}
-          onClick={() => {
-            /* deletes all tags in the data manager for the project */
-            for (let i = 0; i < projectAfterTagsChanges.tags.length; i++) {
-              dataManager?.deleteTag({
-                id: {
-                  type: "canon",
-                  value: projectAfterTagsChanges.tags[i].tagId,
-                },
-                data: null,
-              })
-            }
-
-            /* re-renders the current popup with 0 mediums remaining and updates
-              project */
-            setTags(projectAfterTagsChanges.tags.splice(0));
-            updatePendingProject(projectAfterTagsChanges);
-          }}
-          title="Remove all selected tags"
-        >
-          <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+        <div id="clear-all-button-align">
+        <button 
+            type="button" 
+            className="delete-position-button-alt button-reset"
+            hidden={projectAfterTagsChanges.tags.length === 0 || projectAfterTagsChanges.tags.length == undefined} 
+            onClick={() => {
+              /* deletes all tags in the data manager for the project */
+                for (let i = 0; i < projectAfterTagsChanges.tags.length; i++)
+                {
+                    dataManager?.deleteTag({
+                    id: {
+                      type: "canon",
+                      value: projectAfterTagsChanges.tags[i].tagId,
+                    },
+                    data: null,
+                  })
+                }
+              
+              /* re-renders the current popup with 0 mediums remaining and updates
+                project */
+              setTags(projectAfterTagsChanges.tags.splice(0));
+              updatePendingProject(projectAfterTagsChanges);
+            }}
+            title="Remove all selected tags"
+          >
+            <div id="clear-all-trash-row">
+            <p id="clear-all-trash-text">Clear All</p>
+            <ThemeIcon
+							id="trash"
+							width={18}
+							height={18}
+							ariaLabel="Delete position"
+						/>
+            </div>
         </button>
+        </div>
       </div>
 
       <div id="project-editor-tag-search">
