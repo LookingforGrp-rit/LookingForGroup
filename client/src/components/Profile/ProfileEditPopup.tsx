@@ -14,6 +14,7 @@ import { LinksTab } from "./tabs/LinksTab";
 import { ProjectsTab } from "./tabs/ProjectsTab";
 import { SkillsTab } from "./tabs/SkillsTab";
 import { userDataManager } from "../../api/data-managers/user-data-manager";
+import { DeleteAccountButton } from "./DeleteAccountButton";
 import { PendingUserProfile } from "../../../types/types";
 import { MePrivate } from "@looking-for-group/shared";
 
@@ -283,17 +284,21 @@ export const ProfileEditPopup = ({ editSkills = false, editContact = false }: Ed
         <div id="project-creator-editor">
           <div id="project-editor-tabs">{editorTabs}</div>
           <div id="project-editor-content" key={editorKey}>{renderTabContent()}</div>
-          <form
-            //id="project-creator-editor"
-            onSubmit={onSaveClicked}
-            encType="multipart/form-data">
-            <input
-              type="submit"
-              id="project-editor-save"
-              className={"profile-editor-save " + (validData ? "" : "hidden")}
-              value="Save Changes"
-            />
-          </form>
+          <div className="editor-save-actions">
+            <form
+              //id="project-creator-editor"
+              onSubmit={onSaveClicked}
+              encType="multipart/form-data">
+              <input
+                type="submit"
+                id="project-editor-save"
+                className={"profile-editor-save " + (validData ? "" : "hidden")}
+                value="Save Changes"
+              />
+            </form>
+
+            <DeleteAccountButton />
+          </div>
 
           {errorVisible && (
             <div id="invalid-input-error" className="error-message">

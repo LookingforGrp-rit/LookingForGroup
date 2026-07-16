@@ -1,14 +1,14 @@
-import React, { useMemo, useState, useCallback, ChangeEvent} from 'react';
+import React, { useMemo, useState, useCallback, ChangeEvent } from 'react';
 // import { DiscoverFilters } from '../DiscoverFilters';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
 import { ThemeImage } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
 
-import { getUsers, getUsersById,  } from '../../api/users';
+import { getUsers, getUsersById, } from '../../api/users';
 import {
-  NumberDictionary, 
-  StructuredUserInfo, UserPreview, 
+  NumberDictionary,
+  StructuredUserInfo, UserPreview,
   UserDetail,
   MePrivate,
   Skill
@@ -25,13 +25,13 @@ enum sortModes {
 }
 
 type FilterData = {
-    skills: Skill[],
-    filterMode: 'Match All' | 'Match Any'
-    sortMode: sortModes,
-  }
+  skills: Skill[],
+  filterMode: 'Match All' | 'Match Any'
+  sortMode: sortModes,
+}
 
 //Stores current filter settings
-let filterData: FilterData = {skills: [], filterMode: 'Match All', sortMode: sortModes.Newest};
+let filterData: FilterData = { skills: [], filterMode: 'Match All', sortMode: sortModes.Newest };
 
 export const ProfileMeetPage = () => {
   //banner for the meets page
@@ -180,7 +180,7 @@ export const ProfileMeetPage = () => {
       sortPeople(sortMode);
     }
 
-    filterData = {skills: activeSkillFilters, filterMode, sortMode};
+    filterData = { skills: activeSkillFilters, filterMode, sortMode };
 
     const userList = fullUserList;
 
@@ -224,7 +224,7 @@ export const ProfileMeetPage = () => {
           const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
             .filter((s) => typeof s === 'string');
 
-          if (userSkills.includes(tag.label.toLowerCase().trim())) 
+          if (userSkills.includes(tag.label.toLowerCase().trim()))
             matchesAny = true;
           else
             matchesAll = false;
@@ -247,13 +247,13 @@ export const ProfileMeetPage = () => {
             matchesAny = true;
         }
         // Check role and major by name since IDs are not unique relative to tags
-        else if (tag.type === 'Role') { 
+        else if (tag.type === 'Role') {
           if (item.title === tag.label)
             matchesAny = true;
-          else 
-            matchesAll = false;  
+          else
+            matchesAll = false;
         }
-        else if ((tag as {label: string, type: string}).type === 'Major') {
+        else if ((tag as { label: string, type: string }).type === 'Major') {
           const userMajors = item.majors?.map((s) => s?.label?.toLowerCase())
             .filter((s) => typeof s === 'string');
           if (userMajors.includes(tag.label.toLowerCase()))
@@ -292,7 +292,7 @@ export const ProfileMeetPage = () => {
     // Set displayed projects
     setFilteredUserList(tagFilteredList);
   };
-  
+
   const sortPeople = useCallback((newSortMode?: sortModes) => {
     switch (newSortMode ?? filterData.sortMode) {
       case "A-Z":
@@ -324,9 +324,9 @@ export const ProfileMeetPage = () => {
         setupUserData("Newest", false);
         break;
     }
-    if (newSortMode) filterData = {...filterData, sortMode: newSortMode};
+    if (newSortMode) filterData = { ...filterData, sortMode: newSortMode };
   }, [filterData]);
-  
+
   useMemo(() => sortPeople(), []);
 
   let discoverPanelContents: React.ReactElement;
@@ -346,7 +346,8 @@ export const ProfileMeetPage = () => {
       <Header dataSets={userDataSet}
         onSearch={searchUsers}
         value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
-        setCurrentUserId={getAuth} />
+        setCurrentUserId={getAuth}
+        placeholderText="Search by Name" />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {profileHero}
 

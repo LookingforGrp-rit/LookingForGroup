@@ -520,6 +520,7 @@ const MyProjects = (userProfile: any) => {
         value={currentSearch}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
         setCurrentUserId={setUserProjects}
+        placeholderText='Search by Project'
       />
 
       {/* Banner */}
