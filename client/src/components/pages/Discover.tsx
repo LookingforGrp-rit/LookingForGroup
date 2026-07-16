@@ -27,7 +27,7 @@ let index = 0;
 let count = 10;
 
 //Synchronous storing of the full project list for quick reference
-let syncFullProjectList : ProjectPreview[] = [];
+let syncFullProjectList: ProjectPreview[] = [];
 
 enum sortModes {
   "A-Z" = "A-Z",
@@ -73,7 +73,7 @@ export const DiscoverPage = () => {
   }, [fullProjectList]);
 
   // When passing in data for project carousel, pass in the first three projects after getting their details
-// Hide the carousel while the user has an active search (non-empty search input)
+  // Hide the carousel while the user has an active search (non-empty search input)
   const heroContent = currentSearch.trim() === '' ? (
     <DiscoverCarousel dataList={heroProjectList} />
   ) : null;
@@ -292,7 +292,7 @@ export const DiscoverPage = () => {
   * @param activeTagFilters Tags that are shown to the user now
   */
   const updateProjectList = async (activeTagFilters: Tag[], activeExclusionFilters: Tag[], filterMode: "Match All" | "Match Any", sortMode: sortModes) => {
-    if(filterData.sortMode !== sortMode){
+    if (filterData.sortMode !== sortMode) {
       sortProjects(sortMode);
     }
 
@@ -559,7 +559,9 @@ export const DiscoverPage = () => {
         onSearch={searchProjects}
         value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
         setCurrentUserId={getAuth}
-        searchOnFocus={handleSearchFocus} />
+        searchOnFocus={handleSearchFocus}
+        placeholderText="Search by Project"
+      />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {heroContent}
 

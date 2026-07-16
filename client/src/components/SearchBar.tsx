@@ -29,8 +29,12 @@ interface SearchBarProps {
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 
   setValue?: React.Dispatch<React.SetStateAction<string>>;
-  
+
   onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
+
+  //placeholder text, which should be different based on what page
+  //the user is searching on
+  placeholderText: string;
 }
 
 /**
@@ -46,7 +50,7 @@ interface SearchBarProps {
  * @returns JSX element containing a styled search input with icon
  */
 //FIXME: create way to update results if a new dataset is provided: discover page filter and project editor tag filters do not save search state
-export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange, setValue, onFocus }) => {
+export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange, setValue, onFocus, placeholderText = "Search by Project" }) => {
   // Internal query state for uncontrolled mode
   const [internalQuery, setInternalQuery] = useState('');
 
@@ -149,7 +153,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
         <input
           className="search-input"
           type="text"
-          placeholder="Search by Project"
+          placeholder={placeholderText}
           value={value ?? internalQuery}
           onChange={handleChange}
           onFocus={onFocus}

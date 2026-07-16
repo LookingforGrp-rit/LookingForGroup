@@ -65,6 +65,7 @@ const AboutPage = () => {
                     onChange={handleSearchChange}
                     hideSearchBar={true}
                     hideBackButton={false}
+                    placeholderText=''
                 />
             </aside>
 
@@ -230,16 +231,16 @@ const AboutPage = () => {
                         <p className="about-text">The following guidelines below help keep LFG a friendly, encouraging, and creative community for everyone to enjoy.
                             If you see anyone or anything that violates these guidelines, please use our report feature to notify a moderator. </p>
 
-                            <h3 className="about-header-three">User Eligibility</h3>
+                        <h3 className="about-header-three">User Eligibility</h3>
 
-                            <ul className="guidelines-list">
+                        <ul className="guidelines-list">
                             <li className="about-text">
-                                 Users must be either presently affiliated with RIT (Student or Staff) or formerly affiliated with RIT (Alumni). This is so we can focus on RIT students getting the help they need to get co-ops, internships, or future jobs
+                                Users must be either presently affiliated with RIT (Student or Staff) or formerly affiliated with RIT (Alumni). This is so we can focus on RIT students getting the help they need to get co-ops, internships, or future jobs
                             </li>
-                            </ul>
+                        </ul>
 
-                            <h3 className="about-header-three">Copyright</h3>
-                            <ul className="guidelines-list">
+                        <h3 className="about-header-three">Copyright</h3>
+                        <ul className="guidelines-list">
                             <li className="about-text">
                                 Users are responsible for following general U.S. copyright law (found <a href="https://www.copyright.gov/title17/">here</a>)
                             </li>
@@ -253,8 +254,8 @@ const AboutPage = () => {
                                 Projects falling under Fair Use Guidelines (<a href="https://www.copyright.gov/fair-use/">U.S. Copyright Office Fair Use Index</a>) will not be taken down, however, Fair Use is never guaranteed in every case.
                             </li>
                         </ul>
-                         <h3 className="about-header-three">Banned Content</h3>
-                         <ul className="guidelines-list">
+                        <h3 className="about-header-three">Banned Content</h3>
+                        <ul className="guidelines-list">
                             <li className="about-text">Content promoting/inciting hate, harassment, or discrimination are not tolerated on LFG. As well as selling the project/products on the site. Such content will be taken down and will result in bans.
                                 <ul>
                                     <li>
@@ -263,31 +264,31 @@ const AboutPage = () => {
                                 </ul>
                             </li>
                             <li className="about-text">
-                                Sensitive content such as Suicide, real or disturbing depictions of violence, content that exploits children in any way and sexually explicit content should not be displayed in promotional images/videos.  
+                                Sensitive content such as Suicide, real or disturbing depictions of violence, content that exploits children in any way and sexually explicit content should not be displayed in promotional images/videos.
                             </li>
-                         </ul>
-                         <h3 className="about-header-three">Ai Content</h3>
-                         <ul className="guidelines-list">
+                        </ul>
+                        <h3 className="about-header-three">Ai Content</h3>
+                        <ul className="guidelines-list">
                             <li className="about-text">Projects must disclose use of AI</li>
                             <li className="about-text">AI used maliciously to violate copyright laws is strictly prohibited and will result in the project taken down and potential bans.</li>
                             <li className="about-text">All other rules on this website applies to AI generated content.</li>
-                         </ul>
+                        </ul>
                     </section>
                     <section className="about-section">
                         <h2 className="about-header-two">Data Protection and Security</h2>
                         <ul className="guidelines-list">
-                          <li className="about-text">We do not use cookies to store your data.</li>
-                          <li className="about-text">Any projects along with assets placed upon the site belong to the owner. LFG does not claim ownership.</li>
+                            <li className="about-text">We do not use cookies to store your data.</li>
+                            <li className="about-text">Any projects along with assets placed upon the site belong to the owner. LFG does not claim ownership.</li>
                         </ul>
 
                         <h3 className="about-header-three">Data Collection</h3>
                         <p className="about-text">We store:</p>
                         <ul className="guidelines-list">
-                          <li className="about-text">RIT Email</li>
-                          <li className="about-text">{"Full Name (first/preferred, last)"}</li>
-                          <li className="about-text">Major</li>
-                          <li className="about-text">Year</li>
-                          <li className="about-text">{"Phone Number (optional)"}</li>
+                            <li className="about-text">RIT Email</li>
+                            <li className="about-text">{"Full Name (first/preferred, last)"}</li>
+                            <li className="about-text">Major</li>
+                            <li className="about-text">Year</li>
+                            <li className="about-text">{"Phone Number (optional)"}</li>
                         </ul>
                     </section>
                     <section id="credits" tabIndex={-1} aria-labelledby='credits-title'>

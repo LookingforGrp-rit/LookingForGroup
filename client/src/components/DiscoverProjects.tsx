@@ -6,7 +6,7 @@ import { getJobTitles, getProjectTypes, getTags } from '../api/users';
 import { Tag, StringDictionary, Medium, Role, TagType, } from '@looking-for-group/shared';
 import { Select, SelectButton, SelectOptions } from './Select';
 import MoreFiltersButton from './MoreFiltersButton';
-import { Tag as TagElement} from './Tag';
+import { Tag as TagElement } from './Tag';
 import TagDisplay from './TagDisplay';
 
 
@@ -131,7 +131,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
             const job_data: Role[] = jobResponse.data as Role[];
 
             setAllTags([
-                ...tag_data.filter((tag) => tag.category !== undefined), 
+                ...tag_data.filter((tag) => tag.category !== undefined),
                 ...medium_data.map(
                     (medium) => ({
                         tagId: medium.mediumId,
@@ -139,7 +139,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                         type: "Project Type",
                         category: "Other",
                     } as Tag)
-                ), 
+                ),
                 ...job_data.map(
                     (role) => ({
                         tagId: role.roleId,
@@ -448,12 +448,13 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                 </div>
                                 <div id="filters" className="popup-section">
                                     <SearchBar
-                                        dataSets={[{data: allTags}]}
+                                        dataSets={[{ data: allTags }]}
                                         onSearch={(results) => {
                                             setSearchedTags(results[0] as Tag[]);
                                         }}
                                         value={searchValue}
                                         setValue={setSearchValue}
+                                        placeholderText='Search for Tag'
                                     ></SearchBar>
                                     <div id="more-filters-scroll-container">
                                         <button
@@ -506,10 +507,10 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                                     id: tag.tagId,
                                                     label: tag.label,
                                                     type: tag.type,
-                                                    category: 
-                                                        tag.type === "Project Type" ? "Medium" : 
-                                                        tag.type === "Positions" ? "Position" : 
-                                                        tag.category,
+                                                    category:
+                                                        tag.type === "Project Type" ? "Medium" :
+                                                            tag.type === "Positions" ? "Position" :
+                                                                tag.category,
                                                 })
                                             )}
                                             toggleTag={toggleTag}
@@ -520,10 +521,10 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                                     id: tag.tagId,
                                                     label: tag.label,
                                                     type: tag.type,
-                                                    category: 
-                                                        tag.type === "Project Type" ? "Medium" : 
-                                                        tag.type === "Positions" ? "Position" : 
-                                                        tag.category,
+                                                    category:
+                                                        tag.type === "Project Type" ? "Medium" :
+                                                            tag.type === "Positions" ? "Position" :
+                                                                tag.category,
                                                 })
                                             )}
                                             searchValue={searchValue}
@@ -532,10 +533,10 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                                     id: tag.tagId,
                                                     label: tag.label,
                                                     type: tag.type,
-                                                    category: 
-                                                        tag.type === "Project Type" ? "Medium" : 
-                                                        tag.type === "Positions" ? "Position" : 
-                                                        tag.category,
+                                                    category:
+                                                        tag.type === "Project Type" ? "Medium" :
+                                                            tag.type === "Positions" ? "Position" :
+                                                                tag.category,
                                                 })
                                             )}
                                         />

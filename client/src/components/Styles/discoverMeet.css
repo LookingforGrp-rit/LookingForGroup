@@ -876,9 +876,10 @@ Filters / Tags Style Rules
   p {
     margin: 0px;
     border: 0px;
-    color: var(--main-text);
+    color: black;
   }
-    /* Light-colored background tags will have dark text color */
+
+  /* Light-colored background tags will have dark text color */
   .tag-yellow p,
   .tag-periwinkle p,
   .tag-cyan p {
@@ -1616,9 +1617,10 @@ Filters / Tags Style Rules
 
   #filter-settings {
     width: 90%;
-  .select-container {
-    width: 48%;
+
+    .select-container {
+      width: 48%;
+    }
   }
-}
 
 }
