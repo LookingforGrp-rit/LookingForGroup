@@ -514,7 +514,7 @@ export const TagsTab = ({
         </div>
         <div id="project-editor-tag-search-container">
           <TagDisplay
-            selected={[
+            selected={[[
               ...projectAfterTagsChanges.tags.map(
                 tag => ({
                   ...tag,
@@ -532,7 +532,7 @@ export const TagsTab = ({
                   type: "Project Type",
                 })
               )
-            ]}
+            ], []]}
             toggleTag={handleTagSelect}
             tabs={tagTabs}
             tabId={currentTagsTab}

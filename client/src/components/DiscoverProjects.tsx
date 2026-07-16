@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect, useRef } from 'react';
+import React, { useState, Fragment, useEffect, useRef, useMemo} from 'react';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { tags, projectTabs } from '../constants/tags';
@@ -13,6 +13,7 @@ import TagDisplay from './TagDisplay';
 interface DiscoverProjectsProps {
     updateItemList: (
         tags: Tag[],
+        excludeTags: Tag[],
         filterMode: "Match All" | "Match Any",
         SortMode: sortModes
     ) => void;
@@ -66,6 +67,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     const [appliedFiltersDisplay, setAppliedFiltersDisplay] = useState<EnabledFilter[]>([]);
     // List of tags currently active for filtering in the parent dataset
     const [activeTagFilters, setActiveTagFilters] = useState<Tag[]>([]);
+    const [activeExclusionFilters, setActiveExclusionFilters] = useState<Tag[]>([]);
     // Whether the "Applied Filters" section should display under the quick tags
     const [displayFiltersText, setDisplayFiltersText] = useState(false);
     //Keeps track of the currently selected tab in this popup.
@@ -181,20 +183,28 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
      */
     const toggleTag = (id: number, type: string, update?: boolean) => {
         let newActiveTags: Tag[];
+        let newExclusionTags: Tag[];
         const tag = allTags.find((tag) => tag.tagId === id && tag.type === type as TagType);
         if (!tag) return;
 
         if (activeTagFilters.some(t => t === tag)) {
             // Remove the tag from the active list
             newActiveTags = activeTagFilters.filter(t => t !== tag);
+            newExclusionTags = [...activeExclusionFilters, tag];
+        }
+        else if (activeExclusionFilters.some(t => t === tag)) {
+            newActiveTags = activeTagFilters;
+            newExclusionTags = activeExclusionFilters.filter(t => t !== tag);
         }
         else {
             // Add the tag to the active list
             newActiveTags = [...activeTagFilters, tag];
+            newExclusionTags = activeExclusionFilters;
         }
 
         setActiveTagFilters(newActiveTags);
-        if (update) updateItemList(newActiveTags, filterMode, sortMode);
+        setActiveExclusionFilters(newExclusionTags);
+        if (update) updateItemList(newActiveTags, newExclusionTags, filterMode, sortMode); 
     };
 
     /**
@@ -305,6 +315,37 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    const activeTags = useMemo(() => {
+        return (
+        [...activeTagFilters.map((tag) => (
+            <TagElement
+                key={tag.type + tag.tagId}
+                type={tag.type.toLowerCase()}
+                onClick={() => {
+                    toggleTag(tag.tagId, tag.type);
+                }}
+                selected={true}
+            >
+                <i className="fa fa-check"></i>
+                <p>{tag.label}</p>
+            </TagElement>
+        )),
+        ...activeExclusionFilters.map((tag) => (
+            <TagElement
+                key={tag.type + tag.tagId}
+                type={tag.type.toLowerCase()}
+                onClick={() => {
+                    toggleTag(tag.tagId, tag.type);
+                }}
+                selected={true}
+            >
+                <i className="fa fa-close"></i>
+                <p>{tag.label}</p>
+            </TagElement>
+        ))]
+        );
+    }, [activeTagFilters, activeExclusionFilters]);
+
     return (
         <div id="discover-filters-parent">
             <div id="discover-filters">
@@ -332,7 +373,10 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                         const tagObj: Tag = { tagId: allTags.find((tag) => tag.label == label)?.tagId ?? 0, label, type, category: "Other" };
                         return (
                             <button key={`${type}-${label}`}
-                                className={"discover-tag-filter" + (activeTagFilters.find(t => t.tagId === tagObj.tagId && t.type === tagObj.type) ? " discover-tag-filter-selected" : "")}
+                                className={"discover-tag-filter" + 
+                                    (activeTagFilters.some(t => t.tagId === tagObj.tagId && t.type === tagObj.type) ? " discover-tag-filter-selected" : 
+                                    activeExclusionFilters.some(t => t.tagId === tagObj.tagId && t.type === tagObj.type) ? " discover-tag-filter-excluded " :
+                                    "")}
                                 data-type={type}
                                 onClick={() => toggleTag(tagObj.tagId, tagObj.type, true)}>
                                 {tagLabel}
@@ -458,7 +502,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     <hr />
                                     <div id="filter-tags">
                                         <TagDisplay
-                                            selected={activeTagFilters.map(
+                                            selected={[activeTagFilters.map(
                                                 (tag) => ({
                                                     id: tag.tagId,
                                                     label: tag.label,
@@ -468,7 +512,17 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                                             tag.type === "Positions" ? "Position" :
                                                                 tag.category,
                                                 })
-                                            )}
+                                            ), activeExclusionFilters.map(
+                                                (tag) => ({
+                                                    id: tag.tagId,
+                                                    label: tag.label,
+                                                    type: tag.type,
+                                                    category:
+                                                        tag.type === "Project Type" ? "Medium" :
+                                                            tag.type === "Positions" ? "Position" :
+                                                                tag.category,
+                                                })
+                                            )]}
                                             toggleTag={toggleTag}
                                             tabs={filterPopupTabs.map(tab => tab.categoryName)}
                                             tabId={activeTabId}
@@ -500,21 +554,10 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                 </div>
                                 <div id="selected-section" className="popup-section">
                                     <h3>Selected</h3>
-                                    <h4>Click to deselect</h4>
+                                    <h4>Click once to include-<i className='fa fa-check'>
+                                        </i>, twice to exclude-<i className='fa fa-close'></i>, three times to remove.</h4>
                                     <div id="selected-filters">
-                                        {activeTagFilters.map((tag) => (
-                                            <TagElement
-                                                key={tag.type + tag.tagId}
-                                                type={tag.type.toLowerCase()}
-                                                onClick={() => {
-                                                    toggleTag(tag.tagId, tag.type);
-                                                }}
-                                                selected={true}
-                                            >
-                                                <i className="fa fa-close"></i>
-                                                <p>{tag.label}</p>
-                                            </TagElement>
-                                        ))}
+                                        {activeTags}
                                     </div>
                                 </div>
                                 <div id="filters-btns-section">
@@ -542,8 +585,10 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                         buttonId={'primary-btn'}
                                         callback={() => {
                                             // Reset tag filters before adding results in
-                                            const newActiveTags = activeTagFilters
+                                            const newActiveTags = activeTagFilters;
+                                            const newExclusionTags = activeExclusionFilters;
                                             setActiveTagFilters(newActiveTags);
+                                            setActiveExclusionFilters(newExclusionTags);
                                             const discoverFilters = document.getElementsByClassName('discover-tag-filter');
 
                                             // Remove any/all other clicked discover tags
@@ -566,11 +611,11 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                             });
 
                                             // Update the project list
-                                            updateItemList(newActiveTags, filterMode, sortMode);
+                                            updateItemList(newActiveTags, newExclusionTags, filterMode, sortMode);
 
                                             //Add "Applied Filters" div if it is missing and if the paragraph exists
                                             if (newActiveTags.length > 0) {
-                                                setDisplayFiltersText(newActiveTags.some(tag => tag.type !== 'Project Type'));
+                                                setDisplayFiltersText([...newActiveTags, ...newExclusionTags].some(tag => tag.type !== 'Project Type'));
                                             }
                                         }}
                                     >
@@ -601,7 +646,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     const newActiveTags = tempList.map((filter) => filter.tag);
                                     setAppliedFiltersDisplay(tempList);
                                     setActiveTagFilters(newActiveTags);
-                                    updateItemList(newActiveTags, filterMode, sortMode);
+                                    updateItemList(newActiveTags, activeExclusionFilters, filterMode, sortMode);
 
                                     if (newActiveTags.length === 0 || (newActiveTags.length === 1 && newActiveTags[0].type === 'Project Type')) {
                                         setDisplayFiltersText(false);

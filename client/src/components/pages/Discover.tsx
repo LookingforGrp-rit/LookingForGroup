@@ -39,13 +39,14 @@ enum sortModes {
 }
 
 type FilterData = {
-  tags: Tag[],
-  filterMode: 'Match All' | 'Match Any'
-  sortMode: sortModes,
-}
+    tags: Tag[],
+    excludeTags: Tag[],
+    filterMode: 'Match All' | 'Match Any'
+    sortMode: sortModes,
+  }
 
 //Stores current filter settings
-let filterData: FilterData = { tags: [], filterMode: 'Match All', sortMode: sortModes.Newest };
+let filterData: FilterData = {tags: [], excludeTags: [], filterMode: 'Match All', sortMode: sortModes.Newest};
 
 export const DiscoverPage = () => {
   // --------------------
@@ -315,21 +316,21 @@ export const DiscoverPage = () => {
     setLoaded(true);
 
     //run through filters
-    updateProjectList(filterData.tags, filterData.filterMode, filterData.sortMode);
+    updateProjectList(filterData.tags, filterData.excludeTags, filterData.filterMode, filterData.sortMode);
   };
 
   /**
   * Changes what projects are shown to the user whenever a filter has been added or changed
   * @param activeTagFilters Tags that are shown to the user now
   */
-  const updateProjectList = async (activeTagFilters: Tag[], filterMode: "Match All" | "Match Any", sortMode: sortModes) => {
+  const updateProjectList = async (activeTagFilters: Tag[], activeExclusionFilters: Tag[], filterMode: "Match All" | "Match Any", sortMode: sortModes) => {
     if (filterData.sortMode !== sortMode) {
       sortProjects(sortMode);
     }
 
     //save filters
-    filterData = { tags: activeTagFilters, filterMode, sortMode };
-
+    filterData = {tags: activeTagFilters, excludeTags: activeExclusionFilters, filterMode, sortMode};
+    
     const projectList = syncFullProjectList;
     // Get project and user info to match with tags
     const items: ProjectWithFollowers[] = [];
@@ -348,6 +349,13 @@ export const DiscoverPage = () => {
       }
     }
     let tagFilteredList = items.filter((item) => {
+      for (let tag of activeExclusionFilters) {
+        if (item.tags.some((projectTag) => projectTag.tagId === tag.tagId && projectTag.type === tag.type) ||
+            item.mediums.some((medium) => medium.mediumId === tag.tagId && tag.type === "Project Type") ||
+            item.jobs.some((job) => job.jobId === tag.tagId && tag.type === "Role") ||
+            (item.purpose === tag.label && tag.type === "Purpose"))
+          return false;
+      }
       if (activeTagFilters.length === 0) return true;
       let matchesAny = false;
       let matchesAll = true;
