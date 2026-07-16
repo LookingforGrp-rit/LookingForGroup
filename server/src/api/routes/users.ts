@@ -27,7 +27,7 @@ router.post('/', createUser);
 //Gets another user's projects
 router.get(
   '/:id/projects/',
-  isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  //isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
   getOtherUserProjects,
 );
 
@@ -38,7 +38,7 @@ router.get(
   '/:id/followings/projects',
   userExistsAt('path', 'id'),
   requiresLogin,
-  isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  //isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
   getProjectsFollowing,
 );
 //Gets users user is following
@@ -46,7 +46,7 @@ router.get(
   '/:id/followings/people',
   userExistsAt('path', 'id'),
   requiresLogin,
-  isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  //isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
   getUserFollowing,
 );
 //Gets users that follow this user
@@ -54,7 +54,7 @@ router.get(
   '/:id/followers',
   userExistsAt('path', 'id'),
   requiresLogin,
-  isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  //isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
   getUserFollowers,
 );
 
@@ -74,19 +74,19 @@ router.get(
 //Gets users by username
 router.get(
   '/search-username/:username',
-  isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  //isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
   getUserByUsername,
 );
 // Gets users by email
 router.get(
   '/search-email/:email',
-  isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  //isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
   getUserByEmail,
 );
 //Get ysers by google id
 router.get(
   '/search-google/:id',
-  isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  //isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
   getUserByGoogleId,
 );
 

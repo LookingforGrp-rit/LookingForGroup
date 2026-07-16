@@ -1,5 +1,6 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request } from 'express';
+import prisma from '#config/prisma.ts';
 import type { ParameterLocation } from './parameter-location.ts';
 
 /**
@@ -7,11 +8,22 @@ import type { ParameterLocation } from './parameter-location.ts';
  * Will return 200 if no user was found.
  */
 export class MeParameterLocation implements ParameterLocation {
-  // eslint-disable-next-line @typescript-eslint/require-await
   async getId(_key: string, request: Request): Promise<number | ApiResponse> {
-    if ('currentUser' in request) {
-      const authRequest: AuthenticatedRequest = request as AuthenticatedRequest;
-      return authRequest.currentUser.userId;
+    const id = request.session.gid;
+    if (id) {
+      const userId = await prisma.users.findFirst({
+        where: {
+          googleId: id,
+        },
+        select: {
+          userId: true,
+        },
+      });
+
+      if (!userId) {
+        return { status: 400 };
+      }
+      return userId.userId;
     }
 
     const res = { status: 200 };
