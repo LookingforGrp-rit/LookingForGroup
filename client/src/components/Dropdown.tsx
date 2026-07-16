@@ -41,6 +41,7 @@ type DropdownButtonProps = {
 type DropdownContentProps = {
   children: React.ReactNode; // Content inside the dropdown panel
   rightAlign?: boolean; // Align dropdown to right edge if true
+  openUpward?: boolean; // Open the dropdown content upward when there's not enough space in the bottom if true
 };
 
 type DropdownProps = {
@@ -59,14 +60,14 @@ type DropdownProps = {
  * @param className - Optional CSS class for custom styling.
  * @returns A clickable button that toggles the dropdown open state.
  */
-export const DropdownButton: React.FC<DropdownButtonProps> = ({ 
-  children, 
-  buttonId = '', 
-  className = '', 
+export const DropdownButton: React.FC<DropdownButtonProps> = ({
+  children,
+  buttonId = '',
+  className = '',
   ariaLabel = '',
-  callback = (_e : React.MouseEvent) => {} 
+  callback = (_e: React.MouseEvent) => { }
 }) => {
-  const { open, setOpen } = useContext(DropdownContext); // Shared open/close state
+  const { open, setOpen, buttonRef } = useContext(DropdownContext); // Shared open/close state
 
   // Toggle the open state
   const toggleOpen = () => {
@@ -81,14 +82,50 @@ export const DropdownButton: React.FC<DropdownButtonProps> = ({
   // }, [open]);
 
   return (
-    <button aria-label={ariaLabel} id={buttonId} className={className} onClick={(e) => {
-      callback(e); // Run optional callback
-      toggleOpen(); // Toggle dropdown open/close
-    }}>
+    <button
+      ref={buttonRef}
+      aria-label={ariaLabel}
+      id={buttonId}
+      className={className}
+      onClick={(e) => {
+        callback(e); // Run optional callback
+        toggleOpen(); // Toggle dropdown open/close
+      }}>
       {children}
     </button>
   );
 };
+
+/**
+ * Helper hook to track the current window height, updating on resize. This is used
+ * to determine whether the dropdown should open upward or downward based on available space.
+ *
+ * @returns The current window height in pixels.
+ */
+function useWindowHeight() {
+  // initialize with undefined or 0 to support SSR (Next.js) safely
+  const [height, setHeight] = useState<number>(
+    typeof window !== 'undefined' ? window.innerHeight : 0
+  );
+
+  useEffect(() => {
+    // handler to call on window resize
+    const handleResize = () => {
+      setHeight(window.innerHeight);
+    };
+
+    // add event listener
+    window.addEventListener('resize', handleResize);
+
+    // call handler right away so state gets updated with initial window size
+    handleResize();
+
+    // clean up listener on unmount
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return height;
+}
 
 /**
  * Wrapper for the content displayed inside a dropdown. Visibility is controlled
@@ -101,8 +138,11 @@ export const DropdownButton: React.FC<DropdownButtonProps> = ({
 export const DropdownContent: React.FC<DropdownContentProps> = ({
   children,
   rightAlign = false,
+  openUpward = false
 }) => {
-  const { open } = useContext(DropdownContext); // Access open state
+  const { open, buttonRef } = useContext(DropdownContext); // Access open state
+  const contentRef = useRef<HTMLDivElement>(null); // Ref to content for open up/down detection
+  const height = useWindowHeight();
 
   // useEffect(() => {
   //   if (open) {
@@ -111,13 +151,54 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
   //   }
   // }, [open]);
 
+  useEffect(() => {
+    // return if the dropdown should not open upward
+    if (!openUpward) return;
+    if (!open || !contentRef.current || !buttonRef || !buttonRef.current) return;
+
+    // get the dropdown and button elements
+    const dropdown = contentRef.current;
+    const button = buttonRef.current;
+
+    // get the button's position and the dropdown's height
+    const buttonRect = button.getBoundingClientRect();
+    const dropdownHeight = dropdown.scrollHeight;
+
+    // calculate available space above and below the button
+    // additional 80 for mobile nav bar (can change if necessary)
+    const spaceBelow = window.innerHeight - 80 - buttonRect.bottom;
+    const spaceAbove = buttonRect.top;
+
+    // if space below is less than the dropdown height and space above is enough, open upward
+    if (spaceBelow < dropdownHeight && spaceAbove >= dropdownHeight) {
+      // Open upward
+      dropdown.style.top = `${button.offsetTop - dropdownHeight}px`;
+      dropdown.style.bottom = 'auto';
+    } else {
+      // Open downward
+      dropdown.style.bottom = 'auto';
+      dropdown.style.top = `${button.offsetHeight}px`;
+    }
+  }, [open, openUpward, height]);
+
   // Conditional right alignment
   if (open) {
     if (!rightAlign) {
-      return <div className="dropdown">{children}</div>;
+      return (
+        <div
+          className="dropdown"
+          ref={contentRef}
+        >
+          {children}
+        </div>
+      );
     } else {
       return (
-        <div className="dropdown" style={{ right: 0 }}>
+        <div
+          className="dropdown"
+          style={{ right: 0 }}
+          ref={contentRef}
+        >
           {children}
         </div>
       );
@@ -138,6 +219,7 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
 export const Dropdown: React.FC<DropdownProps> = ({ children, callback }) => {
   const [open, setOpen] = useState(false); // Local state to track open/close
   const dropdownRef = useRef<HTMLDivElement>(null); // Ref to container for click-outside detection
+  const buttonRef = useRef<HTMLButtonElement | null>(null); // Ref to button for positioning
 
   // Close dropdown if clicked outside
   useEffect(() => {
@@ -158,7 +240,7 @@ export const Dropdown: React.FC<DropdownProps> = ({ children, callback }) => {
   }, [open]);
 
   return (
-    <DropdownContext.Provider value={{ open, setOpen }}>
+    <DropdownContext.Provider value={{ open, setOpen, buttonRef }}>
       <div className="dropdown-container" ref={dropdownRef}>
         {children}
       </div>

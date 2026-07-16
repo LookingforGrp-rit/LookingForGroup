@@ -5,7 +5,6 @@ import profileImage from "../images/lfrog.png";
 import { PopupButton } from "./Popup";
 import * as paths from "../constants/routes";
 import { requestToJoin, getMemberRequest, getMembers } from '../api/projects.ts';
-import { Tag as TagElement } from "./Tag";
 import {
   JobAvailability as JobAvailabilityEnums,
   JobDuration as JobDurationEnums,

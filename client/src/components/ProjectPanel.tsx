@@ -181,7 +181,11 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
             )}
             
           </div>
-          <ProjectPanelMeta project={project}/>
+          <ProjectPanelJob project={project}/>
+          <div>
+            <hr/>
+            <ProjectPanelMeta project={project}/>
+          </div>
         </div>
       </div>
     </Link>
@@ -210,6 +214,32 @@ const ProjectPanelMeta = ({ project }: { project: ProjectWithFollowers }) => {
       {shownTags.map((tag, i) => (
         <TagElement key={i} type={tag.type?.toLowerCase() ?? ''} selected={true}>
           <p>{tag.label}</p>
+        </TagElement>
+      ))}
+
+      {overflowCount > 0 && (
+        <TagElement selected={true} className='project-panel-meta-plus'>
+          <p>+{overflowCount}</p>
+        </TagElement>
+      )}
+    </div>
+  );
+};
+
+
+const ProjectPanelJob = ({ project }: { project: ProjectWithFollowers }) => {
+  const jobPositions = project.jobs ?? [];
+  
+  const MAX_TAGS_TO_SHOW = 9; // Editor says only two tags appear
+  const shownJobs = jobPositions.slice(0, MAX_TAGS_TO_SHOW);
+  const overflowCount = jobPositions.length - shownJobs.length;
+
+  return (
+    <div className='project-panel-meta'>
+    
+      {shownJobs.map((jobs, i) => (
+        <TagElement key={i} type="positions" selected={true}>
+          <p>{jobs.role.label}</p>
         </TagElement>
       ))}
 

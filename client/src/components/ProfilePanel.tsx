@@ -106,7 +106,7 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
         <h2>
           {profileData.firstName} {profileData.lastName}
         </h2>
-        <h3>{majorsArr.join(', ') || ''}</h3>
+        <h3>{majorsArr?.join(', ') || ''}</h3>
         {profileData.headline ?
           <div id="quote">{profileData.headline ?
             (profileData.headline.startsWith(`"`) && profileData.headline.endsWith(`"`) ? `${profileData.headline}` : `"${profileData.headline}"`) : ''}</div>

@@ -1,0 +1,140 @@
+/* ==================
+
+    Most of the css styling rules for the Moderator page and mod options
+
+================== */
+
+#mod-tools-block
+{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    /* Include the padding in the 100% width so the boxes line up with the
+       others instead of overflowing ~30px past the right edge. */
+    box-sizing: border-box;
+    background-color: var(--header-color);
+    border-radius: 10px;
+    padding: 10px;
+    height: auto;
+
+    #mod-tools-tabs {
+        display: flex;
+        gap: 15px;
+        align-items: flex-end;
+        height: 40px;
+    }
+    button
+    {
+        color: var(--primary-color);
+        background-color: var(--liked-section-bg);
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        border-color: var(--liked-section-bg);
+        border-style: solid;
+        font-size: 1.25rem;
+        padding: 0.3rem 0.6rem;
+        padding-bottom: 0.4rem;
+        font-weight: 600;
+    }
+    button:hover {
+      transform: none;
+      padding-bottom: 10px;
+    }
+    #mod-content-container
+    {
+        width: calc(100% - 30px);
+        min-height: 100px;
+        background-color: var(--liked-section-bg);
+        border-radius: 10px;
+        border-top-left-radius: 0px;
+        border-color: var(--liked-section-bg);
+        border-style: solid;
+        padding: 10px;
+        max-height: 500px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+}
+.mod-page {
+    .page-title {
+        padding: 20px;
+    }
+    #mod-page-description
+    {
+        width: 90%;
+        text-align: center;
+    }
+}
+#mod-options-btns
+{
+    flex-wrap: wrap;
+    #mod-approve-btn
+    {
+        border: none;
+        border-radius: 30px;
+        padding: 10px 20px;
+        background-color: var(--approved-green, #b1fca9);
+        color: var(--main-text);
+        font-size: 2ch;
+        width: max-content;
+        margin: auto min(1vw, 10px);
+        font-weight: 700;
+    }
+    .mod-edit-btn, #mod-kick-btn
+    {
+        border: none;
+        border-radius: 30px;
+        padding: 10px 20px;
+        background-color: var(--under-review-yellow, #ffe1a2);
+        color: var(--main-text);
+        font-size: 2ch;
+        width: max-content;
+        margin: auto min(1vw, 10px);
+        font-weight: 700;
+    }
+    #mod-ignore-btn
+    {
+        border: none;
+        border-radius: 30px;
+        padding: 10px 20px;
+        background-color: var(--primary-color);
+        color: var(--invert-text);
+        font-size: 2ch;
+        width: max-content;
+        margin: auto min(1vw, 10px);
+        font-weight: 700;
+    }
+    /* decline btn styled by delete-button */
+    #mod-decline-btn
+    {
+        color: var(--main-text);
+    }
+}
+
+#mod-user-options
+{
+    margin-top: 1vw;
+    width: 100%;
+    max-width: calc(100% - 40px);
+}
+
+/* Mobile */
+@media screen and (max-width: 700px)
+{
+    #mod-tools-block
+    {
+        button {
+            font-size: 1em;
+            height: fit-content;
+        }
+        #mod-tools-tabs
+        {
+            height: fit-content;
+        }
+    }
+    #mod-user-options
+    {
+        margin: 20px 0;
+
+    }
+}
