@@ -637,6 +637,10 @@ Project Creator and Editor Popup style rules
   textarea {
     margin: 20px;
   }
+
+  textarea:focus{
+    outline: 0px;
+  }
 }
 
 .share-response-popup {
