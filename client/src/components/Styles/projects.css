@@ -2119,6 +2119,8 @@ Project Creator and Editor Popup style rules
   justify-content: end;
   margin-right: 0;
   margin-left: 0;
+  margin-top: auto;
+  align-self: flex-end;
 }
 
 .delete-position-button-alt {
@@ -2143,7 +2145,7 @@ Project Creator and Editor Popup style rules
   height: fit-content;
   color: #FF3859;
   font-weight: bold;
-  font-size: medium;
+  font-size: small;
   margin: 0;
   margin-right: 0.15em;
 }

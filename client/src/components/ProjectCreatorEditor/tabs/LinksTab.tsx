@@ -399,7 +399,6 @@ export const LinksTab = ({
                 title="Remove social link"
               >
                 <div id="clear-all-trash-row">
-                <p id="clear-all-trash-text">Clear All</p>
                 <ThemeIcon
                   id="trash"
                   width={18}
