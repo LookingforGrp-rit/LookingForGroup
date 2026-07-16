@@ -338,7 +338,7 @@ export const TagsTab = ({
     <div id="project-editor-tags">
       <div id="project-editor-type-tags">
         <div className="project-editor-section-header">
-          Selected Medium(s)
+          Selected Project Type(s)
           {isMediumsUnsaved && (
             <span className="unsaved-indicator">
               (Unsaved)
@@ -346,7 +346,7 @@ export const TagsTab = ({
           )}
         </div>
         {projectAfterTagsChanges.mediums.length === 0 ? (
-          <div className="error">*At least 1 medium is required</div>
+          <div className="error">*At least 1 project type is required</div>
         ) : (
           <></>
         )}
@@ -475,11 +475,18 @@ export const TagsTab = ({
         <div id="project-editor-tag-wrapper">
           <div id="project-editor-tag-search-tabs">
             {tagTabs.map((type, index) => 
+            <>
             <button
             onClick={() => setCurrentTagsTab(index)}
             className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${tagTabColors[type as string] ?? 'grey'} ${currentTagsTab === index && searchValue === "" ? "tag-search-tab-active" : ""}`}>
               {type}
-            </button>)}
+            </button>
+            {
+              type == "Project Type" &&
+              <span id="vertical-line"></span>
+            }
+            </>
+            )}
           </div>
           <hr id="tag-search-divider" />
         </div>
