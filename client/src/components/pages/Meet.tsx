@@ -352,8 +352,7 @@ export const ProfileMeetPage = () => {
         onSearch={searchUsers}
         value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
         setCurrentUserId={getAuth}
-        placeholderText="Search by Name"
-        mobilePlaceholderText="People" />
+        placeholderText="Search by Name" />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {profileHero}
 

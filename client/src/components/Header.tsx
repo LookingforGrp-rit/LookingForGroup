@@ -34,7 +34,6 @@ type HeaderProps = {
   setCurrentUserId?: (data: MePrivate | undefined) => Promise<void>;
   searchOnFocus?: (e: FocusEvent<HTMLInputElement>) => void;
   placeholderText: string;
-  mobilePlaceholderText?: string;
 };
 
 /**
@@ -62,8 +61,7 @@ export const Header: React.FC<HeaderProps> = ({
   pageTitle = "",
   setCurrentUserId,
   searchOnFocus,
-  placeholderText = "",
-  mobilePlaceholderText }) => {
+  placeholderText = "" }) => {
   // User info state
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
@@ -216,7 +214,6 @@ export const Header: React.FC<HeaderProps> = ({
             onChange={onChange}
             onFocus={searchOnFocus}
             placeholderText={placeholderText}
-            mobilePlaceholderText={mobilePlaceholderText}
           />
         </div>
       )}
