@@ -22,6 +22,7 @@
         gap: 15px;
         align-items: flex-end;
         height: 40px;
+        overflow-y: scroll;
     }
     button
     {

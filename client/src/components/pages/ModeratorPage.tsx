@@ -10,6 +10,7 @@ import "../../components/Styles/projects.css";
 import { getCurrentAccount } from "../../api/users";
 import { getUserAccessLevel } from "../../api/mod-tools";
 import * as paths from '../../constants/routes';
+import AllModerators from "../ModeratorTools/admin/AllModerators";
 
 /**
  * The Moderator Page, only accessible by Moderators and Administrators
@@ -22,16 +23,23 @@ const ModeratorPage = () => {
     const [userId, setUserId] = useState<number>(-1);
 
     /* Page contents only viewable by mods*/
-    const [userIsAdmin, setUserIsAdmin] = useState<boolean>(true);      /* FIX UPON FINAL IMPLEMENTATION */
+    const [userIsMod, setUserIsMod] = useState<boolean>(false);
+
+    /* Admin content only viewable by admins */
+    const [userIsAdmin, setUserIsAdmin] = useState<boolean>(false);
 
 // Helper Functions
 
     const navigate = useNavigate();
 
+    /**
+     * Handles tab styling when switching between moderation page tabs
+     */
     const tabManagement = () => {
         const pendingProjectsTab = document.querySelector("#mod-pending-tab") as HTMLButtonElement;
         const reportedUsersTab = document.querySelector("#mod-users-tab") as HTMLButtonElement;
         const reportedProjectsTab = document.querySelector("#mod-projects-tab") as HTMLButtonElement;
+        const allModeratorsTab = document.querySelector("#admin-mods-tab") ? document.querySelector("#admin-mods-tab") as HTMLButtonElement : null;
         
         if (reportedUsersTab != null && reportedProjectsTab != null && pendingProjectsTab != null)
         {
@@ -41,16 +49,42 @@ const ModeratorPage = () => {
                     reportedUsersTab.style.opacity = String(.5);
                     reportedProjectsTab.style.opacity = String(.5);
                     pendingProjectsTab.style.opacity = String(1);
+                    if (userIsAdmin && allModeratorsTab != null)
+                    {
+                        allModeratorsTab.style.opacity = String(.5);
+                    }
                     break;
                 case 1:
                     reportedUsersTab.style.opacity = String(1);
                     reportedProjectsTab.style.opacity = String(.5);
                     pendingProjectsTab.style.opacity = String(.5);
+                    if (userIsAdmin && allModeratorsTab != null)
+                    {
+                        allModeratorsTab.style.opacity = String(.5);
+                    }
                     break;
                 case 2:
                     reportedUsersTab.style.opacity = String(.5);
                     reportedProjectsTab.style.opacity = String(1);
                     pendingProjectsTab.style.opacity = String(.5);
+                    break;
+                case 3:
+                    if (userIsAdmin && allModeratorsTab != null)
+                    {
+                        reportedUsersTab.style.opacity = String(.5);
+                        reportedProjectsTab.style.opacity = String(.5);
+                        pendingProjectsTab.style.opacity = String(.5);
+                        allModeratorsTab.style.opacity = String(1);
+                    }
+                    break;
+                default: 
+                    reportedUsersTab.style.opacity = String(.5);
+                    reportedProjectsTab.style.opacity = String(.5);
+                    pendingProjectsTab.style.opacity = String(1);
+                    if (userIsAdmin && allModeratorsTab != null)
+                    {
+                        allModeratorsTab.style.opacity = String(.5);
+                    }
                     break;
             }
         }
@@ -68,11 +102,17 @@ const ModeratorPage = () => {
             const accessLevel = await getUserAccessLevel(userAccount.data.userId);
             if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator')
             {
-                setUserIsAdmin(true);
+                setUserIsMod(true);
             }
             else /* Redirect to home if not moderator or admin*/
             {
                 navigate(paths.routes.HOME);
+                return;
+            }
+
+            if (accessLevel.data?.toString() == 'Administrator')
+            {
+                setUserIsAdmin(true);
             }
         }
         else    /* Redirect to log in if not logged in */
@@ -91,6 +131,8 @@ const ModeratorPage = () => {
                 return(<ReportedUsers currentUserId={userId} currentTab={currentTab}></ReportedUsers>);
             case 2:
                 return(<ReportedProjects currentUserId={userId} currentTab={currentTab}></ReportedProjects>);
+            case 3:
+                return (<AllModerators currentUserId={userId} currentTab={currentTab}></AllModerators>);
             default:
                 return (<PendingProjects currentUserId={userId} currentTab={currentTab}></PendingProjects>);
         }
@@ -120,12 +162,14 @@ const ModeratorPage = () => {
             <h1 className="page-title">Moderation</h1>
             <p id="mod-page-description">Manage pending project requests, handle user and project reports, and more!</p>
             <main id="main" tabIndex={-1} aria-label='main content'>
-                {userIsAdmin ?
+                {userIsMod ?
                 <div id="mod-tools-block">
                     <div id="mod-tools-tabs">
                       <button id="mod-pending-tab" onClick={() => {setCurrentTab(0);}}>Pending Projects</button>
                       <button id="mod-users-tab" onClick={() => {setCurrentTab(1);}}>Reported Users</button>
                       <button id="mod-projects-tab" onClick={() => {setCurrentTab(2);}}>Reported Projects</button>
+                      {userIsAdmin ? 
+                        <button id="admin-mods-tab" onClick={() => {setCurrentTab(3);}}>All Moderators</button> : ""}
                     </div>
                     <div id="mod-content-container">{renderTabContent()}</div>
                 </div> : "You are not a moderator!"} 
