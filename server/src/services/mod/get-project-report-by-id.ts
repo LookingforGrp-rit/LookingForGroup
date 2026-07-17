@@ -11,18 +11,18 @@ const getProjectReportByIdService = async (
   reportId: number,
 ): Promise<ProjectReport | GetServiceError> => {
   try {
-    const reports = await prisma.reportProject.findUnique({
+    const report = await prisma.reportProject.findUnique({
       where: {
         reportId,
       },
       select: ProjectReportSelector,
     });
 
-    if (!reports) return 'NOT_FOUND';
+    if (!report) return 'NOT_FOUND';
 
-    const transformedReports = transformProjectReport(reports);
+    const transformedReport = transformProjectReport(report);
 
-    return transformedReports;
+    return transformedReport;
   } catch (e) {
     console.error(`Error in getProjectReportByIdService: ${e as Error}`);
 

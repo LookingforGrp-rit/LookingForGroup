@@ -11,18 +11,18 @@ const getUserReportByIdService = async (
   reportId: number,
 ): Promise<UserReport | GetServiceError> => {
   try {
-    const reports = await prisma.reportUser.findUnique({
+    const report = await prisma.reportUser.findUnique({
       where: {
         reportId,
       },
       select: UserReportSelector,
     });
 
-    if (!reports) return 'NOT_FOUND';
+    if (!report) return 'NOT_FOUND';
 
-    const transformedReports = transformUserReport(reports);
+    const transformedReport = transformUserReport(report);
 
-    return transformedReports;
+    return transformedReport;
   } catch (e) {
     console.error(`Error in getUserReportByIdService: ${e as Error}`);
 
