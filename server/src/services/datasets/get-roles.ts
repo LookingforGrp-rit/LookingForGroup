@@ -9,17 +9,19 @@ type GetRolesServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 //GET api/datasets/roles
 const getRolesService = async (): Promise<Role[] | GetRolesServiceError> => {
   try {
-    const roles = await prisma.roles.findMany({
+    let roles = await prisma.roles.findMany({
       select: RoleSelector,
+
       orderBy: {
         label: 'asc',
       },
     });
 
+    //Should sort the array alphabetically
+    roles = roles.toSorted((roleA, roleB) => roleA.label.charCodeAt(0) - roleB.label.charCodeAt(0));
     return roles.map(transformRole);
   } catch (e) {
-    console.error(`Error in getRolesService: ${JSON.stringify(e)}`);
-
+    console.error(`Error in getRolesService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

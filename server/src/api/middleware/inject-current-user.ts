@@ -1,8 +1,9 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { NextFunction, Request, Response } from 'express';
-import { uidHeaderKey } from '#config/constants.ts';
 import envConfig from '#config/env.ts';
-import { getUserByShibService } from '#services/me/get-user-shib.ts';
+//import type { UserData } from '#services/authentication/login.ts';
+import { getUserAccessLevel } from '#services/authentication/get-user-access-level.ts';
+import { getUserByGoogleService } from '#services/me/get-user-google.ts';
 
 const injectCurrentUser = async (request: Request, response: Response, next: NextFunction) => {
   const authenticatedRequest = request as AuthenticatedRequest;
@@ -12,26 +13,52 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
     const devId = request.query.devId as string | undefined;
 
     if (devId) {
-      authenticatedRequest.currentUser = parseInt(devId);
+      const accessLevel = await getUserAccessLevel(parseInt(devId));
+
+      if (accessLevel === 'NOT_FOUND') {
+        const resBody: ApiResponse = {
+          status: 404,
+          error: 'User does not exist',
+          data: null,
+        };
+        response.status(404).json(resBody);
+        return;
+      }
+
+      if (accessLevel === 'INTERNAL_ERROR') {
+        const resBody: ApiResponse = {
+          status: 500,
+          error: 'Internal Error',
+          data: null,
+        };
+        response.status(500).json(resBody);
+        return;
+      }
+
+      authenticatedRequest.currentUser = {
+        username: 'DEV',
+        userId: parseInt(devId),
+        accessLevel: accessLevel,
+      };
       next();
       return;
     }
   }
 
-  const universityId = authenticatedRequest.headers[uidHeaderKey] as string | undefined;
+  const googleId = request.session.gid;
 
-  //if no university id found
-  if (!universityId) {
+  //if no google id found
+  if (!googleId) {
     const resBody: ApiResponse = {
       status: 400,
-      error: 'Missing university ID in headers',
+      error: 'Missing Google ID in session store',
       data: null,
     };
     response.status(400).json(resBody);
     return;
   }
 
-  const result = await getUserByShibService(universityId);
+  const result = await getUserByGoogleService(googleId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -45,16 +72,16 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
-      status: 404,
+      status: 401,
       error: 'User not found',
       data: null,
     };
-    response.status(404).json(resBody);
+    response.status(401).json(resBody);
     return;
   }
 
-  const userID = result.userId;
-  authenticatedRequest.currentUser = userID;
+  authenticatedRequest.currentUser = result;
+  request.session.touch();
   next();
 };
 

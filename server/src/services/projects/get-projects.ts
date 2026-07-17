@@ -14,13 +14,22 @@ const getProjectsService = async (): Promise<ProjectPreview[] | GetServiceError>
       orderBy: {
         createdAt: 'desc',
       },
+      where: {
+        approved: true,
+        globalVisibility: 'public',
+      },
     });
 
     //return transformed projects
-    const transformedProjects = result.map(transformProjectToPreview);
+    let transformedProjects = result.map(transformProjectToPreview);
+
+    //Array is alphabetized by project title
+    transformedProjects = transformedProjects.toSorted(
+      (project1, project2) => project1.title.charCodeAt(0) - project2.title.charCodeAt(0),
+    );
     return transformedProjects;
   } catch (e) {
-    console.error(`Error in getProjectsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getProjectsService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }

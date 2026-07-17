@@ -1,8 +1,8 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type DeleteUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
-type DeleteUserServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
+type DeleteUserServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
 //DELETE api/me
 export const deleteUserService = async (
@@ -10,7 +10,7 @@ export const deleteUserService = async (
 ): Promise<DeleteUserServiceError | DeleteUserServiceSuccess> => {
   try {
     //user validation (does this user exist)
-    const userExists = await prisma.userSocials.findFirst({
+    const userExists = await prisma.users.findFirst({
       where: {
         userId,
       },
@@ -29,7 +29,7 @@ export const deleteUserService = async (
 
     return 'NO_CONTENT';
   } catch (e) {
-    console.error(`Error in deleteUserService: ${JSON.stringify(e)}`);
+    console.error(`Error in deleteUserService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

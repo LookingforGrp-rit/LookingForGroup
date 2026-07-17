@@ -5,14 +5,19 @@ import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { LeaveDeleteContext } from '../contexts/LeaveDeleteContext';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { PagePopup } from './PagePopup';
-import { getByID,  deleteProject } from '../api/projects';
-import { ApiResponse, ProjectDetail } from '@looking-for-group/shared';
+import { getByID, deleteProject, requestProjectReview } from '../api/projects';
+import { ApiResponse, ProjectDetail, ProjectFollowers } from '@looking-for-group/shared';
 import { leaveProject } from '../api/users';
 import { ThemeIcon } from './ThemeIcon';
-import { ProjectStatus as ProjectStatusEnums } from '@looking-for-group/shared/enums';
+import { ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 
 //backend base url for getting images
 
+type ApprovalStatusKey = keyof typeof ApprovalStatus;
+type MyProjectsDisplayListProps = {
+  projectData: ProjectDetail;
+  approvalStatus: ApprovalStatusKey;
+};
 /**
  * MyProjectsDisplayList renders a single project as a list item for the "My Projects" page.
  * 
@@ -32,13 +37,14 @@ import { ProjectStatus as ProjectStatusEnums } from '@looking-for-group/shared/e
  * - Formats creation date into DD/MM/YYYY format.
  * 
  * @param projectData - Detailed information about the project (from the backend API)
+ * @param approvalStatus - Project approval status (keyof ProjectApprovalStatus from "@looking-for-group/shared/enums")
  * @returns {JSX.Element} The project list card element.
  */
-const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) => {
+const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDisplayListProps) => {
   // Navigation hook
   const navigate = useNavigate();
 
-  const { projId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
+  const { projId, isOwner, reloadProjects, removeProject } = useContext(LeaveDeleteContext);
 
   // Project status fetched from API
   const [status, setStatus] = useState<string>();
@@ -53,14 +59,14 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
   // Fetches project status and project thumbnail
 
   useEffect(() => {
-  const fetchStatus = async () => {
-    const response = await getByID(projectData.projectId);
-    if(response.data) {
-      setStatus(ProjectStatusEnums[response.data.status]);
-    } else {
-      setStatus('Error loading status');
-    }
-  };
+    const fetchStatus = async () => {
+      const response = await getByID(projectData.projectId);
+      if (response.data) {
+        setStatus(ProjectStatusEnums[response.data.status]);
+      } else {
+        setStatus('Error loading status');
+      }
+    };
     fetchStatus();
   })
 
@@ -80,6 +86,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
     setRequestType('leave');
     setResultObj(response);
     setShowResult(true);
+    if (response.status === 200) setTimeout(() => removeProject(projId), 1500);
   };
 
   // Handles deleting the project (owner only)
@@ -88,20 +95,21 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
     setRequestType('delete');
     setResultObj(response);
     setShowResult(true);
+    if (response.status === 200) setTimeout(() => removeProject(projId), 1500);
   };
 
-  //Converts ISO date string to DD/MM/YYYY format
+  //Converts ISO date string to MM/DD/YYYY format
   const formatDate = (dateStr: string) => {
     if (!dateStr) return 'No data';
     const [date] = dateStr.split('T');
     const [year, month, day] = date.split('-');
-    return `${day}/${month}/${year}`;
+    return `${month}/${day}/${year}`;
   };
 
   return (
-    <div className="my-project-list-card">
+    <tr className="my-project-list-card">
       {/* Thumbnail and Title*/}
-      <div className="list-card-section1">
+      <td className="list-card-section1">
         {/*
         <img
           className="list-card-image"
@@ -116,93 +124,168 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
           className="list-card-title"
           onClick={() => navigate(projectURL)}
         >{projectData.title}</div>
-      </div>
+      </td>
 
       {/* Status */}
-      <div className="list-card-status">{status}</div>
+      <td className="list-card-status" data-label="Project Status">{status}</td>
+
+      {/* Approval Status */}
+      <td className="list-card-approval-status" data-label="Approval Status">{ApprovalStatus[approvalStatus]}</td>
 
       {/* Data Created */}
-      <div className="list-card-date">{formatDate(projectData.createdAt.toString())}</div>
+      <td className="list-card-date" data-label="Date Created">{formatDate(projectData.createdAt.toString())}</td>
 
       {/* Options */}
-      <Dropdown>
-        <DropdownButton buttonId="list-card-options-button">
-          <ThemeIcon id={'menu'} width={25} height={5} className={'color-fill dropdown-menu'} ariaLabel={'More options'}/>
-        </DropdownButton>
-        <DropdownContent rightAlign={true}>
-          <div className={`card-options-list ${optionsShown ? 'show' : ''}`}>
-            <button className="card-leave-button" onClick={() => navigate(projectURL)}>
+      <td>
+        <Dropdown>
+          <DropdownButton buttonId="list-card-options-button">
+            <ThemeIcon id={'menu'} width={35} height={15} className={'color-fill dropdown-menu'} ariaLabel={'More options'} />
+          </DropdownButton>
+          <DropdownContent rightAlign={true} openUpward={true}>
+            <div className={`card-options-list ${optionsShown ? 'show' : ''}`}>
+              <button className="card-leave-button" onClick={() => navigate(projectURL)}>
                 <ThemeIcon
                   id={"pencil"}
                   width={21}
                   height={21}
-                  ariaLabel={"Leave project"}
+                  ariaLabel={"Edit project"}
                   className="mono-fill"
                 />
                 Edit Project
-            </button>
-            <Popup>
-              <PopupButton className='card-leave-button'>
-                <ThemeIcon
-                  id={"logout"}
-                  width={21}
-                  height={21}
-                  ariaLabel={"Leave project"}
-                  className="mono-fill"
-                />
-                Leave Project
-              </PopupButton>
-              <PopupContent>
-                <div className='small-popup'>
-                  <h3>Leave Project</h3>
-                  <p className='confirm-msg'>
-                    Are you sure you want to leave <span className="project-info-highlight">{projectData.title}</span>? You won't be able
-                    to rejoin unless you're re-added by a project member.
-                  </p>
-                  <div className='confirm-deny-btns'>
-                    <PopupButton
-                      className='confirm-btn'
-                      callback={handleLeaveProject}>
-                        Leave
-                    </PopupButton>
-                    <PopupButton className='deny-btn'>Cancel</PopupButton>
-                  </div>
-                </div>
-              </PopupContent>
-            </Popup>
-            {(isOwner) && (
+              </button>
+              {approvalStatus === 'not-approved' ?
               <Popup>
-                <PopupButton className='card-delete-button'>
+                <PopupButton className='card-leave-button'>
                   <ThemeIcon
-                    id="trash"
+                    id={"request-review"}
                     width={21}
                     height={21}
-                    ariaLabel="Delete project"
+                    ariaLabel={"request-Review"}
+                    className="mono-fill"
                   />
-                  Delete Project
+                  Request Review
+                </PopupButton>
+                <PopupContent>
+                  <div id="project-request-review">
+                    <label id="project-request-label">
+                      Would you like to submit your project for review?
+                    </label>
+                    <div id="project-request-info">
+                      Submiting a request will make your project visible to moderators who will choose to either
+                      accept and make your project visible to all, request changes for you to make, 
+                      or reject it for various reasons. <br/>
+                      <strong>(Moderators are not capable of directly altering or deleting your projects)</strong>
+                    </div>
+                    <div id="project-request-buttons">
+                      <PopupButton buttonId="request-confirm-button"
+                      callback={() => {
+                        if (projectData) requestProjectReview(projectData.projectId);
+                      }}
+                      >
+                        Request Review
+                      </PopupButton>
+                      <PopupButton buttonId="request-cancel-button">
+                        Cancel
+                      </PopupButton>
+                    </div>
+                  </div>
+                </PopupContent>
+              </Popup> : ""}
+              {(!isOwner) && (
+              <Popup>
+                <PopupButton className='card-leave-button'>
+                  <ThemeIcon
+                    id={"logout"}
+                    width={21}
+                    height={21}
+                    ariaLabel={"Leave project"}
+                    className="mono-fill"
+                  />
+                  Leave Project
                 </PopupButton>
                 <PopupContent>
                   <div className='small-popup'>
-                    <h3>Delete Project</h3>
+                    <h3>Leave Project</h3>
                     <p className='confirm-msg'>
-                      Are you sure you want to delete <span className="project-info-highlight">{projectData.title}</span>? This action cannot be undone.
+                      Are you sure you want to leave <span className="project-info-highlight">{projectData.title}</span>? You won't be able
+                      to rejoin unless you're re-added by a project member.
                     </p>
                     <div className='confirm-deny-btns'>
                       <PopupButton
-                        className='confirm-btn delete-button'
-                        callback={handleDeleteProject}>
-                          Delete
+                        className='confirm-btn'
+                        callback={handleLeaveProject}>
+                        Leave
                       </PopupButton>
                       <PopupButton className='deny-btn'>Cancel</PopupButton>
                     </div>
                   </div>
                 </PopupContent>
               </Popup>
-            )}
-          </div>
-        </DropdownContent>
-      </Dropdown>
-
+              )}
+              {(isOwner) && (
+                <Popup>
+                  <PopupButton className='card-leave-button'>
+                    <ThemeIcon
+                      id={"logout"}
+                      width={21}
+                      height={21}
+                      ariaLabel={"Leave project"}
+                      className="mono-fill"
+                    />
+                    Leave Project
+                  </PopupButton>
+                  <PopupContent>
+                    <div className='small-popup'>
+                      <h3>Leave Project</h3>
+                      <p className='confirm-msg'>
+                        Are you sure you want to leave <span className="project-info-highlight">{projectData.title}</span>? You won't be able
+                        to rejoin unless you're re-added by a project member.
+                      </p>
+                      <div className='confirm-deny-btns'>
+                        <PopupButton
+                          className='confirm-btn delete-button'
+                          callback={handleDeleteProject}>
+                          Delete
+                        </PopupButton>
+                        <PopupButton className='deny-btn'>Cancel</PopupButton>
+                      </div>
+                    </div>
+                  </PopupContent>
+                </Popup>
+              )}
+              {(isOwner) && (
+                <Popup>
+                  <PopupButton className='card-delete-button'>
+                    <ThemeIcon
+                      id="trash"
+                      width={21}
+                      height={21}
+                      ariaLabel="Delete project"
+                    />
+                    Delete Project
+                  </PopupButton>
+                  <PopupContent>
+                    <div className='small-popup'>
+                      <h3>Delete Project</h3>
+                      <p className='confirm-msg'>
+                        Are you sure you want to delete <span className="project-info-highlight">{projectData.title}</span>? This action cannot be undone.
+                      </p>
+                      <div className='confirm-deny-btns'>
+                        <PopupButton
+                          className='confirm-btn delete-button'
+                          callback={handleDeleteProject}>
+                          Delete
+                        </PopupButton>
+                        <PopupButton className='deny-btn'>Cancel</PopupButton>
+                      </div>
+                    </div>
+                  </PopupContent>
+                </Popup>
+              )}
+            </div>
+          </DropdownContent>
+        </Dropdown>
+      </td>
       {/* Leave/Delete result popup */}
       <PagePopup
         width={'fit-content'}
@@ -229,7 +312,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
           )}
         </div>
       </PagePopup>
-    </div>
+    </tr>
   );
 };
 

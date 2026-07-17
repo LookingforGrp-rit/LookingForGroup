@@ -8,10 +8,10 @@ export const deleteProjectFollowing = async (
   req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
 
   //call service
-  const result = await deleteProjectFollowService(req.currentUser, projectId);
+  const result = await deleteProjectFollowService(req.currentUser.userId, projectId);
 
   //internal error
   if (result === 'INTERNAL_ERROR') {

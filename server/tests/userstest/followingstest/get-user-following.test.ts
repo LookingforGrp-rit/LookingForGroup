@@ -1,4 +1,4 @@
-import type { ProjectFollowsList } from '@looking-for-group/shared';
+import type { ProjectFollowsList, Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import type { Projects } from '#prisma-models/index.js';
@@ -36,10 +36,12 @@ describe('getProjectFollowingService', () => {
       thumbnailId: null,
       purpose: null,
       status: 'Planning',
+      globalVisibility: 'public',
       audience: '',
       userId: 1,
       createdAt: new Date(),
       updatedAt: new Date(),
+      approved: true,
     };
 
     const prismaResult = [
@@ -53,34 +55,39 @@ describe('getProjectFollowingService', () => {
       projectId: 99,
       title: 'sky forge',
       hook: 'forge a sky',
+      globalVisibility: 'public' as Visibility,
+      jobs: [],
       owner: {
         userId: 1,
         username: 'testuser',
         firstName: 'Test',
         lastName: 'User',
+        preferredName: 'Test',
         profileImage: null,
         mentor: false,
+        privacy: 'public' as Visibility,
         verified: false,
         designer: false,
         developer: false,
         headline: '',
         pronouns: '',
         title: '',
-        funFact: '',
         location: '',
         majors: [],
+        displayPhone: false,
         apiUrl: '/api/users/1',
       },
       thumbnail: null,
       thumbnailId: 0,
       status: 'Planning',
       audience: '',
+      tags: [],
       mediums: [],
       apiUrl: '/api/projects/99',
     };
 
     vi.mocked(prisma.projectFollowings.findMany).mockResolvedValue(prismaResult as any);
-    vi.mocked(transformProjectToPreview).mockReturnValue(transformed as any);
+    vi.mocked(transformProjectToPreview).mockReturnValue(transformed);
 
     const result = await getProjectFollowingService(42);
 
@@ -97,7 +104,7 @@ describe('getProjectFollowingService', () => {
       expect.objectContaining({
         followedAt: true,
         projects: expect.objectContaining({
-          select: expect.any(Object),
+          select: expect.objectContaining({}),
         }),
       }),
     );

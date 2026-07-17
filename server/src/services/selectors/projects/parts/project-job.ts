@@ -1,5 +1,6 @@
 import { RoleSelector } from '#services/selectors/datasets/role.ts';
 import { UserPreviewSelector } from '#services/selectors/users/user-preview.ts';
+import { JobSkillSelector } from './job-skill.ts';
 
 export const ProjectJobSelector = Object.freeze({
   jobId: true,
@@ -7,9 +8,13 @@ export const ProjectJobSelector = Object.freeze({
     select: RoleSelector,
   },
   availability: true,
-  duration: true,
+  jobStart: true,
+  jobEnd: true,
   location: true,
   compensation: true,
+  jobSkills: {
+    select: JobSkillSelector,
+  },
   contact: {
     select: {
       users: {

@@ -8,10 +8,10 @@ export const deleteUserFollowing = async (
   req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
-  const followingId = parseInt(req.params.id);
+  const followingId = parseInt(req.params.id as string);
 
   //call service
-  const result = await deleteUserFollowService(req.currentUser, followingId);
+  const result = await deleteUserFollowService(req.currentUser.userId, followingId);
 
   //not found
   if (result === 'NOT_FOUND') {

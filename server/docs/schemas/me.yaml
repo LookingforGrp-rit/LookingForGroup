@@ -21,9 +21,12 @@ components:
             apiUrl:
               type: string
       example:
+        id: 1
         websiteId: 1
         label: Instagram
         apiUrl: /api/me/socials/1
+        url: https://www.instagram.com/rittigers/
+        alias: '@rittigers'
 
     MyMajor:
       allOf:
@@ -33,9 +36,9 @@ components:
             apiUrl:
               type: string
       example:
+        apiUrl: /api/me/majors/1
         majorId: 1
         label: Animation
-        apiUrl: /api/me/majors/1
 
     MyFollowing:
       type: object
@@ -162,8 +165,8 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/MyMajor'
-            academicYear:
-              $ref: 'enums.yaml#/components/schemas/AcademicYear'
+            ritStatus:
+              $ref: 'enums.yaml#/components/schemas/RitStatus'
             location:
               type: string
             funFact:
@@ -207,7 +210,7 @@ components:
         headline: Hello world
         pronouns: they/them
         title: Student
-        academicYear:
+        ritStatus:
         location: Rochester, NY
         funFact: Loves Prisma
         bio: This is an example user.
@@ -236,12 +239,12 @@ components:
           properties:
             ritEmail:
               type: string
-            visibility:
+            privacy:
               $ref: 'enums.yaml#/components/schemas/Visibility'
             phoneNumber:
               type: string
               nullable: true
-            universityId:
+            googleId:
               type: string
             createdAt:
               type: string
@@ -261,7 +264,7 @@ components:
         headline: Hello world
         pronouns: they/them
         title: Student
-        academicYear:
+        ritStatus:
         location: Rochester, NY
         funFact: Loves Prisma
         bio: This is an example user.
@@ -285,7 +288,8 @@ components:
         ritEmail: mhr2964@rit.edu
         visibility: 1
         phoneNumber: null
-        universityId: 11111111
+        displayPhone: false
+        googleId: 11111111
         createdAt: 2038-01-19 03:14:07
         updatedAt: 2038-01-19 03:14:07
 
@@ -296,9 +300,9 @@ components:
           $ref: 'projects.yaml#/components/schemas/ProjectPreview'
         role:
           $ref: 'datasets.yaml#/components/schemas/Role'
-        visibility:
+        profileVisibility:
           type: string
-          enum: [Public, Private]
+          enum: [public, private]
         memberSince:
           type: string
           format: date-time
@@ -315,6 +319,6 @@ components:
         role:
           roleId: 1
           label: Full-Stack Developer
-        visibility: Private
+        visibility: private
         memberSince: 2038-01-19 03:14:07
         apiUrl: /api/me/projects/1

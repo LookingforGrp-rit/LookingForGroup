@@ -2,7 +2,6 @@ import type {
   ApiResponse,
   JobAvailability,
   JobCompensation,
-  JobDuration,
   JobLocation,
   ProjectJob,
 } from '@looking-for-group/shared';
@@ -13,14 +12,16 @@ import updateJobService from '#services/projects/jobs/update-job.ts';
 //PATCH api/projects/{id}/jobs/{jobId}
 //updates a project's job
 const updateJobController = async (req: Request, res: Response): Promise<void> => {
-  const projectId = parseInt(req.params.id);
-  const jobId = parseInt(req.params.jobId);
+  const projectId = parseInt(req.params.id as string);
+  const jobId = parseInt(req.params.jobId as string);
 
   // Parse and validate the request body
   const body = req.body as Partial<{
     roleId: number;
+    contactUserId: number;
     availability: JobAvailability;
-    duration: JobDuration;
+    jobStart: Date;
+    jobEnd: Date;
     location: JobLocation;
     compensation: JobCompensation;
     description: string;
@@ -33,12 +34,29 @@ const updateJobController = async (req: Request, res: Response): Promise<void> =
     updates.roles = { connect: { roleId: body.roleId } };
   }
 
+  if (typeof body.contactUserId === 'number') {
+    updates.contact = {
+      connect: {
+        projectId_userId: {
+          projectId: projectId,
+          userId: body.contactUserId,
+        },
+      },
+    };
+  }
+
   if (body.availability && ['FullTime', 'PartTime', 'Flexible'].includes(body.availability)) {
     updates.availability = body.availability;
   }
 
-  if (body.duration && ['ShortTerm', 'LongTerm'].includes(body.duration)) {
-    updates.duration = body.duration;
+  const defaultDateTime: Date = new Date(1900, 0, 0);
+
+  if (body.jobStart !== defaultDateTime) {
+    updates.jobStart = body.jobStart;
+  }
+
+  if (body.jobEnd !== defaultDateTime) {
+    updates.jobEnd = body.jobEnd;
   }
 
   if (body.location && ['OnSite', 'Remote', 'Hybrid'].includes(body.location)) {

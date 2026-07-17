@@ -39,14 +39,16 @@ describe('getUserByEmailService', () => {
       apiUrl: '/api/users/1',
       firstName: '',
       lastName: '',
+      preferredName: '',
       profileImage: null,
       mentor: false,
       designer: false,
+      displayPhone: false,
       developer: false,
+      privacy: 'public',
       headline: '',
       pronouns: '',
       title: '',
-      funFact: '',
       location: '',
       majors: [],
     };
@@ -60,7 +62,7 @@ describe('getUserByEmailService', () => {
     const [args] = calls[0];
 
     expect(args?.where).toEqual({ ritEmail: 'gold@rit.edu' });
-    expect(args?.select).toEqual(expect.any(Object));
+    expect(args?.select).toEqual(expect.objectContaining({}));
 
     expect(transformUserToPreview).toHaveBeenCalledWith(prismaUser);
 
@@ -75,7 +77,7 @@ describe('getUserByEmailService', () => {
     expect(result).toBe('NOT_FOUND');
   });
 
-  it('returns INSTERNAL_ERROR when prisma throws', async () => {
+  it('returns INTERNAL_ERROR when prisma throws', async () => {
     vi.mocked(prisma.users.findFirst).mockRejectedValue(new Error('db on fire'));
 
     const result = await getUserByEmailService('boom@rit.edu');

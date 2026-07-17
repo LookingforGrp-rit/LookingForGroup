@@ -1,12 +1,13 @@
 // --- Imports ---
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import { ProjectPurpose, ProjectStatus } from "@looking-for-group/shared";
+import { ProjectPurpose, ProjectStatus, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 import { PopupButton, PopupContent, Popup, PopupContext } from '../../Popup';
 import LabelInputBox from "../../LabelInputBox";
+import { DeleteProjectButton } from "../DeleteProjectButton";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { PendingProject } from "../../../../types/types";
-import { useContext } from "react";
+import { useContext, useRef, useState } from "react";
 
 // --- Variables ---
 let projectAfterGeneralChanges: PendingProject;
@@ -24,12 +25,15 @@ let projectAfterGeneralChanges: PendingProject;
 // };
 
 type GeneralTabProps = {
-  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
+  dataManager?: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
+  unmodifiedProject: ProjectWithFollowers;
   saveProject?: () => Promise<void>;
   updatePendingProject?: (updatedPendingProject: PendingProject) => void;
   saveable : boolean;
   failCheck: boolean;
+  updateFailCheck: boolean;
+  message: string;
 };
 
 /**
@@ -47,17 +51,23 @@ type GeneralTabProps = {
 export const GeneralTab = ({
   dataManager,
   projectData,
+  unmodifiedProject,
   saveProject = async () => {},
   updatePendingProject = () => {},
   saveable,
   failCheck,
+  updateFailCheck,
+  message,
 }: GeneralTabProps) => {
 
   projectAfterGeneralChanges = structuredClone(projectData);
   
   const projectId = projectData.projectId!;
+  const saveButtonRef = useRef<HTMLButtonElement>(null);
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
+
+  const [confirm, setConfirm] = useState(false);
 
   // // Textbox input callback: useRef to avoid unintended reset bugs TODO: is this needed? not used
   // const debouncedUpdatePendingProject = useRef(
@@ -84,10 +94,13 @@ export const GeneralTab = ({
   return (
     <div id="project-editor-general">
       <LabelInputBox
-        label={"Title*"}
+        label={"Title"}
         inputType={"single"}
+        maxLength={50}
         id="project-editor-title-input"
         value={projectAfterGeneralChanges.title || ""}
+        initialValue={unmodifiedProject.title || ""}
+        required
         onChange={(e) => {
           const title = e.target.value;
           projectAfterGeneralChanges = { ...projectAfterGeneralChanges, title };
@@ -97,7 +110,7 @@ export const GeneralTab = ({
             return;
           }
 
-          dataManager.updateFields({
+          dataManager?.updateFields({
             id: {
               value: projectId,
               type: "canon",
@@ -108,8 +121,10 @@ export const GeneralTab = ({
       />
 
       <LabelInputBox
-        label={"Status*"}
+        label={"Status"}
         inputType={"none"}
+        forceUnsaved={unmodifiedProject.status !== projectAfterGeneralChanges.status}
+        required
         id="project-editor-status-input"
       >
         <Select>
@@ -138,7 +153,7 @@ export const GeneralTab = ({
 
                 const key = Object.keys(ProjectStatusEnums).find(key => ProjectStatusEnums[key as keyof typeof ProjectStatusEnums] === status)
 
-                dataManager.updateFields({
+                dataManager?.updateFields({
                   id: {
                     value: projectId,
                     type: "canon",
@@ -163,6 +178,7 @@ export const GeneralTab = ({
       <LabelInputBox
         label={"Purpose"}
         inputType={"none"}
+        forceUnsaved={unmodifiedProject.purpose !== projectAfterGeneralChanges.purpose}
         id="project-editor-purpose-input"
       >
         <Select>
@@ -191,7 +207,7 @@ export const GeneralTab = ({
 
                 const key = Object.keys(ProjectPurposeEnums).find(key => ProjectPurposeEnums[key as keyof typeof ProjectPurposeEnums] === purpose)
 
-                dataManager.updateFields({
+                dataManager?.updateFields({
                   id: {
                     value: projectId,
                     type: "canon",
@@ -220,6 +236,7 @@ export const GeneralTab = ({
         id={"project-editor-audience-input"}
         maxLength={100}
         value={projectAfterGeneralChanges.audience || ""}
+        initialValue={unmodifiedProject.audience || ""}
         onChange={(e) => {
           const audience = e.target.value;
           projectAfterGeneralChanges = {
@@ -228,7 +245,7 @@ export const GeneralTab = ({
           };
           updatePendingProject(projectAfterGeneralChanges);
 
-          dataManager.updateFields({
+          dataManager?.updateFields({
             id: {
               value: projectId,
               type: "canon",
@@ -239,12 +256,14 @@ export const GeneralTab = ({
       />
 
       <LabelInputBox
-        label={"Short Description*"}
+        label={"Short Description"}
         labelInfo="Share a brief summary of your project. This will be displayed in your project's discover card."
         inputType={"multi"}
         id={"project-editor-description-input"}
         maxLength={300}
         value={projectAfterGeneralChanges.hook || ""}
+        initialValue={unmodifiedProject.hook || ""}
+        required
         onChange={(e) => {
           const hook = e.target.value;
           projectAfterGeneralChanges = { ...projectAfterGeneralChanges, hook };
@@ -254,7 +273,7 @@ export const GeneralTab = ({
             return;
           }
 
-          dataManager.updateFields({
+          dataManager?.updateFields({
             id: {
               value: projectId,
               type: "canon",
@@ -265,7 +284,7 @@ export const GeneralTab = ({
       />
 
       <LabelInputBox
-        label={"About This Project*"}
+        label={" Project Overview"}
         labelInfo="Use this space to go into detail about your project! Feel free to share it's
           inspirations and goals, outline key features, and describe this impact you hope it
           brings to others."
@@ -273,6 +292,8 @@ export const GeneralTab = ({
         id={"project-editor-long-description-input"}
         maxLength={2000}
         value={projectAfterGeneralChanges.description || ""}
+        initialValue={unmodifiedProject.description || ""}
+        required={true}
         onChange={(e) => {
           const description = e.target.value;
           projectAfterGeneralChanges = { ...projectAfterGeneralChanges, description };
@@ -282,7 +303,7 @@ export const GeneralTab = ({
             return;
           }
 
-          dataManager.updateFields({
+          dataManager?.updateFields({
             id: {
               value: projectId,
               type: "canon",
@@ -292,33 +313,49 @@ export const GeneralTab = ({
         }}
       />
       <div id="general-save-info">
-        { saveable ? 
-          <Popup>
-            <PopupButton
-              buttonId="project-editor-save"
-              doNotClose={() => failCheck}
-            >
-              Save Changes
-            </PopupButton>
-            <PopupContent useClose={false}>
-              <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
-              <div id="confirm-editor-save">
-                <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
-                  Confirm
-                </PopupButton>
-                <PopupButton buttonId="team-edit-member-cancel-button" >
-                  Cancel
-                </PopupButton>
-              </div>
-            </PopupContent>
-          </Popup>
-        :
+        <div className="editor-save-actions">
+        <Popup>
+          {saveable ? "" :
           <div id="invalid-input-error" className={"save-error-msg-general"}>
-            <p>*Fill out all required info before saving!*</p>
-          </div>
-      }
+            <p>*{message}*</p>
+          </div>}
+          <PopupButton
+            buttonId="project-editor-save"
+            callback={() => {
+              // Incomplete form: still clickable so the save validation runs,
+              // shows the error, and auto-scrolls to the first missing field.
+              if (!saveable) {
+                saveProject?.();
+                return;
+              }
+              else setConfirm(true);
+              console.log(`Current save ref: ${saveButtonRef.current}`);
+              saveButtonRef.current?.focus();
+            }}
+          >
+            Save Changes
+          </PopupButton>
+          {confirm ?
+          <PopupContent useClose={false} callback={() => setConfirm(false)}>
+            <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+            <div id="confirm-editor-save">
+              <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save"
+                  ref={saveButtonRef} >
+                Confirm
+              </PopupButton>
+              <PopupButton buttonId="team-edit-member-cancel-button">
+                Cancel
+              </PopupButton>
+            </div>
+          </PopupContent> : ""}
+        </Popup>
+        <DeleteProjectButton
+          projectID={unmodifiedProject.projectId}
+          projectTitle={unmodifiedProject.title}
+        />
+        </div>
       </div>
-      
+
     </div>
   );
 };

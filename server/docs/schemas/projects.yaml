@@ -17,6 +17,26 @@ components:
         altText: cat yawning
         apiUrl: /api/projects/1/images/1
 
+    ProjectVideo:
+      type: object
+      properties:
+        videoId:
+          type: integer
+        videoUrl:
+          type: string
+        position:
+          type: integer
+        title:
+          type: string
+        projectId:
+          type: integer
+      example:
+        videoId: 1
+        videoUrl: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+        position: 0
+        title: Never Gonna Give You Up
+        projectId: 1
+
     ProjectMedium:
       allOf:
         - $ref: 'datasets.yaml#/components/schemas/Medium'
@@ -83,19 +103,42 @@ components:
         memberSince: 2038-01-19 03:14:07
         apiUrl: /api/projects/1/members/1
 
+    ProjectMemberRequest:
+      type: object
+      properties:
+        requestId: integer
+        prospectiveMemberId: integer
+        projectId: integer
+        roleId: integer
+        sentFromProject: boolean
+        requestStatus: 'enums.yaml#/components/schemas/MemberRequestStatus'
+      example:
+        requestId: 1
+        prospectiveMemberId: 2
+        projectId: 1
+        roleId: 3
+        sentFromProject: true
+        requestStatus: 'Pending'
+
     ProjectSocial:
       allOf:
         - $ref: 'datasets.yaml#/components/schemas/Social'
         - type: object
           properties:
+            id:
+              type: integer
             url:
+              type: string
+            alias:
               type: string
             apiUrl:
               type: string
       example:
+        id: 1
         websiteId: 1
         label: Instagram
         url: https://www.instagram.com/rittigers/
+        alias: '@rittigers'
         apiUrl: /api/projects/1/socials/1
 
     ProjectTag:
@@ -120,8 +163,12 @@ components:
           $ref: 'datasets.yaml#/components/schemas/Role'
         availability:
           type: 'enums.yaml#/components/schemas/JobAvailability'
-        duration:
-          type: 'enums.yaml#/components/schemas/JobDuration'
+        jobStart:
+          type: string
+          format: date-time
+        jobEnd:
+          type: string
+          format: date-time
         location:
           type: 'enums.yaml#/components/schemas/JobLocation'
         compensation:
@@ -144,7 +191,8 @@ components:
           roleId: 1
           label: Full-Stack Developer
         availability: FullTime
-        duration: ShortTerm
+        jobStart: 1900-01-01
+        jobEnd: 1900-01-01
         location: OnSite
         compensation: Unpaid
         contact:
@@ -169,6 +217,9 @@ components:
           type: integer
         title:
           type: string
+        globalVisibility:
+          type: string
+          enum: ['public', 'private']
         hook:
           type: string
         thumbnail:
@@ -295,3 +346,23 @@ components:
               users: []
               apiUrl: /api/projects/1/followers
             apiUrl: /api/projects/1
+
+    ProjectReport:
+      type: object
+      properties:
+        apiUrl:
+          type: string
+        reportId:
+          type: integer
+        userId:
+          type: integer
+        projectId:
+          type: integer
+        reason:
+          type: string
+      example:
+        apiUrl: /api/mod/project-report/1
+        reportId: 1
+        userId: 2
+        projectId: 3
+        reason: Inappropriate content.

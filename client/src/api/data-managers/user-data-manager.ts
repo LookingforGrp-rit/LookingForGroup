@@ -5,7 +5,7 @@ import {
   ApiResponse,
   MePrivate,
   UpdateUserInput,
-  UpdateUserProjectVisibilityInput,
+  UpdateProjectProfileVisibilityInput,
   UpdateUserSkillInput,
   UpdateUserSocialInput,
 } from "@looking-for-group/shared";
@@ -25,7 +25,7 @@ import {
   deleteUserSocial,
   editUser,
   getCurrentAccount,
-  updateProjectVisibility as APIUpdateProjectVisibility,
+  updateProjectProfileVisibility as APIUpdateProjectProfileVisibility,
   updateUserSkill,
   updateUserSocial,
 } from "../users";
@@ -170,10 +170,14 @@ export const userDataManager = async () => {
 
     // project visibilities
     try {
-      await runAndCollectErrors<UpdateUserProjectVisibilityInput>(
-        "Updating project visibility",
+      await runAndCollectErrors<UpdateProjectProfileVisibilityInput>(
+        "Updating project profile visibility",
         updates.projectVisibilities,
-        ({ id, data }) => APIUpdateProjectVisibility(id.value, data)
+        ({ id, data }) => {
+          return APIUpdateProjectProfileVisibility(id.value, {
+            profileVisibility: data.profileVisibility
+          });
+        }
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -413,10 +417,10 @@ export const userDataManager = async () => {
 
   /**
    * Update whether a project is hidden on a user's profile
-   * @param visibility The project to be changed and its new visibility
+   * @param visibility The project to be hiddon on profile or not based on its new visibility
    */
-  const updateProjectVisibility = (
-    visibility: CRUDRequest<UpdateUserProjectVisibilityInput>
+  const updateProjectProfileVisibility = (
+    visibility: CRUDRequest<UpdateProjectProfileVisibilityInput>
   ) => {
     let existingVisibilityUpdate = changes.update.projectVisibilities.find(
       ({ id }) =>
@@ -601,11 +605,12 @@ export const userDataManager = async () => {
 
   return {
     saveChanges,
+    resetChanges,
     addMajor,
     addSkill,
     addSocial,
     updateFields,
-    updateProjectVisibility,
+    updateProjectProfileVisibility,
     updateSkill,
     updateSocial,
     deleteMajor,

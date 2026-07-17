@@ -1,4 +1,4 @@
-import type { Visibility, MePrivate } from '@looking-for-group/shared';
+import type { MePrivate } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { MePrivateSelector } from '#services/selectors/me/me-private.ts';
 import { transformMeToDetail } from './me-detail.ts';
@@ -16,10 +16,11 @@ export const transformMeToPrivate = (user: UsersGetPayload): MePrivate => {
   return {
     ...transformMeToDetail(user),
     ritEmail: user.ritEmail,
-    visibility: user.visibility as unknown as Visibility,
+    privacy: user.privacy,
     phoneNumber: user.phoneNumber ?? null,
-    universityId: user.universityId,
+    googleId: user.googleId,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
+    displayPhone: user.displayPhone,
   };
 };

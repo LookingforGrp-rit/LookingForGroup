@@ -6,9 +6,9 @@ import { deleteMajorService } from '#services/me/majors/delete-major.ts';
 //delete a major from user profile
 export const deleteMajor = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   //the one you're deleting
-  const major = parseInt(req.params.id);
+  const major = parseInt(req.params.id as string);
 
-  const result = await deleteMajorService(major, req.currentUser);
+  const result = await deleteMajorService(req.currentUser.userId, major);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -17,6 +17,16 @@ export const deleteMajor = async (req: AuthenticatedRequest, res: Response): Pro
       data: null,
     };
     res.status(500).json(resBody);
+    return;
+  }
+
+  if (result === 'NOT_FOUND') {
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'Not found',
+      data: null,
+    };
+    res.status(404).json(resBody);
     return;
   }
 

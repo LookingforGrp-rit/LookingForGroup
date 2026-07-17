@@ -1,6 +1,6 @@
-import type { ApiResponse } from '@looking-for-group/shared';
+import type { ApiResponse, SessionUserData } from '@looking-for-group/shared';
 import type { NextFunction, Request, Response } from 'express';
-import { isLoggedInHeaderKey, uidHeaderKey } from '#config/constants.ts';
+import { uidHeaderKey } from '#config/constants.ts';
 import envConfig from '#config/env.ts';
 
 const requiresLogin = (request: Request, response: Response, next: NextFunction) => {
@@ -11,8 +11,9 @@ const requiresLogin = (request: Request, response: Response, next: NextFunction)
     next();
     return;
   }
+  const userData: SessionUserData = JSON.parse(request.session.data || '{}') as SessionUserData;
 
-  if (request.headers[isLoggedInHeaderKey] === 'true') {
+  if (userData.userExists) {
     next();
     return;
   }

@@ -1,15 +1,24 @@
-import type { ApiResponse } from '@looking-for-group/shared';
+import type { ApiResponse, UpdateProjectSocialInput } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { updateProjectSocialService } from '#services/projects/socials/update-proj-social.ts';
 
 //PATCH api/projects/{id}/socials/{socialId}
 //updates a social associated with a project
 export const updateProjectSocial = async (req: Request, res: Response): Promise<void> => {
-  const social = req.params.url;
-  const websiteId = parseInt(req.params.websiteId);
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
+  const socialId = parseInt(req.params.socialId as string);
+  const social: UpdateProjectSocialInput = req.body as UpdateProjectSocialInput;
 
-  const result = await updateProjectSocialService(social, projectId, websiteId);
+  if (Number.isNaN(projectId) || Number.isNaN(socialId)) {
+    res.status(400).json({
+      status: 400,
+      error: 'Invalid request data',
+      data: null,
+    });
+    return;
+  }
+
+  const result = await updateProjectSocialService(social, projectId, socialId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

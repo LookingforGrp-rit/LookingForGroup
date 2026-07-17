@@ -5,6 +5,7 @@ type LeaveDeleteContextProps = {
   projId: number,
   userId: number,
   reloadProjects: () => void,
+  removeProject: (projectId: number) => void,
 };
 
 /**
@@ -15,4 +16,5 @@ export const LeaveDeleteContext = createContext<LeaveDeleteContextProps>({
   projId: 0,
   userId: 0,
   reloadProjects: () => {},
+  removeProject: () => {},
 });

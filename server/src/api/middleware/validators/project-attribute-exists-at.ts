@@ -20,7 +20,7 @@ export const projectAttributeExistsAt = (
 
     switch (attribute.type) {
       case 'path':
-        rawAttributeId = req.params[attribute.key];
+        rawAttributeId = req.params[attribute.key] as string;
         break;
       case 'body':
         rawAttributeId = (req.body as Record<string, unknown>)[attribute.key] as string;
@@ -43,7 +43,7 @@ export const projectAttributeExistsAt = (
 
     switch (project.type) {
       case 'path':
-        rawProjectId = req.params[project.key];
+        rawProjectId = req.params[project.key] as string;
         break;
       case 'body':
         rawProjectId = (req.body as Record<string, unknown>)[project.key] as string;
@@ -94,10 +94,7 @@ const getAttributeById = async (projectId: number, attributeId: number, attribut
     case 'social':
       return await prisma.projectSocials.findUnique({
         where: {
-          projectId_websiteId: {
-            projectId,
-            websiteId: attributeId,
-          },
+          id: attributeId,
         },
       });
     case 'image':

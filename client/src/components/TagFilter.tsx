@@ -83,7 +83,7 @@ export const TagFilter = ({ projectFilter, setUseState }) => {
           const tagElement = document.getElementById(`tag-id-${result}`);
           console.log(tagElement);
 
-          if(tagElement) tagElement.classList.toggle('tag-filter-selected');
+          if (tagElement) tagElement.classList.toggle('tag-filter-selected');
           else console.log('error updating display');
 
         }
@@ -125,7 +125,7 @@ export const TagFilter = ({ projectFilter, setUseState }) => {
   return (
     <>
       {/*Include searchbar component (check what searchbar needs to run correctly)*/}
-      <SearchBar dataSets={[{ data: tagsList }]} onSearch={tagSearch} />
+      <SearchBar dataSets={[{ data: tagsList }]} onSearch={tagSearch} placeholderText='Search for Tag' />
 
       <div id="tag-filter-list">
         {

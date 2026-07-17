@@ -15,8 +15,14 @@
     height: 100%;
 }
 
-#project-image-uploader #img-view {
-    width: 323px;
+#project-video-uploader {
+    border: none;
+    background: transparent;
+}
+
+#project-image-uploader #img-view,
+#project-video-uploader #img-view {
+    width: min(80vw, 323px);
     height: 182px;
     gap: 10px;
 
@@ -43,6 +49,13 @@
     height: 100%;
     width: 100%;
     cursor: pointer;
+    background: none;
+}
+.drop-area-drag-over {
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+    /* for any other special effects */
 }
 
 .camera-button {
@@ -51,4 +64,13 @@
     position: absolute;
     bottom: 9px;
     right: 9px;
+    transition: all 0.2s ease-in-out;
+}
+
+.camera-button:hover {
+    transform: translateY(-1px);
+}
+
+.camera-button:active {
+  transform: translateY(0px);
 }

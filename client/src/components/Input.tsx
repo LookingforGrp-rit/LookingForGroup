@@ -7,6 +7,7 @@ interface CustomInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, '
   maxLength?: number;
   onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   onClick?: React.MouseEventHandler<HTMLElement>;
+  placeholder?: string;
 }
 
 /**
@@ -15,18 +16,20 @@ interface CustomInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, '
  * @param style - Optional custom styles for the input
  * @param onChange - Change event handler
  * @param onClick - Click event handler (for link type to handle removal)
+ * @param placeholder - Optional placeholder text
  * @returns JSX.Element
  */
 export const Input: React.FC<CustomInputProps> = ({
   type,
   onChange,
   onClick,
+  placeholder,
   ...props
 }) => {
 
-  
   // Keep track of value to change character count (multi-line only)
-  const [internalValue, setInternalValue] = useState('');
+  const [internalValue, setInternalValue] = useState(
+    typeof (props.value) != "undefined" ? props.value : '');
 
   // Multi-line input with character count
   if (type === 'multi') {
@@ -34,57 +37,70 @@ export const Input: React.FC<CustomInputProps> = ({
 
     // Handle prop changes
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const trimmedValue = e.target.value
+        // .replace(/ {2,}/g, " ")
+        .replace(/ +$/g, " ")   // remove trailing spaces
+        .replace(/^ +/g, "")   // remove leading spaces
+
+
       if (onChange) {
-        onChange(e);
+        onChange({
+          ...e,
+          target: { ...e.target, value: trimmedValue }
+        });
       }
-      setInternalValue(e.target.value);
+
+      setInternalValue(trimmedValue);
     };
+
+    const charsLeft = (props.maxLength || 0) - value.toString().length;
+    const percentLeft = charsLeft / props.maxLength!;
+    let className = 'character-count';
+    if (percentLeft <= .3) className += ' character-count-near';
+    if (percentLeft <= .2) className += ' character-count-close';
+    if (percentLeft <= .1) className += ' character-count-danger';
 
     return (
       <div className="input-multiline-container" style={{ position: 'relative', height: '100%' }}>
-        <span className="character-count">
-          {value.length} / {props.maxLength}
+        <span
+          className={className}
+        >
+          {value.toString().length} / {props.maxLength}
         </span>
         <textarea
           className="input input-multiline"
           maxLength={props.maxLength}
           value={value}
           onChange={handleChange}
+          placeholder={placeholder}
           {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
       </div>
     );
   }
 
-  // Link input with remove button
-  if (type === 'link') {
-    return (
-      <div className="input-link-wrapper">
-        <input
-          type="url"
-          placeholder="URL"
-          className="input"
-          onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}
-          {...props}
-        />
-        <button
-          className='input-link-remove'
-          title="Remove link"
-          onClick={(e) => {
-            onClick?.(e);
-          }}
-        >
-          <i className="fa-solid fa-minus"></i>
-        </button>
-      </div>
-    )
-  }
+  // Standard Input
+  const doSingleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const trimmedValue = e.target.value
+      // .replace(/ {2,}/g, " ")
+      .replace(/ +$/g, " ")
+      .replace(/^ +/g, "");
 
-  // Standard Input (single line)
+
+    if (onChange) {
+      onChange({
+        ...e,
+        target: { ...e.target, value: trimmedValue }
+      });
+    }
+  };
+
   return (
     <input
       className="input"
-      onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}
+      maxLength={props.maxLength}
+      onChange={doSingleChange}
+      placeholder={placeholder}
       {...props}
     />
   );

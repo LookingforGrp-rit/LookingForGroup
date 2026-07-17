@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 
 interface DiscoverButtonProps {
-  children : React.ReactNode;
-  isActive : boolean;
-  onClick : React.MouseEventHandler;
+  children: React.ReactNode;
+  isActive: boolean;
+  onClick: React.MouseEventHandler;
 }
 
 /**
@@ -16,7 +16,7 @@ interface DiscoverButtonProps {
  * @param onClick - Click handler for when the button is selected.
  * @returns A styled button whose appearance updates based on activity state.
  */
-export const DiscoverButton : React.FC<DiscoverButtonProps> = ({ children, isActive, onClick }) => {
+export const DiscoverButton: React.FC<DiscoverButtonProps> = ({ children, isActive, onClick }) => {
   // State to manage the button's CSS class
   const [buttonClassName, setButtonClassName] = useState(
     isActive ? 'discover-button-active' : 'discover-button-inactive'

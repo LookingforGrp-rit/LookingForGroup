@@ -1,10 +1,11 @@
 import { MouseEventHandler } from 'react';
+import arrow from '../../../public/images/icons/s-arrow.png';
 
 interface GetStartedProps {
-  show : boolean;
-  onBack : MouseEventHandler<HTMLButtonElement>;
-  onCreateProject : MouseEventHandler<HTMLButtonElement>;
-  onJoinProject : MouseEventHandler<HTMLButtonElement>;
+  show: boolean;
+  onBack: MouseEventHandler<HTMLButtonElement>;
+  onCreateProject: MouseEventHandler<HTMLButtonElement>;
+  onJoinProject: MouseEventHandler<HTMLButtonElement>;
 }
 
 /**
@@ -16,7 +17,7 @@ interface GetStartedProps {
  * @param onJoinProject Callback for join button
  * @returns modal markup render if show is true
  */
-const GetStarted : React.FC<GetStartedProps> = ({ show, onBack, onCreateProject, onJoinProject }) => {
+const GetStarted: React.FC<GetStartedProps> = ({ show, onBack, onCreateProject, onJoinProject }) => {
   // Returns modal markup when true, null if not true
   if (!show) {
     return null;
@@ -25,25 +26,25 @@ const GetStarted : React.FC<GetStartedProps> = ({ show, onBack, onCreateProject,
   // render the page
   return (
     <div className="signupProcess-background">
-      <div className="signupProcess-modal">
-        <div className="GetStarted">
-          <h1 id="signupProcess-title">Let's Get Started</h1>
-          <p>Choose one</p>
+      <div className="signupProcess-modal" id="get-started-modal">
+        <div className="GetStarted" >
+          <h1 id="signupProcess-title">Your profile is complete!</h1>
+          <p id="signupProcess-subTitle">Choose a place to get started:</p>
 
           <div id="getStarted-select">
             <button id="new-project-btn" onClick={onCreateProject}>
               Create Project
-              <img src="images/icons/nav/projects.png" alt="folder" />
+              <img className="getStarted-btn-imgs" src="/images/icons/nav/projects.png" alt="folder" />
             </button>
             <button id="join-project-btn" onClick={onJoinProject}>
-              Join Project
-              <img src="images/icons/nav/discover.png" alt="compass" />
+              Browse Projects
+              <img className="getStarted-btn-imgs" src="/images/icons/nav/discover.png" alt="compass" />
             </button>
           </div>
 
           <div id="signupProcess-btns">
             <button id="signup-backBtn" onClick={onBack}>
-              Back
+              <svg width="70" height="25" id="back" className="color-fill scale-on-hover" aria-label="back"><use href="/assets/icons.svg#back"></use></svg>
             </button>
           </div>
         </div>

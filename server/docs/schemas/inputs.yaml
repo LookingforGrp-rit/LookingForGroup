@@ -13,15 +13,15 @@ components:
           type: string
         title:
           type: string
-        academicYear:
-          $ref: 'enums.yaml#/components/schemas/AcademicYear'
+        ritStatus:
+          $ref: 'enums.yaml#/components/schemas/RitStatus'
         location:
           type: string
         funFact:
           type: string
         bio:
           type: string
-        visibility:
+        privacy:
           $ref: 'enums.yaml#/components/schemas/Visibility'
         phoneNumber:
           type: string
@@ -38,14 +38,21 @@ components:
           type: number
         url:
           type: string
+        alias:
+          type: string
       required:
         - websiteId
         - url
+        - alias
 
     UpdateUserSocialInput:
       type: object
       properties:
+        website:
+          type: integer
         url:
+          type: string
+        alias:
           type: string
 
     AddUserSkillsInput:
@@ -69,6 +76,15 @@ components:
           type: number
         proficiency:
           $ref: 'enums.yaml#/components/schemas/SkillProficiency'
+
+    AddUserMajorInput:
+      type: object
+      required:
+        - majorId
+      properties:
+        majorId:
+          type: integer
+          example: 1
 
     CreateProjectInput:
       type: object
@@ -112,6 +128,17 @@ components:
         - altText
         - image
 
+    CreateProjectVideoInput:
+      type: object
+      properties:
+        title:
+          type: string
+        videoUrl:
+          type: string
+      required:
+        - title
+        - videoUrl
+
     UpdateProjectImageInput:
       type: object
       properties:
@@ -146,6 +173,8 @@ components:
       properties:
         roleId:
           type: number
+        profileVisibility:
+          type: string
 
     AddProjectSocialInput:
       type: object
@@ -154,23 +183,43 @@ components:
           type: number
         url:
           type: string
+        alias:
+          type: string
       required:
         - websiteId
         - url
+        - alias
 
     UpdateProjectSocialInput:
       type: object
       properties:
+        websiteId:
+          type: number
         url:
           type: string
+        alias:
+          type: string
 
-    AddProjectTagsInput:
+    AddProjectTagInput:
       type: object
       properties:
         tagId:
           type: number
+        displayOrder:
+          type: number
       required:
         - tagId
+        - displayOrder
+
+    UpdateProjectTagInput:
+      type: object
+      properties:
+        tagId:
+          type: number
+        displayOrder:
+          type: number
+      required:
+        - displayOrder
 
     AddProjectMediumsInput:
       type: array
@@ -187,8 +236,12 @@ components:
       properties:
         availability:
           $ref: 'enums.yaml#/components/schemas/JobAvailability'
-        duration:
-          $ref: 'enums.yaml#/components/schemas/JobDuration'
+        jobStart:
+          type: string
+          format: date-time
+        jobEnd:
+          type: string
+          format: date-time
         location:
           $ref: 'enums.yaml#/components/schemas/JobLocation'
         compensation:
@@ -201,7 +254,6 @@ components:
           type: number
       required:
         - availability
-        - duration
         - location
         - compensation
         - roleId
@@ -212,8 +264,12 @@ components:
       properties:
         availability:
           $ref: 'enums.yaml#/components/schemas/JobAvailability'
-        duration:
-          $ref: 'enums.yaml#/components/schemas/JobDuration'
+        jobStart:
+          type: string
+          format: date-time
+        jobEnd:
+          type: string
+          format: date-time
         location:
           $ref: 'enums.yaml#/components/schemas/JobLocation'
         compensation:
@@ -224,3 +280,77 @@ components:
           type: number
         contactUserId:
           type: number
+
+    CreateMemberRequestInput:
+      type: object
+      properties:
+        ownerUserId:
+          type: number
+        prospectiveMemberId:
+          type: number
+        roleId:
+          type: number
+        message:
+          type: string
+
+    TagInput:
+      type: object
+      properties:
+        label:
+          type: string
+        type:
+          $ref: 'enums.yaml#/components/schemas/TagType'
+        category:
+          $ref: 'enums.yaml#/components/schemas/TagCategory'
+      example:
+        label: Indie
+        type: Creative
+        category: Game
+
+    SkillInput:
+      type: object
+      properties:
+        label:
+          type: string
+        type:
+          $ref: 'enums.yaml#/components/schemas/SkillType'
+        category:
+          $ref: 'enums.yaml#/components/schemas/SkillCategory'
+      example:
+        label: C++
+        type: Developer
+        category: Programming Language
+
+    AddUserReportInput:
+      type: object
+      properties:
+        reason:
+          type: string
+      required:
+        - reason
+      example:
+        reason: 'Inappropriate behavior in the community.'
+
+    AddProjectReportInput:
+      type: object
+      properties:
+        reason:
+          type: string
+      required:
+        - reason
+      example:
+        reason: 'This project contains offensive content.'
+
+    BanUserInput:
+      type: object
+      properties:
+        userId:
+          type: string
+        reason:
+          type: string
+        required:
+          - userId
+          - reason
+      example:
+        userId: 1
+        reason: 'Several inappropriate behaviors in the community.'

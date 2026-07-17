@@ -1,8 +1,8 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type DeleteFollowServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
-type DeleteFollowServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
+type DeleteFollowServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
 //DELETE api/me/followings/projects/{id}
 //delete a project following
@@ -24,6 +24,13 @@ export const deleteProjectFollowService = async (
     return 'NO_CONTENT';
   } catch (error) {
     console.error('Error in deleteProjectFollowService:', error);
+
+    if (error instanceof Object && 'code' in error) {
+      if (error.code === 'P2025') {
+        return 'NOT_FOUND';
+      }
+    }
+
     return 'INTERNAL_ERROR';
   }
 };

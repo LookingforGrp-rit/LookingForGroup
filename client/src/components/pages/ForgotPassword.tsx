@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
-import { ThemeImage } from '../ThemeIcon';
+import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import { sendPost } from '../../functions/fetch.js';
 import { getUserByEmail } from '../../api/users.js';
 
@@ -84,22 +84,27 @@ const ForgotPassword: React.FC = () => {
 
                 *************************************************************/}
         <div className="login-form column">
+          <ThemeIcon //Back button to return to the previous page
+            id={'back'}
+            width={70}
+            height={25}
+            className={'color-fill'}
+            ariaLabel={'back'}
+            onClick={handleBackToLogin}
+          />
           <h2>Forgot password?</h2>
           <p>No worries! We'll send you reset instructions.</p>
           <div className="login-form-inputs">
             <div className="error">{error}</div>
             <span id="errorMessage"></span>
             <input
+              id='main'
               className="login-input"
               type="text"
               placeholder="Enter your email"
               value={emailInput}
               onChange={(e) => setEmailInput(e.target.value)}
             />
-
-            <button id="forgot-password" onClick={handleBackToLogin}>
-              Back to Login
-            </button>
           </div>
           <button id="main-loginsignup-btn" onClick={handleSend}>
             Send
@@ -114,8 +119,8 @@ const ForgotPassword: React.FC = () => {
           {/* <h1>Welcome!</h1>
                     <p>Don't have an account?</p> */}
           <ThemeImage
-            lightSrc={'assets/bannerImages/login_light.png'}
-            darkSrc={'assets/bannerImages/login_dark.png'}
+            lightSrc={'/assets/bannerImages/login_light.png'}
+            darkSrc={'/assets/bannerImages/login_dark.png'}
           />
           <button onClick={() => navigate(paths.routes.SIGNUP)}>Sign Up</button>
         </div>

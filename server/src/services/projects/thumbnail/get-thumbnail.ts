@@ -31,7 +31,7 @@ const getThumbnailService = async (projectId: number): Promise<ProjectImage | Ge
 
     return transformProjectImage(projectId, thumb);
   } catch (e) {
-    console.error(`Error in getThumbnailService: ${JSON.stringify(e)}`);
+    console.error(`Error in getThumbnailService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }

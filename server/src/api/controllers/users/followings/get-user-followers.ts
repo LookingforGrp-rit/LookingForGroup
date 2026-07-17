@@ -5,7 +5,7 @@ import { getUserFollowersService } from '#services/users/followings/get-user-fol
 //GET api/users/{id}/followers
 //get the users following a user
 export const getUserFollowers = async (req: Request, res: Response): Promise<void> => {
-  const userId = parseInt(req.params.id);
+  const userId = parseInt(req.params.id as string);
 
   const result = await getUserFollowersService(userId);
 

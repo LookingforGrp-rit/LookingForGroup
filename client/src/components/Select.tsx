@@ -7,8 +7,10 @@ import { ThemeIcon } from "./ThemeIcon";
 type SelectContextProps = {
     open: boolean; // Whether the dropdown is currently open
     value: ReactElement | null; // Currently selected value (JSX element)
+    searchTerm: string; // Track search input (if any)
     setOpen: (open: boolean) => void; // Setter for open state
     setValue: (value: ReactElement) => void; // Setter for selected value
+    setSearchTerm: (term: string) => void; // Setter for search term
     type: 'input' | 'dropdown'; // Type of select for styling purposes
 }
 
@@ -18,7 +20,9 @@ type SelectButtonProps = {
     buttonId?: string; // Optional HTML id
     className?: string; // Optional additional CSS classes
     type: 'input' | 'dropdown'; // Determines button style
-    callback?: (e: React.MouseEvent<HTMLButtonElement>) => void; // Optional onClick
+    searchable?: boolean; // Option for a searchable dropdown
+    callback?: (e: React.MouseEvent<HTMLDivElement | HTMLInputElement>) => void; // Optional onClick
+    ariaLabelledBy?: string; // Optional aria-labelledBy
 }
 
 type SelectOptions = {
@@ -44,8 +48,10 @@ type SelectProps = {
 export const SelectContext = createContext<SelectContextProps>({
     open: false,
     value: null,
+    searchTerm: "",
     setOpen: () => { },
     setValue: () => { },
+    setSearchTerm: () => { },
     type: 'input',
 });
 
@@ -63,6 +69,7 @@ export const SelectContext = createContext<SelectContextProps>({
  * @param className: Additional classes for styling
  * @param type: 'input' | 'dropdown' to style button appropriately
  * @param callback: Optional function triggered on click
+ * @param ariaLabelledBy: Optional aria-labelledby argument
  * @returns JSX button element for selecting a value
  */
 export const SelectButton: React.FC<SelectButtonProps> = ({
@@ -71,24 +78,71 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
     buttonId = '',
     className = '',
     type = 'input' ,
-    callback = () => { }
+    searchable = false,
+    callback = () => { },
+    ariaLabelledBy,
 }) => {
-    const { open, value, setOpen } = useContext(SelectContext);
+    const { open, value, setOpen, searchTerm, setSearchTerm } = useContext(SelectContext);
 
     const toggleOpen = () => {
         setOpen(!open);
     }
 
     return (
-        <button
+        <div
             id={buttonId}
+            role="button"
+            aria-labelledby={ariaLabelledBy}
+            tabIndex={0}
             className={`${className} select select-button-${type}`}
-            onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+            onClick={(e) => {
                 callback(e);
                 toggleOpen();
             }}
+            onKeyDown={(e) => {
+                const target = e.target as HTMLElement | null;
+                const isSearchInput = target?.classList?.contains('select-search-input');
+
+                if (isSearchInput) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        target.blur();
+                    } else if (e.key === ' ' || e.key === 'Spacebar') {
+                        e.stopPropagation();
+                    }
+                    return;
+                }
+
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    toggleOpen();
+                }
+            }}
         >
-            {(value || initialVal) ? (
+            {searchable && open ? (
+                <input
+                    type="text"
+                    autoFocus
+                    className="select-search-input" // Currently no CSS for this
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search..."
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => {
+                        // Dismiss the mobile keyboard on Enter/Return without
+                        // bubbling up to the wrapper (which would toggle the
+                        // dropdown closed); keep the dropdown open to pick a result.
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            e.currentTarget.blur();
+                        } else if (e.key === ' ' || e.key === 'Spacebar') {
+                            e.stopPropagation();
+                        }
+                    }}
+                />
+            ) : (value || initialVal) ? (
                 <div className='value'>{(value) ? value : initialVal}</div>
             ) : (
                 <span className='placeholder'>{placeholder}</span>
@@ -99,7 +153,7 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
               height={12}
               className={`color-fill select-button-arrow ${open && 'opened'}`}
               ariaLabel={'dropdown arrow'}/>
-        </button>
+        </div>
     );
 };
 
@@ -120,31 +174,38 @@ export const SelectOptions: React.FC<SelectOptionsProps> = ({
     rightAlign = false,
     callback = () => { }
 }) => {
-    const { open, setOpen, setValue } = useContext(SelectContext);
+    const { open, setOpen, setValue, searchTerm } = useContext(SelectContext);
 
     if (open) {
+        const filteredOptions = options.filter(option => 
+            option.value.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
         return (
             <div
                 className='select-options'
                 style={rightAlign ? { right: 0 } : {}}
             >
-                {/* Using index as key is usually bad, but order is not changing here */}
-                {options.map((option, index) =>
-                    <button
-                        key={`${index}-${option.value}`} // Safe key because options order is static
-                        value={option.value}
-                        disabled={option.disabled}
-                        className={
-                            `${className} 
-                            select-option 
-                            ${(index === 0) ? 'top' : (index === (options.length - 1)) ? 'bottom' : ''}`
-                        }
-                        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                            setValue(option.markup);
-                            callback(e);
-                            setOpen(false);
-                        }}
-                    >{option.markup}</button>
+                {filteredOptions.length > 0 ? (
+                    filteredOptions.map((option, index) =>
+                        <button
+                            key={`${index}-${option.value}`}
+                            value={option.value}
+                            disabled={option.disabled}
+                            className={
+                                `${className} 
+                                select-option 
+                                ${(index === 0) ? 'top' : (index === (options.length - 1)) ? 'bottom' : ''}`
+                            }
+                            onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                                setValue(option.markup);
+                                callback(e);
+                                setOpen(false);
+                            }}
+                        >{option.markup}</button>
+                    )
+                ) : (
+                    <div className="select-option disabled">No results found</div>
                 )}
             </div>
         )
@@ -164,10 +225,18 @@ export const SelectOptions: React.FC<SelectOptionsProps> = ({
 export const Select: React.FC<SelectProps> = ({ children }) => {
     const [open, setOpen] = useState<boolean>(false);
     const [value, setValue] = useState<ReactElement | null>(null);
+    const [searchTerm, setSearchTerm] = useState<string>("");
     const selectRef = useRef<HTMLDivElement>(null);
 
+    // Close on click outside
     useEffect(() => {
         const close = (e: MouseEvent) => {
+            const target = e.target as Node;
+
+            if (!target.isConnected) {
+                return;
+            }
+            
             if (selectRef.current && !selectRef.current.contains(e.target as Node)) {
                 setOpen(false);
             }
@@ -182,8 +251,15 @@ export const Select: React.FC<SelectProps> = ({ children }) => {
         };
     }, [open]);
 
+    // Clear search on close
+    useEffect(() => {
+        if (!open) {
+            setSearchTerm("");
+        }
+    }, [open]);
+
     return (
-        <SelectContext.Provider value={{ open, value, setOpen, setValue, type: 'input' }}>
+        <SelectContext.Provider value={{ open, value, searchTerm, setOpen, setValue, setSearchTerm, type: 'input' }}>
             <div className='select-container' ref={selectRef}>
                 {children}
             </div>

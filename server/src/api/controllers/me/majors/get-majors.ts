@@ -5,7 +5,7 @@ import getUserMajorsService from '#services/me/majors/get-majors.ts';
 //GET api/me/majors
 //get majors on user profile
 export const getUserMajors = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const result = await getUserMajorsService(req.currentUser);
+  const result = await getUserMajorsService(req.currentUser.userId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

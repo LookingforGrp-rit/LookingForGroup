@@ -1,16 +1,11 @@
-import type { UserFollowsList } from '@looking-for-group/shared';
+import type { UserFollowsList, Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
-import type { Users } from '#prisma-models/index.js';
 import { transformUserToPreview } from '#services/transformers/users/user-preview.ts';
 import { getUserFollowersService } from '#services/users/followings/get-user-followers.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 vi.mock('#config/prisma.ts', () => ({
   default: {
@@ -30,27 +25,29 @@ describe('getUserFollowersService', () => {
   });
 
   it('returns followers list for a user', async () => {
-    const senderUser: Users = {
-      userId: 2,
-      username: 'sender',
-      ritEmail: 'send@rit.edu',
-      firstName: 'send',
-      lastName: 'user',
-      profileImage: null,
-      headline: '',
-      pronouns: '',
-      title: '',
-      academicYear: null,
-      location: '',
-      funFact: '',
-      bio: '',
-      visibility: 0,
-      mentor: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      phoneNumber: null,
-      universityId: '',
-    };
+    // const senderUser: Users = {
+    //   userId: 2,
+    //   username: 'sender',
+    //   ritEmail: 'send@rit.edu',
+    //   firstName: 'send',
+    //   lastName: 'user',
+    //   preferredName: 'Leafleaf',
+    //   profileImage: null,
+    //   headline: '',
+    //   pronouns: '',
+    //   title: '',
+    //   ritStatus: null,
+    //   location: '',
+    //   bio: '',
+    //   displayPhone: false,
+    //   privacy: 'public',
+    //   mentor: false,
+    //   createdAt: new Date(),
+    //   updatedAt: new Date(),
+    //   phoneNumber: null,
+    //   googleId: '',
+    //   moderator: false,
+    // };
 
     const prismaResult = [
       {
@@ -65,23 +62,25 @@ describe('getUserFollowersService', () => {
       username: 'sender',
       firstName: 'send',
       lastName: 'user',
+      preferredName: 'Leafleaf',
       profileImage: null,
       mentor: false,
       headline: '',
       pronouns: '',
       title: '',
-      academicYear: null,
+      displayPhone: false,
+      ritStatus: null,
       location: '',
-      funFact: '',
       bio: '',
       designer: false,
       developer: false,
+      privacy: 'public' as Visibility,
       majors: [],
       apiUrl: '/api/users/2',
     };
 
-    vi.mocked(prisma.userFollowings.findMany).mockResolvedValue(prismaResult as any);
-    vi.mocked(transformUserToPreview).mockReturnValue(transformed as any);
+    vi.mocked(prisma.userFollowings.findMany).mockResolvedValue(prismaResult);
+    vi.mocked(transformUserToPreview).mockReturnValue(transformed);
 
     const result = await getUserFollowersService(10);
 
@@ -89,7 +88,7 @@ describe('getUserFollowersService', () => {
       where: { receiverId: 10 },
       orderBy: { followedAt: 'desc' },
       select: {
-        senderUser: { select: expect.any(Object) },
+        senderUser: { select: expect.objectContaining({}) },
         followedAt: true,
       },
     });

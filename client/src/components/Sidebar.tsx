@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as paths from "../constants/routes";
 import { useSelector } from "react-redux";
 // import Notifications from "./pages/Notifications";
 import { ThemeIcon } from "./ThemeIcon";
 import { ProjectCreatorEditor } from "./ProjectCreatorEditor/ProjectCreatorEditor";
+import { getCurrentUsername } from '../api/users.ts';
+
 
 //user utils
 //import { getCurrentUsername } from "../api/users.ts";
@@ -28,8 +30,9 @@ const SideBar = () => {
   const [width, setWidth] = React.useState(window.innerWidth); // Current window width
   const breakpoint = useSelector((state: any) => state.page.MOBILE_BREAKPOINT); // Mobile breakpoint
 
-  // const [headerText, setHeaderText] = useState('Group'); // State to manage the h1 text
-  const navigate = useNavigate(); // Hook for navigation
+  const [userId, setUserId] = useState<number>();
+
+  const [active, setActive] = useState(false);
 
   let startingPage: string;
 
@@ -39,7 +42,7 @@ const SideBar = () => {
   // Here, the sidebar buttons are updated on page load (so that they work with browser back/forward)
   // BOTH manual class managing lines & startingPage lines are necessary for the buttons to work with site features AND browser features
   switch (window.location.pathname) {
-    case "/discover":
+    case "/projects":
     case "/":
       startingPage = "Discover";
       for (const i of sidebarBtns) {
@@ -47,7 +50,7 @@ const SideBar = () => {
       }
       document.querySelector("#discover-sidebar-btn")?.classList.add("active");
       break;
-    case "/meet":
+    case "/people":
       startingPage = "Meet";
       for (const i of sidebarBtns) {
         i.classList.remove("active");
@@ -66,15 +69,14 @@ const SideBar = () => {
     case "/profile":
       // Only the mobile layout specifically displays the "own profile" sidebar button
       // Default "profile" brings you to your own page
-      if (width < breakpoint && !window.location.href.includes("?")) {
+
+      if (width < breakpoint && window.location.href.endsWith(`userID=${userId}`)) {
         // Is it the mobile layout, and is it DEFINITELY your own page?
         startingPage = "My Profile";
         for (const i of sidebarBtns) {
           i.classList.remove("active");
         }
-        document
-          .querySelector("#my-profile-sidebar-btn")
-          ?.classList.add("active");
+        document.querySelector("#my-profile-sidebar-btn")?.classList.add("active");
       } else {
         // Otherwise, default to MEET
         // This behavior is not ideal! The desktop layout should likely also feature a "MY PROFILE" button, and one's own profile should have a unique URL.
@@ -83,7 +85,7 @@ const SideBar = () => {
         for (const i of sidebarBtns) {
           i.classList.remove("active");
         }
-        document.querySelector("#meet-sidebar-btn")?.classList.add("active");
+        //document.querySelector("#meet-sidebar-btn")?.classList.add("active");
       }
       break;
     case "/settings":
@@ -132,47 +134,74 @@ const SideBar = () => {
    * Fetches the current authenticated user and sets user data.
    * Updates `createError` depending on authentication status.
   */
- /*
-  const getAuth = async () => {
-    // Is user authenticated?
-    // Get auth
-    try {
-      const res = await getCurrentUsername();
-
-      if (res.status === 200 && res.data?.username) {
-        // Authenticated
-        setCreateError(false);
-
-        const userInfo: UserDetail = {
-          ...res.data,
-          following: res.data.following || { usersFollowing: { users: [], count: 0, apiUrl: "" }, projectsFollowing: { projects: [], count: 0, apiUrl: "" } },
-          followers: res.data.followers || { users: [], count: 0, apiUrl: "" },
-        };
-
-        setUserData(userInfo);
-      } else {
-        // If there is any issue authenticating the user's account,
-        // immediatly send the user to the login screen
-        navigate(paths.routes.LOGIN);
-        setCreateError(true);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  */
+  /*
+   const getAuth = async () => {
+     // Is user authenticated?
+     // Get auth
+     try {
+       const res = await getCurrentUsername();
+ 
+       if (res.status === 200 && res.data?.username) {
+         // Authenticated
+         setCreateError(false);
+ 
+         const userInfo: UserDetail = {
+           ...res.data,
+           following: res.data.following || { usersFollowing: { users: [], count: 0, apiUrl: "" }, projectsFollowing: { projects: [], count: 0, apiUrl: "" } },
+           followers: res.data.followers || { users: [], count: 0, apiUrl: "" },
+         };
+ 
+         setUserData(userInfo);
+       } else {
+         // If there is any issue authenticating the user's account,
+         // immediatly send the user to the login screen
+         navigate(paths.routes.LOGIN);
+         setCreateError(true);
+       }
+     } catch (err) {
+       console.error(err);
+     }
+   };
+   */
 
   /**
    * Handles updating the active page and navigation.
    *
    * @param text - Name of the page (e.g., "Discover")
    * @param path - URL path to navigate to (e.g., "/discover")
-   */
+   
   const handleTextChange = (text: string, path: string) => {
     // setHeaderText(text);
     setActivePage(text);
     navigate(path); // Navigate to the specified path
   };
+
+  // Navigate to the current user's profile
+  const handleProfileAccess = async () => {
+    // navigate to Profile, attach userID
+    const res = await getCurrentUsername();
+    const userId = res.data?.userId;
+    if (userId) navigate(`${paths.routes.PROFILE}?userID=${userId}`);
+    else navigate(paths.routes.LOGIN);
+
+    // Collapse the dropwdown if coming from another user's page
+    if (window.location.href.includes("profile")) {
+      window.location.reload();
+    }
+  };
+
+  const returnProfileLink = async () => {
+    // navigate to Profile, attach userID
+    const res = await getCurrentUsername();
+    const userId = res.data?.userId;
+    if (userId) return `${paths.routes.PROFILE}?userID=${userId}`;
+    else return paths.routes.LOGIN;
+
+    // Collapse the dropwdown if coming from another user's page
+    if (window.location.href.includes("profile")) {
+      window.location.reload();
+    }
+  };**/
 
   /**
    * Handles window resize events and updates width state.
@@ -183,122 +212,157 @@ const SideBar = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const res = await getCurrentUsername();
+        if (res.status === 200 && res.data?.userId) {
+          setUserId(res.data.userId);
+        }
+      } catch (err) {
+        console.error("Error fetching user ID:", err);
+      }
+    };
+
+    fetchUserId();
+  }, []);
+
+  const toggleActive = async (state: boolean) => {
+    setActive(state);
+  }
+
   // Mobile layout
   if (width < breakpoint) {
     return (
-      <div>
-        <div className="sideBarContainer">
+      <nav>
+        <div className={active ? "sideBarContainer active" : "sideBarContainer"}>
           <div className="containerButtonSideBar">
             <div className="containerButtonSideBar">
-              <button
+              <Link
                 id={"discover-sidebar-btn"}
                 className={
                   activePage === "Discover"
                     ? "active sidebar-btn"
                     : "sidebar-btn"
                 }
-                onClick={() => handleTextChange("Discover", paths.routes.HOME)}
+                to={paths.routes.HOME}
               >
-                <ThemeIcon id={'compass'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'}/>
-              </button>
-              <button
+                <ThemeIcon id={'compass'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'} />
+              </Link>
+              <Link
                 id={"meet-sidebar-btn"}
                 className={
                   activePage === "Meet" ? "active sidebar-btn" : "sidebar-btn"
                 }
-                onClick={() => handleTextChange("Meet", paths.routes.MEET)}
+                to={paths.routes.MEET}
               >
-                <ThemeIcon id={'meet'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'}/>
-              </button>
-              <button
+                <ThemeIcon id={'meet'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'} />
+              </Link>
+              <div className="my-projects-create-btn">
+                <ProjectCreatorEditor
+                  newProject={true}
+                  mobileView={true}
+                />
+              </div>
+              <Link
                 id={"my-projects-sidebar-btn"}
                 className={
                   activePage === "My Projects"
                     ? "active sidebar-btn"
                     : "sidebar-btn"
                 }
-                onClick={() =>
-                  handleTextChange("My Projects", paths.routes.MYPROJECTS)
-                }
+                to={paths.routes.MYPROJECTS}
               >
-                <ThemeIcon id={'folder'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'}/>
-              </button>
-              <button
+                <ThemeIcon id={'folder'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'} />
+              </Link>
+              <Link
                 id={"my-profile-sidebar-btn"}
                 className={
                   activePage === "My Profile"
                     ? "active sidebar-btn"
                     : "sidebar-btn"
                 }
-                onClick={() =>
-                  handleTextChange("My Profile", paths.routes.PROFILE)
-                }
+                to={userId ? `${paths.routes.PROFILE}?userID=${userId}` : `${paths.routes.LOGIN}`}
+              //onClick={() =>
+              //  handleProfileAccess()
+              //}
               >
-                <ThemeIcon id={'profile'} width={30} height={28.85} className={'mono-fill'} ariaLabel={'my profile'} />
-              </button>
+                <ThemeIcon id={'profile'} width={30} height={30} className={'mono-fill'} ariaLabel={'my profile'} />
+              </Link>
+
             </div>
           </div>
         </div>
 
         {/* <Notifications show={showNotifications} onClose={() => { setShowNotifications(!showNotifications); }} /> */}
-      </div>
+      </nav>
     );
   }
 
   // Desktop layout
   return (
-    <div>
-      <div className="SideBarContainer">
+    <nav>
+      <a
+        href="#main"
+        className="skip-link"
+        onClick={(e) => {
+          e.preventDefault();
+          document.getElementById('main')?.focus();
+        }}
+      >
+        Skip to main content
+      </a>
+      <div className={active ? "SideBarContainer active" : "SideBarContainer"}>
         <div className="headerContainer">
-          <h1
-            style={{ cursor: "pointer" }}
-            onClick={() => handleTextChange("Discover", paths.routes.HOME)}
+          {/* Must be a button to be focusable and meet accessibility guidelines */}
+          <Link
+            to={paths.routes.HOME}
           >
-            lfg.
-          </h1>
+            <h1>
+              lfg.
+            </h1>
+          </Link>
         </div>
 
         <div className="containerButtonSideBar">
-          <button
+          <Link
             id={"discover-sidebar-btn"}
             className={
               activePage === "Discover" ? "active sidebar-btn" : "sidebar-btn"
             }
-            onClick={() => handleTextChange("Discover", paths.routes.HOME)}
+            to={paths.routes.HOME}
           >
-            <ThemeIcon id={'compass'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'}/>
-            Discover 
-          </button>
-          <button
+            <ThemeIcon id={'compass'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'} />
+            Projects
+          </Link>
+          <Link
             id={"meet-sidebar-btn"}
             className={
               activePage === "Meet" ? "active sidebar-btn" : "sidebar-btn"
             }
-            onClick={() => handleTextChange("Meet", paths.routes.MEET)}
+            to={paths.routes.MEET}
           >
-            <ThemeIcon id={'meet'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'}/>
-            Meet
-          </button>
-          <button
+            <ThemeIcon id={'meet'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'} />
+            People
+          </Link>
+          <Link
             id={"my-projects-sidebar-btn"}
             className={
               activePage === "My Projects"
                 ? "active sidebar-btn"
                 : "sidebar-btn"
             }
-            onClick={() =>
-              handleTextChange("My Projects", paths.routes.MYPROJECTS)
-            }
+            to={paths.routes.MYPROJECTS}
           >
-            <ThemeIcon id={'folder'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'}/>
+            <ThemeIcon id={'folder'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'} />
             My Projects
-          </button>
+          </Link>
           {/* <button className={activePage === 'Following' ? 'active' : ''} onClick={() => handleTextChange('Following', paths.routes.SETTINGS)}>
             // If implementing, use SVG sprite sheet instead of hard-coded png
             <img
-              src="assets/following.png"
-              src-light="assets/following.png"
-              src-dark="assets/following.png"
+              src="/assets/following.png"
+              src-light="/assets/following.png"
+              src-dark="/assets/following.png"
               alt="" /> Following
           </button> */}
 
@@ -307,18 +371,19 @@ const SideBar = () => {
           </button> */}
 
           {/*           {/* <button className={activePage === 'Messages' ? 'active' : ''} onClick={() => handleTextChange('Messages', paths.routes.MESSAGES)}>
-          <img src="images/icons/nav/msg-nav.png" className="navIcon" alt="Messages" /> Messages
+          <img src="/images/icons/nav/msg-nav.png" className="navIcon" alt="Messages" /> Messages
           </button> */}
         </div>
 
         {/* "Create" button in bottom left, made by ProjectCreatorManager */}
         {/* Sends the user to the log in page if they aren't logged in, otherwise allows them to create and edit a project */}
 
-        <div className="Create">
+        <div className={"Create"}>
           <ProjectCreatorEditor
             newProject={true}
-            // buttonCallback={getAuth}
-            // user={userData}
+            mobileView={false}
+            buttonCallback={toggleActive}
+          // user={userData}
           />
         </div>
       </div>
@@ -329,7 +394,7 @@ const SideBar = () => {
           setShowNotifications(false);
         }}
       /> */}
-    </div>
+    </nav>
   );
 };
 

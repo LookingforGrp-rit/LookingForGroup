@@ -1,6 +1,12 @@
-import type { AcademicYear, ApiResponse, FilterRequest } from '@looking-for-group/shared';
+import type {
+  RitStatus,
+  ApiResponse,
+  FilterRequest,
+  UserSortMethod,
+} from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { UsersAcademicYear } from '#prisma-models/index.js';
+import { UsersRitStatus } from '#prisma-models/index.js';
+import { getBlocklistIdsByGidService } from '#services/me/blocklist/get-blocklist-ids-by-gid.ts';
 import { getAllUsersService } from '#services/users/get-all-users.ts';
 
 //GET api/users
@@ -51,8 +57,8 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
   if (req.query.majors) {
     filters.majors = (req.query.majors as string).split(',').map((val) => parseInt(val));
   }
-  if (req.query.academicYear) {
-    filters.academicYear = (req.query.academicYear as string).split(',');
+  if (req.query.ritStatus) {
+    filters.ritStatus = (req.query.ritStatus as string).split(',');
   }
   if (req.query.socials) {
     filters.socials = (req.query.socials as string).split(',').map((val) => parseInt(val));
@@ -73,14 +79,14 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
     return;
   }
 
-  //year checks using UsersAcademicYear
-  const years = filters.academicYear as string[];
-  if (filters.academicYear !== undefined) {
-    years.forEach((year) => {
-      if (!Object.values(UsersAcademicYear).includes(year as AcademicYear)) {
+  //ritStatus checks using UsersRitStatus
+  const ritStatuses = filters.ritStatus as string[];
+  if (filters.ritStatus !== undefined) {
+    ritStatuses.forEach((status) => {
+      if (!Object.values(UsersRitStatus).includes(status as RitStatus)) {
         const resBody: ApiResponse = {
           status: 400,
-          error: 'Invalid academic year(s)',
+          error: 'Invalid RIT status(es)',
           data: null,
         };
         res.status(400).json(resBody);
@@ -104,8 +110,10 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
     }
   }
 
+  //Add sort method
+  const sortMethod = req.params.method as UserSortMethod;
   //send it over
-  const result = await getAllUsersService(filters);
+  let result = await getAllUsersService(filters, sortMethod);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -117,11 +125,21 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
     return;
   }
 
+  // filtering out blocked users
+  const userGid = req.session.gid;
+  if (userGid) {
+    const ids = await getBlocklistIdsByGidService(userGid);
+    if (ids !== 'INTERNAL_ERROR') {
+      result = result.filter((user) => {
+        return !ids.includes(user.userId);
+      });
+    }
+  }
+
   const resBody: ApiResponse<typeof result> = {
     status: 200,
     error: null,
     data: result,
   };
   res.status(200).json(resBody);
-  return;
 };

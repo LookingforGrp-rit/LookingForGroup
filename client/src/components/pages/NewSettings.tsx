@@ -4,34 +4,32 @@ import { Popup, PopupButton, PopupContent } from '../Popup';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import { ThemeIcon } from '../ThemeIcon';
 import { useNavigate } from 'react-router-dom';
-import { useState, useContext, SetStateAction } from 'react';
+import { useState, useContext, SetStateAction, useEffect } from 'react';
 import { Header } from '../Header';
-import CreditsFooter from '../CreditsFooter';
 //import PasswordValidator from 'password-validator';
 import ToTopButton from '../ToTopButton';
 import * as paths from '../../constants/routes';
 import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editUser } from '../../api/users';
 import { MePrivate, UpdateUserInput } from '@looking-for-group/shared';
+import { ProfileEditPopup } from '../Profile/ProfileEditPopup';
 type JsonData = Record<string, unknown>;
-
-// Take the user ID and delete it
-const deleteAccountPressed = async () => {
-  await deleteUser();
-};
 
 /**
  * Settings page. Renders the settings page interface with options for updating user account information, appearance preferences, and account settings
  * @returns JSX Element
  */
-const Settings = () => {
+const Settings = (userProfile: any) => {
   // --------------------
   // Global variables
   // --------------------
   // Variables regarding pulling user data
   const [dataLoaded, setDataLoaded] = useState(false);
   const [userInfo, setUserInfo] = useState<MePrivate>();
+  const [deleteResponseText, setdeleteResponseText] = useState<String | null>(null);
 
   const navigate = useNavigate();
+
+  const successMessage = "Successfully deleted account! Redirecting to the Discover page.";
 
   // Pull stateful theme variable and setter via context
   const theme = useContext(ThemeContext)['theme'];
@@ -41,9 +39,47 @@ const Settings = () => {
   const [themeOption, setThemeOption] = useState(theme === 'dark' ? 'Dark Mode' : 'Light Mode');
   // const [visibilityOption, setVisibilityOption] = useState('Public Account');
 
+  const [notValid, setNotValid] = useState(true);
+
+  // If user is not logged in, redirect to login page
+  useEffect(() => {
+    const load = async () => {
+      const me = await getCurrentAccount();
+      if (me.data) {
+        setUserInfo(me.data);
+      }
+      setDataLoaded(true);
+    };
+    if (!dataLoaded) load();
+  }, [dataLoaded]);
+
+  useEffect(() => {
+    if (!dataLoaded) return;
+    if (userInfo === undefined) {
+      navigate(paths.routes.LOGIN, {
+        state: { from: location.pathname + location.search }
+      })
+    }
+  }, [dataLoaded, userInfo, navigate, location]);
+
   // --------------------
   // Helper functions
   // --------------------
+
+  // Take the user ID and delete it
+  const deleteAccountPressed = async () => {
+    const response = await deleteUser();
+    let responseText = response.error;
+    if (responseText === null || responseText === undefined) {
+      responseText = successMessage;
+    }
+    setdeleteResponseText(responseText);
+  };
+
+  // Used after user exits successful account delete popup
+  const navHome = () => {
+    navigate(paths.routes.HOME);
+  }
 
   // TODO: Function needed to check password!
   // TODO: Function needed to check field validity (e.g. is this actually an email?)
@@ -54,7 +90,7 @@ const Settings = () => {
   const getUserData = async () => {
     // authentication
     const acc = await getCurrentAccount();
-    if ( !acc.error && acc.data) {
+    if (!acc.error && acc.data) {
       setUserInfo(acc.data);
     }
 
@@ -65,11 +101,6 @@ const Settings = () => {
   // Uses stateful variable to only run once at initial render
   if (!dataLoaded) {
     getUserData();
-  }
-
-  // If user is not logged in, redirect to login page
-  if (userInfo === undefined) {
-    navigate(paths.routes.LOGIN, { state: { from: location.pathname } })
   }
 
   // --------------------
@@ -85,8 +116,8 @@ const Settings = () => {
    * @param setSuccess Function to set success message in parent component
    * @returns 
    */
-  const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSuccess } : 
-    {type: string, prev: string, cur: string, apiParams: JsonData, setError: React.Dispatch<SetStateAction<string>>, setSuccess: React.Dispatch<SetStateAction<string>>}) => {
+  const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSuccess }:
+    { type: string, prev: string, cur: string, apiParams: JsonData, setError: React.Dispatch<SetStateAction<string>>, setSuccess: React.Dispatch<SetStateAction<string>> }) => {
     //const [password, setPassword] = useState('');
 
     // git merge 07/24/2025: Yevhenii Shyshko
@@ -147,7 +178,7 @@ const Settings = () => {
               if (response !== undefined && response.error) {
                 setError(response.error);
               }
-              else if(response.data) onSuccess();
+              else if (response.data) onSuccess();
             }}
           >
             Submit
@@ -165,7 +196,7 @@ const Settings = () => {
    * @returns JSX Element
    */
   // User form for changing username/password/email
-  const ChangeForm = ({ type } : {type: string}) => {
+  const ChangeForm = ({ type }: { type: string }) => {
     // Variables
     const [errorMsg, setError] = useState('');
     const [successMsg, setSuccess] = useState('');
@@ -246,20 +277,20 @@ const Settings = () => {
             setSuccess('');
 
             // Update userInfo properly
-            const cleaned_type : string = type.replace(' ', '').toLowerCase();
+            const cleaned_type: string = type.replace(' ', '').toLowerCase();
             if (cleaned_type != 'password') {
               // Create deep copy of object, make changes, then call state update
-              const tempInfo : MePrivate = JSON.parse(JSON.stringify(userInfo));
-              
+              const tempInfo: MePrivate = JSON.parse(JSON.stringify(userInfo));
+
               //tempInfo[cleaned_type] = firstParam;
-              
+
               setUserInfo(tempInfo);
               //this isn't really needed but i'm gonna leave it anyway
             }
           }
         }}
       >
-        <h3>Edit {type}{type === 'Phone' ? ' Number' : ''}</h3>
+        <h3 id="form-title">Edit {type}{type === 'Phone' ? ' Number' : ''}</h3>
         {/*type === 'Password' ? <PasswordChecker pass={firstParam} /> : <></>*/}
         <div className="error">{errorMsg}</div>
         {errorMsg === '' && successMsg !== '' ? <div className="success">{successMsg}</div> : <></>}
@@ -267,10 +298,11 @@ const Settings = () => {
         <div className="input-fields">
           <div className="input-container">
             {/* autoComplete to prevent browser autofill */}
-            <form autoComplete="off">
+            <form autoComplete="off" aria-labelledby='form-title'>
               <input
                 placeholder={`Enter new ${type.toLowerCase()}${type === 'Phone' ? ' number' : ''}`}
                 type={type !== 'Password' ? 'text' : 'password'}
+                aria-label={`new ${type.toLowerCase()}${type === 'Phone' ? ' number' : ''}`}
                 onChange={(e) => {
                   const value = e.target.value;
                   setFirstParam(value);
@@ -315,36 +347,36 @@ const Settings = () => {
                   // TO-DO: Check if already in use if username
                   // or primary email address. Excludes password
                   //don't actually todo this these are not used anymore
-                  
-                    // if (type === 'Primary Email') {
-                    //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    //   if (!emailRegex.test(firstParam)) {
-                    //     setError('*Please enter a valid email address.');
-                    //     return;
-                    //   }
-                    // }
-                    // if (type === 'Username') {
-                    //   const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-                    //   if (!usernameRegex.test(firstParam)) {
-                    //     setError('*Username must be 3-20 characters, letters, numbers, or underscores only.');
-                    //     return;
-                    //   }
-                    // }
-                    if (type === 'Phone') {
-                      const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
-                      if (!phoneRegex.test(firstParam)) {
-                        setError('*Please enter a valid phone number.');
-                        return;
-                      }
-                      else {
-                        // TODO: Insert the backend connection to change the user's phone number
-                      }
-                    }
 
-                    if (type !== 'Password') {
+                  // if (type === 'Primary Email') {
+                  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                  //   if (!emailRegex.test(firstParam)) {
+                  //     setError('*Please enter a valid email address.');
+                  //     return;
+                  //   }
+                  // }
+                  // if (type === 'Username') {
+                  //   const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+                  //   if (!usernameRegex.test(firstParam)) {
+                  //     setError('*Username must be 3-20 characters, letters, numbers, or underscores only.');
+                  //     return;
+                  //   }
+                  // }
+                  if (type === 'Phone') {
+                    const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+                    if (!phoneRegex.test(firstParam)) {
+                      setError('*Please enter a valid phone number.');
+                      return;
+                    }
+                    else {
+                      // TODO: Insert the backend connection to change the user's phone number
+                    }
+                  }
+
+                  if (type !== 'Password') {
                     let data;
-                    if (type ==='Username')   data = await getUserByUsername(firstParam);
-                    if(type === 'Email')      data = await getUserByEmail(firstParam);
+                    if (type === 'Username') data = await getUserByUsername(firstParam);
+                    if (type === 'Email') data = await getUserByEmail(firstParam);
 
                     if (data?.data) {
                       setError(`*${type} is already in use.`);
@@ -360,6 +392,7 @@ const Settings = () => {
               <input
                 className="input-container-confirm"
                 placeholder={`Confirm new ${type.toLowerCase()}${type === 'Phone' ? ' number' : ''}`}
+                aria-label={`confirm ${type.toLowerCase()}${type === 'Phone' ? ' number' : ''}`}
                 type={type !== 'Password' ? 'text' : 'password'}
                 onChange={(e) => {
                   setConfirm(e.target.value);
@@ -456,31 +489,33 @@ const Settings = () => {
   //   }
   // };
 
-  return (
-    <div className="page" style={{ position: 'relative' }}>
-      {/* Top-right profile dropdown */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 20,
-          right: 30,
-          zIndex: 1000,
-        }}
-      ></div>
+  useEffect(() => {
+    if (theme === 'dark')
+      setThemeOption("Dark Mode")
 
+    if (theme === 'light')
+      setThemeOption("Light Mode")
+  }, [theme])
+
+  return (
+    <main className="page" style={{ position: 'relative' }} tabIndex={-1}>
       {/* Search bar is not used in settings */}
       <div id="settings-page">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <h1 className="page-title">Settings</h1>
-          <Header dataSets={[]} onSearch={() => {}} hideSearchBar />
-        </div>
-        <hr />
+        <header id="header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Header dataSets={[]} onSearch={() => { }} hideSearchBar hideBackButton={false} 
+            // pageTitle='Settings'
+            placeholderText='' />
+        </header>
         {userInfo === undefined ? (
           <p>You aren't logged in!</p>
         ) : (
-          <div>
+
+          <div id='main'>
+            <h1 className="settings-title">Settings</h1>
+            <hr />
             {/* Top Row: Personal and Email Settings */}
             <div className="settings-row">
+              <h2 className="settings-header">Account</h2>
               {/* Personal Settings 
               <div className="settings-column">
                 <h2 className="settings-header">Personal</h2>
@@ -521,7 +556,6 @@ const Settings = () => {
               </div> */}
               {/* Email Settings */}
               <div className="settings-column">
-                <h2 className="settings-header">Email</h2>
                 <div className="subsection">
                   <label htmlFor="option-rit-email">RIT Email</label>
                   <div className="input-container disabled">
@@ -537,13 +571,12 @@ const Settings = () => {
 
               {/* Phone Settings */}
               <div className="settings-column">
-                <h2 className="settings-header">Contact</h2>
                 <div className="subsection">
                   <label htmlFor="option-primary-phone">Phone Number</label>
                   <div className="input-container">
                     <input
                       id="option-primary-phone"
-                      placeholder={'123-123-1234'}
+                      placeholder={userInfo.phoneNumber ?? 'No current phone number'}
                       type="text"
                       disabled
                     />
@@ -554,17 +587,33 @@ const Settings = () => {
                       </PopupContent>
                     </Popup>
                   </div>
+                  <div id="phone-number-visibility">
+                    <input
+                      type="checkbox"
+                      id="toggle-phone-checkbox"
+                      onChange={async (e) => {
+                        const tempInfo = { ...userInfo };
+                        tempInfo.displayPhone = e.target.checked;
+                        setUserInfo(tempInfo);
+                        await editUser({ displayPhone: tempInfo.displayPhone as boolean }); //this typecast does nothing. it still passes as a string
+                      }}
+                      checked={userInfo.displayPhone ?? false}
+                    >
+                    </input>
+                    <label htmlFor="toggle-phone-checkbox">Show Phone Number on your Profile?</label>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Bottom row: Appearance and Account Visibility */}
+            <hr />
             <div className="settings-row">
               {/* Appearance */}
+              <h2 className="settings-header">Appearance</h2>
               <div className="settings-column">
-                <h2 className="settings-header">Appearance</h2>
                 <div className="subsection">
-                  <label htmlFor="option-theme">Current Theme</label>
+                  <label htmlFor="options-theme-btn">Current Theme</label>
                   <Dropdown>
                     <DropdownButton buttonId="options-theme-btn">
                       <div className="input-container">
@@ -643,8 +692,8 @@ const Settings = () => {
                           disabled
                         />
                         <ThemeIcon
-                          src={'assets/dropdown_light.svg'}
-                          darkSrc={'assets/dropdown_dark.svg'}
+                          src={'/assets/dropdown_light.svg'}
+                          darkSrc={'/assets/dropdown_dark.svg'}
                           alt={'Visibility'}
                           addClass={'options-dropdown-parent-btn'}
                         />
@@ -676,34 +725,69 @@ const Settings = () => {
                 </div> */}
               </div>
             </div>
-              <div className="settings-row">
-                {/* Account Deletion */}
-                <div className="subsection">
-                  <Popup>
-                    <PopupButton className="delete-button">Delete Account</PopupButton>
-                    <PopupContent>
+            <hr />
+            <div className="settings-row settings-row-actions">
+              {/* Edit Profile — opens the same editor popup used on the profile page */}
+              <div className="subsection">
+                <ProfileEditPopup />
+              </div>
+              {/* Account Deletion */}
+              <div className="subsection">
+                <Popup>
+                  <PopupButton className="delete-button">Delete Account</PopupButton>
+                  <PopupContent>
+                    <div className="small-popup">
                       <div className="delete-user-title">Delete Account</div>
                       <div className="delete-user-extra-info">
                         Are you sure you want to delete your account? This action cannot be undone.
                       </div>
+                      <div className="delete-user-confirm-info">
+                        Type "DELETE" to confirm
+                        <input
+                          className='delete-user-confirm'
+                          type='text'
+                          placeholder='DELETE'
+                          onChange={(e) => {
+                            setNotValid(e.target.value !== "DELETE");
+                          }}
+                        >
+                        </input>
+                      </div>
                       <div className="delete-user-button-pair">
-                        <button className="delete-button" onClick={deleteAccountPressed}>
-                          Delete
-                        </button>
+                        {/* Popup if user presses delete account to show successful delete action */}
+                        <Popup>
+                          <PopupButton className="delete-button" callback={deleteAccountPressed} disabled={notValid}>Delete Account</PopupButton>
+                          <PopupContent>
+                            <div className="small-popup">
+                              <div id="delete-success-title">{
+                                deleteResponseText === null ? "Loading..." : (
+                                  deleteResponseText === successMessage ? "Success!" : "Error"
+                                )
+                              }
+                              </div>
+                              <div id="delete-success-extra-info">
+                                {deleteResponseText}
+                              </div>
+                              <PopupButton buttonId="continue-button" className={
+                                deleteResponseText === successMessage ? "" : "button-reset"
+                              } callback={deleteResponseText === successMessage ? navHome : () => { }}>Continue</PopupButton>
+                            </div>
+                          </PopupContent>
+                        </Popup>
                         <PopupButton buttonId="cancel-button" className="button-reset">
                           Cancel
                         </PopupButton>
                       </div>
-                    </PopupContent>
-                  </Popup>
-                </div>
+                    </div>
+                  </PopupContent>
+                </Popup>
               </div>
+            </div>
           </div>
         )}
       </div>
-      <CreditsFooter />
       <ToTopButton />
-    </div>
+    </main>
   );
 };
 

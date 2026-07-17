@@ -20,16 +20,20 @@ export enum TagType {
   SoftSkill = "Soft Skill",
   Purpose = "Purpose"
 }
-export enum AcademicYear {
-  Freshman = "Freshman",
-  Sophomore = "Sophomore",
-  Junior = "Junior",
-  Senior = "Senior",
-  Graduate = "Graduate"
+export enum RitStatus {
+  'FirstYear' = "1st Year",
+  'SecondYear' = "2nd Year",
+  'ThirdYear' = "3rd Year",
+  'FourthYear' = "4th Year",
+  'FifthYear' = "5th Year",
+  'GraduateStudent' = "Graduate Student",
+  'Alumni' = "Alumni",
+  'Faculty' = "Faculty",
+  'Staff' = "Staff",
 };
 export enum Visibility {
-  Public = 0,
-  Private = 1
+  Public = "Public",
+  Private = "Private"
 };
 export enum SkillProficiency {
   Novice = "Novice",
@@ -54,14 +58,11 @@ export enum JobAvailability {
   PartTime = "Part-time",
   Flexible = "Flexible"
 }
-export enum JobDuration {
-  ShortTerm = "Short-term",
-  LongTerm = "Long-term"
-}
 export enum JobLocation {
   OnSite = "On-Site",
   Remote = "Remote",
-  Hybrid = "Hybrid"
+  Hybrid = "Hybrid",
+  Flexible = "Flexible",
 }
 export enum JobCompensation {
   Unpaid = "Unpaid",
@@ -71,13 +72,13 @@ export enum BaseSocialUrl {
   "Instagram" = 'https://instagram.com/',
   'Twitter' = 'https://x.com/',
   'Facebook' = 'https://facebook.com/',
-  'Discord' = '',
+  'Discord' = 'https://discord.gg/',
   'Bluesky' = 'https://bsky.app/profile/',
   'LinkedIn' = 'https://linkedin.com/in/',
-  'YouTube' = '',
-  'Steam' = '',
-  'Itch' = '',
-  'Other' = ''
+  'YouTube' = 'https://youtube.com/',
+  'Steam' = 'https://',
+  'Itch' = 'https://', //because itch links might have the itch.io part later in the url
+  'Other' = 'https://'
 }
 export interface BaseUrlValidation { //a surprise tool that'll help us later
   Instagram: 'https://instagram.com/',
@@ -90,4 +91,24 @@ export interface BaseUrlValidation { //a surprise tool that'll help us later
   Steam: 'https://steamcommunity.com/' | 'https://store.steampowered.com/app/',
   Itch: '.itch.io',
   Other: 'https://' //idk what imma do with this but for now we'll just make sure it's a working link (TERRIBLE! AWFUL IDEA!)
+}
+
+export enum AspectRatios {
+  '16/9',
+  '4/3',
+  '1/1',
+  '2/3',
+  '6/13',
+}
+
+export enum ProjectApprovalStatus {
+  'approved' = 'Approved',
+  'under-review' = 'Under Review',
+  'not-approved' = 'Not Approved',
+}
+
+export enum UserAccessLevel {
+  User = 'User',
+  Moderator = 'Moderator',
+  Administrator = 'Administrator'
 }

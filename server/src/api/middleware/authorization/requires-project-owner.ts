@@ -8,10 +8,11 @@ const requiresProjectOwner = async (
   next: NextFunction,
 ) => {
   //current user ID
-  const userId = request.currentUser;
+  const user = request.currentUser;
 
   //check if ID is number
-  if (isNaN(userId)) {
+
+  if (isNaN(user.userId)) {
     const resBody: ApiResponse = {
       status: 400,
       error: 'Invalid user ID',
@@ -21,7 +22,7 @@ const requiresProjectOwner = async (
     return;
   }
 
-  const projectId = parseInt(request.params.id);
+  const projectId = parseInt(request.params.id as string);
 
   //check if project id is number
   if (isNaN(projectId)) {
@@ -56,7 +57,7 @@ const requiresProjectOwner = async (
     return;
   }
 
-  if (result.owner.userId !== userId) {
+  if (result.owner.userId !== user.userId) {
     const resBody: ApiResponse = {
       status: 403,
       error: 'Insufficient permissions',

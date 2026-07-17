@@ -1,12 +1,12 @@
-import type { AddProjectMediumsInput, ApiResponse } from '@looking-for-group/shared';
+import type { AddProjectMediumInput, ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import addMediumsService from '#services/projects/mediums/add-proj-mediums.ts';
 
 //POST api/projects/{id}/mediums
 //add a medium to the project
 const addMediumsController = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  const data: AddProjectMediumsInput = req.body as AddProjectMediumsInput;
+  const id = parseInt(req.params.id as string);
+  const data: AddProjectMediumInput = req.body as AddProjectMediumInput;
 
   const result = await addMediumsService(id, data);
 

@@ -1,4 +1,5 @@
-import { memo, FC, ChangeEvent, useState, useCallback, useEffect } from 'react';
+import { memo, FC, ChangeEvent, FocusEvent, useState, useCallback } from 'react';
+import { useMediaQuery } from './UseMediaQuery';
 
 export interface DataSet {
   data: unknown[];
@@ -27,7 +28,28 @@ interface SearchBarProps {
    * updating internal state.
    */
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+
+  setValue?: React.Dispatch<React.SetStateAction<string>>;
+
+  onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
+
+  //placeholder text, which should be different based on what page
+  //the user is searching on
+  placeholderText: string;
+
+  //Shorter placeholder used on mobile, where the full text gets cut off.
+  //If omitted, it's derived from placeholderText by dropping the leading
+  //"Search by "/"Search for " (e.g. "Search by Project" -> "Project").
+  mobilePlaceholderText?: string;
 }
+
+//Screens this narrow can't fit the full "Search by ..." placeholder.
+const MOBILE_QUERY = '(max-width: 500px)';
+
+//Strips the "Search by "/"Search for " lead-in so the mobile placeholder is
+//just the thing being searched (e.g. "Search by Project" -> "Project").
+const deriveMobilePlaceholder = (text: string): string =>
+  text.replace(/^\s*search\s+(?:by|for)\s+/i, '').trim();
 
 /**
  * SearchBar Component
@@ -42,10 +64,15 @@ interface SearchBarProps {
  * @returns JSX element containing a styled search input with icon
  */
 //FIXME: create way to update results if a new dataset is provided: discover page filter and project editor tag filters do not save search state
-export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange }) => {
+export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange, setValue, onFocus, placeholderText = "Search by Project", mobilePlaceholderText }) => {
   // Internal query state for uncontrolled mode
   const [internalQuery, setInternalQuery] = useState('');
-  const query = value ?? internalQuery;
+
+  // On mobile the full "Search by ..." text overflows, so show just the noun.
+  const isMobile = useMediaQuery(MOBILE_QUERY);
+  const effectivePlaceholder = isMobile
+    ? (mobilePlaceholderText ?? deriveMobilePlaceholder(placeholderText))
+    : placeholderText;
 
   /**
    * Handles input changes:
@@ -58,11 +85,13 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
     const newQuery = event.target.value.toLowerCase();
 
     // If onChange is passed in, call it
-     if (onChange) {
-      onChange(event); 
+    if (onChange) {
+      onChange(event);
     } else {
       setInternalQuery(newQuery);
     }
+    if (setValue) setValue(newQuery);
+    if (newQuery.length > 0) handleSearch(newQuery);
     handleSearch(newQuery);
   };
 
@@ -74,60 +103,95 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
    * @param searchQuery - lowercased search string
    */
   const handleSearch = useCallback((searchQuery: string) => {
+    const splitSearchQuery = searchQuery.trim().split(' ');
+    let currentQuery = splitSearchQuery[0];
     const filteredResults = dataSets.map((dataSet) =>
       dataSet.data.filter((item) => {
-      if (typeof item === 'object') {
-        // ONLY return fields we want to match, this avoids unintended searchbar behavior
-        // Search using all string props on the item
-        const includesInValue = (val: unknown): boolean => {
-          if (typeof val === 'string') {
-            return val.toLowerCase().includes(searchQuery);
-          }
-          if (Array.isArray(val)) {
-            return val.some((el) => typeof el === 'string' && el.toLowerCase().includes(searchQuery));
-          }
-          if (val && typeof val === 'object') {
-            return Object.values(val).some(includesInValue);
-          }
-          return false;
-        };
+        if (typeof item === 'object') {
+          // ONLY return fields we want to match, this avoids unintended searchbar behavior
+          // Search using all string props on the item
+          const includesInValue = (val: unknown): boolean => {
+            if (val === null) return false;
+            if (typeof val === 'string') {
+              return val.toLowerCase().includes(currentQuery);
+            }
+            if (Array.isArray(val)) {
+              return val.some((el) => typeof el === 'string' && el.toLowerCase().includes(currentQuery));
+            }
+            if (val && typeof val === 'object') {
+              return Object.values(val).some(includesInValue);
+            }
+            return false;
+          };
 
-        if (item === null) return false;
-        return Object.values(item).some(includesInValue);
-      }
-      else {
-          return String(item).toLowerCase().includes(searchQuery)
-      }
+          if (item === null) return false;
+
+          //Force typing to remove extra data and only check for relevant data
+          type RelevantData = {
+            firstName: string,
+            lastName: string,
+            preferredName: string,
+            email: string,
+            title: string,
+            label: string,
+          };
+          const proccessedItem = item as RelevantData;
+          const finalItem = {
+            firstName: proccessedItem.firstName ?? null,
+            lastName: proccessedItem.lastName ?? null,
+            preferredName: proccessedItem.preferredName ?? null,
+            email: proccessedItem.email ?? null,
+            title: proccessedItem.title ?? null,
+            label: proccessedItem.label ?? null,
+          };
+
+          for (const q of splitSearchQuery) {
+            currentQuery = q;
+            if (!Object.values(finalItem).some(includesInValue)) return false;
+          }
+          return true;
+        }
+        else {
+          for (const q of splitSearchQuery) {
+            if (!String(item).toLowerCase().includes(q)) return false;
+          }
+          return true;
+        }
       })
     );
 
     onSearch(filteredResults);
   }, [dataSets, onSearch]);
 
-  useEffect(() => {
-    handleSearch(query.toLowerCase());
-  }, [dataSets, query]);
-
   return (
     <div className="search-wrapper">
       {/* Prevent form submission from refreshing the page */}
       <div className="search-bar">
-        <div role="button" className="search-button" aria-label="Search" tabIndex={1}>
+        <div role="button" className="search-button" aria-label="Search">
           <i className="fa fa-search" aria-hidden="true"></i>
         </div>
         {/* Input field for search query */}
         <input
           className="search-input"
           type="text"
-          placeholder="Search"
-          value={query}
+          placeholder={effectivePlaceholder}
+          value={value ?? internalQuery}
           onChange={handleChange}
+          onFocus={onFocus}
+          tabIndex={2}
           onKeyDown={(e) => {
-            {/* Prevent odd popup behavior on enter click */}
+            {/* Prevent odd popup behavior on enter click */ }
             if (e.key === 'Enter') {
+              e.preventDefault();
+              // Dismiss the mobile keyboard when the user hits Enter/Return.
+              e.currentTarget.blur();
+            } else if (e.key === ' ') {
+              e.currentTarget.value += ' ';
               e.preventDefault();
             }
           }}
+          aria-label='Searchbar'
+          autoFocus={false}
           autoComplete="searchbar-off"
         />
       </div>

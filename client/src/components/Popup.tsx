@@ -48,40 +48,50 @@ export const PopupContext = createContext<PopupContextType>({
  * @param closeParent — optional function to close parent popup
  * @returns JSX.Element button
  */
-export const PopupButton = ({
+export const 
+PopupButton = ({
   children,
   buttonId = '',
   className = '',
   callback = async () => { },
   doNotClose = () => false,
   closeParent,
+  disabled = false,
+  ref = undefined,
 }: {
   children: ReactNode;
   buttonId?: string;
   className?: string;
   callback?: () => void;
   doNotClose?: () => boolean;
-  closeParent?: (value : boolean) => void
+  closeParent?: (value : boolean) => void;
+  disabled?: boolean;
+  ref?: (React.RefObject<HTMLButtonElement | null>);
 }) => {
   const { open, setOpen } = useContext(PopupContext);
 
   const toggleOpen = () => {
-    callback();
     setOpen(!open);
+    callback();
+
+    if (ref) {
+      console.log(`Save ref: ${ref.current}`);
+    }
+
     if (closeParent) closeParent(false);
   };
 
   // If button should not close the popup, just execute callback 
   if (doNotClose()) {
     return (
-      <button id={buttonId} className={className} onClick={callback}>
+      <button id={buttonId} className={className} tabIndex={0} onClick={callback} disabled={disabled} ref={ref}>
         {children}
       </button>
     );
   }
 
   return (
-    <button id={buttonId} className={className} onClick={toggleOpen}>
+    <button id={buttonId} className={className} tabIndex={0} onClick={toggleOpen} disabled={disabled} ref={ref}>
       {children}
     </button>
   );
@@ -96,6 +106,7 @@ export const PopupButton = ({
  * @param useClose — show close button (default true)
  * @param callback — function to run on closing
  * @param profilePopup — variant style for profile popups
+ * @param confirmation — if true, does not disable popup but still runs callback (default false)
  * @returns JSX.Element | null popup overlay and content
  */
 export const PopupContent = ({
@@ -103,20 +114,32 @@ export const PopupContent = ({
   useClose = true,
   callback = async () => { },
   profilePopup = false,
+  closeButtonRef = undefined,
+  confirmation = false,
 }: {
   children: ReactNode;
   useClose?: boolean;
   callback?: () => void;
   profilePopup?: false | true;
+  closeButtonRef?: React.RefObject<null>;
+  confirmation?: boolean;
 }) => {
   const { open, setOpen } = useContext(PopupContext);
   const popupRef = useRef(null);
+  const pushedHistoryState = useRef(false);
 
   // Close the popup and execute optional callback
   const closePopup = useCallback(() => {
+    if (!open) return;
     callback();
-    setOpen(false);
-  }, [callback, setOpen]);
+    if (!confirmation) {
+      setOpen(false);
+      if (pushedHistoryState.current && (history.state as { popup?: boolean } | null)?.popup) {
+        pushedHistoryState.current = false;
+        history.back();
+      }
+    }
+  }, [callback, confirmation, open, setOpen]);
 
   // Close on Escape key press
   useEffect(() => {
@@ -143,50 +166,51 @@ export const PopupContent = ({
   useEffect(() => {
     if (open) {
       // Push new browser history if no popup state yet
-      if (!history.state.popup) {
+      if (!(history.state as { popup?: boolean } | null)?.popup) {
         history.pushState({ popup: true }, '', '');
+        pushedHistoryState.current = true;
       }
-    };
+    }
     const handlePopState = (event: PopStateEvent) => {
       // Close popup 
-      if (open && !event.state.popup) {
+      if (open && !((event.state as { popup?: boolean } | null)?.popup)) {
         closePopup();
       }
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [open, closePopup]);
+  }, [closePopup, open]);
 
-  if (!open) return null;
+  // Lock body scroll when popup is open
+  useEffect(() => {
+    if (open) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    
+    // Cleanup class if the component unmounts unexpectedly
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [open]);
 
-  if (open && useClose) {
-    return (
-      <>
-        {/* {document.getElementsByClassName("popup-cover").length < 1 ? <div className="popup-cover" /> : <></>} */}
-        <div className="popup-cover" />
-        <div className="popup-container">
-          <div className="popup" ref={popupRef}>
-            <button className={`popup-close ${profilePopup === true ? 'popup-close-edit' : ''}`} onClick={closePopup}>
+  return (
+    <>
+      {/* {document.getElementsByClassName("popup-cover").length < 1 ? <div className="popup-cover" /> : <></>} */}
+      <div className={"popup-cover" + (open ? "" : " hidden")} />
+      <div className={"popup-container" + (open ? "" : " hidden")}>
+        <div className="popup" ref={popupRef}>
+          {useClose ? (
+            <button className={`popup-close ${profilePopup === true ? 'popup-close-edit' : ''}`}
+                onClick={closePopup} ref={closeButtonRef}>
               <img src={close} alt="close" />
-            </button>
-            {children}
-          </div>
+            </button>) : <></>}
+          {children}
         </div>
-      </>
-    );
-  } else if (open) {
-    return (
-      <>
-        {/* {document.getElementsByClassName("popup-cover").length < 1 ? <div className="popup-cover" /> : <></>} */}
-        <div className="popup-cover" />
-        <div className="popup-container">
-          <div className="popup" ref={popupRef}>{children}</div>
-        </div>
-      </>
-    );
-  } else {
-    return <></>;
-  }
+      </div>
+    </>
+  );
 };
 
 /**
@@ -196,8 +220,8 @@ export const PopupContent = ({
  * @param children— the content inside the popup context
  * @returns JSX.Element that provides popup context to children
  */
-export const Popup = ({ children }: { children: ReactNode }) => {
-  const [open, setOpen] = useState(false);
+export const Popup = ({ children, startOpen = false }: { children: ReactNode; startOpen?: boolean }) => {
+  const [open, setOpen] = useState(startOpen);
 
   return (
     <PopupContext.Provider value={{ open, setOpen }}>

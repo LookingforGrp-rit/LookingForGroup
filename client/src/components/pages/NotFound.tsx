@@ -9,17 +9,17 @@ import { ThemeIcon, ThemeImage } from '../ThemeIcon';
  * Not Found (404) page. Changes the page to a Not Found page if the prop isn't found or is invalid
  * @returns JSX Element with link to Home (Discover) page
  */
-const NotFoundPage = () => {
+const NotFoundPage = (userProfile : any) => {
     const [projectsList, _setProjectsList] = useState([] as DataSet[]);
 	const currentSearch = (_results : unknown[][]) => void {};
     const navigate = useNavigate();
     return (
         <div className="page">
-            <Header dataSets={projectsList} onSearch={currentSearch} />
-            <div className="error-box">
+            <Header dataSets={projectsList} onSearch={currentSearch} hideSearchBar userProfile={userProfile }/>
+            <main id="main" className="error-box">
                 <ThemeImage
-                    lightSrc={'assets/bannerImages/404_light.png'}
-                    darkSrc={'assets/bannerImages/404_dark.png'}
+                    lightSrc={'/assets/bannerImages/404_light.png'}
+                    darkSrc={'/assets/bannerImages/404_dark.png'}
                     id={'error-image'}
                     alt={'404 Not Found'}
                 />
@@ -34,7 +34,7 @@ const NotFoundPage = () => {
                     </button>
 
                 </div>
-            </div>
+            </main>
         </div>
     );
 }

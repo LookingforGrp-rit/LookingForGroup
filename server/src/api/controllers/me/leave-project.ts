@@ -5,11 +5,12 @@ import { leaveProjectService } from '#services/me/leave-project.ts';
 /**
  * Handles PUT /me/projects/:id/visibility requests
  * Allows authenticated users to leave a project by setting their visibility to private
+ * why does it work like this
  */
 const leaveProjectController = async (req: AuthenticatedRequest, res: Response) => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
 
-  const result = await leaveProjectService(projectId, req.currentUser);
+  const result = await leaveProjectService(projectId, req.currentUser.userId);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

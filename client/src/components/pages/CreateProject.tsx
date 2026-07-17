@@ -3,6 +3,7 @@ import { ItemMaker } from '../ItemMaker';
 
 //page to create a project
 //accessed from my projects
+// NOT IN USE
 
 /**
  * Create Project page. Creates a page that will allow the user to add their project onto the website.

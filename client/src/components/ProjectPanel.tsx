@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 import { addProjectFollowing, deleteProjectFollowing, getCurrentAccount, getProjectFollowing } from '../api/users.ts';
@@ -7,7 +7,7 @@ import { Tag as TagElement } from './Tag';
 
 //import shares types
 import usePreloadedImage from '../functions/imageLoad.tsx';
-import { ProjectWithFollowers, ProjectMedium, Tag } from '@looking-for-group/shared';
+import { ProjectWithFollowers, ProjectMedium } from '@looking-for-group/shared';
 import React from 'react';
 import { getByID } from '../api/projects.ts';
 import { ThemeIcon } from './ThemeIcon.tsx';
@@ -18,6 +18,8 @@ import { ThemeIcon } from './ThemeIcon.tsx';
 
 interface ProjectPanelProps {
   project: ProjectWithFollowers;
+  initialIsFollowing?: boolean;
+  currentUserId: number;
 }
 
 /**
@@ -28,17 +30,19 @@ interface ProjectPanelProps {
  * @param project - ProjectWithFollowers object containing project info, thumbnail, tags, and follower data
  * @returns JSX element rendering a clickable project preview panel with follow functionality
  */
-export const ProjectPanel = ({ project }: ProjectPanelProps) => {
+export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: ProjectPanelProps) => {
   const navigate = useNavigate();
   const projectURL = `${paths.routes.PROJECT}?projectID=${project.projectId}`;
 
   // Current user ID (for follow logic)
-  const [userId, setUserId] = useState<number>();
+  const [userId, setUserId] = useState<number>(currentUserId);
   // Local state for follow count and current user's follow status
   const [followCount, setFollowCount] = useState(project.followers?.count ?? 0);
-  const [isFollowing, setFollowing] = useState(false);
+  const [isFollowing, setFollowing] = useState(initialIsFollowing ?? false);
+
   // Avoid looping useEffect by separating projectId
   const projectId = project.projectId; //just so the useEffect doesn't loop at me for using the object directly
+
 
   /**
    * Formats the follow count for display
@@ -65,19 +69,19 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
    * @returns boolean indicating follow status
    */
   const checkFollow = useCallback(async () => {
-    if(userId){
-    const followings = (await getProjectFollowing(userId)).data?.projects;
+    if (userId !== -1 && userId) {
+      const followings = (await getProjectFollowing(userId)).data?.projects;
 
-    let isFollow = false;
+      let isFollow = false;
 
-    if(followings !== undefined){
-    for (const follower of followings){
-      isFollow = (follower.project.projectId === project.projectId);
-      if(isFollow) break;
-    }
-    }
-    setFollowing(isFollow);
-    return isFollow;
+      if (followings !== undefined) {
+        for (const follower of followings) {
+          isFollow = (follower.project.projectId === project.projectId);
+          if (isFollow) break;
+        }
+      }
+      setFollowing(isFollow);
+      return isFollow;
 
     }
   }, [project, userId]);
@@ -86,22 +90,29 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   useEffect(() => {
     const getProjectData = async () => {
       //get our current user for use later
-      const userResp = await getCurrentAccount();
-      if(userResp.data) setUserId(userResp.data.userId);
-      
-      //get the project itself
-      const projectResp = await getByID(projectId);
-      if (projectResp.data) { 
-        setFollowCount(projectResp.data.followers.count);
-        checkFollow();
-        if (project.title == "thumbnail") {
-          console.log("Thumbnail project's thumbnail:");
-          console.log(project.thumbnail);
+      if (!userId && userId !== -1) {
+        const userResp = await getCurrentAccount();
+        if (userResp.data) setUserId(userResp.data.userId);
+      }
+
+      // Check if we already have full project data with followers
+      // If not, fetch it to get the current follower count
+      if (!project.followers) {
+        const projectResp = await getByID(projectId);
+        if (projectResp.data) {
+          setFollowCount(projectResp.data.followers.count);
         }
+      } else {
+        setFollowCount(project.followers.count);
+      }
+
+      if (project.title == "thumbnail") {
+        console.log("Thumbnail project's thumbnail:");
+        console.log(project.thumbnail);
       }
     };
-      getProjectData();
-  }, [projectId, userId, checkFollow])
+    getProjectData();
+  }, [projectId, userId, project.followers])
 
   /**
    * Handles click on the follow/unfollow button
@@ -112,54 +123,52 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   const handleFollowClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
-    if (!userId || userId === 0) {
+    if (!userId || userId === -1) {
       navigate(paths.routes.LOGIN);
       return;
     }
     const toggleFollow = !await checkFollow();
     setFollowing(toggleFollow);
 
-    if(toggleFollow) {
+    if (toggleFollow) {
       await addProjectFollowing(project.projectId);
-          setFollowing(true);
-          setFollowCount(followCount + 1);
-        
-    } else { 
+      setFollowing(true);
+      setFollowCount(followCount + 1);
+
+    } else {
       await deleteProjectFollowing(project.projectId);
-          setFollowing(false);
-          setFollowCount(followCount - 1);
+      setFollowing(false);
+      setFollowCount(followCount - 1);
     }
   };
 
   return (
-    <div className={'project-panel'}>
-      <img
-        src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
-        alt={'project image'}
-      />
-      <div
-        className={'project-panel-hover'}
-        onClick={() => navigate(projectURL)}
-      // style={rightAlign ? { width: width, right: 0 } : { width: width }}
-      >
-        <img
-          src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
-          alt={'project image'}
-        />
-        {/* <h2>{project.title}</h2> */}
-        <div className='project-title-likes'>
+    <Link to={projectURL} className='project-link'>
+      <div className={'project-panel'}>
+        <div className="project-image-container">
+          <img
+            src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
+            alt={'project image'}
+          />
+          <div className={'project-panel-hover'}>
+            <div id="quote">{project.hook}</div>
+          </div>
+        </div>
+
+        <div className='project-title-likes-tabs'>
           <h2>{project.title}</h2>
           <div className='project-likes'>
             <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
               {formatFollowCount(followCount)}
             </p>
+            
             {isFollowing ? (
               <ThemeIcon
                 width={28}
                 height={25}
                 id={"heart-filled"}
                 ariaLabel="following"
-                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
+                onClick={(e) => {e.stopPropagation(); e.preventDefault(); handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>);}}
               />
             ) : (
               <ThemeIcon
@@ -167,30 +176,78 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
                 height={25}
                 id={"heart-empty"}
                 ariaLabel="following"
-                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
+                onClick={(e) => {e.stopPropagation(); e.preventDefault(); handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>);}}
               />
             )}
-              {/* <i className={`fa-solid fa-heart ${isFollowing ? 'following' : ''}`}></i>
-            </button> */}
+            
+          </div>
+          <ProjectPanelJob project={project}/>
+          <div>
+            <hr/>
+            <ProjectPanelMeta project={project}/>
           </div>
         </div>
-        <div id="project-panel-tags">
-          {project.mediums.map((medium: ProjectMedium) => (
-            <TagElement type="medium" key={medium.mediumId}>
-              <p>{medium.label}</p>
-            </TagElement>
-          ))}
-          {project.tags?.slice(0, 3)
-            .map((tag: Tag) => {
-              return (
-                <TagElement type={tag.type.toLowerCase()} key={tag.tagId}>
-                  <p>{tag.label}</p>
-                </TagElement>
-              );
-          })}
-        </div>
-        <div id="quote">{project.hook}</div>
       </div>
+    </Link>
+  );
+};
+
+/**
+ * Renders the bottom row of the project card: 
+ * leading medium tag and two normal tags
+ */
+const ProjectPanelMeta = ({ project }: { project: ProjectWithFollowers }) => {
+  const allTags = project.tags ?? [];
+  
+  const MAX_TAGS_TO_SHOW = 2; // Editor says only two tags appear
+  const shownTags = allTags.slice(0, MAX_TAGS_TO_SHOW);
+  const overflowCount = allTags.length - shownTags.length;
+
+  return (
+    <div className='project-panel-meta'>
+      {project.mediums?.[0] && (
+        <TagElement type="medium" selected={true}>
+          <p>{(project.mediums[0] as ProjectMedium).label}</p>
+        </TagElement>
+      )}
+
+      {shownTags.map((tag, i) => (
+        <TagElement key={i} type={tag.type?.toLowerCase() ?? ''} selected={true}>
+          <p>{tag.label}</p>
+        </TagElement>
+      ))}
+
+      {overflowCount > 0 && (
+        <TagElement selected={true} className='project-panel-meta-plus'>
+          <p>+{overflowCount}</p>
+        </TagElement>
+      )}
+    </div>
+  );
+};
+
+
+const ProjectPanelJob = ({ project }: { project: ProjectWithFollowers }) => {
+  const jobPositions = project.jobs ?? [];
+  
+  const MAX_TAGS_TO_SHOW = 9; // Editor says only two tags appear
+  const shownJobs = jobPositions.slice(0, MAX_TAGS_TO_SHOW);
+  const overflowCount = jobPositions.length - shownJobs.length;
+
+  return (
+    <div className='project-panel-meta'>
+    
+      {shownJobs.map((jobs, i) => (
+        <TagElement key={i} type="positions" selected={true}>
+          <p>{jobs.role.label}</p>
+        </TagElement>
+      ))}
+
+      {overflowCount > 0 && (
+        <TagElement selected={true} className='project-panel-meta-plus'>
+          <p>+{overflowCount}</p>
+        </TagElement>
+      )}
     </div>
   );
 };

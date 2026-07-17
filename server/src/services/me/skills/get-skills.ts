@@ -10,7 +10,7 @@ type GetSkillsError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 export const getSkillsService = async (userId: number): Promise<MySkill[] | GetSkillsError> => {
   try {
     //all their skills
-    const skills = await prisma.userSkills.findMany({
+    let skills = await prisma.userSkills.findMany({
       where: {
         userId,
       },
@@ -22,9 +22,13 @@ export const getSkillsService = async (userId: number): Promise<MySkill[] | GetS
       select: MySkillSelector,
     });
 
+    //Array is alphabetized by skill label
+    skills = skills.toSorted(
+      (skill1, skill2) => skill1.skills.label.charCodeAt(0) - skill2.skills.label.charCodeAt(0),
+    );
     return skills.map(transformMySkill);
   } catch (e) {
-    console.error(`Error in getSkillsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getSkillsService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

@@ -10,6 +10,28 @@ components:
         - Soft
       example: Developer
 
+    SkillCategory:
+      type: string
+      enum:
+        - Discipline
+        - Framework
+        - Software
+        - Coding Language
+        - Operating System
+        - Game Engine
+        - Design Software
+        - Art and Animation
+        - Photo Editing
+        - Video Software
+        - DAW/Audio Editor
+        - Notation
+        - Middleware
+        - Personal
+        - Team
+        - Engineering Software
+        - Hardware
+        - Other
+
     TagType:
       type: string
       enum:
@@ -25,7 +47,22 @@ components:
         - Purpose
       example: Creative
 
-    AcademicYear:
+    TagCategory:
+      type: string
+      enum:
+        - Game
+        - Story
+        - Music
+        - Visual
+        - Film/Video
+        - Unity
+        - Unreal Engine
+        - Godot
+        - Twine
+        - Monogame
+        - Other
+
+    RitStatus:
       type: string
       enum:
         - Freshman
@@ -33,12 +70,13 @@ components:
         - Junior
         - Senior
         - Graduate
+        - Faculty
       example: Freshman
 
     Visibility:
-      type: integer
-      enum: [0, 1]
-      example: 1
+      type: string
+      enum: ['public', 'private']
+      example: public
 
     SkillProficiency:
       type: string
@@ -75,13 +113,6 @@ components:
         - Flexible
       example: FullTime
 
-    JobDuration:
-      type: string
-      enum:
-        - ShortTerm
-        - LongTerm
-      example: ShortTerm
-
     JobLocation:
       type: string
       enum:
@@ -96,3 +127,11 @@ components:
         - Unpaid
         - Paid
       example: Unpaid
+
+    MemberRequestStatus:
+      type: string
+      enum:
+        - Pending
+        - Accepted
+        - Declined
+      example: Pending

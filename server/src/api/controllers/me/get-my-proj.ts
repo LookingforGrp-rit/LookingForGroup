@@ -8,7 +8,7 @@ export const getMyProjects = async (req: AuthenticatedRequest, res: Response): P
   const visibility = req.query.visibility as 'all' | 'public' | 'private' | undefined;
   const owner = req.query.owner as 'all' | 'me' | undefined;
 
-  const result = await getMyProjectsService(req.currentUser, visibility, owner);
+  const result = await getMyProjectsService(req.currentUser.userId, visibility, owner);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

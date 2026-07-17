@@ -21,28 +21,85 @@
   position: absolute;
   width: calc(100% - 220px);
   height: 100%;
-  /* set min height to avoid bottom white gap on short pages */
   min-height: 100vh;
+  /* dvh tracks the dynamic viewport so the page shrinks when the mobile
+     keyboard is open, instead of leaving blank scrollable space below. */
+  min-height: 100dvh;
   top: 0px;
   left: 220px;
   background-color: var(--bg-color);
   font-family: 'Inter', sans-serif;
-  /* padding-right: 500px; */
-
-  /* hide horizontal scrollbar, looses scroll functionality */
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   .fa {
     color: var(--primary-color);
   }
 }
 
-@media only screen and (max-width: 799px) {
+.page button,
+.page a,
+.page .icon-button,
+.page [role="button"] {
+  transition: all 0.2s ease-in-out;
+}
+
+.page button:hover,
+.page a:hover,
+.page .icon-button:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+.page button:active,
+.page a:active,
+.page .icon-button:active {
+  transform: translateY(0px);
+}
+
+.discover-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 100%;
+  overflow-y: visible;
+}
+
+.discover-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: visible;
+}
+
+@media only screen and (max-width: 1024px) {
   .page {
     left: 0px;
-    bottom: 0px;
     width: 100%;
-    height: calc(100% - 50px);
-    padding-bottom: 60px;
+    min-height: calc(100% - 50px);
+    min-height: calc(100dvh - 50px);
+    padding-bottom: 80px;
+    overflow-y: visible;
   }
+
+  /* .discover-page {
+    padding-top: 110px;
+  }
+
+  .discover-page #header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    transform: none;
+    z-index: 20;
+    margin: 0 auto;
+    padding: 0 40px;
+    
+  }
+
+  .discover-main {
+    padding-top: 20px;
+  }*/
 }

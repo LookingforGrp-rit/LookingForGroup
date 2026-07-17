@@ -7,7 +7,7 @@ import { deleteUserService } from '#services/me/delete-user.ts';
 //not for general user deletion, you can only delete an account if you're signed in as it
 //...maybe we should've had one for general user deletion too?
 export const deleteUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const result = await deleteUserService(req.currentUser);
+  const result = await deleteUserService(req.currentUser.userId);
 
   //internal error
   if (result === 'INTERNAL_ERROR') {

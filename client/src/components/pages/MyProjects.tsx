@@ -1,8 +1,8 @@
 // import { profiles } from "../../constants/fakeData";
-import { useState, useMemo, ChangeEvent } from 'react';
+import { useState, useMemo, ChangeEvent, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 // import { PagePopup, openClosePopup } from "../PagePopup";
 import ToTopButton from '../ToTopButton';
-import CreditsFooter from '../CreditsFooter';
 import MyProjectsDisplayList from '../MyProjectsDisplayList';
 import MyProjectsDisplayGrid from '../MyProjectsDisplayGrid';
 import { Header } from '../Header';
@@ -14,13 +14,15 @@ import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEdit
 
 //import api utils
 import { getCurrentUsername, getProjectsByUser } from '../../api/users.ts'
-import { ProjectDetail} from '@looking-for-group/shared';
+import { MePrivate, ProjectDetail } from '@looking-for-group/shared';
+import { ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
+import { deleteProject, projectApprovalRequestExists } from '../../api/projects.ts';
 
 /**
  * My Projects page. Creates a customizable page that showcases the user's projects.
  * @returns JSX Element
  */
-const MyProjects = () => {
+const MyProjects = (userProfile: any) => {
 
   //const navigate = useNavigate();
 
@@ -36,7 +38,7 @@ const MyProjects = () => {
 
   // Type of sort for items. Can be newest, oldest, A-Z, or Z-A
   const [sortMethod, setSortMethod] = useState('newest');
-  
+
   // List of user's projects
   const [projectsList, setProjectsList] = useState<ProjectDetail[]>([]);
 
@@ -52,7 +54,27 @@ const MyProjects = () => {
   const [dataLoaded, setDataLoaded] = useState(false);
   const [loggedIn, setLoggedIn] = useState(0);
 
+  // If we arrived here with ?create=1 (e.g. the user clicked "Create Project"
+  // while logged out and just finished signing in), open the create editor
+  // immediately. Read it once on mount, then strip it from the URL so a refresh
+  // or closing the editor doesn't reopen it.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [autoStartCreate] = useState(searchParams.get('create') === '1');
+  useEffect(() => {
+    if (searchParams.get('create') === '1') {
+      searchParams.delete('create');
+      setSearchParams(searchParams, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const [_createError, setCreateError] = useState(false);
+
+  const [projectMode, setProjectMode] = useState("All");
+  const [userId, setUserId] = useState<string>('');
+
+  type ApprovalStatusKey = keyof typeof ApprovalStatus;
+  const [approvalStatuses, setApprovalStatuses] = useState<Record<number, ApprovalStatusKey>>({});
 
   // --------------------
   // Helper functions
@@ -63,24 +85,46 @@ const MyProjects = () => {
   const getUserProjects = async () => {
     try {
       const res = await getCurrentUsername();
-
-      // User is logged in, pull their data
-      if (res.data) {
-        setLoggedIn(res.data.userId);
-        const projectsRes = await getProjectsByUser();
-
-        if (projectsRes.data && projectsRes.data !== undefined) setProjectsList(projectsRes.data);
-        
-        //console.log(projectsRes.data);
-        
-      } else {
-        //guest
-        setLoggedIn(0);
-      }
+      setUserProjects({ ...res.data } as MePrivate)
 
     } catch (e) {
-      console.error('error getting projecrs', e);
+      console.error('error getting projects', e);
       setCreateError(true);
+    }
+  }
+
+  const setUserProjects = async (data: MePrivate | undefined) => {
+    // User is logged in, pull their data
+    if (data) {
+      setLoggedIn(data.userId);
+      let projectsRes = await getProjectsByUser();
+
+      //Get invalid projects
+      const invalidProjects = projectsRes.data?.filter((project) =>
+        project.title === "My Project" && project.hook.length === 0 && project.description.length === 0);
+
+      //Delete invalid projects
+      //If invalidProjects is undefined, there are none
+      if (invalidProjects !== undefined) {
+        for (let i = 0; i < invalidProjects?.length; i++) {
+          //Delete the project from the database
+          deleteProject(invalidProjects[i].projectId);
+
+          //Removes the deleted project from projectsRes so it's not displayed
+          projectsRes.data = projectsRes.data?.filter((project) => !invalidProjects.includes(project));
+        }
+      }
+
+      if (projectsRes.data && projectsRes.data !== undefined) {
+        setProjectsList(projectsRes.data)
+      };
+
+      console.log(projectsRes.data);
+      setUserId(data.username);
+    } else {
+      //guest
+      setUserId("guest");
+      setLoggedIn(0);
     }
 
     setDataLoaded(true);
@@ -121,9 +165,27 @@ const MyProjects = () => {
   //   }
   // };
 
-  if (!dataLoaded) {
-    getUserProjects();
-  }
+  //drop a project from local state — used right after a successful delete/leave
+  const removeProject = useCallback((projectId: number) => {
+    setProjectsList((prev) => prev.filter((p) => p.projectId !== projectId));
+    setFilteredProjects((prev) => prev.filter((p) => p.projectId !== projectId));
+  }, []);
+
+  // Keep the filtered list in sync when the underlying project list changes
+  useEffect(() => {
+    if (projectMode === "All") return;
+    const filtered = projectsList.filter((item) => {
+      if (projectMode === "Joined") {
+        for (const member of item.members) {
+          if (member.user.username === userId && item.owner.username !== userId) return true;
+        }
+        return false;
+      }
+      if (projectMode === "Owned") return item.owner.username === userId;
+      return false;
+    });
+    setFilteredProjects(filtered);
+  }, [projectsList, projectMode, userId]);
   // else {
   //     if (projectsList.length < 20) {
   //         let tempList = new Array(0);
@@ -144,7 +206,7 @@ const MyProjects = () => {
   //         setProjectsList(tempList);
   //     }
   // }
-  
+
   /**
    * Checks if any word in "title" starts with "snippet", and returns that answer as a boolean.
    * @param title Project title
@@ -195,7 +257,7 @@ const MyProjects = () => {
           return tempList.sort((a: ProjectDetail, b: ProjectDetail) => {
             const aTime = new Date(a.createdAt).getTime();
             const bTime = new Date(b.createdAt).getTime();
-            return bTime - aTime;
+            return aTime - bTime;
           });
 
         case 'a-z':
@@ -211,7 +273,7 @@ const MyProjects = () => {
           return tempList.sort((a: ProjectDetail, b: ProjectDetail) => {
             const aTime = new Date(a.createdAt).getTime();
             const bTime = new Date(b.createdAt).getTime();
-            return aTime - bTime;
+            return bTime - aTime;
           });
       }
     }
@@ -228,12 +290,53 @@ const MyProjects = () => {
     }
   };
 
+  const checkApprovalRequest = async (project: ProjectDetail): Promise<ApprovalStatusKey> => {
+    let status: ApprovalStatusKey = 'not-approved';
+
+    try {
+      const result = await projectApprovalRequestExists(project.projectId);
+
+      // if the project is marked as approved -> status is "approved"
+      // if not approved -> check if an approval request exists -> "under-review"
+      // otherwise -> "not-approved"
+      // so it's NORMAL to see 404s
+      status = project.approved
+        ? 'approved'
+        : result
+          ? 'under-review'
+          : 'not-approved';
+    } catch {
+      status = project.approved
+        ? 'approved'
+        : 'not-approved';
+    }
+
+    return status;
+  };
+  useEffect(() => {
+    const loadStatuses = async () => {
+      const results = await Promise.all(
+        projectsList.map(async (project) => [
+          project.projectId,
+          await checkApprovalRequest(project),
+        ])
+      );
+      const statuses = Object.fromEntries(results);
+
+      setApprovalStatuses(statuses);
+    };
+
+    if (projectsList.length > 0) {
+      loadStatuses();
+    }
+  }, [projectsList]);
+
   /**
    * Creates a grid that showcases the user's current projects.
    * @param userProjects Projects to display
    * @returns JSX Element
    */
-  const GridDisplay = ({userProjects} : {userProjects: ProjectDetail[]}) => { //it's a parameter here but a property down there
+  const GridDisplay = ({ userProjects }: { userProjects: ProjectDetail[] }) => { //it's a parameter here but a property down there
     return (
       <>
         <div className='my-projects-grid'>
@@ -249,10 +352,12 @@ const MyProjects = () => {
                   projId: project.projectId,
                   userId: loggedIn,
                   reloadProjects: getUserProjects,
+                  removeProject,
                 }}
               >
                 <MyProjectsDisplayGrid
                   projectData={project}
+                  approvalStatus={approvalStatuses[project.projectId]}
                 />
               </LeaveDeleteContext.Provider>
             );
@@ -267,38 +372,46 @@ const MyProjects = () => {
    * @param userProjects Projects to display 
    * @returns JSX Element
    */
-  const ListDisplay = ({userProjects} : {userProjects: ProjectDetail[]}) => {
+  const ListDisplay = ({ userProjects }: { userProjects: ProjectDetail[] }) => {
     return (
       <>
-        {/* Projects List header */}
-        <div className="my-projects-list-header">
-          <div className="project-header-label title">Project Title</div>
-          <div className="project-header-label status">Status</div>
-          <div className="project-header-label date">Date Created</div>
-        </div>
+        <table className='responsive-table'>
+          {/* Projects List header */}
+          <thead className="my-projects-list-header">
+            <tr>
+              <th className="project-header-label title">Project Title</th>
+              <th className="project-header-label status">Status</th>
+              <th className="project-header-label approval-status">Approval Status</th>
+              <th className="project-header-label date">Date Created</th>
+              {/* <th className="project-header-label options">Options</th> */}
+            </tr>
+          </thead>
 
-        <div className='my-projects-list'>
-          {userProjects.map(project => {
-            // Check if user is the owner of this project
-            const isOwner = (project.owner.userId === loggedIn);
+          <tbody className='my-projects-list'>
+            {userProjects.map(project => {
+              // Check if user is the owner of this project
+              const isOwner = (project.owner.userId === loggedIn);
 
-            return (
-              <LeaveDeleteContext.Provider
-                key={project.projectId}
-                value={{
-                  isOwner,
-                  projId: project.projectId,
-                  userId: loggedIn,
-                  reloadProjects: getUserProjects,
-                }}
-              >
-                <MyProjectsDisplayList
-                  projectData={project}
-                />
-              </LeaveDeleteContext.Provider>
-            );
-          })}
-        </div>
+              return (
+                <LeaveDeleteContext.Provider
+                  key={project.projectId}
+                  value={{
+                    isOwner,
+                    projId: project.projectId,
+                    userId: loggedIn,
+                    reloadProjects: getUserProjects,
+                    removeProject,
+                  }}
+                >
+                  <MyProjectsDisplayList
+                    projectData={project}
+                    approvalStatus={approvalStatuses[project.projectId]}
+                  />
+                </LeaveDeleteContext.Provider>
+              );
+            })}
+          </tbody>
+        </table>
       </>
     );
   };
@@ -308,9 +421,12 @@ const MyProjects = () => {
    * @param userProjects Projects to display 
    * @returns GridDisplay or ListDisplay components. Nothing if there is an error.
    */
-  const ProjectListSection = ({userProjects} : {userProjects: ProjectDetail[]}) => {
+  const ProjectListSection = ({ userProjects }: { userProjects: ProjectDetail[] }) => {
     // Sort projects based on the method selected
     const sortedProjects = sortProjects(userProjects) as ProjectDetail[];
+    if (sortedProjects.length == 0) {
+      return <div className='my-projects-no-project'>No {projectMode === "All" ? "" : projectMode} projects!</div>;
+    }
 
     if (sortedProjects) {
       if (displayMode === 'grid') {
@@ -373,40 +489,66 @@ const MyProjects = () => {
     setFilteredProjects(results[0] as ProjectDetail[]);
   };
 
-  const projectsToDisplay = currentSearch.trim() !== '' ? filteredProjects : projectsList;
+  const projectsModeSwitch = useCallback((newMode: string) => {
+    const newFilteredProjects = projectsList.filter((item) => {
+      if (newMode === "All") return true;
+
+      if (newMode === "Joined") {
+        for (let member of item.members) {
+          if (member.user.username === userId && item.owner.username !== userId) return true;
+        }
+      }
+
+      if (newMode === "Owned") return item.owner.username === userId;
+
+
+      return false;
+    });
+
+    setProjectMode(newMode);
+    setFilteredProjects(newFilteredProjects);
+  }, [projectMode, filteredProjects, userId, projectsList]);
+
+  const projectsToDisplay = (currentSearch.trim() !== '' || projectMode !== "All") ? filteredProjects : projectsList;
 
   return (
-    <div className="page" id="my-projects">
+    <div className="page" id="my-projects" tabIndex={-1}>
       {/* Top Bar */}
-      <Header 
-        dataSets={projectDataSet} 
-        onSearch={handleSearch} 
+      <Header
+        dataSets={projectDataSet}
+        onSearch={handleSearch}
         value={currentSearch}
-        onChange={(e : ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
+        setCurrentUserId={setUserProjects}
+        placeholderText='Search by Project'
       />
 
       {/* Banner */}
-    <div className="projects-banner-outer">
-    <div className="projects-banner-wrapper">
-      <ThemeImage
-        lightSrc={'assets/projects_header_light.png'}
-        darkSrc={'assets/projects_header_dark.png'}
-        className={'my-projects-banner'}
-        alt={'My Projects Banner'}
-      />
-    </div>
-    </div>
+      <div className="projects-banner-outer">
+        <div className="projects-banner-wrapper">
+          <ThemeImage
+            lightSrc={'/assets/projects_header_light.png'}
+            darkSrc={'/assets/projects_header_dark.png'}
+            className={'my-projects-banner'}
+            alt={'My Projects Banner'}
+          />
+        </div>
+      </div>
 
       {/* Header */}
       <div className="my-projects-header-row">
 
         {/* Filters */}
         <div className="my-projects-filters">
-          {/* TODO: keep this button? or add other filters (like Owned and Joined) */}
-          {/* this button does nothing currently i think we should trash it */}
           {/* All Projects Button */}
-          <button className="my-projects-all-projects-button" onClick={() => { }}>
+          <button className={"my-projects-all-projects-button" + (projectMode === "All" ? " my-projects-all-projects-selected" : "")} onClick={() => projectsModeSwitch("All")}>
             All Projects
+          </button>
+          <button className={"my-projects-all-projects-button" + (projectMode === "Owned" ? " my-projects-all-projects-selected" : "")} onClick={() => projectsModeSwitch("Owned")}>
+            Owned Projects
+          </button>
+          <button className={"my-projects-all-projects-button" + (projectMode === "Joined" ? " my-projects-all-projects-selected" : "")} onClick={() => projectsModeSwitch("Joined")}>
+            Joined Projects
           </button>
         </div>
 
@@ -425,61 +567,61 @@ const MyProjects = () => {
               options={[
                 {
                   markup:
-                  <>
-                    <ThemeIcon
-                      id="clock"
-                      width={18}
-                      height={18}
-                      className="mono-stroke"
-                      ariaLabel="Sort by newest"
-                    />
-                    Newest
-                  </>,
+                    <>
+                      <ThemeIcon
+                        id="clock"
+                        width={18}
+                        height={18}
+                        className="mono-stroke"
+                        ariaLabel="Sort by newest"
+                      />
+                      Newest
+                    </>,
                   value: 'newest',
                   disabled: false,
                 },
                 {
                   markup:
-                  <>
-                    <ThemeIcon
-                      id="clock"
-                      width={18}
-                      height={18}
-                      className="mono-stroke"
-                      ariaLabel="Sort by oldest"
-                    />
-                    Oldest
-                  </>,
+                    <>
+                      <ThemeIcon
+                        id="clock"
+                        width={18}
+                        height={18}
+                        className="mono-stroke"
+                        ariaLabel="Sort by oldest"
+                      />
+                      Oldest
+                    </>,
                   value: 'oldest',
                   disabled: false,
                 },
                 {
                   markup:
-                  <>
-                    <ThemeIcon
-                      id="direction-arrow"
-                      width={18}
-                      height={18}
-                      className="mono-stroke arrow-az"
-                      ariaLabel="Sort A-Z"
-                    />
-                    A-Z
-                  </>,
+                    <>
+                      <ThemeIcon
+                        id="direction-arrow"
+                        width={18}
+                        height={18}
+                        className="mono-stroke arrow-az"
+                        ariaLabel="Sort A-Z"
+                      />
+                      A-Z
+                    </>,
                   value: 'a-z',
                   disabled: false,
                 },
                 {
                   markup:
-                  <>
-                    <ThemeIcon
-                      id="direction-arrow"
-                      width={18}
-                      height={18}
-                      className="mono-stroke arrow-za"
-                      ariaLabel="Sort Z-A"
-                    />
-                    Z-A
-                  </>,
+                    <>
+                      <ThemeIcon
+                        id="direction-arrow"
+                        width={18}
+                        height={18}
+                        className="mono-stroke arrow-za"
+                        ariaLabel="Sort Z-A"
+                      />
+                      Z-A
+                    </>,
                   value: 'z-a',
                   disabled: false,
                 },
@@ -504,15 +646,19 @@ const MyProjects = () => {
 
           {/*Create Project Button*/}
           <div className="my-projects-create-btn">
-            <ProjectCreatorEditor newProject={true}/>
+            <ProjectCreatorEditor
+              newProject={true}
+              mobileView={false}
+              autoStart={autoStartCreate}
+            />
           </div>
         </div>
       </div>
 
-      <hr />
+      <hr id='my-projects-hr' />
 
       {/* Project Grid/List */}
-      <div>
+      <main id="main">
         {(!dataLoaded) ? (
           <div
             className='placeholder-spacing'
@@ -530,8 +676,7 @@ const MyProjects = () => {
             <ProjectListSection userProjects={projectsToDisplay} />
           )
         )}
-      </div>
-      <CreditsFooter />
+      </main>
       <ToTopButton />
     </div>
   );

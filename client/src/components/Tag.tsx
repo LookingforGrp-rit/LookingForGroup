@@ -24,30 +24,64 @@ interface TagsProps {
 export const Tag = ({ children, className = '', type = "", onClick, selected = false }: TagsProps) => {
   let color = "grey";
   switch (type) {
+    case "project type":
     case "medium":
       color = "blue";
       break;
-    
-    // The genre type is very split
-    case "creative":
-    case "technical":
-    case "games":
-    case "multimedia":
-    case "music":
-    case "other":
+
+    case "genre":
       color = "green";
       break;
-    
-    case "developer skill":
-      color = "yellow";
+
+    case "style":
+      color = "pink"
       break;
-    case "designer skill":
-      color = "red";
-      break;
-    case "soft skill":
+
+    case "positions":
       color = "purple";
       break;
-    
+
+    case "game engine":
+      color = "yellow"
+      break;
+
+    case 'other':
+    case 'purpose':
+    case 'role':
+    case 'role skill':
+      color = 'grey';
+      break;
+
+    case "major":
+    case "major skill":
+      color = "orange";
+      break;
+
+    case "developer skill":
+    case "developer":
+      color = "yellow";
+      break;
+
+    case "designer skill":
+    case "designer":
+      color = "red";
+      break;
+
+    case "soft skill":
+    case "soft":
+      color = "purple";
+      break;
+
+    case "audio skill":
+    case "audio":
+      color = "periwinkle";
+      break;
+
+    case "engineer skill":
+    case "engineer":
+      color = "cyan";
+      break;
+
     default:
       if (type == "") break;
 
@@ -63,15 +97,15 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
 
   if (onClick != undefined) {
     return (
-    <button className={"tag-button tag-" + color + " " + className + " " + tag_extra_classes} onClick={onClick} >
-      {children}
-    </button>
+      <button className={"tag-button tag-" + color + " " + className + " " + tag_extra_classes} onClick={onClick} >
+        {children}
+      </button>
     );
   }
-  
+
   return (
     <div className={"tag-button tag-label tag-" + color + " " + className + " " + tag_extra_classes} >
       {children}
     </div>
-    );
+  );
 };

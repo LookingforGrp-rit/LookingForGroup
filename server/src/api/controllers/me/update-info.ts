@@ -17,13 +17,14 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     'headline',
     'pronouns',
     'title',
-    'academicYear',
+    'ritStatus',
     'location',
     'funFact',
     'bio',
-    'visibility',
+    'privacy',
     'phoneNumber',
     'mentor',
+    'displayPhone',
   ];
 
   //validate update fields
@@ -42,7 +43,7 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
   const updates: Parameters<typeof updateUserInfoService>[1] = {
     ...body,
     mentor: undefined,
-    visibility: undefined,
+    privacy: undefined,
   };
 
   //check if they sent over a new pfp, and upload it to the db
@@ -80,11 +81,16 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     updates.mentor = body.mentor === 'true';
   }
 
-  if (body.visibility !== undefined) {
-    updates.visibility = body.visibility === '1' ? 1 : 0;
+  if (body.privacy !== undefined) {
+    updates.privacy = body.privacy;
   }
 
-  const result = await updateUserInfoService(req.currentUser, updates);
+  if (body.displayPhone !== undefined) {
+    updates.displayPhone = body.displayPhone.toString() === 'true';
+    //weird workaround bc the boolean passes through here as a string
+  }
+
+  const result = await updateUserInfoService(req.currentUser.userId, updates);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

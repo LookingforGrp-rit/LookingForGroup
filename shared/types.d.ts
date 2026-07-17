@@ -1,30 +1,40 @@
+
+import UserAccessLevel = require("@looking-for-group/shared/enums");
 import type { Request } from "express";
 
 // Enums for better typing
-export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft";
+export type SkillType = "Developer" | "Designer" | "Engineer" | "Soft" | "Audio" | "Role" | "Major";
 export type TagType =
-  | "Creative"
-  | "Technical"
-  | "Games"
-  | "Multimedia"
-  | "Music"
   | "Other"
-  | "Developer"
-  | "Designer"
-  | "Soft"
+  | 'Style'
+  | 'Genre'
   | "Purpose"
   | "Project Type"
   | "Role"
   | "Major"
-  | "Developer Skill"
-  | "Designer Skill"
-  | "Soft Skill";
-export type AcademicYear =
-  | "Freshman"
-  | "Sophomore"
-  | "Junior"
-  | "Senior"
-  | "Graduate";
+  | "Game Engine"
+  | "Positions"
+//wow.
+export type GenreCategory = 'Game' | "Story" | 'Music';
+export type StyleCategory = 'Visual' | 'Film/Video';
+export type GameEngine = 'Unity' | 'Unreal Engine' | 'Godot' | 'Twine' | 'MonoGame'
+export type DesignerCategory = 'Discipline' | 'Design Software' | 'Art and Animation' | 'Photo Editing' | 'Video Software';
+export type DeveloperCategory = 'Discipline' | 'Framework' | 'API' | 'Software' | 'Coding Language' | 'Operating System' | 'Game Engine';
+export type SoftCategory = 'Discipline' | 'Personal' | 'Team';
+export type AudioCategory = 'Discipline' | 'DAW/Audio Editor' | 'Notation' | 'Middleware';
+export type EngineerCategory = 'Discipline' | 'Engineering Software' | 'Hardware'
+export type SkillCategory = DeveloperCategory | DesignerCategory | AudioCategory | SoftCategory | EngineerCategory | "Other";
+export type TagCategory = GenreCategory | StyleCategory | GameEngine | "Other";
+export type RitStatus =
+  | "FirstYear"
+  | "SecondYear"
+  | "ThirdYear"
+  | "FourthYear"
+  | "FifthYear"
+  | "GraduateStudent"
+  | "Alumni"
+  | "Faculty"
+  | 'Staff';
 export type SkillProficiency =
   | "Novice"
   | "Intermediate"
@@ -41,52 +51,37 @@ export type ProjectStatus =
   | "PostProduction"
   | "Complete";
 export type JobAvailability = "FullTime" | "PartTime" | "Flexible";
-export type JobDuration = "ShortTerm" | "LongTerm";
-export type JobLocation = "OnSite" | "Remote" | "Hybrid";
+export type JobLocation = "OnSite" | "Remote" | "Hybrid" | "Flexible";
 export type JobCompensation = "Unpaid" | "Paid";
-export type Visibility = "Public" | "Private";
+export type MemberRequestStatus = "Accepted" | "Declined" | "Pending";
+export type ProjectSortMethod = "Newest" | "A-Z" | "Popular";
+export type UserSortMethod = "Newest" | "A-Z";
+export type Visibility = "public" | "private";
+export type UserAccessLevel = "User" | "Moderator" | "Administrator";
+//do we even need this visibility enum at all? it's stored as a 0/1 in the db anyway
+//a problem for another day, i really don't feel like fixing it right now
 
 // Structures for type management
 export interface StringDictionary<T> {
-	[key : string]: T;
+  [key: string]: T;
 }
 
 export interface NumberDictionary<T> {
-  [key : number] : T;
+  [key: number]: T;
 }
 
-interface ProjectType {
-  project_type: string;
-}
 
 export type ProjectInfoStage = "Preview" | "Detail" | "Full";
 
 export interface StructuredProjectInfo {
-  preview? : ProjectPreview;
-  detail? : ProjectDetail;
-  full? : ProjectWithFollowers;
+  preview?: ProjectPreview;
+  detail?: ProjectDetail;
+  full?: ProjectWithFollowers;
 }
 
 export interface StructuredUserInfo {
-  preview? : UserPreview;
-  detail? : UserDetail;
-}
-
-export interface UserAndProjectInfo {
-  tags?: Tag[];
-  title?: string;
-  hook?: string;
-  project_types?: ProjectType[];
-  job_title?: string;
-  major?: string;
-  skills?: Skill[];
-  first_name?: string;
-  last_name?: string;
-  username?: string;
-  name?: string;
-  bio?: string;
-  projectId?: number;
-  userId?: number;
+  preview?: UserPreview;
+  detail?: UserDetail;
 }
 
 //API REQUEST
@@ -96,7 +91,7 @@ export interface UserAndProjectInfo {
  * Used for routes that make changes to a logged-in user
  */
 export interface AuthenticatedRequest extends Request {
-  currentUser: number;
+  currentUser: { username: string; userId: number; accessLevel: UserAccessLevel };
 }
 
 //API RESPONSE
@@ -125,8 +120,8 @@ export interface ApiResponse<_data = any> {
 }
 
 export interface UserIdentifiers {
-  userId : number,
-  username : string,
+  userId: number,
+  username: string,
 }
 
 export interface UsernameResponse extends ApiResponse {
@@ -186,6 +181,11 @@ export interface Tag {
    * The type of tag, such as "Purpose"
    */
   type: TagType;
+
+  /**
+   * The category of tag, such as "Game"
+   */
+  category: TagCategory;
 }
 
 /**
@@ -222,19 +222,24 @@ export interface Skill {
    * The type of skill, such as "Designer"
    */
   type: SkillType;
+
+  /**
+   * The category of the skill, such as "Software"
+   */
+  category: SkillCategory;
 }
 
 /**
- * Mediums refer to the medium through which a project is experienced.
+ * Mediums refer to the medium through which the project is experienced
  */
 export interface Medium {
   /**
-   * The database ID corresponding to the medium
+   * The database ID corresponding to the type
    */
   mediumId: number;
 
   /**
-   * The name of the medium, such as "Video Game"
+   * The name of the type, such as "Video Game"
    */
   label: string;
 }
@@ -258,7 +263,7 @@ export interface UserMember {
   /**
    * Is this project visible on the user's profile?
    */
-  visibility: Visibility;
+  profileVisibility: Visibility;
 
   /**
    * The date the user became a member
@@ -287,13 +292,47 @@ export interface UserSkill extends Skill {
 }
 
 /**
+ * Represents all info for a skill that a user has
+ */
+export interface JobSkill extends Skill {
+
+  /**
+   * The proficiency in the skill the job is searching for
+   */
+  proficiency: SkillProficiency;
+
+  /**
+   * The index at which the job skill is displayed
+   */
+  position: number;
+
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+
+  //anything else we would want these to have would go in here
+
+}
+
+/**
  * Represents all info for a social media account that a user has
  */
 export interface UserSocial extends Social {
   /**
+   * The DB id of this user social
+   */
+  id: number;
+
+  /**
    * The url to the user's social media account
    */
   url: string;
+
+  /**
+   * Alias for the link
+   */
+  alias: string;
 }
 
 /**
@@ -398,7 +437,7 @@ export interface MyMember {
   /**
    * Is this project visible on the logged-in user's profile?
    */
-  visibility: Visibility;
+  profileVisibility: Visibility;
 
   /**
    * The date the logged-in user became a member
@@ -543,6 +582,11 @@ export interface UserPreview {
   lastName: string;
 
   /**
+ * The user's preferred name
+ */
+  preferredName: string;
+
+  /**
    * The users's username
    */
   username: string;
@@ -583,11 +627,6 @@ export interface UserPreview {
   title: string;
 
   /**
-   * A fun fact about the user
-   */
-  funFact: string;
-
-  /**
    * The user's location, such as "Rochester, NY"
    */
   location: string;
@@ -600,6 +639,22 @@ export interface UserPreview {
   /**
    * Location of this resource on the server
    */
+
+  /**
+   * The user's preference on whether or not they wish to display their phone number on their profile
+   */
+  displayPhone: boolean;
+
+  /**
+   * The user's preference on whether or not they wish to display their phone number on their profile
+   */
+  privacy: Visibility;
+
+  /**
+   * The user's phone number (only filled is displayPhone is true)
+   */
+  phoneNumber?: string | null;
+
   apiUrl: string;
 }
 
@@ -608,9 +663,9 @@ export interface UserPreview {
  */
 export interface UserDetail extends UserPreview {
   /**
-   * The user's academic year, or null if unset
+   * The user's RIT status, or null if unset
    */
-  academicYear: AcademicYear | null;
+  ritStatus: RitStatus | null;
 
   /**
    * The user's bio
@@ -653,6 +708,13 @@ export interface UserDetail extends UserPreview {
   followers: UserFollowsList;
 }
 
+export interface UserEmail extends Pick<UserPreview, 'userId' | 'firstName' | 'lastName'> {
+  /**
+   * The user's rit email
+   */
+  ritEmail: string;
+}
+
 // ME
 
 // TODO should MePreview use the same properties as UserPreview?
@@ -672,6 +734,10 @@ export interface MePreview {
    * The logged-in user's last name
    */
   lastName: string;
+  /**
+* The logged-in user's preferred name
+*/
+  preferredName: string;
   /**
    * The logged-in users's username
    */
@@ -723,19 +789,14 @@ export interface MeDetail extends MePreview {
   majors: MyMajor[];
 
   /**
-   * The logged-in user's academic year, or null if unset
+   * The logged-in user's RIT Status, or null if unset
    */
-  academicYear: AcademicYear;
+  ritStatus: RitStatus;
 
   /**
    * The logged-in user's location, such as "Rochester, NY"
    */
   location: string;
-
-  /**
-   * A fun fact about the logged-in user
-   */
-  funFact: string;
 
   /**
    * The logged-in user's bio
@@ -795,8 +856,7 @@ export interface MePrivate extends MeDetail {
   /**
    * Whether the logged-in user has set their profile to be Public or Private
    */
-  // TODO implement or remove
-  visibility: Visibility;
+  privacy: Visibility;
 
   /**
    * The logged-in user's phone number, null if unset
@@ -804,9 +864,14 @@ export interface MePrivate extends MeDetail {
   phoneNumber: string | null;
 
   /**
+   * Whether or not to display the user's phone number 
+   */
+  displayPhone: boolean
+
+  /**
    * The logged-in user's UID
    */
-  universityId: string;
+  googleId: string;
 
   /**
    * The date on which the logged-in user's account was created
@@ -847,6 +912,36 @@ export interface ProjectImage {
 }
 
 /**
+ * An video displayed on a project
+ */
+export interface ProjectVideo {
+  /**
+   * The database ID corresponding with the video
+   */
+  videoId: number;
+
+  /**
+   * The URL of the video
+   */
+  videoUrl: string;
+
+  /**
+   * The video title
+   */
+  title: string;
+
+  /**
+   * The position of the video
+   */
+  position: number;
+
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+}
+
+/**
  * Represents a medium tied to a project
  */
 export interface ProjectMedium extends Medium {
@@ -876,6 +971,28 @@ export interface ProjectFollowers {
   apiUrl: string;
 }
 
+export interface ProjectVideo {
+  /**
+   * UniqueID for the video
+   */
+  videoId: number;
+
+  /**
+   * URL to the video
+   */
+  videoUrl: string;
+
+  /**
+   * Order in which videos are displayed on project
+   */
+  position: number;
+
+  /**
+   * Alt title for screen readers
+   */
+  title: string;
+}
+
 /**
  * Represents a user who is a member of a known project
  */
@@ -902,13 +1019,23 @@ export interface ProjectMember {
 }
 
 /**
- * Represents a tag tied to a project
+ * Represents a social tied to a project
  */
 export interface ProjectSocial extends Social {
+  /**
+   * DB id of the project social
+   */
+  id: number;
+
   /**
    * The url to the project's social media account
    */
   url: string;
+
+  /**
+  * Alias of the url
+  */
+  alias: string;
 
   /**
    * The location of this resource on the server
@@ -924,6 +1051,11 @@ export interface ProjectTag extends Tag {
    * The location of this resource on the server
    */
   apiUrl: string;
+
+  /**
+   * The order this tag is in compared to other tags attached to the project
+   */
+  displayOrder: number;
 }
 
 /**
@@ -946,9 +1078,14 @@ export interface ProjectJob {
   availability: JobAvailability;
 
   /**
-   * The duration of the position, such as "Short-Term"
+   * The starting date for this job, as a date. The month is 0-indexed.
    */
-  duration: JobDuration;
+  jobStart: Date | null | undefined;
+
+  /**
+   * The ending date for this job, as a date. The month is 0-indexed.
+   */
+  jobEnd: Date | null | undefined;
 
   /**
    * The on/off-site location of the job, such as "Remote"
@@ -976,6 +1113,11 @@ export interface ProjectJob {
   createdAt: Date;
 
   /**
+   * The skills the listing is looking for
+   */
+  jobSkills: JobSkill[];
+
+  /**
    * The date the listing was last updated
    */
   updatedAt: Date;
@@ -984,6 +1126,63 @@ export interface ProjectJob {
    * The location of this resource on the server
    */
   apiUrl: string;
+}
+
+// NOTIFICATIONS
+
+/**
+ * The preview of what the user sees when they first see a notification.
+ */
+export interface NotificationPreview {
+  /**
+   * ID of the notification
+   */
+  notificationId: string;
+
+  /**
+   * The time the notification was sent.
+   */
+  timeSent: Date;
+
+  /**
+   * The subject of the notification.
+   */
+  subjectLine: string;
+
+  /**
+   * Whether or not the notification has been read by its receiver.
+   */
+  hasBeenRead: boolean;
+}
+
+/**
+ * The full extent of the notification when the user clicks on it.
+ */
+export interface NotificationDetail extends NotificationPreview {
+  /**
+   * The message within the notification.
+   */
+  message: string;
+}
+
+/**
+ * Returned by NotificationBuilders to be used by the sendNotification service.
+ */
+export interface NotificationBuilderResult {
+  /**
+   * UserId of the receiver.
+   */
+  receiverId: number;
+
+  /**
+   * Line that appears in the list of notifications.
+   */
+  subjectLine: string;
+
+  /**
+   * Full extent of the notification's message.
+   */
+  message: string;
 }
 
 // PROJECTS
@@ -1013,24 +1212,19 @@ export interface ProjectDetail extends ProjectPreview {
   audience: string;
 
   /**
-   * The tags attached to the project
-   */
-  tags: Tag[];
-
-  /**
    * The images attached to the project
    */
   projectImages: ProjectImage[];
 
   /**
+   * The youtube links attached to the project
+   */
+  projectVideos: ProjectVideo[];
+
+  /**
    * The social media accounts related to the project
    */
   projectSocials: ProjectSocial[];
-
-  /**
-   * The open job positions the project is looking to fill
-   */
-  jobs: ProjectJob[];
 
   /**
    * All members of the project, including the creator
@@ -1046,6 +1240,11 @@ export interface ProjectDetail extends ProjectPreview {
    * The date the project was last updated
    */
   updatedAt: Date;
+
+  /**
+   * Is the project approved?
+   */
+  approved: boolean;
 }
 
 /**
@@ -1063,6 +1262,16 @@ export interface ProjectPreview {
   title: string;
 
   /**
+   * The project's sitewide visibility
+   */
+  globalVisibility: Visibility
+
+  /**
+   * The tags attached to the project
+   */
+  tags: ProjectTag[];
+
+  /**
    * A hook to catch attention to the project
    */
   hook: string;
@@ -1071,6 +1280,11 @@ export interface ProjectPreview {
    * The creator of the project
    */
   owner: UserPreview;
+
+  /**
+   * The open job positions the project is looking to fill
+   */
+  jobs: ProjectJob[];
 
   /**
    * The project thumbnail, null if unset
@@ -1104,6 +1318,36 @@ export interface ProjectWithFollowers extends ProjectDetail {
   followers: ProjectFollowers;
 }
 
+/**
+ * The full data of a project report
+ */
+export type ProjectReport = {
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+
+  /**
+   * Report ID in the DB
+   */
+  reportId: number;
+
+  /**
+   * Reporter ID
+   */
+  userId: number;
+
+  /**
+   * Reported project ID
+   */
+  projectId: number;
+
+  /**
+   * Reason for the report
+   */
+  reason: string;
+}
+
 // IMAGES
 
 /**
@@ -1128,31 +1372,65 @@ export type UpdateUserInput = Partial<
     MePrivate,
     | "firstName"
     | "lastName"
+    | "preferredName"
     | "headline"
     | "pronouns"
     | "title"
-    | "academicYear"
+    | "ritStatus"
     | "location"
-    | "funFact"
     | "bio"
     | "phoneNumber"
+    | 'privacy'
+    | 'displayPhone'
   > & {
     profileImage?: File;
     mentor?: "true" | "false";
-    // TODO update to use Visibility enum
-    visibility?: "1" | "0";
   }
 >;
+export type CreateUserInput = Partial<
+  Pick<
+    MePrivate,
+    | "headline"
+    | "pronouns"
+    | "title"
+    | "ritStatus"
+    | "location"
+    | "bio"
+    | "phoneNumber"
+    | 'username'
+    | 'privacy'
+    | 'displayPhone'
+  > & {
+    profileImage?: string;
+    mentor?: true | false;
+  }
+> & {
+  firstName: string;
+  lastName: string;
+  preferredName: string;
+  googleId?: string;
+  username: string;
+  ritEmail: string;
+};
+
+export type SessionUserData = Partial<{
+  firstName: string;
+  lastName: string;
+  preferredName: string;
+  email: string;
+  googleId: string;
+  userExists: boolean;
+}>
 
 /**
  * Data required to add a social media link to a user's profile
  */
-export type AddUserSocialInput = Pick<UserSocial, "websiteId" | "url">;
+export type AddUserSocialInput = Pick<UserSocial, "websiteId" | "url" | "alias">;
 
 /**
  * Data required to update an existing social media link on a user's profile
  */
-export type UpdateUserSocialInput = Partial<Pick<UserSocial, "url">>;
+export type UpdateUserSocialInput = Partial<Pick<UserSocial, "url" | "alias" | "websiteId">>;
 
 /**
  * Data required to add a skill to a user's profile
@@ -1177,9 +1455,44 @@ export type AddUserMajorInput = Pick<Major, "majorId">;
 /**
  * Data required to show or hide a project on a user's profile
  */
-export type UpdateUserProjectVisibilityInput = {
-  visibility: Visibility;
+export type UpdateProjectProfileVisibilityInput = {
+  profileVisibility: Visibility;
 };
+
+/**
+ * The full data of a user report
+ */
+export type UserReport = {
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+
+  /**
+   * Report ID in the DB
+   */
+  reportId: number;
+
+  /**
+   * ID of the user who made the report
+   */
+  reporterId: number;
+
+  /**
+   * ID of the user being reported
+   */
+  reportedId: number;
+
+  /**
+   * Reason for the report
+   */
+  reason: string;
+
+  /**
+   * Whether the report is still active or has been resolved
+   */
+  active: boolean;
+}
 
 // PROJECTS inputs
 
@@ -1190,7 +1503,7 @@ export type CreateProjectInput = Required<Pick<ProjectDetail, "title">> &
   Partial<
     Pick<
       ProjectDetail,
-      "hook" | "description" | "status" | "audience" | "purpose"
+      "hook" | "description" | "status" | "audience" | "purpose" | 'globalVisibility'
     >
   >;
 
@@ -1198,6 +1511,14 @@ export type CreateProjectInput = Required<Pick<ProjectDetail, "title">> &
  * Data required to update an existing project
  */
 export type UpdateProjectInput = Partial<CreateProjectInput>;
+
+/**
+ * Data required to upload a new image to a project
+ */
+export type CreateProjectVideoInput = {
+  title: string;
+  videoUrl: string;
+};
 
 /**
  * Data required to upload a new image to a project
@@ -1222,26 +1543,94 @@ export type ReorderProjectImagesInput = {
  * Data required to add a user as a member of a project, role defaults to "Member"
  */
 export type CreateProjectMemberInput = {
+  ownerUserId: number;
+  prospectiveMemberId: number;
+  roleId: number;
+  message?: string;
+};
+
+/**
+ * Data required to add owner of a project
+ */
+export type CreateProjectOwnerInput = {
   userId: number;
-  roleId?: number;
+  roleId: number;
+};
+
+/**
+ * Data required to invite a user to join a project
+ */
+export type SendProjectInviteInput = CreateProjectMemberInput;
+
+/**
+ * Data required to request to join a project
+ */
+export type RequestToJoinInput = CreateProjectMemberInput;
+
+/**
+ * Data required to update member request
+ */
+export type UpdateMemberRequestInput = {
+  requestStatus?: MemberRequestStatus,
+  roleId?: number,
+};
+
+/**
+ * Data required to send invitation email to user
+ */
+export type EmailInput = {
+  sender: UserEmail;
+  receiver: UserEmail;
+  subject: string;
+  textBody: string;
+  HTMLBody: string;
 };
 
 /**
  * Data required to change a member's role in a project
  */
 export type UpdateProjectMemberInput = Partial<
-  Pick<CreateProjectMemberInput, "roleId">
->;
+  Pick<CreateProjectMemberInput, "roleId">> & {
+    profileVisibility?: Visibility;
+  };
+
+/**
+ * Data stored in a member request
+ */
+export type MemberRequests = {
+  requestId: number;
+  prospectiveMemberId: number;
+  projectId: number;
+  roleId: number;
+  sentFromProject: boolean;
+  requestStatus: MemberRequestStatus;
+};
+
+/**
+ * Data for getting a member request
+ * (if requestId is provided, others are optional)
+ */
+type GetMemberRequest = {
+  requestId: number;
+  prospectiveMemberId?: number;
+  projectId?: number;
+  roleId?: number;
+} | {
+  requestId?: undefined;
+  prospectiveMemberId: number;
+  projectId: number;
+  roleId: number;
+};
 
 /**
  * Data required to add a social media link to a project
  */
-export type AddProjectSocialInput = Pick<ProjectSocial, "websiteId" | "url">;
+export type AddProjectSocialInput = Pick<ProjectSocial, "websiteId" | "url" | "alias">;
 
 /**
  * Data required to update the url of an existing social media link on a project
  */
-export type UpdateProjectSocialInput = Partial<Pick<ProjectSocial, "url">>;
+export type UpdateProjectSocialInput = Partial<Pick<ProjectSocial, "url" | "alias" | "websiteId">>;
 
 /**
  * Data required to change which project image is used as the thumbnail
@@ -1254,22 +1643,26 @@ export type UpdateProjectThumbnailInput = {
 /**
  * Data required to add a tag to a project
  */
-// TODO rename to AddProjectTagInput (no plural)
-export type AddProjectTagsInput = Pick<ProjectTag, "tagId">;
+export type AddProjectTagInput = Pick<ProjectTag, "tagId" | "displayOrder">;
 
 /**
- * Data required to add a medium to a project
+ * Data required to update a tag on a project
  */
-// TODO rename to AddProjectMediumInput (no plural)
-export type AddProjectMediumsInput = Pick<ProjectMedium, "mediumId">;
+export type UpdateProjectTagInput = Partial<AddProjectTagInput>;
+
+/**
+ * Data required to add a type to a project
+ */
+export type AddProjectMediumInput = Pick<ProjectMedium, "mediumId">;
 
 /**
  * Data required to create a job listing on a project
  */
 export type CreateProjectJobInput = Required<
-  Pick<ProjectJob, "availability" | "duration" | "location" | "compensation">
+  Pick<ProjectJob, "availability" | "location" | "compensation">
 > &
-  Partial<Pick<ProjectJob, "description">> & {
+  //might have to move jobStart and jobEnd to required in case the db freaks out
+  Partial<Pick<ProjectJob, "description" | "jobSkills" | "jobStart" | "jobEnd">> & {
     roleId: number;
     contactUserId: number;
   };
@@ -1281,6 +1674,20 @@ export type UpdateProjectJobInput = Partial<CreateProjectJobInput>;
 
 
 /**
+ * Data required to add a skill to a project
+ */
+export type AddJobSkillInput = Pick<JobSkill, "skillId" | "proficiency" | "position">
+
+export type UpdateJobSkillInput = Pick<JobSkill, "skillId" | "proficiency" | "position"> //more things if we want to add more things
+
+export type DeleteJobSkillInput = {
+  jobId: number,
+  skillId: number
+}
+//this is purely for the frontend because it needs both things for the url, and so the data manager can work properly
+//the delete service takes it from the parameters
+
+/**
  * Data required to filter request
  */
 export type FilterRequest = {
@@ -1289,7 +1696,66 @@ export type FilterRequest = {
   developer?: boolean;
   skills?: number[];
   majors?: number[];
-  academicYear?: string[];
+  ritStatus?: string[];
   socials?: number[];
   strictness?: 'any' | 'all';
+}
+
+/**
+ * Data required to create a new tag.
+ */
+export type CreateTagInput = Pick<Tag, "label" | "type" | "category">;
+
+/**
+ * Data required to edit an existing tag.
+ */
+export type EditTagInput = Partial<CreateTagInput> & { tagId: number }
+
+/**
+ * Data required to create a skill.
+ */
+export type CreateSkillInput = Pick<Skill, "label" | "type" | "category">;
+
+/**
+ * Data required to edit an existing skill
+ */
+export type EditSkillInput = Partial<CreateSkillInput> & { skillId: number };
+
+/**
+ * Data required to add a user report
+ */
+export type AddUserReportInput = {
+  reason: string;
+};
+
+/**
+ * Data required to add a project report
+ */
+export type AddProjectReportInput = {
+  reason: string;
+};
+
+/**
+ * Data required to unapprove an already approved project
+ */
+export type UnapproveProjectInput = {
+  reason: string;
+}
+
+/**
+ * Data required to send a notification to a moderator
+ */
+export type ModeratorNotificationInput = {
+  modUserId: number;
+  receiverId: number;
+  subjectLine: string;
+  message: string;
+}
+
+/**
+ * Data required to ban a user from the site
+ */
+export type BanUserInput = {
+  userId: number;
+  reason: string;
 }

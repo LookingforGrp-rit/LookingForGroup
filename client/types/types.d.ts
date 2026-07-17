@@ -1,10 +1,11 @@
 import {
-  AddProjectMediumsInput,
+  AddProjectMediumInput,
   AddProjectSocialInput,
-  AddProjectTagsInput,
+  AddProjectTagInput,
   CreateProjectImageInput,
   CreateProjectJobInput,
   CreateProjectMemberInput,
+  UpdateProjectTagInput,
   UpdateProjectImageInput,
   UpdateProjectInput,
   UpdateProjectJobInput,
@@ -26,11 +27,19 @@ import {
   UpdateUserInput,
   UpdateUserSocialInput,
   UpdateUserSkillInput,
-  AcademicYear,
+  RitStatus,
   MyMember,
+  MyMajor,
+  MySocial,
   MySkill,
   MeDetail,
-  UpdateUserProjectVisibilityInput,
+  UpdateProjectProfileVisibilityInput,
+  CreateProjectVideoInput,
+  AddJobSkillInput,
+  UpdateJobSkillInput,
+  DeleteJobSkillInput,
+  JobSkill,
+  UpdateMemberRequestInput
 } from "@looking-for-group/shared";
 
 /**
@@ -39,8 +48,8 @@ import {
  */
 export type Fillable<T> = {
   [attr in keyof T]: T[attr] extends object
-    ? Fillable<T[attr]> | null
-    : T[attr] | null;
+  ? Fillable<T[attr]> | null
+  : T[attr] | null;
 };
 
 /**
@@ -66,12 +75,12 @@ type CRUDRequest<T> = Id & { data: T };
 /**
  * Helper function to remove server-created properties and allow for null values.
  */
-type Pending<T> = Fillable<
+type Pending<T> = 
   Omit<
     T,
     "apiUrl" | "createdAt" | "updatedAt" | "memberSince" | "imageId" | "jobId"
   >
-> & { localId: number | null };
+& { localId: number | null };
 
 // PROJECT CHANGES
 
@@ -100,12 +109,17 @@ interface ProjectChangesCreates {
   /**
    * All tags to be created
    */
-  tags: CRUDRequest<AddProjectTagsInput>[];
+  tags: CRUDRequest<AddProjectTagInput>[];
 
   /**
    * All project images to be created
    */
   projectImages: CRUDRequest<CreateProjectImageInput>[];
+
+  /**
+   * All project videos to be created
+   */
+  projectVideos: CRUDRequest<CreateProjectVideoInput>[];
 
   /**
    * All project socials to be created
@@ -118,6 +132,10 @@ interface ProjectChangesCreates {
   jobs: CRUDRequest<CreateProjectJobInput>[];
 
   /**
+   * All job skills to be added
+   */
+  jobSkills: CRUDRequest<AddJobSkillInput>[];
+  /**
    * All members to be created
    */
   members: CRUDRequest<CreateProjectMemberInput>[];
@@ -125,7 +143,7 @@ interface ProjectChangesCreates {
   /**
    * All mediums to be created
    */
-  mediums: CRUDRequest<AddProjectMediumsInput>[];
+  mediums: CRUDRequest<AddProjectMediumInput>[];
 }
 
 /**
@@ -141,7 +159,12 @@ interface ProjectChangesUpdates {
    * The thumbnail to be updated
    */
   thumbnail: CRUDRequest<UpdateProjectThumbnailInput>;
-  
+
+  /**
+   * All tags to be updated
+   */
+  tags: CRUDRequest<UpdateProjectTagInput>[];
+
   /**
    * All images to be updated
    */
@@ -158,9 +181,19 @@ interface ProjectChangesUpdates {
   jobs: CRUDRequest<UpdateProjectJobInput>[];
 
   /**
+   * All job skills to be updated
+   */
+  jobSkills: CRUDRequest<UpdateJobSkillInput>[];
+
+  /**
    * All members to be updated
    */
   members: CRUDRequest<UpdateProjectMemberInput>[];
+
+  /**
+   * All member requests to be updated
+   */
+  memberRequests: CRUDRequest<UpdateMemberRequestInput>[];
 }
 
 /**
@@ -178,6 +211,11 @@ interface ProjectChangesDeletes {
   projectImages: CRUDRequest<null>[];
 
   /**
+   * All project videos to be deleted
+   */
+  projectVideos: CRUDRequest<null>[];
+
+  /**
    * All project socials to be deleted
    */
   projectSocials: CRUDRequest<null>[];
@@ -188,6 +226,11 @@ interface ProjectChangesDeletes {
   jobs: CRUDRequest<null>[];
 
   /**
+   * All job skills to be deleted
+   */
+  jobSkills: CRUDRequest<DeleteJobSkillInput>[];
+
+  /**
    * All members to be deleted
    */
   members: CRUDRequest<null>[];
@@ -196,6 +239,11 @@ interface ProjectChangesDeletes {
    * All mediums to be deleted
    */
   mediums: CRUDRequest<null>[];
+
+  /**
+   * All member requests to be deleted
+   */
+  memberRequests: CRUDRequest<null>[];
 }
 
 /**
@@ -217,6 +265,11 @@ interface PendingProjectMember extends Pending<ProjectMember> {
  * A project tag that hasn't been saved on the server yet
  */
 type PendingProjectTag = Omit<ProjectTag, "apiUrl">;
+
+/**
+ * A job skill that hasn't been saved on the server yet
+ */
+type PendingJobSkill = Omit<JobSkill, "apiUrl">;
 
 /**
  * A project medium that hasn't been saved on the server yet
@@ -275,7 +328,7 @@ interface UserChangesCreates {
   /**
    * All socials to be created
    */
-  socials: CrudRequest<AddUserSocialInput>[];
+  socials: CRUDRequest<AddUserSocialInput>[];
 }
 
 /**
@@ -300,7 +353,7 @@ interface UserChangesUpdates {
   /**
    * All project visibilities to be updated
    */
-  projectVisibilities: CRUDRequest<UpdateUserProjectVisibilityInput>[];
+  projectVisibilities: CRUDRequest<UpdateProjectProfileVisibilityInput>[];
 }
 
 /**
@@ -361,8 +414,8 @@ interface PendingUserMember extends Exclude<MyMember, "apiUrl"> {
  */
 interface PendingUserProfile extends Exclude<MeDetail, "apiUrl"> {
   profileImage: string | null | PendingProfileImage;
-  majors: (MyMajor | PendingMajor)[];
-  academicYear: AcademicYear | null;
+  majors: (MyMajor[] | PendingMajor[])
+  ritStatus: RitStatus | null;
   projects: (MyMember | PendingUserMember)[];
   skills: (MySkill | PendingUserSkill)[];
   socials: (MySocial | PendingUserSocial)[];

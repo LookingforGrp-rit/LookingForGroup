@@ -1,8 +1,7 @@
 import { ProjectImageSelector } from './parts/project-image.ts';
-import { ProjectJobSelector } from './parts/project-job.ts';
 import { ProjectMemberSelector } from './parts/project-member.ts';
 import { ProjectSocialSelector } from './parts/project-social.ts';
-import { ProjectTagSelector } from './parts/project-tag.ts';
+import { ProjectVideoSelector } from './parts/project-video.ts';
 import { ProjectPreviewSelector } from './project-preview.ts';
 
 export const ProjectDetailSelector = Object.freeze({
@@ -13,17 +12,15 @@ export const ProjectDetailSelector = Object.freeze({
   audience: true,
   createdAt: true,
   updatedAt: true,
-  tags: {
-    select: ProjectTagSelector,
-  },
+  approved: true,
   projectImages: {
     select: ProjectImageSelector,
   },
+  projectVideos: {
+    select: ProjectVideoSelector,
+  },
   projectSocials: {
     select: ProjectSocialSelector,
-  },
-  jobs: {
-    select: ProjectJobSelector,
   },
   members: {
     select: ProjectMemberSelector,

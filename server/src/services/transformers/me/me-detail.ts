@@ -1,4 +1,4 @@
-import type { MeDetail, MyMajor, AcademicYear } from '@looking-for-group/shared';
+import type { MeDetail, MyMajor, RitStatus } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { MeDetailSelector } from '#services/selectors/me/me-detail.ts';
 import { transformProjectToPreview } from '../projects/project-preview.ts';
@@ -23,17 +23,14 @@ export const transformMeToDetail = (user: UsersGetPayload): MeDetail => {
     headline: user.headline,
     pronouns: user.pronouns,
     bio: user.bio,
-    academicYear: user.academicYear as AcademicYear,
+    ritStatus: user.ritStatus as RitStatus,
     location: user.location,
-    funFact: user.funFact,
     title: user.title,
-    majors: user.majors.map(
-      ({ majorId, label }: { majorId: number; label: string }): MyMajor => ({
-        majorId,
-        label,
-        apiUrl: `/api/me/majors/${majorId.toString()}`,
-      }),
-    ),
+    majors: user.majors.map(({ majorId, label }: { majorId: number; label: string }): MyMajor => ({
+      majorId,
+      label,
+      apiUrl: `/api/me/majors/${majorId.toString()}`,
+    })),
     skills: user.userSkills.map(transformMySkill),
     socials: user.userSocials.map(transformMySocial),
     projects: user.members.map(transformMyMember),

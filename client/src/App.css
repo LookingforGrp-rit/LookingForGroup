@@ -23,6 +23,13 @@
   --tag-light-green: #e5f0dd;
   --tag-light-blue: #dff1f8;
   --tag-light-purple: #e6e6ff;
+  --tag-periwinkle: #A2ADF9;
+  --tag-pink: #e191e8;
+  --tag-cyan: #82cfba;
+
+  --approved-green: #b1fca9;
+  --under-review-yellow: #fc9d9d;
+  --not-approved-red: #ffe1a2;
 
   --modal-gradient-start: #0a0a0a;
   --modal-gradient-end: #2c2a3a;
@@ -66,7 +73,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(0.625rem + 2vmin);
   color: white;
 }
 

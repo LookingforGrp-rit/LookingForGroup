@@ -1,6 +1,5 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { NextFunction, Response } from 'express';
-import envConfig from '#config/env.ts';
 
 const requiresModerator = (
   request: AuthenticatedRequest,
@@ -8,18 +7,7 @@ const requiresModerator = (
   next: NextFunction,
 ) => {
   //current user ID
-  const userId = request.currentUser;
-
-  //check if ID is number
-  if (isNaN(userId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    response.status(400).json(resBody);
-    return;
-  }
+  const user = request.currentUser;
 
   const forbiddenResBody: ApiResponse = {
     status: 403,
@@ -27,15 +15,7 @@ const requiresModerator = (
     data: null,
   };
 
-  if (!envConfig.modId) {
-    response.status(403).json(forbiddenResBody);
-    return;
-  }
-
-  const modId = parseInt(envConfig.modId);
-
-  //check if mod ID is number
-  if (isNaN(modId) || modId !== userId) {
+  if (user.accessLevel === 'User') {
     response.status(403).json(forbiddenResBody);
     return;
   }

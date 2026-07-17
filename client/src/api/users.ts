@@ -26,8 +26,10 @@ import type {
   UserFollowsList,
   ProjectDetail,
   ProjectFollowsList,
-  UpdateUserProjectVisibilityInput,
+  UpdateProjectProfileVisibilityInput,
   MyMember,
+  SessionUserData,
+  CreateUserInput,
 } from "@looking-for-group/shared";
 
 /* USER CRUD */
@@ -39,12 +41,36 @@ import type {
  * @returns status - 200 if valid, 400 if not
  */
 export const createNewUser = async (
-  userData: UserPreview
+  userData: CreateUserInput
 ): Promise<ApiResponse> => {
   const apiURL = "/users";
 
-  return await POST(apiURL, userData);
+  const response = await POST(apiURL, userData);
+
+  if (response.error) console.log(`Error in createUser: ${response.error}`);
+  return response as ApiResponse<MePrivate>;
 };
+
+export const googleLogin = async (
+  credential: { credential: string }
+): Promise<ApiResponse> => {
+  const apiURL = '/google-login';
+
+  return await POST(apiURL, credential);
+}
+export const googleLogout = async (
+  userId: number,
+): Promise<ApiResponse> => {
+  const apiURL = '/google-login';
+
+  return await DELETE(apiURL, { userId });
+}
+
+export const testLogin = async (): Promise<ApiResponse<SessionUserData>> => {
+  const apiURL = '/google-login/test';
+
+  return await GET(apiURL);
+}
 
 /**
  * Checks if the user is logged in (shibboleth) and returns username if they are
@@ -61,9 +87,9 @@ export const getCurrentUsername = async (): Promise<UsernameResponse> => {
     data:
       response.status === 200
         ? {
-            userId: (response.data as MePrivate).userId,
-            username: (response.data as MePrivate).username,
-          }
+          userId: (response.data as MePrivate).userId,
+          username: (response.data as MePrivate).username,
+        }
         : undefined,
     error: response.error,
   };
@@ -73,8 +99,10 @@ export const getCurrentUsername = async (): Promise<UsernameResponse> => {
  * Gets all data on all public users. Does not return private ones
  * @returns result - JSONified data of all users, else if error, '400'.
  */
-export const getUsers = async (): Promise<ApiResponse<UserPreview[]>> => {
-  const apiURL = `/users`;
+export const getUsers = async (method?: string): Promise<ApiResponse<UserPreview[]>> => {
+  //NOTE: the "A-Z" is a default implementation of sorting method
+  //CHANGE THIS WHEN SORTING METHOD FRONTEND IS IMPLEMENTED!!
+  const apiURL = `/users/all/${method ?? 'A-Z'}`;
   const response = await GET(apiURL);
   //TODO: revisit this to make it include filters
   //but filters are a stretch goal anyway so it's not too important
@@ -118,13 +146,33 @@ export const editUser = async (
   const form = new FormData();
 
   for (const [name, value] of Object.entries(userData)) {
-    if (value !== null) form.append(name, value);
+    if (value !== null) form.append(name, value as string);
+    //ohhhh i see, it auto appends a string for the displayPhone because this can't take booleans for some reason...
+    //this has to be a FormData to allow images so i can't change that, guess i'll have to stick with the weird parse on the backend
   }
 
   const response = await PATCH(apiURL, form);
 
   if (response.error) console.log(`Error in editUser: ${response.error}`);
   return response as ApiResponse<MePrivate>; //it would get mad at me if i didn't do this soooo
+};
+
+/**
+ * Sends in a report of a user -- they did something bad!
+ * @param userId ID of the user that is being reported
+ * @param report The message that was sent along with the report
+ * @returns 
+ */
+export const reportUser = async (
+  userId: number,
+  report: string,
+): Promise<ApiResponse> => {
+  const apiURL = `/me/users/report/${userId}/${report}`;
+  const response = await POST(apiURL, {});
+  
+  //if (response.error) console.log(`Error in reportUser: ${response.error}`);
+  //else console.log(response);
+  return response;
 };
 
 //Removes a user specified by URL.
@@ -261,16 +309,15 @@ export const getVisibleProjects = async (
  * @param _visibility - either "public" or "private", set visibility
  * @return 201 if successful, 400 if not
  */
-export const updateProjectVisibility = async (
+export const updateProjectProfileVisibility = async (
   projectID: number,
-  visibility: UpdateUserProjectVisibilityInput
+  visibility: UpdateProjectProfileVisibilityInput
 ): Promise<ApiResponse<MyMember>> => {
-  const url = `me/projects/${projectID}/visibility`;
+  const url = `/me/projects/${projectID}/visibility`;
   const response = await PUT(url, visibility);
 
-  // if (response.error)
-    //console.log(`Error in updateProjectVisibility: ${response.error}`);
-  //console.log(response);
+  if (response.error)
+    console.log(`Error in updateProjectVisibility: ${response.error}`);
   return response as ApiResponse<MyMember>;
 };
 
@@ -280,7 +327,7 @@ export const updateProjectVisibility = async (
  * @return 201 if successful, 400 if not
  */
 export const leaveProject = async (projectID: number): Promise<ApiResponse<null>> => {
-  const url = `me/projects/${projectID}/leave`;
+  const url = `/me/projects/${projectID}/leave`;
   const response = await DELETE(url);
 
   // if (response.error) //console.log(`Error in leaveProject: ${response.error}`);
@@ -361,14 +408,14 @@ export const addUserSocial = async (
 
 // Update socials specified by the current user
 /**
- * @param websiteId - ID of the social to be updated
+ * @param id - DB id of the social to be updated
  * @param socialData - Data used to update the social
  */
 export const updateUserSocial = async (
-  websiteId: number,
+  id: number,
   socialData: UpdateUserSocialInput
 ): Promise<ApiResponse<MySocial>> => {
-  const apiURL = `/me/socials/${websiteId}`;
+  const apiURL = `/me/socials/${id}`;
   const response = await PATCH(apiURL, socialData);
 
   if (response.error)
@@ -379,12 +426,12 @@ export const updateUserSocial = async (
 
 // Delete user socials
 /**
- * @param websiteId - ID of the social to be deleted
+ * @param id - DB id of the social to be deleted
  */
 export const deleteUserSocial = async (
-  websiteId: number
+  id: number
 ): Promise<ApiResponse> => {
-  const url = `/me/socials/${websiteId}`;
+  const url = `/me/socials/${id}`;
   const response = await DELETE(url);
 
   //console.log(response);
@@ -555,6 +602,7 @@ export default {
   getUsers,
   getUsersById,
   editUser,
+  reportUser,
   deleteUser,
   getUserByUsername,
   getUserByEmail,
@@ -564,7 +612,7 @@ export default {
   deleteUserFollowing,
   getProjectsByUser,
   getVisibleProjects,
-  updateProjectVisibility,
+  updateProjectProfileVisibility,
   leaveProject,
   getProjectFollowing,
   addProjectFollowing,

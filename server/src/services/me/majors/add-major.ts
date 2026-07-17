@@ -27,7 +27,9 @@ const addUserMajorService = async (
       },
       include: {
         majors: {
-          where: data,
+          where: {
+            majorId: data.majorId,
+          },
           select: MyMajorSelector,
         },
       },

@@ -1,4 +1,8 @@
-import type { ProjectMember, CreateProjectMemberInput } from '@looking-for-group/shared';
+import type {
+  ProjectMember,
+  CreateProjectMemberInput,
+  CreateProjectOwnerInput,
+} from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectMemberSelector } from '#services/selectors/projects/parts/project-member.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
@@ -9,21 +13,45 @@ type AddMemberServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' |
 //POST api/projects/{id}/members
 const addMemberService = async (
   projectId: number,
-  data: CreateProjectMemberInput,
+  data: CreateProjectMemberInput | CreateProjectOwnerInput,
 ): Promise<ProjectMember | AddMemberServiceError> => {
   try {
-    const newMember = await prisma.members.create({
-      data: {
-        projects: { connect: { projectId } },
-        users: { connect: { userId: data.userId } },
-        roles: { connect: data.roleId ? { roleId: data.roleId } : { label: 'Member' } },
-      },
-      select: {
-        ...ProjectMemberSelector,
-        projectId: true,
-      },
-    });
-    const result = transformProjectMember(newMember.projectId, newMember);
+    // declare newMember in outer scope so it's available after branches
+    let result: ProjectMember;
+
+    // it's creating an owner
+    if ('userId' in data) {
+      // create owner
+      const newMember = await prisma.members.create({
+        data: {
+          projects: { connect: { projectId } },
+          users: { connect: { userId: data.userId } },
+          roles: { connect: { roleId: data.roleId } },
+        },
+        select: {
+          ...ProjectMemberSelector,
+          projectId: true,
+        },
+      });
+
+      result = transformProjectMember(newMember.projectId, newMember);
+    } else {
+      // create new member with pending role
+      // will update to correct role when invitee accepts invite
+      const newMember = await prisma.members.create({
+        data: {
+          projects: { connect: { projectId } },
+          users: { connect: { userId: data.prospectiveMemberId } },
+          roles: { connect: { roleId: data.roleId } },
+        },
+        select: {
+          ...ProjectMemberSelector,
+          projectId: true,
+        },
+      });
+
+      result = transformProjectMember(newMember.projectId, newMember);
+    }
 
     return result;
   } catch (e) {

@@ -52,68 +52,65 @@ async function main() {
   //     ],
   // });
 
-    //Users
-    //separating these out so the majors can be created
-    //since createMany doesn't handle relations
-    await prisma.users.create({
-        data: {
-                username: 'mhr2964',
-                ritEmail: 'mhr2964@rit.edu',
-                firstName: 'Michael',
-                lastName: 'Robinson',
-                headline: 'Hello world',
-                pronouns: 'they/them',
-                title: 'Student',
-                location: 'Rochester, NY',
-                funFact: 'Loves Prisma',
-                bio: 'This is an example user.',
-                universityId: '11111111',
-                academicYear: 'Freshman',
-                majors: {
-                    connect: [{ majorId: 1 }]
-                }
-            }
-    })
-    await prisma.users.create({
-        data: 
-            {
-                username: 'anw7643',
-                ritEmail: 'anw7643@rit.edu',
-                firstName: 'Ashley',
-                lastName: 'Whigam',
-                headline: 'Hello world',
-                pronouns: 'they/them',
-                title: 'Student',
-                location: 'Rochester, NY',
-                funFact: 'Loves cheez-its',
-                bio: 'This is an example user.',
-                universityId: '222222222',
-                academicYear: 'Freshman',
-                majors: {
-                    connect: [{ majorId: 4 }, { majorId: 5 }]
-                }
-            },
-    })
-    await prisma.users.create({
-        data: 
-            {
-                username: 'swc3333',
-                ritEmail: 'swc3333@rit.edu',
-                firstName: 'Stephen',
-                lastName: 'Curry',
-                headline: 'Hello world',
-                pronouns: 'they/them',
-                title: 'Student',
-                location: 'Rochester, NY',
-                funFact: 'Loves shooting',
-                bio: 'This is an example user.',
-                universityId: '33333333',
-                academicYear: 'Senior',
-                majors: {
-                    connect: [{ majorId: 7 }]
-                }
-            },
-    })
+  //Users
+  //separating these out so the majors can be created
+  //since createMany doesn't handle relations
+  await prisma.users.create({
+    data: {
+      username: 'mhr2964',
+      ritEmail: 'mhr2964@rit.edu',
+      firstName: 'Michael',
+      lastName: 'Robinson',
+      headline: 'Hello world',
+      pronouns: 'they/them',
+      title: 'Student',
+      location: 'Rochester, NY',
+      bio: 'This is an example user.',
+      googleId: '11111111',
+      ritStatus: 'FirstYear',
+      majors: {
+        connect: [{ majorId: 1 }]
+      }
+    }
+  })
+  await prisma.users.create({
+    data:
+    {
+      username: 'anw7643',
+      ritEmail: 'anw7643@rit.edu',
+      firstName: 'Ashley',
+      lastName: 'Whigam',
+      headline: 'Hello world',
+      pronouns: 'they/them',
+      title: 'Student',
+      location: 'Rochester, NY',
+      bio: 'This is an example user.',
+      googleId: '222222222',
+      ritStatus: 'FirstYear',
+      majors: {
+        connect: [{ majorId: 4 }, { majorId: 5 }]
+      }
+    },
+  })
+  await prisma.users.create({
+    data:
+    {
+      username: 'swc3333',
+      ritEmail: 'swc3333@rit.edu',
+      firstName: 'Stephen',
+      lastName: 'Curry',
+      headline: 'Hello world',
+      pronouns: 'they/them',
+      title: 'Student',
+      location: 'Rochester, NY',
+      bio: 'This is an example user.',
+      googleId: '33333333',
+      ritStatus: 'FourthYear',
+      majors: {
+        connect: [{ majorId: 7 }]
+      }
+    },
+  })
 
   //Projects
   await prisma.projects.createMany({
@@ -126,6 +123,7 @@ async function main() {
         purpose: 'Personal',
         userId: 1,
         status: 'Development',
+        globalVisibility: 'public',
       },
       {
         title: 'Changeling',
@@ -133,6 +131,7 @@ async function main() {
         description: 'Have you ever needed a Changeling?',
         audience: 'Everybody',
         purpose: 'Personal',
+        globalVisibility: 'public',
         userId: 2,
         status: 'Development',
       },
@@ -140,6 +139,7 @@ async function main() {
         title: 'Manhattan Project',
         hook: 'You can make an ATOMIC BOMB',
         description: 'Have you ever needed to nuke a country?',
+        globalVisibility: 'public',
         audience: 'Everybody',
         purpose: 'Personal',
         userId: 3,
@@ -179,6 +179,7 @@ async function main() {
         projectId: 1,
         websiteId: 1,
         url: 'https://example.com',
+        alias: 'example',
       },
     ],
   });
@@ -254,7 +255,8 @@ async function main() {
         projectId: 1,
         roleId: 1,
         availability: 'Flexible',
-        duration: 'ShortTerm',
+        jobStart: "1900-01-01",
+        jobEnd: "1900-01-01",
         location: 'Remote',
         compensation: 'Unpaid',
         description: 'One example job',
@@ -264,7 +266,8 @@ async function main() {
         projectId: 2,
         roleId: 1,
         availability: 'Flexible',
-        duration: 'ShortTerm',
+        jobStart: "1900-01-01",
+        jobEnd: "1900-01-01",
         location: 'Remote',
         compensation: 'Unpaid',
         description: 'One example job',
@@ -274,7 +277,8 @@ async function main() {
         projectId: 3,
         roleId: 1,
         availability: 'Flexible',
-        duration: 'ShortTerm',
+        jobStart: "1900-01-01",
+        jobEnd: "1900-01-01",
         location: 'Remote',
         compensation: 'Unpaid',
         description: 'One example job',
@@ -308,16 +312,19 @@ async function main() {
         userId: 1,
         websiteId: 1,
         url: 'https://example.com/u/example_user',
+        alias: 'example website 1',
       },
       {
         userId: 2,
         websiteId: 2,
         url: 'https://example.com/u/example_user',
+        alias: 'example website 2',
       },
       {
         userId: 3,
         websiteId: 3,
         url: 'https://example.com/u/example_user',
+        alias: 'example website 3',
       },
     ],
   });

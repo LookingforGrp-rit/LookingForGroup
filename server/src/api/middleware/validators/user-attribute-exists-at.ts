@@ -15,7 +15,7 @@ export const userAttributeExistsAt = (
 
     switch (type) {
       case 'path':
-        rawAttributeId = req.params[key];
+        rawAttributeId = req.params[key] as string;
         break;
       case 'body':
         rawAttributeId = (req.body as Record<string, unknown>)[key] as string;
@@ -34,7 +34,7 @@ export const userAttributeExistsAt = (
       return;
     }
 
-    const rawUserId = req.currentUser;
+    const rawUserId = req.currentUser.userId;
 
     const userId = rawUserId;
 
@@ -80,10 +80,7 @@ const getAttributeById = async (userId: number, attributeId: number, attribute: 
     case 'social':
       return await prisma.userSocials.findUnique({
         where: {
-          userId_websiteId: {
-            userId,
-            websiteId: attributeId,
-          },
+          id: attributeId,
         },
       });
     case 'skill':

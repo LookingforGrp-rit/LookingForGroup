@@ -1,4 +1,4 @@
-import { Dispatch,ReactNode, SetStateAction } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useEffect } from 'react';
 
 //This component is meant to be reusable in any area of the site, acting as an element that can be
 //  opened or closed after performing certain actions.
@@ -85,8 +85,22 @@ export const PagePopup = ({
   zIndex,
   show,
   setShow,
-  onClose = () => {},
+  onClose = () => { },
 }: PagePopupProps) => {
+
+  // Lock body scroll when popup is open
+  useEffect(() => {
+    if (show) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [show]);
+
   if (!show) return null;
 
   return (
@@ -111,7 +125,7 @@ export const PagePopup = ({
               openClosePopup(show, setShow);
             }}
           >
-            <img src="images/icons/cancel.png" alt="cancel" />
+            <img src="/images/icons/cancel.png" alt="cancel" />
           </button>
           {children}
         </div>

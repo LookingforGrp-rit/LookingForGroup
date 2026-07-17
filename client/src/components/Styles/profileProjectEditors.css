@@ -2,13 +2,13 @@
 
 /* Text styles */
 .editor-header {
-  font-size: 20px;
+  font-size: 1.5rem;
   font-weight: 600;
   color: var(--primary-color);
 }
 
 .editor-extra-info {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--neutral-gray);
   font-style: italic;
 }
@@ -20,12 +20,14 @@
   flex-direction: column;
   height: 100%;
 }
-  #editor-links > label {
-    margin-bottom: 3px;
-  }
-  #editor-links > .editor-extra-info {
-    margin-bottom: 15px;
-  }
+
+#editor-links>label {
+  margin-bottom: 3px;
+}
+
+#editor-links>.editor-extra-info {
+  margin-bottom: 15px;
+}
 
 /* Contact Information Section */
 #editor-contact-info {
@@ -53,7 +55,7 @@
   border-radius: 6px;
   text-decoration: none;
   color: var(--text-primary, #333333);
-  transition: all 0.2s ease;
+  transition: all 0.2s ease-in-out;
 }
 
 .contact-social-link:hover {
@@ -64,7 +66,7 @@
 
 .contact-social-link span {
   font-weight: 500;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .no-contact-info {
@@ -78,11 +80,16 @@
   border-radius: 6px;
 }
 
+#url-input {
+  height: fit-content;
+}
+
 /* Container for link inputs */
 #editor-link-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  /* height: 100%; */
 }
 
 /* Container for Select and Input components */
@@ -92,16 +99,32 @@
   justify-items: center;
   /* align-items: flex-start; */
   align-self: stretch;
+  height: 100%;
 }
-  /* Select component wrapper */
-  .editor-link-item > .select-container {
-    width: 100%;
-    max-width: 166px;
+
+@media only screen and (max-width: 700px){
+  .editor-link-item {
+    flex-wrap: wrap;
   }
 
-  /* Container for content of Select component */
-  .editor-link-item .value {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  html, body {margin: 0; height: 100%; overflow: hidden}
+
+}
+
+/* Select component wrapper */
+.editor-link-item>.select-container {
+  width: 100%;
+  max-width: 166px;
+  
+  .select-options {
+    max-height: min(300px, calc(100vh - 600px));
+    min-height: 100%;
   }
+}
+
+/* Container for content of Select component */
+.editor-link-item .value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

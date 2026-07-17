@@ -32,6 +32,8 @@ General style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region general */
+
 /*default color scheme*/
 :root {
   /* default dark mode is default */
@@ -44,11 +46,17 @@ General style rules
   /* hover color for profile cards */
   --header-color: #1a1921;
   /* search bar, header button background, profile page background, etc. */
+  --tab-color: rgba(26, 25, 33, 0.500);
+  --second-tab-color: rgba(26, 25, 33, 0.650);
+  /* background colors for non-selected tabs */
   --dropdown-color: #0e0e0e;
   /* dropdown/small modal background color */
   --sidebar-gradient: linear-gradient(180deg, #2c2a3a 30%, #fead81 100%);
+  --create-gradient: linear-gradient(180deg, #fead81 0%, #2c2a3a 100%);
   --hero-gradient: linear-gradient(180deg, #0e0e0e 30%, #2c2a3a 100%);
   /* gradient for  discover hero section */
+  --about-gradient: linear-gradient(180deg, #1A1921 55%, #2B2939 88%);
+  /* gradient for about about boxes */
   --modal-gradient: linear-gradient(293deg, var(--modal-gradient-start) 0%, var(--modal-gradient-end) 100%);
   /* gradient for bigger modals (project/profile settings, etc.) */
   --border-color: #2b2939;
@@ -57,6 +65,8 @@ General style rules
   /* for error messages and delete buttons */
   --shadow-color: rgba(255, 255, 255, 0.2);
   /* for shadows */
+  --liked-section-bg: #2c2a3a;
+  /* bg color of liked section on personal user's pg*/
 
   /* text colors */
   --main-text: white;
@@ -78,6 +88,9 @@ General style rules
   --tag-blue-selected: #b0dcee;
   --tag-purple-selected: #d7bed3;
   --tag-grey-selected: #d0d0d0;
+  --tag-periwinkle-selected: #A2ADF9;
+  --tag-pink-selected: #e191e8;
+  --tag-cyan-selected: #82cfba;
 
   --tag-red-unselected: #0e0e0e;
   --tag-orange-unselected: #0e0e0e;
@@ -86,6 +99,9 @@ General style rules
   --tag-blue-unselected: #0e0e0e;
   --tag-purple-unselected: #0e0e0e;
   --tag-grey-unselected: #0e0e0e;
+  --tag-periwinkle-unselected: #0e0e0e;
+  --tag-pink-unselected: #0e0e0e;
+  --tag-cyan-unselected: #0e0e0e;
 
   --tag-red-unselected-border: #ffa0b0;
   --tag-orange-unselected-border: #ffa281;
@@ -94,17 +110,25 @@ General style rules
   --tag-blue-unselected-border: #b0dcee;
   --tag-purple-unselected-border: #d7bed3;
   --tag-grey-unselected-border: #d0d0d0;
+  --tag-periwinkle-unselected-border: #A2ADF9;
+  --tag-pink-unselected-border: #e191e8;
+  --tag-cyan-unselected-border: #82cfba;
 
   --tag-text-selected: black;
 
-  --tag-text-unselected-red: #ffa0b0;
-  --tag-text-unselected-orange: #ffa281;
-  --tag-text-unselected-yellow: #ffcf8b;
-  --tag-text-unselected-green: #bed9aa;
-  --tag-text-unselected-blue: #b0dcee;
-  --tag-text-unselected-purple: #d7bed3;
-  --tag-text-unselected-grey: #d0d0d0;
-
+  /* Unselected tag text is white so it reads like the rest of the site's text
+     (against the dark unselected tag background) instead of the dim per-category
+     / grey colors. */
+  --tag-text-unselected-red: white;
+  --tag-text-unselected-orange: white;
+  --tag-text-unselected-yellow: white;
+  --tag-text-unselected-green: white;
+  --tag-text-unselected-blue: white;
+  --tag-text-unselected-purple: white;
+  --tag-text-unselected-grey: white;
+  --tag-text-unselected-periwinkle: white;
+  --tag-text-unselected-pink: white;
+  --tag-text-unselected-cyan: white;
   --modal-gradient-start: #0a0a0a;
   --modal-gradient-end: #2c2a3a;
 
@@ -115,22 +139,28 @@ General style rules
     Should be black for all tags in light mode
     and match the tag color in dark mode
     */
+
 }
 
 /*light mode color scheme*/
 [data-theme='light'] {
   --bg-color: #fff;
+  --bg-partial-color: rgba(255, 255, 255, 0.700);
 
   --primary-color: #271d66;
   --panel-hover: rgba(39, 29, 102, 0.9);
   --header-color: #ececf7;
+  --tab-color: rgba(236, 236, 247, 0.500);
   --dropdown-color: #fff;
   --sidebar-gradient: linear-gradient(180deg, #d3d3ff 0%, #ffceb4 100%);
+  --create-gradient: linear-gradient(180deg, #b0b0fc 0%, #fead81 100%);
   --hero-gradient: linear-gradient(180deg, #ffffff 50%, #d3d3ff 100%);
+  --about-gradient: linear-gradient(180deg, #ececf7 55%, #d3d3ff 88%);
   --modal-gradient: linear-gradient(293deg, var(--modal-gradient-start) 0%, var(--modal-gradient-end) 100%);
   --border-color: #d3d3ff;
   --error-delete-color: #ff3859;
   --shadow-color: rgba(0, 0, 0, 0.2);
+  --liked-section-bg: white;
 
   --main-text: black;
   --invert-text: white;
@@ -150,6 +180,9 @@ General style rules
   --tag-blue-selected: #b0dcee;
   --tag-purple-selected: #d7bed3;
   --tag-grey-selected: #d0d0d0;
+  --tag-periwinkle-selected: #A2ADF9;
+  --tag-pink-selected: #e191e8;
+  --tag-cyan-selected: #82cfba;
 
   --tag-red-unselected: #ffd9df;
   --tag-orange-unselected: #ffdacd;
@@ -158,6 +191,9 @@ General style rules
   --tag-blue-unselected: #dff1f8;
   --tag-purple-unselected: #efe5ed;
   --tag-grey-unselected: #ececec;
+  --tag-periwinkle-unselected: #d1d6fc;
+  --tag-pink-unselected: #f0c8f4;
+  --tag-cyan-unselected: #c1e7dd;
 
   --tag-red-unselected-border: #ffd9df;
   --tag-orange-unselected-border: #ffdacd;
@@ -166,6 +202,9 @@ General style rules
   --tag-blue-unselected-border: #dff1f8;
   --tag-purple-unselected-border: #efe5ed;
   --tag-grey-unselected-border: #ececec;
+  --tag-periwinkle-unselected-border: #d1d6fc;
+  --tag-pink-unselected-border: #f0c8f4;
+  --tag-cyan-unselected-border: #c1e7dd;
 
   --tag-text-selected: black;
 
@@ -176,14 +215,21 @@ General style rules
   --tag-text-unselected-blue: black;
   --tag-text-unselected-purple: black;
   --tag-text-unselected-grey: black;
+  --tag-text-unselected-periwinkle: black;
+  --tag-text-unselected-pink: black;
+  --tag-text-unselected-cyan: black;
+
 
   --modal-gradient-start: #ffffff;
   --modal-gradient-end: #d3d3ff;
+
+
 }
 
 * {
   font-family: 'Inter', sans-serif;
   color: var(--main-text);
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 /*basic rules for hiding/showing certain elements
@@ -198,17 +244,32 @@ used for the more options dropdown menu and notifications
 }
 
 .page-title {
-  margin-bottom: 0;
-  font-size: 42px;
-  margin-left: max(1.79vw, 27px);
+  margin: 0;
+  font-size: 2.625rem;
+  text-align: center;
   color: var(--primary-color);
 }
 
 .error {
   color: var(--error-delete-color);
   font-weight: 500;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-style: italic;
+}
+
+#main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+  margin: 0 auto 50px;
+  width: calc(100% - 40px);
+}
+
+#settings-page {
+  #main {
+    align-items: flex-start;
+  }
 }
 
 .button-reset {
@@ -218,25 +279,64 @@ used for the more options dropdown menu and notifications
   margin: 0;
 }
 
+a:link,
+a:visited {
+  color: var(--primary-color);
+}
+
 button {
   cursor: pointer;
   transition: 0.2s;
+}
+
+button:focus-visible,
+#back:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  transition: 0s;
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+input:focus:not(:focus-visible) {
+  outline: none;
+}
+
+svg:focus,
+input:focus {
+  outline: none;
 }
 
 /*give sections of the page a drop shadow*/
 section {
   margin: 10px;
   padding: 4px 16px 16px 16px;
-  border-style: solid;
+  /* border-style: solid;
   border: 2px solid black;
-  box-shadow: 10px 10px 5px lightblue;
+  box-shadow: 10px 10px 5px lightblue; */
 }
 
 /* Content areas to take up entire height of viewport
    to push the Footer to the bottom */
-.my-projects-grid, .my-projects-list, #discover-panel-box {
-  min-height: 50vh;
+.my-projects-grid,
+.my-projects-list,
+#discover-panel-box {
+  min-height: 35vh;
 }
+
+.placeholder-spacing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 30px auto;
+}
+
+
+/* #endregion */
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -245,6 +345,7 @@ Card component style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region card component */
 
 /*style rules for the cards with drop shadows (see wireframes)*/
 /*discover card: used on the discover page for projects and profiles*/
@@ -342,6 +443,8 @@ Card component style rules
   text-decoration: underline;
 }
 
+/* #endregion */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -349,6 +452,7 @@ Tag component style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region tag components*/
 
 /*used in Tags component */
 .tag {
@@ -372,6 +476,8 @@ Tag component style rules
   }
 }
 
+/* #endregion */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -379,6 +485,26 @@ Button component style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region button component */
+
+/* Skip link in top corner to jump to main content */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  background-color: var(--bg-color);
+  color: var(--main-text);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  z-index: 9999;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid var(--primary-color);
+}
 
 /*general rules for buttons
 orange-button class makes the button orange, white-button class makes the button white*/
@@ -436,6 +562,34 @@ orange-button class makes the button orange, white-button class makes the button
   margin: auto;
 }
 
+.scale-on-hover {
+  transition: transform 0.2s;
+}
+
+.scale-on-hover:hover {
+  transform: scale(1.05);
+}
+
+/*back buttons on project pages*/
+.project-back-btn {
+  margin: 10px 30px;
+  z-index: 3;
+}
+
+@media screen and (max-width: 700px) {
+  .project-back-btn {
+    margin: 10px 0px;
+  }
+
+  #main {
+    margin: 0 auto 100px;
+  }
+}
+
+
+
+/* #endregion*/
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -443,6 +597,7 @@ Sidebar Nav style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region sidebar */
 
 .SideBarContainer {
   width: 220px;
@@ -451,7 +606,7 @@ Sidebar Nav style rules
   top: 0px;
   left: 0px;
   /* box-shadow: rgba(0, 0, 0, 0.25) 0px 8px 16px; */
-  z-index: 2;
+  /*changing z-index affects #discover-filters-parent*/
   color: var(--dark-lighttheme);
   background-color: var(--bg-color);
   /*background-image: url("../../../public/images/nav-background.png");*/
@@ -461,16 +616,13 @@ Sidebar Nav style rules
   background-repeat: no-repeat;
 }
 
+.SideBarContainer.active {
+  z-index: 14;
+}
+
 #lfg-logo {
   width: 80px;
 }
-
-/* .ProfileContainer {
-    width: 220px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-} */
 
 /* Container for logo and notification bell */
 .headerContainer {
@@ -480,7 +632,7 @@ Sidebar Nav style rules
   justify-content: center;
   align-items: center;
   text-align: center;
-  width: 200px;
+  width: 100%;
   margin: 30px 0 30px 0;
 }
 
@@ -489,26 +641,26 @@ Sidebar Nav style rules
   height: 12px;
   background-color: var(--red);
   color: white;
-  font-size: 10px;
+  font-size: 0.625rem;
   border-radius: 50%;
   position: absolute;
   top: 33px;
   right: 14px;
 }
 
-/* notification bell */
-.headerContainer button {
+/* title button */
+.headerContainer button,
+.headerContainer a {
   background: none;
   border: none;
-  width: 33px;
-  height: 33px;
+  text-decoration: none;
 }
 
-/* title/logo */
+/* title/logo text */
 .headerContainer h1 {
   font-weight: bold;
-  font-size: 45px;
-  margin: 0px 0px 0px 30px;
+  font-size: 2.8125rem;
+  margin: 0px 0px 0px 0px;
   text-align: center;
   color: var(--primary-color);
 }
@@ -519,15 +671,14 @@ Sidebar Nav style rules
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  gap: 10px;
-  /*background-color: var(--primary-blue);*/
+  gap: 15px;
 }
 
-.containerButtonSideBar button {
+.containerButtonSideBar>button,
+.containerButtonSideBar>a {
   color: var(--main-text);
-  width: 194px;
+  width: 174px;
   height: 55px;
-  /*background-color: var(--primary-blue);*/
   background-color: rgb(0, 0, 0, 0);
   border: none;
   border-radius: 30px;
@@ -537,8 +688,9 @@ Sidebar Nav style rules
   padding-right: auto;
   display: flex;
   align-items: center;
-  /*color: var(--dark-lighttheme);*/
   gap: 15px;
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.25s ease, color 0.25s ease;
 
   img {
     width: 30px;
@@ -546,24 +698,28 @@ Sidebar Nav style rules
   }
 }
 
-.containerButtonSideBar button:hover {
-  transition-duration: 0.25s;
+.containerButtonSideBar>button:hover,
+.containerButtonSideBar>a:hover {
   background-color: var(--invert-text);
+  transform: translateY(-2px);
 }
 
-.containerButtonSideBar button.active {
+.containerButtonSideBar>button:active,
+.containerButtonSideBar>a:active {
+  transform: translateY(0);
+}
+
+.containerButtonSideBar>button.active,
+.containerButtonSideBar>a.active {
   background-color: var(--primary-color);
   transition: 0.25s;
   font-weight: bold;
   color: var(--invert-text);
 
-  img {
+  img,
+  svg {
     filter: invert(1);
   }
-}
-
-.containerButtonSideBar .active > svg {
-  
 }
 
 /* Profile picture or avatar */
@@ -575,7 +731,6 @@ Sidebar Nav style rules
   border-radius: 4px;
   display: flex;
   border: none;
-  /* box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.25); */
   margin-bottom: 14px;
   object-fit: cover;
   overflow: hidden;
@@ -587,7 +742,6 @@ Sidebar Nav style rules
 }
 
 /*logout button*/
-/*!!!May be removed later!!!*/
 .Logout {
   display: flex;
   align-items: center;
@@ -602,25 +756,21 @@ Sidebar Nav style rules
   margin-bottom: 40px;
   width: 120px;
   height: 45px;
-  font-size: 18px;
+  font-size: 1.125rem;
   border: none;
   border-radius: 12px;
-  /* outline: solid var(--orange) 2px; */
   font-weight: 600;
+  transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .Logout button:hover {
   background-color: rgb(199, 198, 198);
+  transform: translateY(-2px);
 }
 
-/* .Logout button:hover {
-    transition-duration: 0.25s;
-    background-color: var(--orange);
-    color: white;
-    outline: solid var(--orange) 2px;
-    cursor: pointer;
-} */
-
+.Logout button:active {
+  transform: translateY(0);
+}
 
 /*create button*/
 .Create {
@@ -646,12 +796,11 @@ Sidebar Nav style rules
   margin-bottom: 40px;
   width: 194px;
   height: 55px;
-  font-size: 20px;
-  /* padding-bottom: 5px; */
+  font-size: 1.25rem;
   border: none;
   border-radius: 30px;
-  /* outline: solid var(--orange) 2px; */
   font-weight: bold;
+  transition: transform 0.2s ease, background-color 0.25s ease, filter 0.25s ease;
 
   p {
     margin-left: 15px;
@@ -663,30 +812,35 @@ Sidebar Nav style rules
   background-color: var(--create-text);
   color: var(--create-bg);
   filter: drop-shadow(0px 5px 3px var(--shadow-color));
-  transition: 0.25s;
+  transform: translateY(-2px);
   border: 2px solid var(--create-bg);
 
   svg {
     filter: invert(1) saturate(0) brightness(0.5);
     transition: 0.25s;
   }
+
   p {
     color: var(--create-bg);
     transition: 0.25s;
   }
 }
 
+.Create>button:active {
+  transform: translateY(0);
+}
+
 /*responsive stuff for sidebar*/
-@media only screen and (max-width: 799px) {
+@media only screen and (max-width: 1024px) {
   .sideBarContainer {
-    width: 100vw;
-    height: 50px;
-    /*border: solid black 2px;*/
     position: fixed;
-    bottom: 10px;
-    background-color: var(--header-color);
-    z-index: 1;
-    /*box-shadow: rgba(0, 0, 0, 0.25) 0px 8px 16px;*/
+    bottom: 0;
+    width: 100%;
+    height: calc(61px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    box-sizing: border-box;
+    z-index: 100;
+    /*can be changed, just a placeholder value*/
   }
 
   .ProfileContainer {
@@ -696,44 +850,108 @@ Sidebar Nav style rules
   .containerButtonSideBar {
     display: flex;
     flex-direction: row;
-    /* cursor: pointer; */
-    gap: 20px;
+    gap: 15px;
     align-items: center;
     justify-content: space-evenly;
     height: 80px;
-    background-color: var(--header-color);
+    width: 100%;
+    background-color: var(--border-color);
   }
 
-  .containerButtonSideBar button {
-    width: 20vw;
+  .containerButtonSideBar>button,
+  .containerButtonSideBar>a,
+  .containerButtonSideBar .my-projects-create-btn {
+    width: 15vw;
     height: 45px;
     margin: 0 5px 20px 5px;
-    padding-left: calc((100vw - 160px) / 10);
-    padding-right: auto;
+    background-color: var(--border-color);
   }
 
-  .containerButtonSideBar button:hover {
+  .containerButtonSideBar>.my-projects-create-btn>#project-info-create {
+    background-image: var(--create-gradient);
+    width: 70px !important;
+    height: 70px !important;
+    border-radius: 50% !important;
+    padding: 0% !important;
+    margin-bottom: 30%;
+    border-width: 5px !important;
+    border-color: var(--border-color) !important;
+    background-color: var(--border-color);
+    border: solid;
+  }
+
+  .containerButtonSideBar>.my-projects-create-btn>#project-info-create>#create {
+    margin: 0% !important;
+    padding: 0% !important;
+    width: 45px !important;
+    height: 45px !important;
+  }
+
+  .containerButtonSideBar>button,
+  .containerButtonSideBar>a {
+    padding-left: calc((100vw - 160px) / 14);
+    padding-right: calc((100vw - 160px) / 14);
+    border: none;
+    text-align: left;
+    display: flex;
+    align-items: center;
+  }
+
+  .containerButtonSideBar>.my-projects-create-btn {
+    border: none;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    width: auto;
+  }
+
+  .containerButtonSideBar>button:hover {
     transition-duration: 0.25s;
-    background-color: var(--invert-text);
+    color: var(--primary-color);
+    transform: none;
   }
 
-  .containerButtonSideBar button.active {
+  .containerButtonSideBar>button.active {
     background-color: var(--primary-color);
     transition: 0.25s;
     font-weight: bold;
     color: var(--invert-text);
 
-    img {
-      filter: invert(1);
+
+    img,
+    svg {
+      filter: invert(1) !important;
     }
+  }
+
+  .sidebar-btn,
+  #my-profile-sidebar-btn {
+    height: 55px !important;
+    width: 55px !important;
+    border-radius: 50% !important;
+    border-width: 2% !important;
+    padding: 0% !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .containerButtonSideBar>.sidebar-btn>.sidebar-icon,
+  .containerButtonSideBar>#my-profile-sidebar-btn>#profile {
+    margin: 0% !important;
+    padding: 0% !important;
+    width: 30px !important;
+    height: 30px !important;
   }
 }
 
 @media only screen and (max-width: 500px) {
   .containerButtonSideBar {
-    gap: 10px;
+    gap: 5px;
   }
 }
+
+/* #endregion */
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -742,6 +960,7 @@ Page popup style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region popup */
 
 /*rules for the cover a popup uses*/
 .popup-cover {
@@ -753,7 +972,7 @@ Page popup style rules
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 2;
+  z-index: 20;
 }
 
 /*rules for the popup itself*/
@@ -766,39 +985,61 @@ Page popup style rules
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   /* max-width: 1321px; */
+  width: min(1121px, 92vw);
   max-width: 1121px;
-  max-height: 849px;
+  max-height: min(849px, 90vh);
+  overflow-y: auto;
   opacity: 100%;
-  z-index: 3;
   /* height: 849px; */
+
 }
+
+.popup:has(> .small-popup) {
+  max-width: 800px;
+  height: 40vh;
+}
+
 
 /* Used inside of popup object for smaller popups */
 .small-popup {
-  max-width: 456px;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   background-color: var(--bg-color);
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   opacity: 100%;
-  z-index: 3;
-  padding: 20px 40px;
+  z-index: 5;
+  padding: 24px 56px;
+  box-sizing: border-box;
+
+
+  .confirm-msg {
+    width: 80%;
+  }
+}
+
+@media (max-width: 799px) {
+  .popup {
+    width: 95vw;
+    max-width: 95vw;
+  }
 }
 
 @media (max-width: 576px) {
   .popup {
-    /* max-width: 921px;
-    max-height: 781px;
-    width: 64vw; */
-    /* height: 95vw; */
+    width: 95vw;
+    max-width: 95vw;
+    border-radius: 8px;
   }
 
   /* Smaller popups within another popup should scale */
   .popup .popup {
-    max-width: 50vw;
-  }  
+    max-width: 80vw;
+  }
 }
 
 .popup-container {
@@ -810,21 +1051,71 @@ Page popup style rules
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 3;
+  z-index: 21;
   border-radius: 10px;
 }
 
+html.modal-open,
+body.modal-open {
+  overflow: hidden !important;
+  height: 100% !important;
+}
+
+@media only screen and (hover: none) {
+  .popup {
+    margin: 20px 20px;
+    width: 95vw;
+    height: 100%;
+    max-width: 100vw;
+  }
+
+  .popup-container {
+    align-items: baseline;
+    justify-content: baseline;
+  }
+
+  .popup .popup-container {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .popup .small-popup {
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Popup container with a smaller popup inside (for leave/delete project specifically) */
+  .popup:has(> .small-popup) {
+    width: 95vw;
+    height: 50vh;
+    max-width: 500px;
+  }
+
+  .popup-container:has(> .popup > .small-popup) {
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.popup .popup {
+  height: auto;
+  width: auto;
+}
+
+
 #popup-close {
-  position: absolute;
+  position: none;
   border-radius: 4px;
   top: 10px;
   right: 10px;
   background: none;
 }
 
+/* 
 .onFront {
   z-index: 5;
-}
+} */
 
 .popup-back {
   position: absolute;
@@ -843,6 +1134,30 @@ Page popup style rules
   }
 }
 
+.popup-back:hover {
+  border-color: var(--invert-text) !important;
+  color: var(--invert-text) !important;
+}
+
+#back {
+  padding: 4px;
+  padding-left: 7px;
+  padding-right: 7px;
+}
+
+#back:hover {
+  padding: 4px;
+  padding-left: 7px;
+  padding-right: 7px;
+  border-radius: 50px / 50px !important;
+  background-color: var(--invert-text) !important;
+  border-color: var(--invert-text) !important;
+}
+
+#project-creator-editor {
+  scrollbar-width: none;
+}
+
 .popup-close {
   position: absolute;
   border-radius: 4px !important;
@@ -853,12 +1168,14 @@ Page popup style rules
   height: 40px !important;
   background: none !important;
   margin: 0 !important;
-  z-index: 4;
+  z-index: 6;
   padding: 8px 18px 0px 0px;
 }
 
 @media screen and (max-width: 1180px) {
-  .popup-close, .popup-close.popup-close-edit {
+
+  .popup-close,
+  .popup-close.popup-close-edit {
     margin: 0 8px 0 0 !important;
   }
 }
@@ -896,17 +1213,54 @@ Page popup style rules
   align-items: center;
 
   #primary-btn {
-    width: 104px;
+    width: fit-content;
     height: 40px;
     padding: 5px 16px;
-    font-size: 20px;
+    font-size: 1.25rem;
     border: none;
     border-radius: 40px;
     background-color: var(--primary-color);
     color: var(--invert-text);
     font-weight: 700;
-    margin-top: min(3.67vh, 36px);
-    margin-bottom: min(2.65vh, 26px);
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  #filters-btns-section {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 90%;
+    gap: 20px;
+    margin-top: min(3.67vh, 4px);
+    margin-bottom: min(2.65vh, 10px);
+
+    .select-container {
+      width: 20%;
+    }
+  }
+
+
+
+  #match-button {
+    width: fit-content;
+    height: 40px;
+    padding: 5px 16px;
+    font-size: 1.25rem;
+    border: none;
+    border-radius: 40px;
+    background-color: var(--primary-color);
+    color: var(--invert-text);
+    font-weight: 700;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  #match-button:hover {
+    transform: scale(1.1);
+    transition: 0.2s;
   }
 
   #primary-btn:hover {
@@ -914,23 +1268,43 @@ Page popup style rules
     transition: 0.2s;
   }
 
+  .delete-button {
+    border: none;
+    border-radius: 30px;
+    padding: 5px 16px;
+    background-color: var(--error-delete-color) !important;
+    color: var(--invert-text);
+    font-size: 2ch;
+    width: fit-content;
+    height: 40px;
+    font-weight: 700;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .delete-button:hover {
+    transform: scale(1.1);
+    transition: 0.2s;
+    box-shadow: none;
+  }
+
   h2 {
-    font-size: 24px;
-    margin-top: min(3.46vh, 34px);
-    margin-bottom: min(3.05vh, 30px);
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: min(3.05vh, 5px);
     font-weight: 600;
     color: var(--primary-color);
   }
 
   h3 {
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 600;
     color: var(--primary-color);
     margin: min(0.2vh, 2px) 0 min(0.51vh, 5px);
   }
 
   h4 {
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 400;
     color: var(--neutral-gray);
     font-style: italic;
@@ -942,16 +1316,18 @@ Page popup style rules
     border-radius: 10px;
     width: 100%;
     overflow: auto;
-    margin: min(1.32vh, 13px) min(6.68vw, 101px);
+    margin: 0 min(6.68vw, 101px);
   }
 
   #filters {
-    /* Scale with viewport, but cap off at 919x392 (including padding) */
+    /* Scale with viewport, but cap off at 857x340 (including padding) */
     max-width: 857px;
     max-height: 340px;
-    width: 56.7vw;
-    height: 39.9vh;
-    padding: min(2.65vh, 26px) min(2.05vw, 31px);
+    width: calc(70vw - 20px);
+    /* height: 49.9vh; */
+    padding: min(1.65vh, 10px) min(2.05vw, 31px);
+    padding-bottom: 0;
+    margin-bottom: min(3.05vh, 5px);
 
     p {
       margin-top: 0;
@@ -965,22 +1341,30 @@ Page popup style rules
     gap: min(3.87vh, 38px) min(2.51vw, 38px);
     justify-content: center;
     margin: min(1.63vh, 16px) auto;
+    width: 100%;
   }
 
   .filter-tab {
-    font-size: 16px;
+    display: block;
+    font-size: 1rem;
     font-weight: 400;
     color: var(--neutral-gray);
     /* Indicate should be clicked without being a button */
     cursor: pointer;
     transition: 0.2s;
+    padding: 1px;
     /* margin: 14px 38px; */
+    width: 15%;
+    text-align: center;
   }
 
   .filter-tab:hover {
     color: var(--primary-color);
-    font-weight: 600;
-    transition: none;
+    font-weight: 500;
+    transform: none;
+    padding-bottom: 5px;
+    transition: 0.2s;
+    text-decoration: underline;
   }
 
   .filter-tab.selected {
@@ -998,18 +1382,24 @@ Page popup style rules
   #filter-tags {
     display: flex;
     flex-wrap: wrap;
+    overflow-x: hidden;
     gap: min(1.02vh, 10px) min(0.66vw, 10px);
   }
 
   #selected-section {
-    max-width: 859px;
-    max-height: 178px;
-    width: 56.8vw;
+    max-height: 160px;
+    width: calc(70vw - 20px);
     height: 18.1vh;
     padding: min(1.63vh, 16px) min(1.98vw, 30px);
     display: flex;
     flex-direction: column;
     align-items: start;
+    margin-top: 0;
+
+    h3,
+    h4 {
+      padding-left: 10px;
+    }
   }
 
   #selected-filters {
@@ -1019,7 +1409,63 @@ Page popup style rules
   }
 }
 
+@media screen and (max-width: 700px) {
+  #filter-tabs {
+    column-gap: min(6vw, 45px);
+  }
+}
+
+/* Styles for required fields */
+.requiredAsterisk {
+  color: red;
+}
+
+.requiredText {
+  font-style: italic;
+}
+
 /* Mobile styling */
+
+@media screen and (max-width: 1180px) {
+  .popup #filters-popup {
+    max-width: 88vw;
+
+    #filters {
+      width: calc(88vw - 20px);
+    }
+
+    #selected-section {
+      width: calc(88vw - 20px);
+    }
+
+    #filter-tabs {
+      height: auto;
+      width: 100%;
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: scroll;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      justify-content: left !important;
+      ;
+      column-gap: 5vw;
+    }
+  }
+}
+
+@media screen and (max-width: 850px) {
+  .popup #filters-popup {
+
+    #filters {
+      width: calc(94vw - 20px);
+    }
+
+    #selected-section {
+      width: calc(94vw - 20px);
+    }
+  }
+}
+
 @media (max-width: 576px) {
   .popup-back {
     margin: 2.01vw 0 0 2.01vw !important;
@@ -1036,27 +1482,29 @@ Page popup style rules
     }
 
     #filters {
-      width: 71.9vw;
       height: 37.6vh;
       padding: 2.88vh 2.6vw;
     }
 
     #filter-tabs {
-      column-gap: 3.19vw;
+      column-gap: 10vw;
     }
 
     #selected-section {
-      width: 72vw;
       height: 19.7vh;
       padding: 1.77vh 2.52vw;
     }
   }
 }
 
+
+
 /* .popup #primary-btn:hover {
   background-color: var(--border-color);
   color: var(--invert-text);
 } */
+
+/* #endregion */
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -1065,31 +1513,53 @@ Header style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+/* #region header */
 
 #header {
   display: grid;
   align-items: center;
   text-align: left;
-  /* margin-right: 50px; */
-  margin: auto;
-  grid-template: 'search buttons' 90px / auto max-content;
+  grid-template: 'back search buttons' 90px / auto max-content;
+  grid-template-columns: 1fr 10fr 1fr;
   background-color: rgba(0, 0, 0, 0);
   /* 
         Please don't comment the background-image rule out unless there is a good reason for it
         It makes a smooth color transition for the header to the page content, and works with light/dark mode
         from what I've tested. I see no reason to not use it.
     */
-  background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
-  /* width: calc(100% - 50px); */
-  margin: 0 50px;
+  background-image: linear-gradient(var(--bg-color) 90%, rgba(0, 0, 0, 0));
+
+  gap: 10px;
+
+  width: calc(100% - 24px);
+  padding: 0 48px;
+  margin: 0 auto;
   height: 90px;
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 9;
+  box-sizing: border-box;
+}
+
+#header.active {
+  z-index: 15;
+}
+
+@media screen and (max-width: 800px) {
+  #header {
+    padding: 0;
+    margin: 0 auto;
+  }
+}
+
+#header #title {
+  grid-area: search;
 }
 
 #header-searchbar {
-  grid-area: search;
+  grid-area: 1 / 1 / back / search;
+  width: 100%;
+  align-items: left;
 }
 
 #header-searchbar>.search-wrapper>.search-bar {
@@ -1101,23 +1571,41 @@ Header style rules
   grid-area: buttons;
   display: flex;
   justify-content: flex-end;
-  /* width: 140px; */
-  max-width: fit-content;
-  margin-left: 10px;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+#header-buttons #about-btn {
+  width: 45px;
+  height: 45px;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--header-color);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--main-text);
+  transition: 0.2s;
+}
+
+#header-buttons #about-btn:hover {
+  color: var(--bg-color);
 }
 
 #header-buttons button {
   background-color: var(--header-color);
   border-radius: 50px;
   border: none;
-  margin-left: 10px;
   height: 45px;
-  /* width: auto; */
+}
 
-  /* margin-left:10px;
-    height:auto;
-    width:auto;
-    padding-top:4px; */
+
+#header-buttons .dropdown-container {
+  order: 2;
 }
 
 #notif-btn {
@@ -1131,16 +1619,48 @@ Header style rules
   }
 }
 
+@media screen and (max-width: 500px) {
+  #header-buttons .dropdown {
+    position: absolute;
+    top: 50px;
+    right: -10%;
+    width: 100%;
+
+    #notifications-panel {
+      margin: auto;
+    }
+
+    #header-profile-dropdown {
+      justify-self: right;
+      margin-right: 25px;
+    }
+  }
+
+  /* Notifications: pin the panel to the VIEWPORT below the header, right
+     edge near the bell, so it can never be clipped by the header/button
+     containers. (Anchoring inside the ~50px bell container let it overflow
+     off the right side of the screen.) */
+  #header-buttons .dropdown:has(> #notifications-panel) {
+    position: fixed;
+    top: 70px;
+    right: 12px !important;
+    left: auto;
+    width: fit-content;
+  }
+
+  #header-buttons .dropdown #notifications-panel {
+    margin: 0;
+    /* Narrower than the viewport so both edges always stay on screen. */
+    width: min(340px, calc(100vw - 24px));
+  }
+}
+
 #profile-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
   gap: 5px;
-  padding: 5px 5px 5px 6px;
 
   #profile-img-icon {
     width: 32px;
@@ -1159,21 +1679,19 @@ Header style rules
   }
 }
 
-/* #header-buttons img {
-    filter:none;
-    height:auto;
-    margin:2px;
-} */
-
 #header-profile-dropdown {
   margin-top: 10px;
   width: 165px;
-  height: 200px;
+  height: fit-content;
   border-radius: 10px;
   background-color: var(--dropdown-color);
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   border: none;
   padding: 10px;
+  position: absolute;
+  right: -30%;
+  top: 0% !important;
+
   /* color: var(--primary-color); */
   hr {
     border: 0;
@@ -1182,29 +1700,39 @@ Header style rules
   }
 }
 
-#header-profile-dropdown > #header-profile-user {
+#header-profile-dropdown>#header-profile-user {
   display: flex;
   justify-content: center;
   gap: 14px;
-  font-size: 16px;
+  font-size: 1rem;
+  max-width: 156px;
 
-  > #header-profile-user-info {
+  >#header-profile-user-info {
     display: flex;
     flex-direction: column;
-    width: fit-content;
+    flex: 1;
+    min-width: 0;
     text-align: left;
 
     #header-profile-username {
-      font-size: 16px;
+      font-size: 1rem;
       font-weight: 700;
       color: var(--primary-color);
-      margin: 0;
+      margin: 1px;
+
+      white-space: normal;
+      display: -webkit-box;
+      line-clamp: 2;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
+
     #header-profile-email {
       font-style: italic;
-      font-size: 12px;
+      font-size: 0.75rem;
       color: var(--main-text);
-      margin: 0;
+      margin: 1px;
     }
   }
 }
@@ -1230,17 +1758,48 @@ Header style rules
   margin: 0;
   flex-shrink: 0;
   color: var(--main-text);
+  padding: 1px 4px;
+  font-size: 0.9375rem;
 }
 
-#header-profile-dropdown button:hover {
+#header-profile-dropdown a {
+  background: none;
+  display: flex;
+  width: 100%;
+  border-radius: 10px;
+  gap: 10px;
+  align-items: center;
+  margin: 0;
+  flex-shrink: 0;
+  color: var(--main-text);
+  text-decoration: none;
+  padding: 7px 4px;
+  font-size: 0.9375rem;
+}
+
+#header-profile-dropdown button:hover,
+#header-profile-dropdown a:hover {
   background-color: var(--header-color);
 }
 
-@media only screen and (max-width: 400px) {
-  #header {
-    width: 85%;
+/* #endregion */
+
+/*
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+------------------------------------------------------------------------------------------------
+Footer style rules
+------------------------------------------------------------------------------------------------
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+*/
+/* #region header */
+
+@media (max-width: 799px) {
+  .FooterContainer {
+    margin-bottom: 3%;
   }
 }
+
+/* #endregion */
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -1249,6 +1808,7 @@ Search style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region search */
 
 /*position on the page*/
 .search-wrapper {
@@ -1262,7 +1822,7 @@ Search style rules
 }
 
 .fa-search {
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 
 .search-bar {
@@ -1271,12 +1831,12 @@ Search style rules
   width: calc(100% - 2em);
   /* Keeps width within parent element */
   /* padding: 10px 15px; */
-  padding: 10px 1em;
+  padding: 8px 1em;
   /*border: 3px solid gray;*/
   border-radius: 40px;
   background-color: var(--header-color);
   color: var(--primary-color);
-  font-size: 16px;
+  font-size: 1rem;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   text-align: left;
@@ -1289,16 +1849,21 @@ Search style rules
 }
 
 /*text in the bar*/
-.search-input,
-.search-input::placeholder {
+.search-input {
   background: none;
   width: 100%;
   color: var(--primary-color);
   border: none;
-  padding: 4px;
+  padding: 14px;
   font: inherit;
   cursor: text;
   outline: inherit;
+}
+
+.search-input::placeholder {
+  color: var(--primary-color);
+  font: inherit;
+  cursor: text;
 }
 
 /*magnifying glass button*/
@@ -1322,10 +1887,12 @@ Search style rules
 
 @media only screen and (max-width: 800px) {
   .search-bar {
-    font-size: 16px;
+    font-size: 1rem;
     /* width: 200px; */
   }
 }
+
+/* #endregion */
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -1334,6 +1901,7 @@ Dropdown style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+/* #region dropdown */
 
 .dropdown-container {
   position: relative;
@@ -1345,8 +1913,169 @@ Dropdown style rules
   /* box-shadow: 1px 2px 2px var(--dark-lighttheme); */
   position: absolute;
   background: none;
-  z-index: 2;
+  z-index: 15;
 }
+
+/* Notifications bell badge + dropdown panel */
+.notif-bell-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background-color: #f14f76;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
+
+#notifications-panel {
+  position: relative;
+  width: min(340px, 90vw);
+  max-height: 70vh;
+  overflow-y: auto;
+  background-color: var(--header-color);
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px 0px var(--shadow-color);
+  text-align: left;
+  scrollbar-color: var(--text-color) var(--header-color);
+  scrollbar-width: thin;
+}
+
+#notifications-panel .notifications-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--header-color);
+  padding: 10px 16px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--primary-color);
+  border-bottom: 1px solid var(--bg-color);
+}
+
+#notifications-panel .notifications-empty {
+  padding: 18px 16px;
+  color: var(--main-text);
+  font-style: italic;
+}
+
+#notifications-panel .notifications-error {
+  color: #f14f76;
+}
+
+#notifications-panel .notifications-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#notifications-panel .notification-item {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--bg-color);
+}
+
+#notifications-panel .notification-item.unread {
+  background-color: var(--bg-color);
+}
+
+#notifications-panel .notification-open {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 12px 8px 12px 14px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--main-text);
+  will-change: filter;
+  backface-visibility: hidden;
+}
+
+#notifications-panel .notification-open:hover {
+  filter: contrast(5);
+}
+
+#notifications-panel .notification-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #f14f76;
+}
+
+#notifications-panel .notification-subject {
+  font-size: 0.85rem;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#notifications-panel .notification-message {
+  font-size: 0.85rem;
+  color: var(--main-text);
+  font-weight: 400;
+  margin: 8px 8px 12px 14px;
+  padding-left: 10px;
+  word-break: break-word;
+  border-left: 2px solid var(--primary-color);
+  animation: slideDown 1s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+#notifications-panel .notification-time {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--neutral-gray);
+  white-space: nowrap;
+}
+
+#notifications-panel .notification-delete {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  height: auto;
+  border-radius: 0;
+  padding: 0 12px;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--neutral-gray);
+  cursor: pointer;
+}
+
+#notifications-panel .notification-delete:hover {
+  color: #f14f76;
+}
+
+/* #endregion */
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -1355,26 +2084,47 @@ Select style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+/* #region select */
+
 .select-container {
   position: relative;
   width: 100%;
   border-radius: 10px;
 }
 
+
+
 /* Universal styles for Select component */
 .select {
+  box-sizing: border-box;
   display: flex;
+  cursor: pointer;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   width: 100%;
   height: 45px;
-  padding: 15px 15px;
+  padding: 0px 15px;
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  font-size: 15px;
+  font-size: 0.9375rem;
+  color: var(--neutral-gray);
 }
-.select::placeholder {
+
+.select-search-input {
+  width: 100%;
+  border: none !important;
+  outline: none !important;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  box-shadow: none;
+}
+
+.select-search-input::placeholder {
   color: var(--neutral-gray);
   font-style: italic;
 }
@@ -1383,6 +2133,7 @@ Select style rules
 .select-button-dropdown {
   background-color: var(--header-color);
 }
+
 .select-button-input {
   background-color: var(--bg-color);
 }
@@ -1391,22 +2142,24 @@ Select style rules
 .select-button-arrow {
   transform: scale(1, 1);
 }
+
 .select-button-arrow.opened {
   transform: scale(1, -1);
 }
 
 /* Container for Select options */
 .select-options {
-  width: 100%;
+  width: min(100%, 90vw);
   border-radius: 10px;
   position: absolute;
   background: none;
+  background-color: var(--dropdown-color);
   z-index: 2;
   margin-top: 5px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   /* Limit height to ten items, maybe less */
   max-height: 450px;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
 }
 
@@ -1419,7 +2172,7 @@ Select style rules
   border: none;
   background-color: var(--dropdown-color);
   padding: 15px 15px;
-  font-size: 14px;
+  font-size: 0.875rem;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -1427,19 +2180,22 @@ Select style rules
   gap: 8px;
   text-align: left;
 }
+
 .select-option:disabled {
   background-color: var(--tag-grey-unselected);
   color: var(--neutral-gray);
   cursor: not-allowed;
 }
+
 .select-option:hover {
   background-color: var(--primary-color);
   color: var(--invert-text);
-  
+
   .mono-stroke use {
     /* Important overrides theme specificity */
     stroke: var(--invert-text) !important;
   }
+
   .mono-fill use {
     /* Important overrides theme specificity */
     fill: var(--invert-text) !important;
@@ -1450,6 +2206,7 @@ Select style rules
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
+
 .select-option.bottom {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -1461,6 +2218,8 @@ Select style rules
   text-align: left;
 }
 
+/* #endregion */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1468,11 +2227,12 @@ Input style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+/* #region input */
 
 /* Universal styling for all input types */
 .input {
   min-height: 45px;
-  font-size: 15px;
+  font-size: 0.9375rem;
   padding-left: 15px;
   background: var(--bg-color);
   border: 1px solid var(--border-color);
@@ -1484,6 +2244,7 @@ Input style rules
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
   flex-grow: 1;
 }
+
 .input::placeholder {
   color: var(--neutral-gray);
   font-style: italic;
@@ -1493,12 +2254,14 @@ Input style rules
 .input-multiline-container {
   display: flex;
   flex-grow: 1;
+
 }
 
 /* Paired with character limit */
 .input-multiline {
   padding: 15px;
 }
+
 
 /* Link wrapper */
 .input-link-wrapper {
@@ -1523,6 +2286,7 @@ Input style rules
     color: var(--invert-text);
   }
 }
+
 .input-link-remove:hover {
   background-color: var(--error-delete-color) !important;
   cursor: pointer;
@@ -1531,13 +2295,14 @@ Input style rules
 /* Combo box label */
 .input-combo-label {
   color: var(--primary-color);
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
+
 }
 
 /* Details underneath label */
 .label-info {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--neutral-gray);
   font-style: italic;
   margin-top: 2px;
@@ -1547,14 +2312,24 @@ Input style rules
   display: flex;
   flex-direction: column;
 
-  .input, .select {
+  .input,
+  .select {
     margin-top: 10px;
   }
 }
+
 .label-input-box textarea {
   flex: 1 1 auto;
 }
 
+@media only screen and (max-width: 700px) {
+  .label-input-box {
+    width: calc(100vw - 60px);
+  }
+}
+
+
+/* #endregion */
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -1563,6 +2338,7 @@ Scrollbar style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region scrollbar */
 
 /* width */
 ::-webkit-scrollbar {
@@ -1590,6 +2366,8 @@ Scrollbar style rules
   cursor: pointer;
 }
 
+/* #endregion */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1597,6 +2375,7 @@ Tag Filter style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+/* #region tag filter */
 
 #tag-filter-list {
   display: flex;
@@ -1619,6 +2398,8 @@ Tag Filter style rules
   cursor: pointer;
 }
 
+/* #endregion */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1626,6 +2407,7 @@ Image Carousel style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+/* #region image carousel */
 
 #carousel-tabs {
   display: flex;
@@ -1637,6 +2419,7 @@ Image Carousel style rules
   border-radius: 50%;
   width: 14px;
   height: 14px;
+  padding: 0;
   background-color: var(--header-color);
 }
 
@@ -1645,6 +2428,8 @@ Image Carousel style rules
   background-color: var(--primary-color);
 }
 
+/* #endregion*/
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1652,10 +2437,12 @@ Image Carousel style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region scoll to top button */
+
 .ToTopContainer {
   position: fixed;
-  right: 50px;
-  bottom: 50px;
+  right: 15px;
+  bottom: 15px;
   width: fit-content;
   height: fit-content;
   font-size: 3rem;
@@ -1663,20 +2450,27 @@ Image Carousel style rules
   /* color: green; */
 }
 
+@media (max-width: 800px) {
+  .ToTopContainer {
+    bottom: 70px;
+  }
+}
+
 .ToTopContainer .to-top-button {
   width: 40px;
   height: 40px;
   text-align: center;
-  background: none;
-  border: none;
+  background: var(--header-color);
+  border: 2px solid var(--main-text);
   border-radius: 50px;
+
 
   animation: fadeIn 0.15s ease-in-out;
 
 }
 
 .to-top-button:hover {
-  background-color: var(--header-color);
+  box-shadow: 0px 0px 5px 1px;
 }
 
 .hidden {
@@ -1695,6 +2489,8 @@ Image Carousel style rules
   left: 1rem;
 }
 
+/* #endregion */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1702,6 +2498,8 @@ Spinning loader style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region spinning loader */
+
 .spinning-loader {
   border: 8px solid var(--neutral-gray);
   border-radius: 50%;
@@ -1711,6 +2509,7 @@ Spinning loader style rules
   -webkit-animation: spin 1.5s ease-in-out infinite;
   /* Safari */
   animation: spin 1.5s ease-in-out infinite;
+  justify-self: center;
 }
 
 /* Safari */
@@ -1734,6 +2533,8 @@ Spinning loader style rules
   }
 }
 
+/* #endregion */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1741,6 +2542,9 @@ Theme Icons style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region theme icons */
+
+
 
 /* Rule
 ** Applied to the svg via ThemeIcon component...
@@ -1773,6 +2577,7 @@ Theme Icons style rules
 .theme-light .svg-color-icon {
   fill: black;
 }
+
 [data-theme="dark"] .mono-fill use,
 [data-theme="light"] button.active .mono-fill use,
 /* Where is this used? */
@@ -1781,49 +2586,55 @@ Theme Icons style rules
 }
 
 /* Colored SVGs */
-.color-stroke > use {
+.color-stroke>use {
   stroke: var(--primary-color);
 }
-.color-fill > use {
+
+.color-fill>use {
   fill: var(--primary-color);
 }
 
 /* Header Color SVGs */
-.header-color-stroke > use {
+.header-color-stroke>use {
   stroke: var(--header-color);
 }
-.header-color-fill > use {
+
+.header-color-fill>use {
   fill: var(--header-color);
 }
 
 /* Gradient Color SVGs */
-.gradient-color-stroke > use {
+.gradient-color-stroke>use {
   stroke: var(--modal-gradient-start);
 }
-.gradient-color-fill > use {
+
+.gradient-color-fill>use {
   fill: var(--modal-gradient-start);
 }
+
 
 /* Star SVG (Following icon and Thumbnail indicator) */
 .star {
   top: 9px;
 }
 
-.empty-star > use {
+.empty-star>use {
   fill: none;
   stroke: var(--invert-text);
 }
-.project-image-hover > .filled-star > use,
-.star:hover > use {
+
+.project-image-hover>.filled-star>use,
+.star:hover>use {
   fill: var(--invert-text);
   stroke: var(--invert-text);
 }
 
 /* Only have shadow on image itself,  */
-:not(.project-image-hover) > .filled-star {
+:not(.project-image-hover)>.filled-star {
   filter: drop-shadow(0px 0px 10px rgb(0, 0, 0, 0.75));
 }
-.filled-star > use {
+
+.filled-star>use {
   fill: var(--main-text);
   stroke: var(--main-text);
 }
@@ -1840,3 +2651,5 @@ Theme Icons style rules
     /* filter: none; */
   }
 }
+
+/* #endregion */

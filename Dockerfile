@@ -1,51 +1,63 @@
-# Dockerfile that builds the Express API image
+# Builds the docker image of the server side of the project
 
-# Base Nodejs install
+#######################
+# base Node.js layer
+#######################
+# node:20-slim should be compatable with Prisma
 FROM node:24-slim AS base
 
-RUN apt-get update -y && apt-get install -y openssl
+#######################
+# system dependencies
+#######################
+# required for Prisma and some Node packages
+RUN apt-get update -y && apt-get install -y --no-install-recommends openssl
 
-# Generate the generated prisma client files
-FROM base AS prisma-client
-
-WORKDIR /prisma
-
-COPY package.json package-lock.json ./
-COPY ./server/package.json ./server/package.json
-COPY ./server/prisma/schema.prisma ./server/prisma/schema.prisma
-
-RUN npm ci --workspace=server --only=dev --ignore-scripts
-
-RUN npm run prisma:generate
-
-# Download only the production dependencies
-FROM base AS prod-deps
-
-WORKDIR /deps
-
-COPY package.json package-lock.json ./
-COPY ./server/package.json ./server/package.json
-
-RUN npm ci --workspace=server --omit=dev --ignore-scripts
-
-# Final stage where app will run
-FROM base AS runner
-
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 lfg
-
-ENV NODE_ENV=production
-ENV PORT=3000
 
 WORKDIR /app
 
-COPY ./server/package.json ./
-COPY ./server/src ./src
-COPY --from=prisma-client /prisma/server/src/models ./src/models
-COPY --from=prod-deps /deps/node_modules ./node_modules
+#######################
+# Install dependencies
+#######################
+# makes sure installs dont re-run unless chnages
+COPY package.json package-lock.json ./
+COPY server/package.json ./server/package.json
+COPY client/package.json ./client/package.json
+COPY shared/package.json ./shared/package.json
+
+# run clean install
+RUN npm ci --ignore-scripts
+
+#######################
+# Copy full project source code
+#######################
+COPY . .
+
+#######################
+# Generate Prisma Client
+#######################
+# creates the prisma client based on server/prisma/schema.prisma
+RUN npx prisma generate --schema=server/prisma/schema.prisma
+
+#######################
+# Build frontend
+#######################
+# Compiles react and vite into assets
+# Will be served by backend
+
+ARG VITE_GOOGLE_CLIENT_ID
+ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
+
+RUN npm run build
+
+#######################
+# Environment variables
+#######################
+ENV NODE_ENV=production
+ENV PORT=3000
 
 EXPOSE 3000
 
-USER lfg
-
-CMD ["src/index.ts"]
+#######################
+# Start server
+#######################
+CMD ["npm", "run", "start"]

@@ -38,14 +38,16 @@ describe('getUserByUsernameService', () => {
       apiUrl: '/api/users/3',
       firstName: '',
       lastName: '',
+      preferredName: '',
       profileImage: null,
       mentor: false,
+      privacy: 'public',
       designer: false,
       developer: false,
+      displayPhone: false,
       headline: '',
       pronouns: '',
       title: '',
-      funFact: '',
       location: '',
       majors: [],
     };
@@ -59,7 +61,7 @@ describe('getUserByUsernameService', () => {
     const [args] = calls[0];
 
     expect(args?.where).toEqual({ username: 'emberfox' });
-    expect(args?.select).toEqual(expect.any(Object));
+    expect(args?.select).toBeTypeOf('object');
 
     expect(transformUserToPreview).toHaveBeenCalledWith(prismaUser);
 

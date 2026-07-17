@@ -9,11 +9,24 @@
     gap: 20px 16px;
 }
 
+#profile-editor-project-selection > p {
+    grid-column: 1 / -1;
+    margin: 0.5rem 0;
+}
+
+@media only screen and (max-width: 700px) {
+    #profile-editor-project-selection {
+        grid-template-columns: 1fr 1fr 1fr;
+        height: 90%;
+    }
+}
+
 .projectTile {
     position: relative;
     aspect-ratio: 1 / 1;
     box-sizing: border-box;
     overflow: hidden;
+    transition: all 0.2s ease-in-out;
 
     img {
         box-sizing: border-box;
@@ -29,34 +42,63 @@
     .image-overlay {
         box-sizing: border-box;
         border-radius: 10px;
-        border: solid 2px white;
-        background-color: rgba(0, 0, 0, 0.6);
+        background-color: rgba(0, 0, 0, 0.45);
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
+        pointer-events: none;
     }
 
     .project-visibility-button {
-        position: absolute;
-        bottom: 9px;
-        right: 11.5px;
-        border: none;
-        padding: 0;
-        background-color: var(--primary-color);
-        width: 30px;
-        height: 30px;
-        border-radius: 30px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      position: absolute;
+      bottom: 9px;
+      right: 11.5px;
+      border: none;
+      padding: 0;
+      background-color: var(--primary-color);
+      width: 30px;
+      height: 30px;
+      border-radius: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.2s ease-in-out;
     }
+    .project-visibility-button:hover {
+      transform: translateY(-1px);
+      scale: 1.1;
+    }
+
+}
+
+.projectTile:hover {
+    transform: translateY(-2px);
+}
+
+/* "Hide project" icon is visibile (white) in light mode */
+[data-theme='light'] {
+  #eye, #eye-line
+  {
+      filter: invert(1);
+  }
+}
+
+.project-tile-title {
+  font-size: 18px;
+  margin-top: 6px;
+}
+
+/* Hidden project: dim the whole tile (image already has the overlay) so the
+   title and surrounding area also read as muted. */
+.project-tile-hidden .project-tile-title {
+  opacity: 0.55;
 }
 
 #profile-editor-projects {
-    height: 100%;
-    font-size: 1rem;
+  height: 100%;
+  font-size: 1rem;
 }
 
 .no-projects-text {

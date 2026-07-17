@@ -1,8 +1,8 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type DeleteMajorServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
-type DeleteMajorServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
+type DeleteMajorServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
 //DELETE api/me/majors/{id}
 //deletes a major from a user
@@ -31,13 +31,16 @@ export const deleteMajorService = async (
     });
 
     return 'NO_CONTENT';
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error in deleteMajorService:', error);
 
-    if (error instanceof Object && 'code' in error) {
-      if (error.code === 'P2025') {
-        return 'NOT_FOUND';
-      }
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      (error as { code?: string }).code === 'P2025'
+    ) {
+      return 'NOT_FOUND';
     }
 
     return 'INTERNAL_ERROR';

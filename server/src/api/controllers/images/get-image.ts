@@ -4,7 +4,7 @@ import { getImageService } from '#services/images/get-image.ts';
 
 //GET api/images/{image}
 export const getImage = async (req: Request, res: Response): Promise<void> => {
-  const key = req.params.image;
+  const key = req.params.image as string;
 
   if (!key) {
     const resBody: ApiResponse = {
@@ -31,7 +31,7 @@ export const getImage = async (req: Request, res: Response): Promise<void> => {
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
       status: 500,
-      error: 'Image not found',
+      error: 'Internal Error',
       data: null,
     };
     res.status(500).json(resBody);

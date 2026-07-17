@@ -1,39 +1,55 @@
 import {
-  AddProjectMediumsInput,
+  AddProjectMediumInput,
   AddProjectSocialInput,
-  AddProjectTagsInput,
+  AddProjectTagInput,
   ApiResponse,
   CreateProjectImageInput,
   CreateProjectJobInput,
   CreateProjectMemberInput,
+  SendProjectInviteInput,
+  CreateProjectVideoInput,
   ProjectWithFollowers,
   UpdateProjectImageInput,
   UpdateProjectInput,
   UpdateProjectJobInput,
   UpdateProjectMemberInput,
   UpdateProjectSocialInput,
+  UpdateProjectTagInput,
   UpdateProjectThumbnailInput,
+  UpdateJobSkillInput,
+  AddJobSkillInput,
+  DeleteJobSkillInput,
+  ProjectJob,
+  UpdateMemberRequestInput,
 } from "@looking-for-group/shared";
 import {
-  addMember,
+  sendInvite,
   addPic,
   addProjectJob,
   addProjectMedium,
   addProjectSocial,
   addProjectTag,
+  addVideo,
+  deleteVideo as deleteVideoAPI,
   deleteMember as deleteMemberAPI,
   deletePic,
   deleteProjectJob,
   deleteProjectMedium,
   deleteProjectSocial,
   deleteProjectTag,
+  deleteMemberRequest as deleteMemberRequestAPI,
   getByID,
   updateMember as updateMemberAPI,
+  updateMemberRequest as updateMemberRequestAPI,
   updatePic,
   updateProject,
   updateProjectJob,
   updateProjectSocial,
+  updateProjectTag,
   updateThumb,
+  updateJobSkill,
+  addJobSkill,
+  deleteJobSkill,
 } from "../projects";
 import {
   CRUDRequest,
@@ -72,7 +88,9 @@ export const projectDataManager = async (projectId: number) => {
         tags: [],
         projectImages: [],
         projectSocials: [],
+        projectVideos: [],
         jobs: [],
+        jobSkills: [],
         members: [],
         mediums: [],
       },
@@ -91,18 +109,24 @@ export const projectDataManager = async (projectId: number) => {
           },
           data: {} as UpdateProjectThumbnailInput,
         },
+        tags: [],
         projectImages: [],
         projectSocials: [],
         jobs: [],
+        jobSkills: [],
         members: [],
+        memberRequests: [],
       },
       delete: {
         tags: [],
         projectImages: [],
         projectSocials: [],
+        projectVideos: [],
         jobs: [],
+        jobSkills: [],
         members: [],
         mediums: [],
+        memberRequests: [],
       },
     };
 
@@ -118,6 +142,11 @@ export const projectDataManager = async (projectId: number) => {
    * the changes we are about to apply to the project.
    */
   let changes: ProjectChanges = getEmptyChanges();
+
+  /**
+   * an array used for applying canon jobId to job skills before they're created.
+   */
+  const jobIdArray: {localId: number, jobId: number}[] = [];
 
   /**
    * For each change, did it succeed on the server side?
@@ -216,6 +245,17 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project tags
+    try {
+      await runAndCollectErrors<UpdateProjectTagInput>(
+        "Updating project tag",
+        updates.tags,
+        ({ id, data }) => updateProjectTag(projectId, id.value, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
     // project jobs
     try {
       await runAndCollectErrors<UpdateProjectJobInput>(
@@ -246,21 +286,24 @@ export const projectDataManager = async (projectId: number) => {
         ({ id, data }) => updatePic(projectId, id.value, data)
       );
     } catch (error) {
-      errorMessage += (error as { message: string }).message;
+      // Don't fail completely. This should probably be reverted as AWS is set up
+      console.warn("Skipped updating images (backend may be down):", (error as { message: string }).message);
     }
 
     // project thumbnails
     try {
 
-      await runAndCollectErrors<UpdateProjectThumbnailInput>(
-        "Updating project thumbnail",
-        [updates.thumbnail],
-        ({ data }) => updateThumb(projectId, data)
-      );
+      // Only update if there is a thumbnail
+      if (updates.thumbnail && updates.thumbnail.data && updates.thumbnail.data.thumbnail !== undefined) {
+        await runAndCollectErrors<UpdateProjectThumbnailInput>(
+          "Updating project thumbnail",
+          [updates.thumbnail],
+          ({ data }) => updateThumb(projectId, data)
+        );
+      }
 
     } catch (error) {
-      console.log("Failed to update thumbnail: " + (error as { message: string }).message);
-      errorMessage += (error as { message: string }).message;
+      console.warn("Skipped updating images (backend may be down):", (error as { message: string }).message);
     }
 
     // project socials
@@ -269,6 +312,33 @@ export const projectDataManager = async (projectId: number) => {
         "Updating project social",
         updates.projectSocials,
         ({ id, data }) => updateProjectSocial(projectId, id.value, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    if (errorMessage != "") {
+      throw new Error(`Some updates failed: ${errorMessage}. `);
+    }
+
+
+    // job skills
+    try {
+      await runAndCollectErrors<UpdateJobSkillInput>(
+        "Updating project social",
+        updates.jobSkills,
+        ({ id, data }) => updateJobSkill(projectId, id.value, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    // project member requests
+    try {
+      await runAndCollectErrors<UpdateMemberRequestInput>(
+        "Updating project member requests",
+        updates.memberRequests,
+        ({ id, data }) => updateMemberRequestAPI(id.value, data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -319,12 +389,23 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project videos
+    try {
+      await runAndCollectErrors<CreateProjectVideoInput>(
+        "Creating project video",
+        creates.projectVideos,
+        ({ data }) => addVideo(projectId, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
     // project members
     try {
-      await runAndCollectErrors<CreateProjectMemberInput>(
-        "Creating project member",
+      await runAndCollectErrors<SendProjectInviteInput>(
+        "Sending project invitation to prospective member ",
         creates.members,
-        ({ data }) => addMember(projectId, data)
+        ({ data }) => sendInvite(projectId, data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -332,7 +413,7 @@ export const projectDataManager = async (projectId: number) => {
 
     // project mediums
     try {
-      await runAndCollectErrors<AddProjectMediumsInput>(
+      await runAndCollectErrors<AddProjectMediumInput>(
         "Adding project medium",
         creates.mediums,
         ({ data }) => addProjectMedium(projectId, data)
@@ -343,7 +424,7 @@ export const projectDataManager = async (projectId: number) => {
 
     // project tags
     try {
-      await runAndCollectErrors<AddProjectTagsInput>(
+      await runAndCollectErrors<AddProjectTagInput>(
         "Adding project tag",
         creates.tags,
         ({ data }) => addProjectTag(projectId, data)
@@ -358,6 +439,31 @@ export const projectDataManager = async (projectId: number) => {
         "Adding project social",
         creates.projectSocials,
         ({ data }) => addProjectSocial(projectId, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    if (errorMessage != "") {
+      throw new Error(`Some creates failed: ${errorMessage}. `);
+    }
+
+    // job skills
+    try {
+      for(const skill of changes.create.jobSkills){
+      
+      //inserting canon job ids into the skills after their associated jobs are created
+      for(const ids of jobIdArray){
+        if(skill.id.type === "local" && ids.localId === skill.id.value){
+          skill.id.value = ids.jobId;
+          skill.id.type = 'canon'
+        }
+      }
+      }
+      await runAndCollectErrors<AddJobSkillInput>(
+        "Adding job skill",
+        creates.jobSkills,
+        ({ id, data }) => addJobSkill(projectId, id.value, data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -399,7 +505,6 @@ export const projectDataManager = async (projectId: number) => {
 
     // project members
     try {
-      console.log(deletes.members);
       await runAndCollectErrors<null>(
         "Deleting project member",
         deletes.members,
@@ -415,6 +520,17 @@ export const projectDataManager = async (projectId: number) => {
         "Deleting project image",
         deletes.projectImages,
         ({ id }) => deletePic(projectId, id.value)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    // project videos
+    try {
+      await runAndCollectErrors<null>(
+        "Deleting project video",
+        deletes.projectVideos,
+        ({ id }) => deleteVideoAPI(projectId, id.value)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -437,6 +553,32 @@ export const projectDataManager = async (projectId: number) => {
         "Deleting project tag",
         deletes.tags,
         ({ id }) => deleteProjectTag(projectId, id.value)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    if (errorMessage != "") {
+      throw new Error(`Some deletes failed: ${errorMessage}. `);
+    }
+
+    // job skills
+    try {
+      await runAndCollectErrors<DeleteJobSkillInput>(
+        "Deleting job skill",
+        deletes.jobSkills,
+        ({ data }) => deleteJobSkill(projectId, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    // project member requests
+    try {
+      await runAndCollectErrors<null>(
+        "Deleting project member requests",
+        deletes.memberRequests,
+        ({ id }) => deleteMemberRequestAPI(id.value)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -476,6 +618,12 @@ export const projectDataManager = async (projectId: number) => {
     // we haven't found this to be a problem.
     for (const request of requests) {
       const response = await action(request);
+      if(request.data) {
+        const jobSkills = (request.data as UpdateProjectJobInput).jobSkills
+        if(jobSkills && jobSkills.length > 0 && request.id.type === "local"){
+          jobIdArray.push({localId: request.id.value, jobId: (response.data as ProjectJob).jobId})
+        }
+      }
       statuses.push({
         id: request.id.value,
         succeeded: !response.error,
@@ -494,7 +642,7 @@ export const projectDataManager = async (projectId: number) => {
    * Adds a new tag to the project
    * @param tag The tag to be added
    */
-  const addTag = (tag: CRUDRequest<AddProjectTagsInput>) => {
+  const addTag = (tag: CRUDRequest<AddProjectTagInput>) => {
     if (changes.create.tags.some(({ id }) => id.value === tag.id.value)) {
       changes.create.tags = [
         ...changes.create.tags.filter(({ id }) => id.value !== tag.id.value),
@@ -505,12 +653,20 @@ export const projectDataManager = async (projectId: number) => {
 
     changes.create.tags.push(tag);
   };
+  /**
+   * Adds a new skill to a project job
+   * @param skill The skill to be added
+   */
+  const addProjectJobSkill = (skill: CRUDRequest<AddJobSkillInput>) => {
+
+    changes.create.jobSkills.push(skill);
+  };
 
   /**
    * Adds a new medium to the project
    * @param medium The medium to be added
    */
-  const addMedium = (medium: CRUDRequest<AddProjectMediumsInput>) => {
+  const addMedium = (medium: CRUDRequest<AddProjectMediumInput>) => {
     if (changes.create.mediums.some(({ id }) => id.value === medium.id.value)) {
       changes.create.mediums = [
         ...changes.create.mediums.filter(
@@ -551,19 +707,26 @@ export const projectDataManager = async (projectId: number) => {
    * @param image The image data
    */
   const createImage = (image: CRUDRequest<CreateProjectImageInput>) => {
+    changes.create.projectImages.push(image);
+  };
+
+  /**
+   * Adds a new video to the project
+   * @param video The video to be created
+   */
+  const createVideo = (video: CRUDRequest<CreateProjectVideoInput>) => {
     if (
-      changes.create.projectImages.some(({ id }) => id.value === image.id.value)
+      changes.create.projectVideos.some(({ id }) => id.value === video.id.value)
     ) {
-      changes.create.projectImages = [
-        ...changes.create.projectImages.filter(
-          ({ id }) => id.value !== image.id.value
+      changes.create.projectVideos = [
+        ...changes.create.projectVideos.filter(
+          ({ id }) => id.value !== video.id.value
         ),
-        image,
+        video,
       ];
       return;
     }
-
-    changes.create.projectImages.push(image);
+    changes.create.projectVideos.push(video);
   };
 
   /**
@@ -643,6 +806,64 @@ export const projectDataManager = async (projectId: number) => {
           )
       ),
       existingImageUpdate,
+    ];
+  };
+
+  /**
+   * Updates an existing tag of a project
+   * @param tag The tag to be updated and its new data
+   */
+  const updateTag = (tag: CRUDRequest<UpdateProjectTagInput>) => {
+    let existingTagUpdate = changes.update.tags.find(
+      ({ id }) => id.value === tag.id.value && id.type === tag.id.type
+    );
+
+    existingTagUpdate = {
+      id: tag.id,
+      data: {
+        ...existingTagUpdate?.data,
+        ...tag.data,
+      },
+    };
+
+    changes.update.tags = [
+      ...changes.update.tags.filter(
+        ({ id }) =>
+          !(
+            id.value == existingTagUpdate.id.value &&
+            id.type == existingTagUpdate.id.type
+          )
+      ),
+      existingTagUpdate,
+    ];
+  };
+
+  /**
+   * Updates an existing job skill
+   * @param skill The skill to be updated and its new data
+   */
+  const updateProjectJobSkill = (skill: CRUDRequest<UpdateJobSkillInput>) => {
+    let existingSkillUpdate = changes.update.jobSkills.find(
+      ({ id }) => id.value === skill.id.value && id.type === skill.id.type
+    );
+
+    existingSkillUpdate = {
+      id: skill.id,
+      data: {
+        ...existingSkillUpdate?.data,
+        ...skill.data,
+      },
+    };
+
+    changes.update.jobSkills = [
+      ...changes.update.jobSkills.filter(
+        ({ id }) =>
+          !(
+            id.value == existingSkillUpdate.id.value &&
+            id.type == existingSkillUpdate.id.type
+          )
+      ),
+      existingSkillUpdate,
     ];
   };
 
@@ -749,6 +970,35 @@ export const projectDataManager = async (projectId: number) => {
   };
 
   /**
+   * Updates an existing member request of a project
+   * @param request The request to be updated and its new data
+   */
+  const updateMemberRequest = (request: CRUDRequest<UpdateMemberRequestInput>) => {
+    let existingRequestUpdate = changes.update.memberRequests.find(
+      ({ id }) => id.value === request.id.value && id.type === request.id.type
+    );
+
+    existingRequestUpdate = {
+      id: request.id,
+      data: {
+        ...existingRequestUpdate?.data,
+        ...request.data,
+      },
+    };
+
+    changes.update.memberRequests = [
+      ...changes.update.memberRequests.filter(
+        ({ id }) =>
+          !(
+            id.value == existingRequestUpdate.id.value &&
+            id.type == existingRequestUpdate.id.type
+          )
+      ),
+      existingRequestUpdate,
+    ];
+  };
+
+  /**
    * Deletes an existing tag of a project
    * @param tag The tag to be deleted
    */
@@ -806,6 +1056,31 @@ export const projectDataManager = async (projectId: number) => {
   };
 
   /**
+   * Removes an existing video from a project
+   * @param video The video to delete
+   */
+  const deleteVideo = (video: CRUDRequest<null>) => {
+    // if we were gonna create this video, don't
+    if (
+      video.id.type === "local" &&
+      changes.create.projectVideos.some(({ id }) => id.value === video.id.value)
+    ) {
+      changes.create.projectVideos = changes.create.projectVideos.filter(
+        ({ id }) => id.value !== video.id.value
+      );
+      return;
+    }
+
+    // otherwise, delete this video
+    if (
+      video.id.type === "canon" &&
+      !changes.delete.projectVideos.some(({ id }) => id.value === video.id.value)
+    ) {
+      changes.delete.projectVideos.push(video);
+    }
+  };
+
+  /**
    * Deletes an existing social of a project
    * @param social The social to delete
    */
@@ -843,6 +1118,48 @@ export const projectDataManager = async (projectId: number) => {
       )
     ) {
       changes.delete.projectSocials.push(social);
+    }
+  };
+
+
+  /**
+   * Deletes an existing skill of a project job
+   * @param skill The skill to delete
+   */
+  const deleteProjectJobSkill = (skill: CRUDRequest<DeleteJobSkillInput>) => {
+    // if we were gonna update this skill, don't
+    if (
+      changes.update.jobSkills.some(
+        ({ id }) => id.value === skill.id.value && id.type === skill.id.type
+      )
+    ) {
+      changes.update.jobSkills = changes.update.jobSkills.filter(
+        ({ id }) =>
+          !(id.value === skill.id.value && id.type === skill.id.type)
+      );
+    }
+
+    // if we were gonna create this skill, don't
+    if (
+      skill.id.type === "local" &&
+      changes.create.projectSocials.some(
+        ({ id }) => id.value === skill.id.value
+      )
+    ) {
+      changes.create.jobSkills = changes.create.jobSkills.filter(
+        ({ id }) => id.value !== skill.id.value
+      );
+      return;
+    }
+
+    // otherwise, delete this skill
+    if (
+      skill.id.type === "canon" &&
+      !changes.delete.jobSkills.some(
+        ({ id }) => id.value === skill.id.value
+      )
+    ) {
+      changes.delete.jobSkills.push(skill);
     }
   };
 
@@ -920,6 +1237,32 @@ export const projectDataManager = async (projectId: number) => {
   };
 
   /**
+   * Removes an existing member request of a project
+   * @param request The member request to delete
+   */
+  const deleteMemberRequest = (request: CRUDRequest<null>) => {
+    // if we were gonna update this request, don't
+    if (
+      changes.update.memberRequests.some(
+        ({ id }) => id.value === request.id.value && id.type === request.id.type
+      )
+    ) {
+      changes.update.memberRequests = changes.update.memberRequests.filter(
+        ({ id }) =>
+          !(id.value === request.id.value && id.type === request.id.type)
+      );
+    }
+
+    // otherwise, delete this member request
+    if (
+      request.id.type === "canon" &&
+      !changes.delete.memberRequests.some(({ id }) => id.value === request.id.value)
+    ) {
+      changes.delete.memberRequests.push(request);
+    }
+  };
+
+  /**
    * Removes an existing medium from a project
    * @param medium The medium to delete
    */
@@ -943,22 +1286,30 @@ export const projectDataManager = async (projectId: number) => {
   return {
     saveChanges,
     addTag,
+    addProjectJobSkill,
+    updateProjectJobSkill,
+    deleteProjectJobSkill,
     addMedium,
     addSocial,
     createImage,
     createMember,
     createJob,
+    createVideo,
     updateFields,
     updateImage,
+    updateTag,
     updateSocial,
     updateJob,
     updateMember,
+    updateMemberRequest,
     updateThumbnail,
     deleteTag,
     deleteImage,
     deleteSocial,
+    deleteVideo,
     deleteJob,
     deleteMember,
+    deleteMemberRequest,
     deleteMedium,
     getSavedProject,
   };

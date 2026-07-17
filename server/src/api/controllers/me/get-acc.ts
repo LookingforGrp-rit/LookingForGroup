@@ -5,7 +5,7 @@ import { getUserAccountService } from '#services/me/get-user-acc.ts';
 //GET api/me
 //get current user's account
 export const getAccount = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const result = await getUserAccountService(req.currentUser);
+  const result = await getUserAccountService(req.currentUser.userId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

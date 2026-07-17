@@ -23,7 +23,7 @@ CREATE TABLE `jobs` (
     `role_id` INTEGER NOT NULL,
     `contact_user_id` INTEGER NOT NULL,
     `availability` ENUM('Full-time', 'Part-time', 'Flexible') NOT NULL,
-    `duration` ENUM('Short-term', 'Long-term') NOT NULL,
+    `duration` ENUM('Days', 'Weeks', 'Months', 'Semesters', 'Years') NOT NULL,
     `location` ENUM('On-site', 'Remote', 'Hybrid') NOT NULL,
     `compensation` ENUM('Unpaid', 'Paid') NOT NULL,
     `description` VARCHAR(500) NOT NULL DEFAULT '',
@@ -94,7 +94,7 @@ CREATE TABLE `project_socials` (
 CREATE TABLE `projects` (
     `project_id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(150) NOT NULL,
-    `hook` VARCHAR(200) NOT NULL DEFAULT '',
+    `hook` VARCHAR(300) NOT NULL DEFAULT '',
     `description` VARCHAR(2000) NOT NULL DEFAULT '',
     `thumbnail_id` INTEGER NULL,
     `purpose` ENUM('Personal', 'Portfolio Piece', 'Academic', 'Co-op') NULL,
@@ -171,7 +171,7 @@ CREATE TABLE `users` (
     `headline` VARCHAR(100) NOT NULL DEFAULT '',
     `pronouns` VARCHAR(20) NOT NULL DEFAULT '',
     `title` VARCHAR(50) NOT NULL DEFAULT '',
-    `academic_year` ENUM('Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate') NULL,
+    `rit_status` ENUM('Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate', 'Faculty', 'Staff') NULL,
     `location` VARCHAR(150) NOT NULL DEFAULT '',
     `fun_fact` VARCHAR(100) NOT NULL DEFAULT '',
     `bio` VARCHAR(600) NOT NULL DEFAULT '',
@@ -180,12 +180,12 @@ CREATE TABLE `users` (
     `created_at` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
     `updated_at` TIMESTAMP(0) NOT NULL,
     `phone_number` VARCHAR(20) NULL,
-    `university_id` VARCHAR(9) NOT NULL,
+    `google_id` VARCHAR(200) NOT NULL,
 
     UNIQUE INDEX `users_username_key`(`username`),
     UNIQUE INDEX `users_rit_email_key`(`rit_email`),
     UNIQUE INDEX `users_phone_number_key`(`phone_number`),
-    UNIQUE INDEX `university_id_UNIQUE`(`university_id`),
+    UNIQUE INDEX `google_id_UNIQUE`(`google_id`),
     PRIMARY KEY (`user_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -215,15 +215,6 @@ CREATE TABLE `_MajorsToUsers` (
 
     UNIQUE INDEX `_MajorsToUsers_AB_unique`(`A`, `B`),
     INDEX `_MajorsToUsers_B_index`(`B`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `_ProjectsToTags` (
-    `A` INTEGER NOT NULL,
-    `B` INTEGER NOT NULL,
-
-    UNIQUE INDEX `_ProjectsToTags_AB_unique`(`A`, `B`),
-    INDEX `_ProjectsToTags_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
@@ -291,12 +282,6 @@ ALTER TABLE `_MajorsToUsers` ADD CONSTRAINT `_MajorsToUsers_A_fkey` FOREIGN KEY 
 
 -- AddForeignKey
 ALTER TABLE `_MajorsToUsers` ADD CONSTRAINT `_MajorsToUsers_B_fkey` FOREIGN KEY (`B`) REFERENCES `users`(`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `_ProjectsToTags` ADD CONSTRAINT `_ProjectsToTags_A_fkey` FOREIGN KEY (`A`) REFERENCES `projects`(`project_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `_ProjectsToTags` ADD CONSTRAINT `_ProjectsToTags_B_fkey` FOREIGN KEY (`B`) REFERENCES `tags`(`tag_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --

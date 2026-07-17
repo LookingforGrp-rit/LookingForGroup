@@ -1,6 +1,9 @@
 import type { AuthenticatedRequest } from '@looking-for-group/shared';
 import { Router, type NextFunction, type Request, type Response } from 'express';
 import { upload } from '#config/multer.ts';
+import { addToBlocklist } from '#controllers/me/blocklist/add-to-blocklist.ts';
+import { getBlocklist } from '#controllers/me/blocklist/get-blocklist.ts';
+import { removeFromBlocklist } from '#controllers/me/blocklist/remove-from-blocklist.ts';
 import { deleteUser } from '#controllers/me/delete-user.ts';
 import { addProjectFollowing } from '#controllers/me/followings/add-follow-proj.ts';
 import { addUserFollowing } from '#controllers/me/followings/add-follow-user.ts';
@@ -8,11 +11,18 @@ import { deleteProjectFollowing } from '#controllers/me/followings/delete-follow
 import { deleteUserFollowing } from '#controllers/me/followings/delete-follow-user.ts';
 import { getAccount } from '#controllers/me/get-acc.ts';
 import { getMyProjects } from '#controllers/me/get-my-proj.ts';
-import { getUsernameByShib } from '#controllers/me/get-username-shib.ts';
+import { getUsernameByGoogle } from '#controllers/me/get-username-google.ts';
 import { leaveProjectController } from '#controllers/me/leave-project.ts';
 import addUserMajor from '#controllers/me/majors/add-major.ts';
 import { deleteMajor } from '#controllers/me/majors/delete-major.ts';
 import { getUserMajors } from '#controllers/me/majors/get-majors.ts';
+import { checkForUnreadNotifications } from '#controllers/me/notifications/check-for-unread-notifications.ts';
+import { deleteNotification } from '#controllers/me/notifications/delete-notification.ts';
+import { getNotification } from '#controllers/me/notifications/get-notification.ts';
+import { getNotifications } from '#controllers/me/notifications/get-notifications.ts';
+import { readNotification } from '#controllers/me/notifications/read-notification.ts';
+import { reportProjectController } from '#controllers/me/report-proj.ts';
+import { reportUserController } from '#controllers/me/report-user.ts';
 import addSkills from '#controllers/me/skills/add-skills.ts';
 import { deleteSkill } from '#controllers/me/skills/delete-skills.ts';
 import { getSkills } from '#controllers/me/skills/get-skills.ts';
@@ -22,7 +32,11 @@ import { deleteSocial } from '#controllers/me/socials/delete-social.ts';
 import { getSocials } from '#controllers/me/socials/get-socials.ts';
 import { updateSocial } from '#controllers/me/socials/update-social.ts';
 import { updateUserInfo } from '#controllers/me/update-info.ts';
-import { updateProjectVisibilityController } from '#controllers/me/update-project-visibility.ts';
+import { updateProjectProfileVisibilityController } from '#controllers/me/update-project-profile-visibility.ts';
+import { isUserBlocked } from '#middleware/validators/is-user-blocked.ts';
+import { MeParameterLocation } from '#middleware/validators/parameter-location/me-param-location.ts';
+import { PathParameterLocation } from '#middleware/validators/parameter-location/path-param-location.ts';
+import { ProjectInPathParameterLocation } from '#middleware/validators/parameter-location/project-in-path-param-location.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
@@ -48,14 +62,15 @@ export const authenticated = (
 //All routes use requiresLogin and injectCurrentUser
 router.use(requiresLogin, injectCurrentUser);
 
-// FOLLOW ROUTES
-
+//#region Follow routes
 //Follows a project
 router.post(
   '/followings/projects/:id',
   projectExistsAt('path', 'id'),
+  isUserBlocked(new ProjectInPathParameterLocation(), '', new MeParameterLocation(), ''),
   authenticated(addProjectFollowing),
 );
+
 //Unfollows a project
 router.delete(
   '/followings/projects/:id',
@@ -63,8 +78,15 @@ router.delete(
   authenticated(userAttributeExistsAt('projectFollowing', 'path', 'id')),
   authenticated(deleteProjectFollowing),
 );
+
 //Follows a user
-router.post('/followings/people/:id', userExistsAt('path', 'id'), authenticated(addUserFollowing));
+router.post(
+  '/followings/people/:id',
+  userExistsAt('path', 'id'),
+  isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  authenticated(addUserFollowing),
+);
+
 //Unfollows a user
 router.delete(
   '/followings/people/:id',
@@ -72,24 +94,27 @@ router.delete(
   authenticated(userAttributeExistsAt('userFollowing', 'path', 'id')),
   authenticated(deleteUserFollowing),
 );
+//#endregion
 
-// MAJORS ROUTES
-
+//#region Majors routes
 //Gets the current user's majors
 router.get('/majors', authenticated(getUserMajors));
+
 //Adds a major
 router.post('/majors', attributeExistsAt('major', 'body', 'majorId'), authenticated(addUserMajor));
+
 //Deletes a major
 router.delete(
   '/majors/:id',
   authenticated(userAttributeExistsAt('major', 'path', 'id')),
   authenticated(deleteMajor),
 );
+//#endregion
 
-// PROJECTS ROUTES
-
+//#region Projects routes
 //Gets current user's projects
 router.get('/projects', authenticated(getMyProjects));
+
 //Leave a project
 router.delete(
   '/projects/:id/leave',
@@ -97,60 +122,100 @@ router.delete(
   authenticated(userAttributeExistsAt('project', 'path', 'id')),
   authenticated(leaveProjectController),
 );
+
 //Change project profile visibility
 router.put(
   '/projects/:id/visibility',
   projectExistsAt('path', 'id'),
   authenticated(userAttributeExistsAt('project', 'path', 'id')),
-  authenticated(updateProjectVisibilityController),
+  authenticated(updateProjectProfileVisibilityController),
 );
 
-// SKILLS ROUTES
+//Report project
+router.post(
+  '/projects/report/:id/',
+  projectExistsAt('path', 'id'),
+  authenticated(reportProjectController),
+);
+//#endregion
 
+//#region Skills routes
 //Gets a user's skills
 router.get('/skills', authenticated(getSkills));
+
 //Adds a skill
 router.post('/skills', attributeExistsAt('skill', 'body', 'skillId'), authenticated(addSkills));
+
 //Deletes a skill
 router.delete(
   '/skills/:id',
   authenticated(userAttributeExistsAt('skill', 'path', 'id')),
   authenticated(deleteSkill),
 );
+
 //Updates a skill's proficiency (or position if it ever becomes useful)
 router.patch(
   '/skills/:id',
   authenticated(userAttributeExistsAt('skill', 'path', 'id')),
   authenticated(updateSkills),
 );
+//#endregion
 
-// SOCIALS ROUTES
-
+//#region Socials routes
 //Gets a user's socials
 router.get('/socials', authenticated(getSocials));
+
 //Adds a social
 router.post('/socials', attributeExistsAt('social', 'body', 'websiteId'), authenticated(addSocial));
+
 //Updates a social
 router.patch(
-  '/socials/:websiteId',
-  authenticated(userAttributeExistsAt('social', 'path', 'websiteId')),
+  '/socials/:id',
+  authenticated(userAttributeExistsAt('social', 'path', 'id')),
   authenticated(updateSocial),
 );
+
 //Deletes a social
 router.delete(
-  '/socials/:websiteId',
-  authenticated(userAttributeExistsAt('social', 'path', 'websiteId')),
+  '/socials/:id',
+  authenticated(userAttributeExistsAt('social', 'path', 'id')),
   authenticated(deleteSocial),
 );
+//#endregion
+
+//#region Notifications routes
+router.get('/notifications', authenticated(getNotifications));
+
+router.get('/notifications/checkformessages', authenticated(checkForUnreadNotifications));
+
+router.get('/notifications/:id', authenticated(getNotification));
+
+router.patch('/notifications/:id/read', authenticated(readNotification));
+
+router.delete('/notifications/:id', authenticated(deleteNotification));
+//#endregion
+
+//#region Blocklist routes
+router.post('/blocklist', userExistsAt('body', 'userId'), authenticated(addToBlocklist));
+
+router.delete('/blocklist', userExistsAt('body', 'userId'), authenticated(removeFromBlocklist));
+
+router.get('/blocklist', authenticated(getBlocklist));
+//#endregion
 
 //Gets user's account
 router.get('/', authenticated(getAccount));
+
 //Updates users information
 router.patch('/', upload.single('profileImage'), authenticated(updateUserInfo));
+
 //Delete user
 router.delete('/', authenticated(deleteUser));
 
 //Gets username by shib ID
-router.get('/get-username', authenticated(getUsernameByShib));
+router.get('/get-username', authenticated(getUsernameByGoogle));
+
+//Report user
+router.post('/users/report/:id', userExistsAt('path', 'id'), authenticated(reportUserController));
 
 export default router;

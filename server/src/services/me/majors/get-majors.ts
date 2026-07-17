@@ -24,9 +24,13 @@ const getUserMajorsService = async (userId: number): Promise<MyMajor[] | GetServ
 
     if (result === null) return 'NOT_FOUND';
 
+    //Array is alphabetized by major name
+    result.majors = result.majors.toSorted(
+      (major1, major2) => major1.label.charCodeAt(0) - major2.label.charCodeAt(0),
+    );
     return result.majors.map((major) => transformMyMajor(major));
   } catch (e) {
-    console.error(`Error in getMajorService: ${JSON.stringify(e)}`);
+    console.error(`Error in getMajorService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }

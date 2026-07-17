@@ -6,9 +6,20 @@ import { deleteSkillService } from '#services/me/skills/delete-skills.ts';
 //delete a skill from user profile
 export const deleteSkill = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   //the one you're deleting
-  const skill = parseInt(req.params.id);
+  const skill = parseInt(req.params.id as string);
 
-  const result = await deleteSkillService(skill, req.currentUser);
+  const result = await deleteSkillService(skill, req.currentUser.userId);
+
+  //not found
+  if (result === 'NOT_FOUND') {
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'Skill Not Found',
+      data: null,
+    };
+    res.status(404).json(resBody);
+    return;
+  }
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

@@ -11,6 +11,7 @@ Login and Signup page style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region login and signup page */
 
 .background-cover {
   position: fixed;
@@ -26,49 +27,51 @@ Login and Signup page style rules
 }
 
 .login-signup-container {
+  width: 95%;
+  max-width: 880px;
   margin: auto;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  height: 525px;
-  width: 880px;
+  height: min(60vh, 525px);
   background-color: var(--bg-color);
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   border-radius: 10px;
   position: relative;
+  overflow: hidden;
 }
 
 .login-form,
 .signup-form {
-  width: 440px;
-  height: 485px;
-  text-align: center;
-  /* border: 1px solid black; */
-  background-color: var(--bg-color);
-  padding: 20px;
-  border-radius: 10px 0 0 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
 }
 
+/* .signup-form,
+  .directory {
+    flex: 1;
+    height: 485px;
+    text-align: center;
+     border: 1px solid black; 
+    background-color: var(--bg-color);
+    padding: 40px 20px;
+    border-radius: 10px 0 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+  } */
+
 .directory {
-  width: 440px;
-  height: 485px;
-  text-align: center;
   /* border: 1px solid black; */
   background: var(--sidebar-gradient);
   color: var(--main-text);
-  padding: 20px;
-  border-radius: 0 10px 10px 0;
   background-size: cover;
   background-position: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  height: 100%;
 }
 
 .directory img {
@@ -76,7 +79,7 @@ Login and Signup page style rules
   height: auto;
   /* height: 200px;
   border-radius: 100%; */
-  margin-bottom: 20px;
+  margin: auto;
 }
 
 /* .directory p {
@@ -87,9 +90,10 @@ Login and Signup page style rules
 
 .login-form h2,
 .signup-form h2 {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 600;
   color: var(--primary-color);
+  margin: 20px auto;
 }
 
 /* .login-form p {
@@ -97,24 +101,11 @@ Login and Signup page style rules
   margin-bottom: 0;
 } */
 
-.signup-name-input {
-  width: 135px;
-  height: 40px;
-  margin: 5px;
-  padding: 5px 20px;
-  border: none;
-  outline: none;
-  background-color: var(--header-color);
-  border-radius: 10px;
-  text-align: left;
-  font-size: 15px;
-}
-
 .signup-input,
-.login-input {
-  width: 320px;
+.login-input,
+.signup-name-input {
+  width: 100%;
   height: 40px;
-  margin: 5px;
   padding: 5px 20px;
   border: none;
   background-color: var(--header-color);
@@ -122,7 +113,8 @@ Login and Signup page style rules
   border-radius: 10px;
   text-align: left;
   outline: none;
-  font-size: 15px;
+  font-size: 0.9375rem;
+  box-sizing: border-box;
 }
 
 .signup-input::placeholder,
@@ -138,7 +130,7 @@ Login and Signup page style rules
   height: 40px;
   /* margin: 20px auto 0px auto; */
   padding: 5px 16px;
-  font-size: 20px;
+  font-size: 1.25rem;
   border: none;
   border-radius: 40px;
   background-color: var(--primary-color);
@@ -150,9 +142,9 @@ Login and Signup page style rules
 .directory button {
   width: 120px;
   height: 40px;
-  margin: 20px auto 0px auto;
+  margin: 20px auto 20px auto;
   padding: 5px 16px;
-  font-size: 20px;
+  font-size: 1.25rem;
   border: 1px solid #e3e3e3;
   border: none;
   border-radius: 50px;
@@ -167,41 +159,51 @@ Login and Signup page style rules
   transition: 0.2s;
 }
 
+.signup-form-inputs,
 .login-form-inputs {
   /* border: 1px solid black; */
-  /* height: 300px; */
-  margin: 10px 0;
+  width: 100%;
+  max-width: 320px;
+  max-height: 340px;
+  height: auto;
+  margin: 20px auto;
+  gap: 15px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
 }
 
-.signup-form-inputs {
-  /* border: 1px solid black; */
-  height: 340px;
-  margin: 10px 0;
+.signup-form p {
+  text-align: center;
+}
+
+.signup-form-inputs .row {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.signup-name-input {
+  flex: 1;
+  min-width: 0;
 }
 
 #password-wrapper {
   position: relative;
-  display: inline-block;
+  width: 100%;
   margin: 0px;
 }
 
 #password-wrapper input {
-  padding-right: 60px;
-  width: 280px;
+  padding-right: 45px;
+  width: 100%;
 }
 
 #show-password {
   position: absolute;
   top: 55%;
-  right: 22px;
+  right: 0.5rem;
   transform: translateY(-50%);
   border: none;
   background-color: transparent;
@@ -219,7 +221,7 @@ Login and Signup page style rules
 }
 
 #forgot-password {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--primary-color);
   margin: 0px;
   box-shadow: none;
@@ -235,7 +237,14 @@ Login and Signup page style rules
   text-decoration: underline;
 }
 
+#forgot-password,
+.mobile-signup,
+.mobile-login {
+  align-self: center;
+}
+
 .spacer {
+  border-bottom: 1px solid var(--primary-color);
   /* height: 30px; */
 }
 
@@ -249,6 +258,11 @@ Login and Signup page style rules
   display: none;
 }
 
+.error {
+  text-align: center;
+  padding: 5px
+}
+
 @media screen and (max-width: 1020px) {
   .background-cover {
     /* background-image: url("../../../public/images/mobile-directory-background.png"); */
@@ -258,20 +272,20 @@ Login and Signup page style rules
     background-repeat: no-repeat;
   }
 
-  .login-signup-container {
-    width: 540px;
-    border-radius: 5px;
-  }
 
   .login-form,
   .signup-form {
-    position: fixed;
     border-radius: 4px;
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    margin: 0 auto;
   }
 
   .directory {
     visibility: collapse;
     display: none;
+    width: 0;
   }
 
   .mobile-signup,
@@ -298,6 +312,8 @@ Login and Signup page style rules
   }
 }
 
+/* #endregion*/
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -305,6 +321,7 @@ Signup process modal style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region signup process modal */
 
 .signupProcess-background {
   position: fixed;
@@ -313,10 +330,13 @@ Signup process modal style rules
   width: 100%;
   height: 100%;
   /* background-image: url("../../../public/images/mobile-directory-background.png"); */
-  background-color: var(--bg-color);
+  background-color: var(--sidebar-gradient);
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .signupProcess-modal {
@@ -329,109 +349,221 @@ Signup process modal style rules
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: var(--modal-gradient);
   background-repeat: no-repeat;
   z-index: 10;
+  margin: 0 auto;
 }
 
+#create-profile-redirect-modal,
+#complete-profile-modal,
+#get-started-modal,
+#tos-modal {
+  justify-content: center;
+}
+
+.CreateProfileRedirect,
 .ChooseSkills,
 .ChooseInterests,
 .ChooseProficiencies,
 .CompleteProfile,
+.TermsOfService,
 .GetStarted {
-  background-color: var(--primary-color);
-  margin: auto;
+  background: var(--bg-color);
+  margin: 0 auto;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 820px;
-  width: 1000px;
-  border-radius: 4px;
-  box-shadow: 0px 0px 10px 0px var(--shadow-color);
-
   flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  height: fit-content;
+  max-height: 85vh;
+  width: min(calc(90vw - 20px), 1000px);
+  border-radius: 4px;
+  padding: 20px;
+  box-shadow: 0px 0px 10px 0px var(--border-color);
   z-index: 1;
+  overflow-y: scroll;
+
+  #create-profile-redirect-text {
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 30px;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+
+  #profile-editor-tags {
+    height: fit-content;
+  }
+}
+
+.ChooseSkills #profile-editor-tags {
+  width: 90%;
+  overflow-y: hidden;
+  display: flex;
+
+  #project-editor-tag-wrapper,
+  #project-editor-selected-tags-container {
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--header-color) rgba(0, 0, 0, 0);
+  }
+
+  #project-editor-tag-wrapper {
+    min-height: fit-content;
+  }
 }
 
 #signupProcess-title {
-  font-size: 28px;
-  color: var(--orange);
-  width: 500px;
+  font-size: 1.75rem;
+  color: var(--primary-color);
+  width: 90%;
+  font-weight: 600;
   text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
 
-  p {
-    font-size: 15px;
-    color: black;
-    margin: 10px;
-    font-weight: 400;
-  }
+#signupProcess-title-highlight {
+  color: var(--primary-color);
+  font-weight: 600;
+  font-style: italic;
+}
+
+#signupProcess-subTitle {
+  color: var(--main-text);
+  font-size: 1rem;
+  margin: 0 10px 20px 10px;
+  font-weight: 400;
+}
+
+#signupProcess-skills-subTitle {
+  color: var(--primary-color);
+  font-size: 1.25rem;
+  font-weight: 400;
 }
 
 /* buttons */
 #signupProcess-btns {
-  width: 900px;
+  margin-top: 2.5%;
+  width: 90%;
   display: flex;
   justify-content: space-between;
+
+  input {
+    accent-color: var(--primary-color);
+    margin-right: 10px;
+  }
+
+  #back {
+    position: relative;
+    top: 0;
+    left: 0;
+  }
+
+  #next {
+    padding: 4px;
+    padding-left: 7px;
+    padding-right: 7px;
+    color: var(--primary-color)
+  }
+}
+
+#signup-nextBtn,
+#signup-backBtn,
+#accept-tos-btn {
+  border: none;
+  border-radius: 14px;
+  height: 90px;
+  width: 100px;
+  font-size: 1.125rem;
+  font-weight: 800;
+  background: none;
+  color: var(--primary-color);
 }
 
 #signup-nextBtn:disabled {
   border: none;
   border-radius: 14px;
-  height: 45px;
+  height: 90px;
   width: 100px;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 600;
-  background-color: var(--lightGray);
-  color: black;
-  border: 2px solid var(--lightGray);
+  background: none;
+
+  .color-fill>use {
+    fill: var(--neutral-gray);
+    opacity: 0.5;
+  }
+
+  cursor: not-allowed;
+}
+
+#accept-tos-btn {
+  width: fit-content;
+}
+
+/* The absolute top-left back button arrow */
+#back {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+#main-loginsignup-btn,
+.directory button {
+  transition: transform 0.2s ease;
+}
+
+
+#signup-nextBtn:hover,
+#signup-backBtn:hover,
+#accept-tos-btn:hover,
+#back:hover,
+#main-loginsignup-btn:hover,
+.directory button:hover {
+  transform: translateY(-2px);
+}
+
+
+#signup-nextBtn:active,
+#signup-backBtn:active,
+#accept-tos-btn:active,
+#back:active,
+#main-loginsignup-btn:active,
+.directory button:active {
+  transform: translateY(0);
+}
+
+#signup-nextBtn:disabled {
+  border: none;
+  border-radius: 14px;
+  height: 90px;
+  width: 100px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  background: none;
+  color: var(--neutral-gray);
   cursor: not-allowed;
 }
 
 #signup-nextBtn:disabled:hover {
-  background-color: var(--lightGray);
-  border: 2px solid var(--lightGray);
-  color: black;
+  transform: translateY(0);
 }
 
-#signup-nextBtn {
-  border: none;
-  border-radius: 14px;
-  height: 45px;
-  width: 100px;
-  font-size: 18px;
-  font-weight: 800;
-  background-color: var(--primary-color);
-  color: var(--orange);
-  border: 2px solid var(--orange);
-}
-
-#signup-nextBtn:hover {
-  color: var(--main-text);
-  background-color: var(--orange);
-}
-
-#signup-backBtn {
-  border: none;
-  border-radius: 14px;
-  height: 45px;
-  width: 100px;
-  font-size: 18px;
-  font-weight: 600;
-  background-color: var(--lightGray);
-  color: black;
-  border: 2px solid var(--lightGray);
-}
-
-#signup-backBtn:hover {
-  background-color: var(--medGray);
-  border: 2px solid var(--medGray);
-}
+/* ========================================== */
 
 #skill-select,
 #interest-select,
 #proficiency-select,
 #getStarted-select {
   height: 515px;
+  width: 90%;
+  gap: 5%;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -439,6 +571,9 @@ Signup process modal style rules
   align-items: center;
   overflow-y: auto;
   margin: 20px;
+  background-color: var(--header-color);
+  border: 10px solid var(--header-color);
+  border-radius: 5px;
 }
 
 .edit-interest-container {
@@ -458,7 +593,7 @@ Signup process modal style rules
     width: 340px;
     height: 30px;
     padding: 5px 20px;
-    font-size: 15px;
+    font-size: 0.9375rem;
     border: 2px solid var(--lightGray);
     border-radius: 50px;
     background-color: var(--primary-color);
@@ -468,75 +603,70 @@ Signup process modal style rules
   }
 }
 
-#profile-details {
-  height: 515px;
-  margin: 20px;
+#complete-profile-add-image {
+  grid-area: image;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
+  align-self: center;
+  border: 2px dashed #424242;
+  border-radius: 10px;
+  width: min(50vw, 250px);
+  height: min(50vw, 250px);
+  aspect-ratio: 1 / 1;
+}
+
+#profile-pic {
+  width: 100%;
+  height: auto;
+  border: 3px solid var(--primary-color);
+  border-radius: 10px;
+
+  img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+  }
 }
 
 /* upload picture or use avatar buttons */
 .profile-pic-option {
-  width: 164px;
-  height: 164px;
-  position: fixed;
-  display: none;
-  transition: 0.2s;
-
-  button,
-  label {
-    display: none;
-  }
-}
-
-.profile-pic-option:hover {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.2);
   z-index: 1;
   border-radius: 4px;
   transition: 0.2s;
+  gap: 10px;
+  width: 100%;
 
-  button {
+  button,
+  label {
     display: block;
-    width: 140px;
-    height: 40px;
+    width: 100%;
+    height: auto;
     padding: 5px;
-    font-size: 15px;
+    font-size: 1rem;
     border: none;
     border-radius: 10px;
     background-color: var(--primary-color);
-    color: black;
-    font-weight: 600;
+    color: var(--invert-text);
+    font-weight: 700;
     text-align: center;
     box-shadow: 0px 0px 10px 0px var(--shadow-color);
   }
 
-  label {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 140px;
-    height: 40px;
-    font-size: 15px;
-    border: none;
-    border-radius: 10px;
-    background-color: var(--primary-color);
-    color: black;
-    font-weight: 700;
-    text-align: center;
-    box-shadow: 0px 0px 10px 0px var(--shadow-color);
-    transition: 0.2s;
+  button,
+  input {
+    height: 100%;
   }
 
   button:hover,
   label:hover {
-    color: var(--orange);
+    transform: scale(1.1);
+    transition: 0.2s;
     cursor: pointer;
   }
 }
@@ -546,7 +676,7 @@ Signup process modal style rules
 }
 
 .signup-fullname h2 {
-  font-size: 24px;
+  font-size: 1.5rem;
   margin: 0;
   text-align: left;
 }
@@ -557,7 +687,7 @@ Signup process modal style rules
 }
 
 #signup-profile-skill {
-  font-size: 14px;
+  font-size: 0.875rem;
   margin: 0 20px;
 
   display: flex;
@@ -580,23 +710,86 @@ Signup process modal style rules
 #skill-select button,
 #interest-select button,
 #proficiency-select button {
-  width: 180px;
-  height: 65px;
+  width: auto;
+  height: 8%;
   margin: 10px;
   padding: 0px 20px;
-  font-size: 16px;
-  border: 2px solid var(--lightGray);
-  border-radius: 4px;
-  background-color: var(--primary-color);
-  color: black;
+  font-size: 1rem;
+  border: 2px solid var(--tag-grey-unselected-border);
+  border-radius: 40px;
+  background-color: var(--tag-grey-unselected);
+  color: var(--tag-text-unselected);
   font-weight: 400;
   box-shadow: none;
 }
 
+#skill-select>.Audio {
+  border-color: var(--tag-periwinkle-unselected-border);
+  background-color: var(--tag-periwinkle-unselected);
+  color: var(--tag-text-unselected-periwinkle);
+}
+
+#skill-select>.Developer {
+  border-color: var(--tag-yellow-unselected-border);
+  background-color: var(--tag-yellow-unselected);
+  color: var(--tag-text-unselected-yellow);
+}
+
+#skill-select>.Designer {
+  border-color: var(--tag-red-unselected-border);
+  background-color: var(--tag-red-unselected);
+  color: var(--tag-text-unselected-red);
+}
+
+#skill-select>.Soft {
+  border-color: var(--tag-purple-unselected-border);
+  background-color: var(--tag-purple-unselected);
+  color: var(--tag-text-unselected-purple);
+}
+
+#skill-select>.Engineer {
+  border-color: var(--tag-cyan-unselected-border);
+  background-color: var(--tag-cyan-unselected);
+  color: var(--tag-text-unselected-cyan);
+}
+
+
 #skill-select button.active,
 #interest-select button.active,
 #proficiency-select button.active {
-  border: 2px solid var(--orange);
+  border-color: var(--tag-grey-selected);
+  background-color: var(--tag-grey-selected);
+  color: var(--tag-text-selected);
+}
+
+#skill-select>.Audio.active {
+  border-color: var(--tag-periwinkle-selected);
+  background-color: var(--tag-periwinkle-selected);
+  color: var(--tag-text-selected);
+}
+
+#skill-select>.Developer.active {
+  border-color: var(--tag-yellow-selected);
+  background-color: var(--tag-yellow-selected);
+  color: var(--tag-text-selected);
+}
+
+#skill-select>.Designer.active {
+  border-color: var(--tag-red-selected);
+  background-color: var(--tag-red-selected);
+  color: var(--tag-text-selected);
+}
+
+#skill-select>.Soft.active {
+  border-color: var(--tag-purple-selected);
+  background-color: var(--tag-purple-selected);
+  color: var(--tag-text-selected);
+}
+
+#skill-select>.Engineer.active {
+  border-color: var(--tag-cyan-selected);
+  background-color: var(--tag-cyan-selected);
+  color: var(--tag-text-selected);
 }
 
 #display-skills {
@@ -612,34 +805,10 @@ Signup process modal style rules
   color: black;
   border-radius: 4px;
   padding: 5px 10px;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
-#pronouns-input {
-  width: 180px;
-  height: 35px;
-  margin: 40px 0px 0px 10px;
-  padding: 5px 20px;
-  font-size: 15px;
-  border: 2px solid var(--lightGray);
-  border-radius: 4px;
-  background-color: var(--primary-color);
-  color: black;
-  font-weight: 400;
-}
-
-#bio-input {
-  width: 400px;
-  height: 140px;
-  margin: 20px;
-  padding: 10px;
-  border: 2px solid var(--lightGray);
-  border-radius: 4px;
-  resize: none;
-  font-size: 16px;
-}
-
-.name-username-pronouns-container {
+/* .name-username-pronouns-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -648,38 +817,261 @@ Signup process modal style rules
   gap: 10px;
   width: 230px;
   height: 150px;
+} */
+
+#completeProfile-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  /* height: 100%; */
+  width: 100%;
+  margin: 10px 0 15px 0;
+
+  div {
+    width: 100%;
+  }
 }
+
+#completeProfile-input-section-1 {
+  display: grid;
+  grid-template-areas:
+    'image row1'
+    'image row2'
+    'image row3';
+  grid-template-columns: 25% auto;
+  grid-template-rows: 1fr 1fr 1fr;
+  column-gap: 20px;
+  row-gap: 10px;
+}
+
+#complete-profile-row-1,
+#complete-profile-row-2,
+#complete-profile-row-3 {
+  display: grid;
+  gap: 10px;
+}
+
+#complete-profile-row-1 {
+  grid-area: row1;
+  grid-template-columns: 1.25fr 2fr;
+}
+
+#complete-profile-row-2 {
+  grid-area: row2;
+  grid-template-columns: 1.25fr 2fr;
+}
+
+#complete-profile-row-3 {
+  grid-area: row3;
+  grid-template-columns: 1.25fr 2fr;
+}
+
+#pronouns-input,
+#phoneNumber-input,
+#jobTitle-input,
+#location-input,
+#funFact-input {
+  font-weight: 400;
+  height: 50px;
+
+  input {
+    margin-top: 0px;
+    background-color: var(--header-color);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 14px;
+  }
+
+  .input-combo-label {
+    padding-bottom: 4px;
+  }
+}
+
+#jobTitle-input {
+  .select-container div {
+    margin-top: 0px;
+    background-color: var(--header-color);
+
+    max-height: 570%;
+  }
+}
+
+#ritStatus-input {
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+
+  .select-container div {
+    margin-top: 0px;
+    background-color: var(--header-color);
+
+    max-height: 710%;
+  }
+
+  .select {
+    height: 50px;
+  }
+}
+
+#completeProfile-input-section-2 {
+  display: flex;
+  gap: 20px;
+
+  #completeProfile-personal-quote {
+    width: 50%;
+  }
+}
+
+.CompleteProfile .select-container div {
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+
+  .value {
+    background-color: none;
+    box-shadow: none;
+  }
+}
+
+#major-input {
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+
+  .select-container div {
+    margin-top: 0px;
+    background-color: var(--header-color);
+
+    max-height: 710%;
+  }
+
+  .select {
+    height: 50px;
+  }
+}
+
+.dropdown-label {
+  color: var(--primary-color);
+  font-size: 1.25rem;
+  font-weight: 600;
+  padding-bottom: 4px;
+}
+
+#bio-input,
+#headline-input {
+  resize: none;
+  font-size: 1rem;
+  height: 100%;
+
+  div textarea {
+    margin-top: 0px;
+    background-color: var(--header-color);
+    outline: none;
+  }
+
+  .label-info {
+    padding-bottom: 6px;
+  }
+}
+
+/* === Terms of Service === */
+
+#terms-of-service-text {
+  display: flex;
+  flex-direction: column;
+  padding: 26px 31px;
+  gap: 17px;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+  border-radius: 10px;
+  width: 75%;
+  min-width: 150px;
+  max-height: 548px;
+  overflow-y: scroll;
+
+  h2 {
+    text-align: center;
+  }
+
+  p {
+    text-align: left;
+  }
+}
+
+#tos-checkbox {
+  border-radius: 14px;
+  margin: 0 5px;
+  height: 1.125rem;
+  width: 1.125rem;
+  /*border: 2px solid var(--primary-color);*/
+  /* does not work */
+}
+
+#tos-accept-label {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--primary-color);
+}
+
+#accept-tos-section {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+}
+
+
+/* ======================== */
 
 #new-project-btn,
 #join-project-btn {
   width: 240px;
   height: 200px;
-  margin: 20px 40px;
   padding: 5px 10px;
-  font-size: 24px;
-  border: 2px solid var(--lightGray);
+  font-size: 1.5rem;
   border-radius: 12px;
   background-color: var(--primary-color);
-  color: black;
+  color: var(--invert-text);
   font-weight: 600;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   display: flex;
   flex-direction: column;
+  color: var(--invert-text);
   justify-content: center;
+  border: none;
   align-items: center;
-  gap: 20px;
 
+  /* for dark mode */
   img {
     filter: invert(1);
   }
 }
 
+/* for light mode */
+[data-theme='light'] {
+
+  #new-project-btn,
+  #join-project-btn {
+    img {
+      filter: invert(0);
+    }
+  }
+
+  #new-project-btn:hover,
+  #join-project-btn:hover {
+    img {
+      filter: invert(1);
+    }
+  }
+}
+
 #new-project-btn:hover,
 #join-project-btn:hover {
-  background-color: var(--orange);
+  background-color: var(--border-color);
   color: var(--main-text);
-  border: 2px solid var(--orange);
 
+  /* for dark mode */
   img {
     filter: invert(0);
   }
@@ -690,53 +1082,198 @@ Signup process modal style rules
   top: 20px;
   left: 20px;
   cursor: pointer;
-  z-index: 1;
 }
 
-@media screen and (max-width: 1020px) {
-  #signupProcess-btns {
-    width: 700px;
-  }
+.ritEmailText {
+  color: var(--primary-color);
+  /* color: #F76902; */
+  font-weight: 750;
+}
+
+#completeProfile-input-container .select-options {
+  overflow-y: scroll;
+  max-height: 500%;
+  height: auto;
+  scrollbar-width: thick;
+  scrollbar-color: var(--header-color) rgba(0, 0, 0, 0);
+}
+
+/* Mobile css to individual signup pages */
+@media screen and (max-width: 1000px) {
 
   .ChooseSkills,
-  .ChooseInterests,
-  .ChooseProficiencies,
   .CompleteProfile,
   .GetStarted {
-    width: 800px;
+    height: 80vh;
+  }
+
+  .CompleteProfile {
+    #completeProfile-input-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      overflow-y: scroll;
+
+      .required-asterisk {
+        width: fit-content;
+      }
+
+      #completeProfile-input-section-1 {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        row-gap: 40px;
+
+        #complete-profile-row-1,
+        #complete-profile-row-2,
+        #complete-profile-row-3 {
+          display: flex;
+          flex-direction: column;
+          row-gap: 40px;
+        }
+      }
+
+      #completeProfile-input-section-2 {
+        padding-top: 25px;
+        flex-direction: column;
+
+        #completeProfile-personal-quote {
+          width: 100%;
+        }
+      }
+    }
+
+    #ritStatus-input,
+    #major-input,
+    #jobTitle-input {
+      height: 45px;
+
+      .select-container {
+        height: 100%;
+        min-height: 50px;
+
+        .select {
+          height: 45px;
+        }
+      }
+
+      .select-container div {
+        margin-top: 0px;
+
+        max-height: 400%;
+      }
+    }
+
+    /* Profile picture editor */
+    #completeProfile-input-container #complete-profile-add-image {
+      width: auto;
+    }
+  }
+
+  .GetStarted,
+  .ChooseSkills #profile-editor-tags {
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    /* prevents x scrollbar */
+  }
+
+  #getStarted-select {
+    gap: 2%;
+    width: 95%;
+    margin: 0;
+  }
+
+  .getStarted-btn-imgs {
+    margin-top: 20px;
+  }
+
+  #new-project-btn,
+  #join-project-btn {
+    width: 90%;
+    max-width: 240px;
+    height: 45%;
+    margin: 0;
+  }
+
+  .ChooseSkills #project-editor-selected-tags {
+    width: calc(100% - 62px - 1.818px);
+  }
+
+  /* === TOS === */
+  .TermsOfService #signupProcess-btns {
+    display: grid;
+    height: fit-content;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  .TermsOfService #signup-backBtn {
+    justify-self: center;
+    align-self: center;
+    grid-column: 1/2;
+    grid-row: 2/3;
+  }
+
+  .TermsOfService #signup-nextBtn {
+    justify-self: center;
+    align-self: center;
+    grid-column: 3/4;
+    grid-row: 2/3;
+  }
+
+  .TermsOfService #accept-tos-section {
+    justify-self: center;
+    align-self: center;
+    grid-column: 1/4;
+    grid-row: 1/2;
+  }
+
+  #tos-accept-label {
+    font-size: 1rem;
+    text-align: center;
   }
 }
 
-@media screen and (max-width: 820px) {
-  #signupProcess-btns {
-    width: 500px;
-  }
+@media only screen and (max-width: 700px) {
 
-  .ChooseSkills,
-  .ChooseInterests,
-  .ChooseProficiencies,
-  .CompleteProfile,
-  .GetStarted {
-    width: 550px;
+  .ChooseSkills {
+    #profile-editor-tags {
+      display: flex;
+      /* flex-wrap: wrap; */
+      flex-direction: column;
+      gap: 20px;
+
+      #project-editor-selected-tags {
+        /* width: 93%; */
+        height: 50%;
+        overflow-y: scroll;
+        order: 2;
+        width: auto;
+        padding: 15px;
+
+      }
+
+      #project-editor-tag-search {
+        /* width: 93%; */
+        height: 80%;
+        overflow-y: scroll;
+        max-width: auto;
+        gap: 10px;
+        padding: 15px;
+      }
+    }
+
+    #signupProcess-btns {
+      margin-top: 0;
+    }
   }
 }
 
 @media screen and (max-width: 550px) {
   body {
     padding: 0px;
-  }
-
-  #signupProcess-btns {
-    width: 480px;
-  }
-
-  .ChooseSkills,
-  .ChooseInterests,
-  .ChooseProficiencies,
-  .CompleteProfile,
-  .GetStarted {
-    box-shadow: none;
-    width: 100%;
   }
 }
 
@@ -745,16 +1282,9 @@ Signup process modal style rules
     padding: 0px;
   }
 
-  .ChooseSkills,
-  .ChooseInterests,
-  .ChooseProficiencies,
-  .CompleteProfile,
-  .GetStarted {
-    box-shadow: none;
-    width: 100%;
-  }
-
   #signupProcess-title {
-    font-size: 24px;
+    font-size: 1.5rem;
   }
 }
+
+/* #endregion */

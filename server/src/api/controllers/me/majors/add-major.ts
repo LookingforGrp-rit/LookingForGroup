@@ -13,7 +13,7 @@ const addUserMajor = async (req: AuthenticatedRequest, res: Response) => {
 
   const majorWithUserId = {
     ...data,
-    userId: req.currentUser,
+    userId: req.currentUser.userId,
   };
 
   //add the major they wanna add

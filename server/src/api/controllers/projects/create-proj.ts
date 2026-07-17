@@ -14,7 +14,7 @@ const createProjectController = async (req: AuthenticatedRequest, res: Response)
     'thumbnail'
   >;
 
-  const result = await createProjectService(inputData, req.currentUser);
+  const result = await createProjectService(inputData, req.currentUser.userId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

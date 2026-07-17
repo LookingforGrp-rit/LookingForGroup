@@ -9,7 +9,7 @@ type GetJobServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 //GET api/projects/{id}/jobs
 const getJobsService = async (projectId: number): Promise<ProjectJob[] | GetJobServiceError> => {
   try {
-    const jobs = await prisma.jobs.findMany({
+    let jobs = await prisma.jobs.findMany({
       where: {
         projectId,
       },
@@ -19,6 +19,10 @@ const getJobsService = async (projectId: number): Promise<ProjectJob[] | GetJobS
       },
     });
 
+    //Array is alphabetized by role label
+    jobs = jobs.toSorted(
+      (job1, job2) => job1.roles.label.charCodeAt(0) - job2.roles.label.charCodeAt(0),
+    );
     return jobs.map((job) => transformProjectJob(projectId, job));
   } catch (error) {
     console.error('Error in getJobService:', error);
