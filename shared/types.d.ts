@@ -1080,12 +1080,12 @@ export interface ProjectJob {
   /**
    * The starting date for this job, as a date. The month is 0-indexed.
    */
-  jobStart: Date | Fillable<Date> | null | undefined;
+  jobStart: Date | null | undefined;
 
   /**
    * The ending date for this job, as a date. The month is 0-indexed.
    */
-  jobEnd: Date | Fillable<Date> | null | undefined;
+  jobEnd: Date | null | undefined;
 
   /**
    * The on/off-site location of the job, such as "Remote"

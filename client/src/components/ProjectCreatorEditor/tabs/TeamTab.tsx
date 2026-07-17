@@ -45,6 +45,7 @@ import {
 	JobCompensation as JobCompensationEnums,
 } from "@looking-for-group/shared/enums";
 import {
+	Fillable,
 	Pending,
 	PendingProject,
 	PendingProjectMember
@@ -1169,9 +1170,20 @@ export const TeamTab = ({
 						</div>
 					</div>
 					<div id="open-position-details-right">
-						<div id="position-duration">
-							{/* Put start/end date UI here */}
+						<div id="position-start">
+							<span className="position-detail-indicator">
+								Job Start:
+							</span>
+							{` ${currentJob?.jobStart?.toString().slice(0, 10)}`}
 						</div>
+
+						<div id="position-end">
+							<span className="position-detail-indicator">
+								Job End:
+							</span>
+							{` ${currentJob?.jobEnd?.toString().slice(0, 10)}`}
+						</div>
+
 						<div id="position-compensation">
 							<span className="position-detail-indicator">
 								Compensation:{" "}
@@ -1513,26 +1525,37 @@ export const TeamTab = ({
 				</div>
 				<div id="edit-position-details-right">
 					<div className="edit-position-container">
-						<label className="edit-position-job-start">
-							Job Start
-							<span
-								className="required-asterisk"
-								aria-hidden="true"
-								title="Required">
-								*
-							</span>
-						</label>
-						{/* Put start/end calendar input here */}
-						<label className="edit-position-job-end">
-							Job End
-							<span
-								className="required-asterisk"
-								aria-hidden="true"
-								title="Required">
-								*
-							</span>
-						</label>
-						{/* Put start/end calendar input here */}
+						<label className="edit-position-job-start">Job Start</label>
+						<input
+							type="date"
+							id="input-job-start"
+							name="job-start"
+							min="1000-01-01"
+							max="9999-12-31"
+							onChange={(e) => {
+								if (currentJob) {
+									currentJob.jobStart = e.currentTarget.valueAsDate;
+								} else {
+									console.log("currentJob is undefined");
+								}
+							}}>
+						</input>
+
+						<label className="edit-position-job-end">Job End</label>
+						<input
+							type="date"
+							id="input-job-end"
+							name="job-end"
+							min="1000-01-01"
+							max="9999-12-31"
+							onChange={(e) => {
+								if (currentJob) {
+									currentJob.jobEnd = e.currentTarget.valueAsDate;
+								} else {
+									console.log("currentJob is undefined");
+								}
+							}}>
+						</input>
 					</div>
 					<div className="edit-position-container">
 						<label className="edit-position-compensation">
