@@ -141,6 +141,15 @@ Project Panel component style rules
   }
 
 
+   hr {
+    /* color: var(--header-color); */
+    border: 1px solid var(--liked-section-bg);
+    margin: 0;
+    margin-bottom: min(1.73vh, 17px);
+    margin-top: min(1vh, 17px);
+  }
+
+  
   a {
     text-decoration: none;
   }
@@ -1230,6 +1239,16 @@ Project Creator and Editor Popup style rules
 
 #project-editor-team-tabs {
   margin: 0px;
+}
+
+#vertical-line{
+  width: 1px;
+  border-style: solid;
+  border-width: 3px;
+  color: var(--header-color);
+  margin: 0;
+  margin-left: -2.5%;
+  margin-right: 2.5%;
 }
 
 @media only screen and (max-width: 799px) {
