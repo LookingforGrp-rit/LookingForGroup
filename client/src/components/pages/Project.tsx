@@ -64,7 +64,7 @@ const Project = () => {
   const [videos, setVideos] = useState<ProjectVideo[]>();
 
   const reportMessage = useRef<HTMLTextAreaElement>(null);
-  const deleteMessage = useRef<HTMLTextAreaElement>(null);
+  const modMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>("");
 
   /**
@@ -267,26 +267,29 @@ const Project = () => {
    */
   const resolveReport = async (action: 'dismiss' | 'unapprove project') => {
     if (!reportedProject) return;
+    let res;
 
-    if (action === 'dismiss') {
-      const res = await deleteProjectReport(reportedProject.reportId);
-      if (res.status === 200) {
-        // refresh page
-        window.location.reload();
-      }
-    } else if (action === 'unapprove project') {
-      const res = await approveProjectReport(
-        reportedProject.reportId, 
-        reportedProject.projectId, 
-        { 
-          reason: deleteMessage.current?.value ?? ''
-        } as UnapproveProjectInput
-      );
+    switch (action) {
+      case 'dismiss':
+        res = await deleteProjectReport(reportedProject.reportId);
+        break;
+      case 'unapprove project':
+        res = await approveProjectReport(
+          reportedProject.reportId,
+          reportedProject.projectId,
+          {
+            reason: modMessage.current?.value ?? ''
+          } as UnapproveProjectInput
+        );
+        break;
+      default:
+        console.error(`Unknown action: ${action}`);
+        break;
+    }
 
-      if (res.status === 200) {
-        // refresh page
-        window.location.reload();
-      }
+    if (res?.status === 200) {
+      // refresh page
+      window.location.reload();
     }
   };
 
@@ -942,32 +945,32 @@ const Project = () => {
 
             {/* Mod options to approveor reject a project request (request edits in order to approve) */}
             {isUserAdmin && approvalStatus == 'under-review' ? <div className="mod-project-options">
-                <h4>Approve?</h4>
-                <p>You can approve this project or request changes.</p>
-                <div id="mod-options-btns">
-                  <button id="mod-approve-btn" onClick={ () => { if (displayedProject){ handleApproveRequest(); }}}>Approve</button>
-                  <Popup>
-                    <PopupButton className="delete-button">Decline</PopupButton>
-                    <PopupContent>
+              <h4>Approve?</h4>
+              <p>You can approve this project or request changes.</p>
+              <div id="mod-options-btns">
+                <button id="mod-approve-btn" onClick={() => { if (displayedProject) { handleApproveRequest(); } }}>Approve</button>
+                <Popup>
+                  <PopupButton className="delete-button">Decline</PopupButton>
+                  <PopupContent>
                     <div className="small-popup" id="report-popup">
                       <h3>Decline Approval Request</h3>
                       <p>What changes should be made to {displayedProject?.title} in order to receive approval?</p>
-                      <textarea placeholder="Write the requested changes here..." className="input input-multiline" ref={deleteMessage}></textarea>
-                        <div className="confirm-deny-btns">
-                          <button
-                            id="team-delete-member-cancel-button"
-                            className="button-reset"
-                          >
-                            Cancel
-                          </button>
-                          <button className="confirm-btn" onClick={() => {handleDeleteProjectRequest(deleteMessage?.current ? deleteMessage.current.value : "No message provided.");}}>Submit</button>
+                      <textarea placeholder="Write the requested changes here..." className="input input-multiline" ref={modMessage}></textarea>
+                      <div className="confirm-deny-btns">
+                        <button
+                          id="team-delete-member-cancel-button"
+                          className="button-reset"
+                        >
+                          Cancel
+                        </button>
+                        <button className="confirm-btn" onClick={() => { handleDeleteProjectRequest(modMessage?.current ? modMessage.current.value : "No message provided."); }}>Submit</button>
                       </div>
                     </div>
-                    </PopupContent>
-                  </Popup>
-                </div>
+                  </PopupContent>
+                </Popup>
               </div>
-            : ""}
+            </div>
+              : ""}
 
             {/* Mod options to accept, decline, or request changes to a reported project // are we doing edits on reported projects?  */}
             {isUserAdmin && reportedProject ? (
@@ -976,14 +979,14 @@ const Project = () => {
                 <p>You can ignore this report or request edits on this project.</p>
                 <p>Reason for this report: {reportedProject.reason}</p>
                 <div id="mod-options-btns">
-                  <button id="mod-ignore-btn" onClick={() => { resolveReport('dismiss'); }}>Dismiss Report</button>
+                  <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')}>Dismiss Report</button>
                   <Popup>
                     <PopupButton className="mod-edit-btn">Request Edits</PopupButton>
                     <PopupContent>
                       <div className="small-popup" id="report-popup">
                         <h3>Request Edits</h3>
                         <p>What should the user change about their project?</p>
-                        <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={deleteMessage}></textarea>
+                        <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={modMessage}></textarea>
                         <div className="confirm-deny-btns">
                           <button
                             id="cancel-button"
@@ -991,7 +994,7 @@ const Project = () => {
                           >
                             Cancel
                           </button>
-                          <button className="confirm-btn" onClick={() => { resolveReport('unapprove project'); }}>Submit</button>
+                          <button className="confirm-btn" onClick={() => resolveReport('unapprove project')}>Submit</button>
                         </div>
                       </div>
                     </PopupContent>
