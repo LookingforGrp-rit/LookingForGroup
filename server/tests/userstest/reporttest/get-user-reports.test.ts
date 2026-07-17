@@ -20,12 +20,14 @@ const prismaReports = [
     reporterId: 1,
     reportedId: 2,
     reportText: 'test report',
+    active: true,
   },
   {
     reportId: 7,
     reporterId: 5,
     reportedId: 6,
     reportText: 'test report 2',
+    active: false,
   },
 ];
 

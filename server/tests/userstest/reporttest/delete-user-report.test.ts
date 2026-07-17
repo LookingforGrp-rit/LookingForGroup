@@ -20,6 +20,7 @@ const prismaReport = {
   reporterId: 1,
   reportedId: 2,
   reportText: 'test report',
+  active: true,
 };
 
 describe('deleteUserReportService', async () => {
