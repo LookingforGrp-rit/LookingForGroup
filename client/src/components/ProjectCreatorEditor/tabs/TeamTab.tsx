@@ -71,7 +71,7 @@ type UserSearchableFields = Pick<
 >;
 
 // Empty job position template used when creating new positions.
-const emptyJob: Pending<ProjectJob> = {
+const emptyJob: Fillable<Pending<ProjectJob>> = {
 	availability: null,
 	compensation: null,
 	contact: null,
@@ -183,7 +183,7 @@ export const TeamTab = ({
 	>();
 	// State tracking which job position is currently selected.
 	const [currentJob, setCurrentJob] = useState<
-		ProjectJob | Pending<ProjectJob>
+		ProjectJob | Fillable<Pending<ProjectJob>>
 	>();
 
 	// State indicating whether position editing is active
@@ -935,7 +935,7 @@ export const TeamTab = ({
 
 			//passing in the associated job's localId to get this to work properly
 			if (currentJob.jobSkills) {
-				for (let skill of currentJob.jobSkills) {
+				for (const skill of currentJob.jobSkills) {
 					console.log(skill)
 
 					dataManager?.addProjectJobSkill({

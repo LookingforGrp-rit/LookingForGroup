@@ -1,4 +1,4 @@
-import { Fillable } from "@looking-for-group/client";
+
 import UserAccessLevel = require("@looking-for-group/shared/enums");
 import type { Request } from "express";
 

@@ -16,7 +16,7 @@ import {
   ProjectTag,
   ProjectSocial,
   ProjectJob,
-  Medium,
+  ProjectMedium,
   ProjectMember,
   UserPreview,
   UpdateProjectThumbnailInput,
@@ -75,12 +75,12 @@ type CRUDRequest<T> = Id & { data: T };
 /**
  * Helper function to remove server-created properties and allow for null values.
  */
-type Pending<T> = Fillable<
+type Pending<T> = 
   Omit<
     T,
     "apiUrl" | "createdAt" | "updatedAt" | "memberSince" | "imageId" | "jobId"
   >
-> & { localId: number | null };
+& { localId: number | null };
 
 // PROJECT CHANGES
 
@@ -286,7 +286,7 @@ interface PendingProject extends Omit<Pending<ProjectDetail>, "localId"> {
   projectSocials: (ProjectSocial | Pending<ProjectSocial>)[];
   jobs: (ProjectJob | Pending<ProjectJob>)[];
   members: (ProjectMember | PendingProjectMember)[];
-  mediums: (Medium | PendingProjectMedium)[];
+  mediums: (ProjectMedium | PendingProjectMedium)[];
 }
 
 // USER CHANGES
