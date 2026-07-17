@@ -1,6 +1,7 @@
 import { GET, DELETE, POST, PUT, PATCH } from "./index";
 import { ApiResponse, UserAccessLevel, UnapproveProjectInput } from "@looking-for-group/shared";
 import { ProjectPreview, ProjectDetail, ProjectReport, UserReport, ModeratorNotificationInput, BanUserInput} from "@looking-for-group/shared";
+import { deleteUser } from "./users";
 
 /**
  * Gets the list of all pending projects
@@ -80,7 +81,7 @@ export const getReportedProjects = async (): Promise<ApiResponse<ProjectReport[]
  * Gets the list of all reported users
  * @returns List of all reported users or an error message if the request fails
  */
-export const getReportedUsers = async (): Promise<ApiResponse> => {
+export const getReportedUsers = async (): Promise<ApiResponse<UserReport[]>> => {
     const apiURL = `/mod/user-report/`;
     const response = await GET(apiURL);
 
@@ -126,13 +127,13 @@ export const approveProjectReport = async(
  * @param data Notification data
  * @returns ApiResponse from inactivateUserReport
  */
-export const requestEditsForUserReport = async (reportId: number, data: ModeratorNotificationInput): Promise<ApiResponse> => {
+export const warnUser = async (reportId: number, data: ModeratorNotificationInput): Promise<ApiResponse> => {
     const inactivateRes = await inactivateUserReport(reportId);
     // !! sends mod message to user (API not setup yet)
     // const notifyRes = await sendModeratorNotification(data);
 
-    if (inactivateRes.error) console.log(`Error in requestEditsForUserReport(inactivateUserReport): ${inactivateRes.error}`);
-    // if (notifyRes.error) console.log(`Error in requestEditsForUserReport(sendModeratorNotification): ${notifyRes.error}`);
+    if (inactivateRes.error) console.log(`Error in WarnUser(inactivateUserReport): ${inactivateRes.error}`);
+    // if (notifyRes.error) console.log(`Error in WarnUser(sendModeratorNotification): ${notifyRes.error}`);
     
     return inactivateRes;
 }
@@ -166,14 +167,18 @@ export const sendModeratorNotification = async (data: ModeratorNotificationInput
 
 /**
  * Bans a user from the site
+ * @param reportId The id of the report to delete
  * @param data Data needed fro banning a user from the site
  * @returns ApiResponse from the API call to ban a user
  */
-export const banUser = async (data: BanUserInput): Promise<ApiResponse> => {
-    const apiUrl = `/ban-user/${data.userId}`;
+export const banUser = async (reportId: number, data: BanUserInput): Promise<ApiResponse> => {
+    const apiUrl = `/mod/ban-user/${data.userId}`;
     const res = await POST(apiUrl, data);
 
+    const deleteReport = await deleteUserReport(reportId);
+
     if (res.error) console.log(`Error in banUser: ${res.error}`);
+    if (deleteReport.error) console.log(`Error in banUser(deleteReport): ${res.error}`);
     return res;
 };
 

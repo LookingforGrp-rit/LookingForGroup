@@ -29,7 +29,7 @@ import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, 
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
-import { getReportedUsers, getUserAccessLevel, deleteUserReport, requestEditsForUserReport, banUser } from "../../api/mod-tools";
+import { getReportedUsers, getUserAccessLevel, deleteUserReport, warnUser, banUser } from "../../api/mod-tools";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -472,9 +472,9 @@ const Profile = (userProfile: any) => {
 
   /**
      * Resolves a user report
-     * @param action The action to take on the report ('dismiss' or 'unapprove project')
+     * @param action The action to take on the report ('dismiss', 'warn' or 'ban')
      */
-  const resolveReport = async (action: 'dismiss' | 'edits' | 'ban') => {
+  const resolveReport = async (action: 'dismiss' | 'warn' | 'ban') => {
     if (!reportedUser) return;
     let res;
 
@@ -482,8 +482,8 @@ const Profile = (userProfile: any) => {
       case 'dismiss':
         res = await deleteUserReport(reportedUser.reportId);
         break;
-      case 'edits':
-        res = await requestEditsForUserReport(reportedUser.reportId, {
+      case 'warn':
+        res = await warnUser(reportedUser.reportId, {
           message: modMessage?.current?.value ?? '',
           receiverId: reportedUser.reportedId,
           subjectLine: 'Moderator Request for Edits',
@@ -491,10 +491,13 @@ const Profile = (userProfile: any) => {
         });
         break;
       case 'ban':
-        res = await banUser({
-          reason: modMessage?.current?.value ?? '',
-          userId: reportedUser.reportedId,
-        });
+        res = await banUser(
+          reportedUser.reportId,
+          {
+            reason: modMessage?.current?.value ?? '',
+            userId: reportedUser.reportedId,
+          }
+        );
         break;
       default:
         console.error(`Unknown action: ${action}`);
@@ -707,16 +710,16 @@ const Profile = (userProfile: any) => {
           {/* Mod options when this is a reported user */}
           {(!isUsersProfile) && isUserAdmin && reportedUser ? <div id="mod-user-options">
             <h4>Request Edits or Ban?</h4>
-            {!reportedUser.active ? <p>This report is inactive at the moment because a moderator has requested changes already.</p> : ""}
+            {!reportedUser.active ? <p>This report is inactive at the moment because a moderator has warned the user and/or requested changes already.</p> : ""}
             <p>You can dismiss this report, request edits, or ban them.</p>
             <p>Reason for this report: {reportedUser.reason}</p>
             <div id="mod-options-btns">
               <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')} >Dismiss Report</button>
               <Popup>
-                <PopupButton className="mod-edit-btn">Request Edits</PopupButton>
+                <PopupButton className="mod-edit-btn">Warn User</PopupButton>
                 <PopupContent>
                   <div className="small-popup" id="report-popup">
-                    <h3>Request Edits</h3>
+                    <h3>Warn User</h3>
                     <p>What should the user change about their profile?</p>
                     <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={modMessage}></textarea>
                     <div className="confirm-deny-btns">
@@ -726,7 +729,7 @@ const Profile = (userProfile: any) => {
                       >
                         Cancel
                       </button>
-                      <button className="confirm-btn" onClick={() => resolveReport('edits')}>Submit</button>
+                      <button className="confirm-btn" onClick={() => resolveReport('warn')}>Submit</button>
                     </div>
                   </div>
                 </PopupContent>

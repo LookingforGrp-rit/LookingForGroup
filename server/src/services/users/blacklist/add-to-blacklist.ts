@@ -7,14 +7,14 @@ type AddBlacklistServiceSuccess = ServiceSuccessSubset<'OK'>;
 //PUT api/mod/ban-user/{id}
 //add a user to blacklist
 const addBlacklistService = async (
-  id: number,
+  userId: number,
   reason: string,
 ): Promise<AddBlacklistServiceSuccess | AddBlacklistServiceError> => {
   try {
     //check if user exists
     const user = await prisma.users.findUnique({
       where: {
-        userId: id,
+        userId,
       },
     });
 
