@@ -18,7 +18,7 @@ export const transformUserReport = ({
   active,
 }: UserReportGetPayload): UserReport => {
   return {
-    apiUrl: `api/mod/user-report/${reportId}`,
+    apiUrl: `api/mod/user-report/${reportId.toString()}`,
     reportId,
     reportedId,
     reporterId,

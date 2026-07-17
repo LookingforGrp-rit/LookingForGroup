@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import type { Users } from '#prisma-models/index.js';
-import { sendEmail } from '#services/mailer.ts';
 import addBlacklistService from '#services/users/blacklist/add-to-blacklist.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */

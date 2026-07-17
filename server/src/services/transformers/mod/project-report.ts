@@ -17,7 +17,7 @@ export const transformProjectReport = ({
   reportText,
 }: ProjectReportGetPayload): ProjectReport => {
   return {
-    apiUrl: `api/mod/project-report/${reportId}`,
+    apiUrl: `api/mod/project-report/${reportId.toString()}`,
     reportId,
     userId,
     projectId,

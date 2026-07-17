@@ -62,7 +62,7 @@ describe('getUserByEmailService', () => {
     const [args] = calls[0];
 
     expect(args?.where).toEqual({ ritEmail: 'gold@rit.edu' });
-    expect(args?.select).toEqual(expect.any(Object));
+    expect(args?.select).toEqual(expect.objectContaining({}));
 
     expect(transformUserToPreview).toHaveBeenCalledWith(prismaUser);
 
