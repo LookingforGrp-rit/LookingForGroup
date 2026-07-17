@@ -308,7 +308,7 @@ const Profile = (userProfile: any) => {
       //get followed projects to display
       const displayFollowedProjects = async () => {
         const tempFollowProjectArray = [];
-        let tempIds: Set<number> = new Set();
+        const tempIds: Set<number> = new Set();
         const projectFollowings = ((await getProjectFollowing(userID)).data?.projects);
         if (projectFollowings !== undefined) {
           for (const follower of projectFollowings) {

@@ -16,7 +16,7 @@ import {
   ProjectTag,
   ProjectSocial,
   ProjectJob,
-  ProjectMedium,
+  Medium,
   ProjectMember,
   UserPreview,
   UpdateProjectThumbnailInput,
@@ -250,7 +250,7 @@ interface ProjectChangesDeletes {
  * An image that hasn't been saved on the server yet
  */
 interface PendingProjectImage extends Pending<ProjectImage> {
-  image: File | string | null;
+  image: File | null;
 }
 
 /**
@@ -286,7 +286,7 @@ interface PendingProject extends Omit<Pending<ProjectDetail>, "localId"> {
   projectSocials: (ProjectSocial | Pending<ProjectSocial>)[];
   jobs: (ProjectJob | Pending<ProjectJob>)[];
   members: (ProjectMember | PendingProjectMember)[];
-  mediums: (ProjectMedium | PendingProjectMedium)[];
+  mediums: (Medium | PendingProjectMedium)[];
 }
 
 // USER CHANGES
@@ -414,7 +414,7 @@ interface PendingUserMember extends Exclude<MyMember, "apiUrl"> {
  */
 interface PendingUserProfile extends Exclude<MeDetail, "apiUrl"> {
   profileImage: string | null | PendingProfileImage;
-  majors: (MyMajor | PendingMajor)
+  majors: (MyMajor[] | PendingMajor[])
   ritStatus: RitStatus | null;
   projects: (MyMember | PendingUserMember)[];
   skills: (MySkill | PendingUserSkill)[];
