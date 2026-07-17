@@ -29,6 +29,8 @@ import {
   UpdateUserSkillInput,
   RitStatus,
   MyMember,
+  MyMajor,
+  MySocial,
   MySkill,
   MySocial,
   MyMajor,
@@ -39,7 +41,7 @@ import {
   UpdateJobSkillInput,
   DeleteJobSkillInput,
   JobSkill,
-  UpdateMemberRequestInput,
+  UpdateMemberRequestInput
 } from "@looking-for-group/shared";
 
 /**
