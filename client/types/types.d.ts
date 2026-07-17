@@ -29,14 +29,17 @@ import {
   UpdateUserSkillInput,
   RitStatus,
   MyMember,
+  MyMajor,
+  MySocial,
   MySkill,
   MeDetail,
   UpdateUserProjectVisibilityInput,
+  UpdateProjectProfileVisibilityInput,
   CreateProjectVideoInput,
   AddJobSkillInput,
   DeleteJobSkillInput,
   JobSkill,
-  UpdateMemberRequestInput,
+  UpdateMemberRequestInput
 } from "@looking-for-group/shared";
 
 /**
@@ -325,7 +328,7 @@ interface UserChangesCreates {
   /**
    * All socials to be created
    */
-  socials: CrudRequest<AddUserSocialInput>[];
+  socials: CRUDRequest<AddUserSocialInput>[];
 }
 
 /**
