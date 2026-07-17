@@ -1,5 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
+import { getBlockerIdsByGidService } from '#services/me/blocklist/get-blocker-ids-by-gid.ts';
 import { getBlocklistIdsByGidService } from '#services/me/blocklist/get-blocklist-ids-by-gid.ts';
 import getService from '#services/projects/get-projects.ts';
 
@@ -21,8 +22,12 @@ const getProjectsController = async (req: Request, res: Response): Promise<void>
   // filtering out blocked users
   const userGid = req.session.gid;
   if (userGid) {
-    const ids = await getBlocklistIdsByGidService(userGid);
-    if (ids !== 'INTERNAL_ERROR') {
+    const blockedIds = getBlocklistIdsByGidService(userGid);
+    const blockerIds = getBlockerIdsByGidService(userGid);
+    const awaitedBlockedIds = await blockedIds;
+    const awaitedBlockerIds = await blockerIds;
+    if (awaitedBlockedIds !== 'INTERNAL_ERROR' && awaitedBlockerIds !== 'INTERNAL_ERROR') {
+      const ids = awaitedBlockedIds.concat(awaitedBlockerIds);
       result = result.filter((project) => {
         return !ids.includes(project.owner.userId);
       });
