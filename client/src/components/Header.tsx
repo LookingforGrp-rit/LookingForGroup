@@ -70,6 +70,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [userId, setUserId] = useState<number>();
   const location = useLocation(); // Hook to access the current location
 
+  /* Is user admin OR moderator? */
   const [isUserAdmin, setIsUserAdmin] = useState<boolean>(false);
 
   // Pull the theme and setTheme function from useState() via a context

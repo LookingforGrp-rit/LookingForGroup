@@ -44,7 +44,6 @@ export const approveProjectRequest = async (
     const apiURL = `/projects/${projectId}/approve`;
     
     const response = await PATCH(apiURL, projectData);
-    console.log(response.status);
 
     if (response.error) console.log(`Error in approveProjectRequest: ${response.error}`);
     return response;
@@ -94,5 +93,37 @@ export const deleteProjectReport = async (
     const response = await DELETE(apiURL, {});
 
     if (response.error) console.log(`Error in deleteProjectRequest: ${response.error}`);
+    return response;
+};
+
+/**
+ * Promotes the user to mod
+ * @param currentUserId The person who is promoting. Must be an admin
+ * @param userToPromote The user to promote to mod
+ */
+export const promoteToMod = async (
+    currentUserId: number,
+    userToPromote: number
+): Promise<ApiResponse> => {
+    const apiURL = `/admin/promote`;
+    const response = await PATCH(apiURL, {userId: userToPromote});
+
+    if (response.error) console.log(`Error in promoteToMod: ${response.error}`);
+    return response;
+};
+
+/**
+ * Demotes the mod to a regular user
+ * @param currentUserId The person who is demoting. Must be an admin
+ * @param userToPromote The mod to demote to user
+ */
+export const demoteToUser = async (
+    currentUserId: number,
+    userToDemote: number
+): Promise<ApiResponse> => {
+    const apiURL = `/admin/demote`;
+    const response = await PATCH(apiURL, {userId: userToDemote});
+
+    if (response.error) console.log(`Error in promoteToMod: ${response.error}`);
     return response;
 };

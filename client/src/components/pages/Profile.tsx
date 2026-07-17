@@ -9,7 +9,7 @@ import "../Styles/projects.css";
 import "../Styles/settings.css";
 import "../Styles/pages.css";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../../constants/routes";
 import { Header, loggedIn } from "../Header";
@@ -25,11 +25,12 @@ import profilePicture from "../../images/lfrog.png";
 import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles } from "../../api/users";
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
-import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail } from '@looking-for-group/shared';
+import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel } from '@looking-for-group/shared';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
-import { getReportedUsers, getUserAccessLevel } from "../../api/mod-tools";
+import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser } from "../../api/mod-tools";
+import { PopupContext } from "../Popup";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -48,6 +49,7 @@ const Profile = (userProfile: any) => {
   // --------------------
 
   const navigate = useNavigate(); // Hook for navigation
+  const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
   // Get URL parameters to tell what user we're looking for and store it
   const urlParams = new URLSearchParams(window.location.search);
@@ -58,7 +60,11 @@ const Profile = (userProfile: any) => {
 
   const [displayedProfile, setDisplayedProfile] = useState<UserDetail>();
   const [userID, setUserID] = useState<number>();
+
+  const [isUserMod, setIsUserMod] = useState<boolean>(false);
   const [isUserAdmin, setIsUserAdmin] = useState<boolean>(false);
+
+  const [displayedProfileAccessLevel, setDisplayedProfileAccessLevel] = useState<UserAccessLevel>('User');
 
   const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
   const [reportedUser, setReportedUser] = useState<boolean>(false);
@@ -79,6 +85,8 @@ const Profile = (userProfile: any) => {
 
   const reportMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>('');
+  const [promoteResponseText, setPromoteResponseText] = useState<string>('');
+  const [demoteResponseText, setDemoteResponseText] = useState<string>('');
 
   // ---- Invite-to-project popup state (only used when viewing someone else) ----
   // Projects the current logged-in user owns; populated lazily so we don't fetch
@@ -173,7 +181,7 @@ const Profile = (userProfile: any) => {
   }, [profileID, userID])
 
   /**
-     * Checks mod permissions for the user on render (in useEffect)
+     * Checks mod permissions for the user on render (in useEffect). The CURRENT user
      */
     const getUserPermissions = async () => {
       /* Ensures the user is logged in */
@@ -185,10 +193,41 @@ const Profile = (userProfile: any) => {
           const accessLevel = await getUserAccessLevel(userAccount.data.userId);
           if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator')
           {
-              setIsUserAdmin(true);
+              setIsUserMod(true);
+          }
+          if (accessLevel.data?.toString() == 'Administrator')
+          {
+            setIsUserAdmin(true);
           }
       }
     };
+
+    /**
+     * Checks permissions for the user of the DISPLAYED PROFILE on render (in useEffect).
+     */
+    const getProfileUserPermissions = async () => {
+      /* Ensures the user is logged in */
+      const userAccount = await getUsersById(parseInt(profileID));
+      if (userAccount.status === 200 && userAccount.data?.userId)
+      {
+          const accessLevel = await getUserAccessLevel(userAccount.data.userId);
+          switch (accessLevel.data?.toString())
+          {
+            case 'User':
+              setDisplayedProfileAccessLevel('User');
+              break;
+            case 'Moderator':
+              setDisplayedProfileAccessLevel('Moderator');
+            break;
+            case 'Administrator':
+              setDisplayedProfileAccessLevel('Administrator');
+              break;
+            default:
+              setDisplayedProfileAccessLevel('User');
+          }
+      }
+    };
+    
 
     /**
      * Checks if the user has been reported and updates the useState
@@ -291,7 +330,7 @@ const Profile = (userProfile: any) => {
 
       // Only run this if profile data exists for user
       if (data) {
-        console.log(data);
+        //console.log(data);
         setDisplayedProfile(data);
         setMajorsArr(data.majors.map((maj) => maj.label));
         await getProfileProjectData();
@@ -381,7 +420,13 @@ const Profile = (userProfile: any) => {
       }
     };
     loadInviteOptions();
+    // CURRENT user permissions
     getUserPermissions();
+
+    // THIS PROFILE's user permissions
+      getProfileUserPermissions();
+
+    // is the displayed profile a reported user
     isUserReported();
 
     return () => {
@@ -473,6 +518,38 @@ const Profile = (userProfile: any) => {
     setReportResponseText(responseText);
   };
 
+  /**
+   * Promotes a user to mod
+   */
+  const promoteToModPressed = async () => {
+    const response = await promoteToMod(userID ? userID : -1, displayedProfile ? displayedProfile.userId : -1);
+    let responseText = response.error;
+    if (responseText === null || responseText === undefined) {
+      setDisplayedProfileAccessLevel('Moderator');
+      responseText = `Success! ${displayedProfile ? displayedProfile.firstName : "This user"} is now a Moderator!`;
+    }
+    else {
+      responseText = "Uh oh! Something went wrong when promoting the user!";
+    }
+    setPromoteResponseText(responseText);
+  }
+
+  /**
+   * Demotes a mod to user
+   */
+  const demoteToUserPressed = async () => {
+    const response = await demoteToUser(userID ? userID : -1, displayedProfile ? displayedProfile.userId : -1);;
+    let responseText = response.error;
+    if (responseText === null || responseText === undefined) {
+      setDisplayedProfileAccessLevel('User');
+      responseText = `Success! ${displayedProfile ? displayedProfile.firstName : "This user"} is now a User!`;
+    }
+    else {
+      responseText = "Uh oh! Something went wrong when demoting the user!";
+    }
+    setDemoteResponseText(responseText);
+  }
+
   // --------------------
   // Components
   // --------------------
@@ -505,14 +582,88 @@ const Profile = (userProfile: any) => {
               onClick={() => followUser()}
             />
           )}
-
-          {/* TODO: Implement Share, Block, and Report functionality */}
           <Dropdown>
             <DropdownButton>
               <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'} />
             </DropdownButton>
             <DropdownContent>
               <div id="profile-menu-dropdown">
+                {isUserAdmin && displayedProfileAccessLevel !== 'Administrator' && displayedProfileAccessLevel === 'User' ?
+                <Popup>
+                  <PopupButton
+                    className="project-info-dropdown-option"
+                  >
+                    <ThemeIcon id={'settings'} width={27} height={27} className={'mono-stroke'} ariaLabel={"Manage User Permissions"}/>
+                    Manage Permissions
+                  </PopupButton>
+                  <PopupContent>
+                      <div className="small-popup" id="manage-perms-popup">
+                        <h3>Manage {displayedProfile?.firstName ?? "User"}'s Permissions</h3>
+                      <p>Promote {displayedProfile?.firstName ?? "User"} to Moderator?</p>
+                      <div className="confirm-deny-btns">
+                        <PopupButton
+                          buttonId="team-delete-member-cancel-button"
+                          className="button-reset"
+                        >
+                          Cancel
+                        </PopupButton>
+                        <Popup>
+                          <PopupButton
+                            className="confirm-btn"
+                            callback={promoteToModPressed}>
+                            Promote
+                          </PopupButton>
+                          <PopupContent>
+                            <div className="small-popup">
+                              <p>{promoteResponseText}</p>
+                              <PopupButton buttonId="continue-button" closeParent={closeOuterPopup}>
+                                Continue
+                              </PopupButton>
+                            </div>
+                          </PopupContent>
+                        </Popup>
+                        </div>
+                      </div>
+                  </PopupContent>
+                </Popup> : ""}
+                {isUserAdmin && displayedProfileAccessLevel !== 'Administrator' && displayedProfileAccessLevel === 'Moderator' ?
+                <Popup>
+                  <PopupButton
+                    className="project-info-dropdown-option"
+                  >
+                    <ThemeIcon id={'settings'} width={27} height={27} className={'mono-stroke'} ariaLabel={"Manage User Permissions"}/>
+                    Manage Permissions
+                  </PopupButton>
+                  <PopupContent>
+                      <div className="small-popup" id="manage-perms-popup">
+                        <h3>Manage {displayedProfile?.firstName ?? "User"}'s Permissions</h3>
+                      <p>Demote {displayedProfile?.firstName ?? "Moderator"} to User?</p>
+                      <div className="confirm-deny-btns">
+                        <PopupButton
+                          buttonId="team-delete-member-cancel-button"
+                          className="button-reset"
+                        >
+                          Cancel
+                        </PopupButton>
+                        <Popup>
+                          <PopupButton
+                            className="delete-button"
+                            callback={demoteToUserPressed}>
+                            Demote
+                          </PopupButton>
+                          <PopupContent>
+                            <div className="small-popup">
+                              <p>{demoteResponseText}</p>
+                              <PopupButton buttonId="continue-button" closeParent={closeOuterPopup}>
+                                Continue
+                              </PopupButton>
+                            </div>
+                          </PopupContent>
+                        </Popup>
+                        </div>
+                      </div>
+                  </PopupContent>
+                </Popup> : ""}
                 <ShareButton />
                 <button
                   className="profile-menu-dropdown-button"
@@ -549,14 +700,13 @@ const Profile = (userProfile: any) => {
                         <Popup>
                           <PopupButton
                             className="delete-button"
-                            callback={reportUserPressed}
-                            closeParent={() => true}> {/* doesnt work*/}
+                            callback={reportUserPressed}>
                             Report
                           </PopupButton>
                           <PopupContent>
                             <div className="small-popup">
                               <p>{reportResponseText}</p>
-                              <PopupButton buttonId="continue-button" closeParent={() => true}>
+                              <PopupButton buttonId="continue-button" closeParent={closeOuterPopup}>
                                 Continue
                               </PopupButton>
                             </div>
@@ -671,7 +821,7 @@ const Profile = (userProfile: any) => {
           </div>
 
           {/* Mod options when this is a reported user */}
-          {(!isUsersProfile) && isUserAdmin && reportedUser ? <div id="mod-user-options">
+          {(!isUsersProfile) && isUserMod && reportedUser ? <div id="mod-user-options">
               <h4>Kick or Ban?</h4>
                 <p>You can ignore this request, kick the user, or ban them.</p>
                 <div id="mod-options-btns">
