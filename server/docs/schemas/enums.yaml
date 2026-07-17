@@ -45,6 +45,8 @@ components:
         - Designer Skill
         - Soft Skill
         - Purpose
+        - Context
+        - Content Warning
       example: Creative
 
     TagCategory:

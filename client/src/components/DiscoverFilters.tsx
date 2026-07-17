@@ -141,6 +141,8 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         Other: 'Other',
         Genre: 'Genre',
         Purpose: 'Purpose',
+        Context: 'Context',
+        ContentWarning: 'Content Warning',
         Medium: 'Project Type',
       } : {
         Designer: 'Designer Skill',
@@ -354,7 +356,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
             onScroll={checkScrollVisibility}
           >
             { /* make each tag button have proper label & type */}
-            {tagList.map(tagLabel => {
+            {tagList.map((tagLabel: string) => {
               const label = tagLabel === 'Developers' ? 'Developer' :
                 tagLabel === 'Designers' ? 'Designer' :
                   tagLabel === 'Audio Creators' ? 'Audio' :

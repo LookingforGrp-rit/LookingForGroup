@@ -34,7 +34,7 @@ describe('getProjectFollowingService', () => {
       hook: 'forge a sky',
       description: 'desc',
       thumbnailId: null,
-      purpose: null,
+      context: null,
       status: 'Planning',
       globalVisibility: 'public',
       audience: '',

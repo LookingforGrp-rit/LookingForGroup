@@ -182,7 +182,7 @@ model Projects {
   description       String              @default("") @db.Text
   thumbnail         ProjectImages?      @relation(fields: [thumbnailId], references: [imageId])
   thumbnailId       Int?                @unique @map("thumbnail_id")
-  purpose           ProjectsPurpose?
+  context           ProjectsContext?
   status            ProjectsStatus      @default(Planning)
   audience          String              @default("") @db.VarChar(100)
   userId            Int                 @map("user_id")
@@ -419,13 +419,13 @@ enum JobsLocation {
   @@map("jobs_location")
 }
 
-enum ProjectsPurpose {
+enum ProjectsContext {
   Personal
   PortfolioPiece @map("Portfolio Piece")
   Academic
   CoOp           @map("Co-op")
 
-  @@map("projects_purpose")
+  @@map("projects_context")
 }
 
 enum JobsCompensation {

@@ -21,7 +21,7 @@ export const transformProjectToDetail = (project: ProjectsGetPayload): ProjectDe
   return {
     ...transformProjectToPreview(project),
     description: project.description,
-    purpose: project.purpose,
+    context: project.context,
     status: project.status,
     audience: project.audience,
     createdAt: project.createdAt,

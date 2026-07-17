@@ -122,6 +122,8 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                 Style: 'Style',
                 Other: 'Other',
                 Genre: 'Genre',
+                Context: 'Context',
+                ContentWarning: 'Content Warning',
                 Purpose: 'Purpose',
                 Medium: 'Project Type',
             }

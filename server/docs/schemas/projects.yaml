@@ -241,8 +241,8 @@ components:
           properties:
             description:
               type: string
-            purpose:
-              type: 'enums.yaml#/components/schemas/ProjectPurpose'
+            context:
+              type: 'enums.yaml#/components/schemas/ProjectContext'
               nullable: true
             status:
               type: 'enums.yaml#/components/schemas/ProjectStatus'
@@ -283,7 +283,7 @@ components:
         mediums: []
         thumbnail: null
         description: Have you ever needed a project or a group?
-        purpose: Personal
+        context: Personal
         status: Planning
         audience: Everybody
         createdAt: 2038-01-19 03:14:07
@@ -316,7 +316,7 @@ components:
             mediums: []
             thumbnail: null
             description: Have you ever needed a project or a group?
-            purpose: Personal
+            context: Personal
             status: Planning
             audience: Everybody
             createdAt: 2038-01-19 03:14:07

@@ -46,11 +46,14 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
       break;
 
     case 'other':
-    case 'purpose':
-    case 'role':
+    case 'context': //SORTORAMA: add proper tag color for context
       color = 'grey';
       break;
 
+    case 'purpose': //SORTORAMA: add proper tag color for purpose, unless this orange is fine enough
+    case 'role': //SORTORAMA: we should add a proper tag color for role too, since it will show up on the site and probably shouldn't just be gray right
+      color = 'orange';
+      break;
 
     case "developer skill":
     case "developer":
@@ -59,6 +62,7 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
 
     case "designer skill":
     case "designer":
+    case 'content warning': //SORTORAMA: add proper tag color for content warning, preferably a different red
       color = "red";
       break;
 

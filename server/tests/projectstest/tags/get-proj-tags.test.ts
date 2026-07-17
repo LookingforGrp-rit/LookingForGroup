@@ -1,5 +1,5 @@
 import type {
-  ProjectPurpose,
+  ProjectContext,
   ProjectStatus,
   Tag,
   Visibility,
@@ -50,7 +50,7 @@ const prismaProject = {
   description: '',
   hook: '',
   projectId: 100,
-  purpose: 'Academic' as ProjectPurpose,
+  context: 'Academic' as ProjectContext,
   status: 'Planning' as ProjectStatus,
   globalVisibility: 'public' as Visibility,
   thumbnailId: 0,

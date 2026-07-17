@@ -1,7 +1,7 @@
 // --- Imports ---
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import { ProjectPurpose, ProjectStatus, ProjectWithFollowers } from "@looking-for-group/shared";
-import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+import { ProjectContext, ProjectStatus, ProjectWithFollowers } from "@looking-for-group/shared";
+import { ProjectContext as ProjectContextEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 import { PopupButton, PopupContent, Popup, PopupContext } from '../../Popup';
 import LabelInputBox from "../../LabelInputBox";
 import { DeleteProjectButton } from "../DeleteProjectButton";
@@ -176,17 +176,17 @@ export const GeneralTab = ({
       </LabelInputBox>
 
       <LabelInputBox
-        label={"Purpose"}
+        label={"Context"}
         inputType={"none"}
-        forceUnsaved={unmodifiedProject.purpose !== projectAfterGeneralChanges.purpose}
-        id="project-editor-purpose-input"
+        forceUnsaved={unmodifiedProject.context !== projectAfterGeneralChanges.context}
+        id="project-editor-context-input"
       >
         <Select>
           <SelectButton
             placeholder="Select"
             initialVal={
-              projectAfterGeneralChanges.purpose ?
-                ProjectPurposeEnums[projectAfterGeneralChanges.purpose] :
+              projectAfterGeneralChanges.context ?
+                ProjectContextEnums[projectAfterGeneralChanges.context] :
                 ""
             }
             className="project-editor-input-item"
@@ -194,18 +194,18 @@ export const GeneralTab = ({
           />
           <SelectOptions
             callback={(e) => {
-              const purpose = (
+              const context = (
                 e.target as React.ButtonHTMLAttributes<HTMLButtonElement>
-              ).value as ProjectPurposeEnums;
+              ).value as ProjectContextEnums;
 
-              if (purpose && Object.values(ProjectPurposeEnums).includes(purpose as ProjectPurposeEnums)) {
+              if (context && Object.values(ProjectContextEnums).includes(context as ProjectContextEnums)) {
                 projectAfterGeneralChanges = {
                   ...projectAfterGeneralChanges,
-                  purpose: purpose as ProjectPurpose,
+                  context: context as ProjectContext,
                 };
                 updatePendingProject(projectAfterGeneralChanges);
 
-                const key = Object.keys(ProjectPurposeEnums).find(key => ProjectPurposeEnums[key as keyof typeof ProjectPurposeEnums] === purpose)
+                const key = Object.keys(ProjectContextEnums).find(key => ProjectContextEnums[key as keyof typeof ProjectContextEnums] === context)
 
                 dataManager?.updateFields({
                   id: {
@@ -213,12 +213,12 @@ export const GeneralTab = ({
                     type: "canon",
                   },
                   data: {
-                    purpose: key as ProjectPurpose,
+                    context: key as ProjectContext,
                   },
                 });
               }
             }}
-            options={Object.values(ProjectPurposeEnums).map((option) => {
+            options={Object.values(ProjectContextEnums).map((option) => {
               return {
                 markup: <>{option}</>,
                 value: option,
