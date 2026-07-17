@@ -588,7 +588,7 @@ const Profile = (userProfile: any) => {
             </DropdownButton>
             <DropdownContent>
               <div id="profile-menu-dropdown">
-                {isUserAdmin && displayedProfileAccessLevel !== 'Administrator' && displayedProfileAccessLevel === 'User' ?
+                {isUserAdmin && displayedProfileAccessLevel !== 'Administrator' ?
                 <Popup>
                   <PopupButton
                     className="project-info-dropdown-option"
@@ -596,6 +596,7 @@ const Profile = (userProfile: any) => {
                     <ThemeIcon id={'settings'} width={27} height={27} className={'mono-stroke'} ariaLabel={"Manage User Permissions"}/>
                     Manage Permissions
                   </PopupButton>
+                  {displayedProfileAccessLevel === 'User' ?
                   <PopupContent>
                       <div className="small-popup" id="manage-perms-popup">
                         <h3>Manage {displayedProfile?.firstName ?? "User"}'s Permissions</h3>
@@ -613,20 +614,21 @@ const Profile = (userProfile: any) => {
                             callback={promoteToModPressed}>
                             Promote
                           </PopupButton>
-                          <PopupContent>
-                            <div className="small-popup">
-                              <p>{promoteResponseText}</p>
-                              <PopupButton buttonId="continue-button" closeParent={closeOuterPopup}>
-                                Continue
-                              </PopupButton>
-                            </div>
-                          </PopupContent>
                         </Popup>
                         </div>
                       </div>
+                  </PopupContent> :
+                  <PopupContent>
+                    <div className="small-popup">
+                      <p>{promoteResponseText}</p>
+                      <PopupButton buttonId="continue-button" closeParent={closeOuterPopup}>
+                        Continue
+                      </PopupButton>
+                    </div>
                   </PopupContent>
+                  }
                 </Popup> : ""}
-                {isUserAdmin && displayedProfileAccessLevel !== 'Administrator' && displayedProfileAccessLevel === 'Moderator' ?
+                {isUserAdmin && displayedProfileAccessLevel !== 'Administrator' ?
                 <Popup>
                   <PopupButton
                     className="project-info-dropdown-option"
@@ -634,6 +636,7 @@ const Profile = (userProfile: any) => {
                     <ThemeIcon id={'settings'} width={27} height={27} className={'mono-stroke'} ariaLabel={"Manage User Permissions"}/>
                     Manage Permissions
                   </PopupButton>
+                  {displayedProfileAccessLevel === 'Moderator' ?
                   <PopupContent>
                       <div className="small-popup" id="manage-perms-popup">
                         <h3>Manage {displayedProfile?.firstName ?? "User"}'s Permissions</h3>
@@ -651,18 +654,18 @@ const Profile = (userProfile: any) => {
                             callback={demoteToUserPressed}>
                             Demote
                           </PopupButton>
-                          <PopupContent>
-                            <div className="small-popup">
-                              <p>{demoteResponseText}</p>
-                              <PopupButton buttonId="continue-button" closeParent={closeOuterPopup}>
-                                Continue
-                              </PopupButton>
-                            </div>
-                          </PopupContent>
                         </Popup>
                         </div>
                       </div>
-                  </PopupContent>
+                  </PopupContent> :
+                  <PopupContent>
+                  <div className="small-popup">
+                    <p>{demoteResponseText}</p>
+                    <PopupButton buttonId="continue-button" closeParent={closeOuterPopup}>
+                      Continue
+                    </PopupButton>
+                  </div>
+                  </PopupContent>}
                 </Popup> : ""}
                 <ShareButton />
                 <button
