@@ -1,4 +1,5 @@
 import { memo, FC, ChangeEvent, FocusEvent, useState, useCallback } from 'react';
+import { useMediaQuery } from './UseMediaQuery';
 
 export interface DataSet {
   data: unknown[];
@@ -29,9 +30,26 @@ interface SearchBarProps {
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 
   setValue?: React.Dispatch<React.SetStateAction<string>>;
-  
+
   onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
+
+  //placeholder text, which should be different based on what page
+  //the user is searching on
+  placeholderText: string;
+
+  //Shorter placeholder used on mobile, where the full text gets cut off.
+  //If omitted, it's derived from placeholderText by dropping the leading
+  //"Search by "/"Search for " (e.g. "Search by Project" -> "Project").
+  mobilePlaceholderText?: string;
 }
+
+//Screens this narrow can't fit the full "Search by ..." placeholder.
+const MOBILE_QUERY = '(max-width: 500px)';
+
+//Strips the "Search by "/"Search for " lead-in so the mobile placeholder is
+//just the thing being searched (e.g. "Search by Project" -> "Project").
+const deriveMobilePlaceholder = (text: string): string =>
+  text.replace(/^\s*search\s+(?:by|for)\s+/i, '').trim();
 
 /**
  * SearchBar Component
@@ -46,9 +64,15 @@ interface SearchBarProps {
  * @returns JSX element containing a styled search input with icon
  */
 //FIXME: create way to update results if a new dataset is provided: discover page filter and project editor tag filters do not save search state
-export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange, setValue, onFocus }) => {
+export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange, setValue, onFocus, placeholderText = "Search by Project", mobilePlaceholderText }) => {
   // Internal query state for uncontrolled mode
   const [internalQuery, setInternalQuery] = useState('');
+
+  // On mobile the full "Search by ..." text overflows, so show just the noun.
+  const isMobile = useMediaQuery(MOBILE_QUERY);
+  const effectivePlaceholder = isMobile
+    ? (mobilePlaceholderText ?? deriveMobilePlaceholder(placeholderText))
+    : placeholderText;
 
   /**
    * Handles input changes:
@@ -68,6 +92,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
     }
     if (setValue) setValue(newQuery);
     if (newQuery.length > 0) handleSearch(newQuery);
+    handleSearch(newQuery);
   };
 
   /**
@@ -149,7 +174,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
         <input
           className="search-input"
           type="text"
-          placeholder="Search by Project"
+          placeholder={effectivePlaceholder}
           value={value ?? internalQuery}
           onChange={handleChange}
           onFocus={onFocus}

@@ -8,6 +8,7 @@ import { ThemeIcon } from './ThemeIcon';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { useLocation } from 'react-router-dom'; // Hook to access the current location
 import profilePicture from '../images/lfrog.png';
+import { getUserAccessLevel } from '../api/mod-tools.ts';
 
 //user utils
 import { getCurrentAccount, getCurrentUsername, googleLogout } from '../api/users.ts';
@@ -32,6 +33,8 @@ type HeaderProps = {
   pageTitle?: string;
   setCurrentUserId?: (data: MePrivate | undefined) => Promise<void>;
   searchOnFocus?: (e: FocusEvent<HTMLInputElement>) => void;
+  placeholderText: string;
+  mobilePlaceholderText?: string;
 };
 
 /**
@@ -49,16 +52,18 @@ type HeaderProps = {
  * @returns A fully featured header containing the search bar, 
  * user dropdown menu, theme toggle, and navigation controls.
  */
-export const Header: React.FC<HeaderProps> = ({ 
-  dataSets, 
-  onSearch, 
-  value = "", 
-  onChange, 
-  hideSearchBar = false, 
-  hideBackButton = true, 
+export const Header: React.FC<HeaderProps> = ({
+  dataSets,
+  onSearch,
+  value = "",
+  onChange,
+  hideSearchBar = false,
+  hideBackButton = true,
   pageTitle = "",
-  setCurrentUserId, 
-  searchOnFocus }) => {
+  setCurrentUserId,
+  searchOnFocus,
+  placeholderText = "",
+  mobilePlaceholderText }) => {
   // User info state
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
@@ -66,6 +71,8 @@ export const Header: React.FC<HeaderProps> = ({
   const [profileImg, setProfileImg] = useState<string>('');
   const [userId, setUserId] = useState<number>();
   const location = useLocation(); // Hook to access the current location
+
+  const [isUserAdmin, setIsUserAdmin] = useState<boolean>(false);
 
   // Pull the theme and setTheme function from useState() via a context
   const theme = useContext(ThemeContext)['theme'];
@@ -77,6 +84,24 @@ export const Header: React.FC<HeaderProps> = ({
   const [active, setActive] = useState(false);
 
   const navigate = useNavigate(); // Hook for navigation
+
+  /**
+   * Checks mod permissions for the user on render (in useEffect)
+   */
+  const getUserPermissions = async () => {
+    /* Ensures the user is logged in */
+    const userAccount = await getCurrentAccount();
+    if (userAccount.status === 200 && userAccount.data?.userId)
+    {
+        setUserId(userAccount.data?.userId);
+        /* User must have mod permissions to access mod page */
+        const accessLevel = await getUserAccessLevel(userAccount.data.userId);
+        if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator')
+        {
+            setIsUserAdmin(true);
+        }
+    }
+  };
 
   // Fetch current user info on mount
   useEffect(() => {
@@ -113,6 +138,7 @@ export const Header: React.FC<HeaderProps> = ({
     };
 
     fetchUsername();
+    getUserPermissions();
   }, []);
 
   //loads in the data for the header
@@ -188,13 +214,15 @@ export const Header: React.FC<HeaderProps> = ({
             value={value}
             onChange={onChange}
             onFocus={searchOnFocus}
+            placeholderText={placeholderText}
+            mobilePlaceholderText={mobilePlaceholderText}
           />
         </div>
       )}
 
       {/* Conditional rendering for back button*/}
       {(!hideBackButton) && (<div className="project-back-btn-header">
-        <ThemeIcon 
+        <ThemeIcon
           role="button"
           id={'back'}
           width={70}
@@ -205,11 +233,11 @@ export const Header: React.FC<HeaderProps> = ({
         />
       </div>)}
 
-      {hideSearchBar && pageTitle !== "" ? 
+      {hideSearchBar && pageTitle !== "" ?
         <div id='title'>
           <h1 className="page-title">{pageTitle}</h1>
         </div>
-      : ""}
+        : ""}
 
       <div id="header-buttons">
         {/* About button */}
@@ -270,13 +298,13 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>{' '}
 
                 {/* Single unified auth entry point (logs in existing users, signs up new ones) */}
-                <button 
-                onClick={() =>
-                  navigate(paths.routes.LOGIN, {
-                    state: {from: location.pathname + location.search}
-                  })
-                }
-                className="header-login-btn"
+                <button
+                  onClick={() =>
+                    navigate(paths.routes.LOGIN, {
+                      state: { from: location.pathname + location.search }
+                    })
+                  }
+                  className="header-login-btn"
                 >
                   <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in or sign up'} />
                   Log In / Sign Up
@@ -304,7 +332,15 @@ export const Header: React.FC<HeaderProps> = ({
                 </Link>
 
                 <hr />
-
+                {/* Moderation Page Link */}
+                {/* TO DO: Change icon when a new icon is found */}
+                {isUserAdmin ? 
+                <a href={paths.routes.MODERATION}>
+                  <ThemeIcon id={'settings'} width={25} height={25} className={'mono-stroke'} ariaLabel={'settings'} />
+                  Moderation
+                </a>
+                : ""}
+                
                 {/* Dark/Light Theme Switcher */}
                 <button onClick={switchTheme}>
                   <ThemeIcon id={'mode'} width={25} height={25} className={'mono-stroke'} ariaLabel={'current mode'} />
