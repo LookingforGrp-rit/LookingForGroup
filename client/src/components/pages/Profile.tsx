@@ -65,6 +65,7 @@ const Profile = (userProfile: any) => {
   const [isUserAdmin, setIsUserAdmin] = useState<boolean>(false);
 
   const [displayedProfileAccessLevel, setDisplayedProfileAccessLevel] = useState<UserAccessLevel>('User');
+  const [previousDisplayedProfileAccessLevel, setPreviousDisplayedProfileAccessLevel] = useState<UserAccessLevel>('User');
 
   const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
   const [reportedUser, setReportedUser] = useState<boolean>(false);
@@ -215,15 +216,19 @@ const Profile = (userProfile: any) => {
           {
             case 'User':
               setDisplayedProfileAccessLevel('User');
+              setPreviousDisplayedProfileAccessLevel('User');
               break;
             case 'Moderator':
               setDisplayedProfileAccessLevel('Moderator');
+              setPreviousDisplayedProfileAccessLevel('Moderator');
             break;
             case 'Administrator':
               setDisplayedProfileAccessLevel('Administrator');
+              setPreviousDisplayedProfileAccessLevel('Administrator');
               break;
             default:
               setDisplayedProfileAccessLevel('User');
+              setPreviousDisplayedProfileAccessLevel('User');
           }
       }
     };
@@ -596,7 +601,17 @@ const Profile = (userProfile: any) => {
                     <ThemeIcon id={'settings'} width={27} height={27} className={'mono-stroke'} ariaLabel={"Manage User Permissions"}/>
                     Manage Permissions
                   </PopupButton>
-                  {displayedProfileAccessLevel === 'User' ?
+
+                  {/**
+                    Note for future self (will delete later)
+
+                    This does not work because of the if/else statement nature of the 2 options. One or the other of the mod/users options
+                    will appear at a time-- there can never be an instance where both dont show up.
+                   */}
+
+
+
+                  {displayedProfileAccessLevel === 'User' && previousDisplayedProfileAccessLevel === 'User' ?
                   <PopupContent>
                       <div className="small-popup" id="manage-perms-popup">
                         <h3>Manage {displayedProfile?.firstName ?? "User"}'s Permissions</h3>
@@ -618,25 +633,15 @@ const Profile = (userProfile: any) => {
                         </div>
                       </div>
                   </PopupContent> :
-                  <PopupContent>
+                  <PopupContent callback={() => setPreviousDisplayedProfileAccessLevel('Moderator')}>
                     <div className="small-popup">
                       <p>{promoteResponseText}</p>
                       <PopupButton buttonId="continue-button" closeParent={closeOuterPopup}>
                         Continue
                       </PopupButton>
                     </div>
-                  </PopupContent>
-                  }
-                </Popup> : ""}
-                {isUserAdmin && displayedProfileAccessLevel !== 'Administrator' ?
-                <Popup>
-                  <PopupButton
-                    className="project-info-dropdown-option"
-                  >
-                    <ThemeIcon id={'settings'} width={27} height={27} className={'mono-stroke'} ariaLabel={"Manage User Permissions"}/>
-                    Manage Permissions
-                  </PopupButton>
-                  {displayedProfileAccessLevel === 'Moderator' ?
+                  </PopupContent>}
+                  {displayedProfileAccessLevel === 'Moderator' && previousDisplayedProfileAccessLevel === 'Moderator' ?
                   <PopupContent>
                       <div className="small-popup" id="manage-perms-popup">
                         <h3>Manage {displayedProfile?.firstName ?? "User"}'s Permissions</h3>
@@ -658,7 +663,7 @@ const Profile = (userProfile: any) => {
                         </div>
                       </div>
                   </PopupContent> :
-                  <PopupContent>
+                  <PopupContent callback={() => setPreviousDisplayedProfileAccessLevel('User')}>
                   <div className="small-popup">
                     <p>{demoteResponseText}</p>
                     <PopupButton buttonId="continue-button" closeParent={closeOuterPopup}>
