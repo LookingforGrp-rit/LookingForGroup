@@ -12,7 +12,6 @@ type AddBlacklistServiceSuccess = ServiceSuccessSubset<'OK'>;
 //PUT api/mod/ban-user/{id}/{reason}
 //add a user to blacklist
 const addBlacklistService = async (
-  modId: number,
   googleId: string,
   reason: string,
 ): Promise<AddBlacklistServiceSuccess | AddBlacklistServiceError> => {
