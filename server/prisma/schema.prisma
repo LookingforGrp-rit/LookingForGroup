@@ -401,16 +401,6 @@ enum JobsAvailability {
   @@map("jobs_availability")
 }
 
-enum JobsDuration {
-  Days      @map("Days")
-  Weeks     @map("Weeks")
-  Months    @map("Months")
-  Semesters @map("Semesters")
-  Years     @map("Years")
-
-  @@map("jobs_duration")
-}
-
 enum JobsLocation {
   OnSite   @map("On-site")
   Remote

@@ -56,6 +56,7 @@ const addJobService = async (
         compensation: data.compensation,
         description: data.description,
       },
+
       select: ProjectJobSelector,
     });
 
