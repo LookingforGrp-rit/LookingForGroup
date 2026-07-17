@@ -53,7 +53,7 @@ describe('addBlacklistService', async () => {
     expect(prisma.userBlacklist.create).toHaveBeenCalled();
     expect(prisma.userBlacklist.create).toHaveBeenCalledWith({
       data: {
-        googleId: '1',
+        googleId: 'u123',
         banReason: 'silly',
       },
     });
