@@ -7,7 +7,6 @@ import * as paths from "../constants/routes";
 import { requestToJoin, getMemberRequest, getMembers } from '../api/projects.ts';
 import {
   JobAvailability as JobAvailabilityEnums,
-  JobDuration as JobDurationEnums,
   JobLocation as JobLocationEnums,
   JobCompensation as JobCompensationEnums,
 } from "@looking-for-group/shared/enums";
@@ -77,7 +76,7 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
       //check if already a member
       const members = await getMembers(displayedProject.projectId);
       const memberIds = members.data?.map(member => member.user.userId);
-      if(memberIds?.includes(currentUserId)){
+      if (memberIds?.includes(currentUserId)) {
         setAllowApply(false);
         return;
       }
@@ -100,7 +99,7 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
         setAllowApply(true);
       }
 
-    } catch (e) {
+    } catch {
       // no request made before
       setAllowApply(true);
       setSystemMessage('');
@@ -110,6 +109,18 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
   useEffect(() => {
     checkApplied(viewedPosition);
   }, []);
+
+  const undefinedDateToString = (undefinedDate: Date | null | undefined) => {
+    if (undefinedDate) {
+      if (undefinedDate.toString().slice(0, 10) === "1900-01-01") {
+        return " None";
+      }
+
+      return ` ${undefinedDate.toString().slice(0, 10)}`;
+    }
+
+    return " Date was undefined";
+  }
 
   return <div id="project-open-positions-popup">
     <div id="positions-popup-header">Join The Team</div>
@@ -154,45 +165,46 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
           >
             {currentJob?.description}
           </div>
-                <span className="position-detail-indicator">
-                  Job Skills
-                </span>
-				  <div id="edit-position-skills-list">
+          <span className="position-detail-indicator">
+            Job Skills
+          </span>
+          <div id="edit-position-skills-list">
             {/* TODO: make displayed tags look like tags */}
             {currentJob?.jobSkills &&
               currentJob?.jobSkills?.length > 0 ?
               currentJob?.jobSkills?.map((tag) => {
                 let category: string;
-                      switch (tag.type) {
-                        case "Designer":
-                          category = "red";
-                          break;
-                        case "Developer":
-                          category = "yellow";
-                          break;
-                        case "Soft":
-                          category = "purple";
-                          break;
-                        case "Audio":
-                          category = "periwinkle";
-                          break;
-                        case "Engineer":
-                          category = "cyan";
-                          break;
-                        default:
-                          category = "grey";
-                      }
-                      return (
-                        <div
-                          key={`${tag.skillId}`}
-                          className={`skill-tag-label label-${category}`}
-                        >
-                          {tag.label}
-                        </div>
-                      );}
+                switch (tag.type) {
+                  case "Designer":
+                    category = "red";
+                    break;
+                  case "Developer":
+                    category = "yellow";
+                    break;
+                  case "Soft":
+                    category = "purple";
+                    break;
+                  case "Audio":
+                    category = "periwinkle";
+                    break;
+                  case "Engineer":
+                    category = "cyan";
+                    break;
+                  default:
+                    category = "grey";
+                }
+                return (
+                  <div
+                    key={`${tag.skillId}`}
+                    className={`skill-tag-label label-${category}`}
+                  >
+                    {tag.label}
+                  </div>
+                );
+              }
               ) : "None"}
 
-              
+
           </div>
 
           <div id="open-position-details">
@@ -212,12 +224,22 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
             </div>
 
             <div id="open-position-details-right">
-              <div id="position-duration">
+              <div id="position-start">
                 <span className="position-detail-indicator">
-                  Duration:{" "}
+                  Job Start:
                 </span>
-                {JobDurationEnums[currentJob?.duration]}
+
+                {undefinedDateToString(currentJob?.jobStart)}
               </div>
+
+              <div id="position-end">
+                <span className="position-detail-indicator">
+                  Job End:
+                </span>
+
+                {undefinedDateToString(currentJob?.jobEnd)}
+              </div>
+
               <div id="position-compensation">
                 <span className="position-detail-indicator">
                   Compensation:{" "}
@@ -272,7 +294,7 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
                       navigate(paths.routes.LOGIN, {
                         state: { from: location }
                       });
-                    // otherwise, show quick apply fields 
+                      // otherwise, show quick apply fields 
                     } else {
                       setQuickApplyOpen(true);
                     }

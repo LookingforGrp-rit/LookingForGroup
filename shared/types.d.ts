@@ -1,3 +1,4 @@
+
 import UserAccessLevel = require("@looking-for-group/shared/enums");
 import type { Request } from "express";
 
@@ -50,7 +51,6 @@ export type ProjectStatus =
   | "PostProduction"
   | "Complete";
 export type JobAvailability = "FullTime" | "PartTime" | "Flexible";
-export type JobDuration = "Days" | "Weeks" | "Months" | "Semesters" | "Years";
 export type JobLocation = "OnSite" | "Remote" | "Hybrid" | "Flexible";
 export type JobCompensation = "Unpaid" | "Paid";
 export type MemberRequestStatus = "Accepted" | "Declined" | "Pending";
@@ -1078,15 +1078,14 @@ export interface ProjectJob {
   availability: JobAvailability;
 
   /**
-   * The duration of the position, such as "Days"
+   * The starting date for this job, as a date. The month is 0-indexed.
    */
-  duration: JobDuration;
+  jobStart: Date | null | undefined;
 
   /**
-   * The number of duration units for the position, such as 3 (to pair with a
-   * `duration` of "Months" for "3 Months"). Optional pending backend support.
+   * The ending date for this job, as a date. The month is 0-indexed.
    */
-  durationCount?: number | null;
+  jobEnd: Date | null | undefined;
 
   /**
    * The on/off-site location of the job, such as "Remote"
@@ -1660,9 +1659,10 @@ export type AddProjectMediumInput = Pick<ProjectMedium, "mediumId">;
  * Data required to create a job listing on a project
  */
 export type CreateProjectJobInput = Required<
-  Pick<ProjectJob, "availability" | "duration" | "location" | "compensation">
+  Pick<ProjectJob, "availability" | "location" | "compensation">
 > &
-  Partial<Pick<ProjectJob, "description" | "jobSkills" | "durationCount">> & {
+  //might have to move jobStart and jobEnd to required in case the db freaks out
+  Partial<Pick<ProjectJob, "description" | "jobSkills" | "jobStart" | "jobEnd">> & {
     roleId: number;
     contactUserId: number;
   };

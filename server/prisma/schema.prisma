@@ -42,7 +42,9 @@ model Jobs {
   roleId        Int              @map("role_id")
   contactUserId Int              @map("contact_user_id")
   availability  JobsAvailability
-  duration      JobsDuration
+  // default/undefined is 1/1/1900
+  jobStart      DateTime         @default("1900-01-01T00:00:00-00:00") @db.DateTime()
+  jobEnd        DateTime         @default("1900-01-01T00:00:00-00:00") @db.DateTime()
   location      JobsLocation
   compensation  JobsCompensation
   contact       Members          @relation(fields: [projectId, contactUserId], references: [projectId, userId])
@@ -399,16 +401,6 @@ enum JobsAvailability {
   Flexible
 
   @@map("jobs_availability")
-}
-
-enum JobsDuration {
-  Days      @map("Days")
-  Weeks     @map("Weeks")
-  Months    @map("Months")
-  Semesters @map("Semesters")
-  Years     @map("Years")
-
-  @@map("jobs_duration")
 }
 
 enum JobsLocation {

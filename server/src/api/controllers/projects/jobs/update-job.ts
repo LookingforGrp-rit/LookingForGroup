@@ -2,7 +2,6 @@ import type {
   ApiResponse,
   JobAvailability,
   JobCompensation,
-  JobDuration,
   JobLocation,
   ProjectJob,
 } from '@looking-for-group/shared';
@@ -21,7 +20,8 @@ const updateJobController = async (req: Request, res: Response): Promise<void> =
     roleId: number;
     contactUserId: number;
     availability: JobAvailability;
-    duration: JobDuration;
+    jobStart: Date;
+    jobEnd: Date;
     location: JobLocation;
     compensation: JobCompensation;
     description: string;
@@ -49,8 +49,14 @@ const updateJobController = async (req: Request, res: Response): Promise<void> =
     updates.availability = body.availability;
   }
 
-  if (body.duration && ['Days', 'Weeks', 'Months', 'Semesters', 'Years'].includes(body.duration)) {
-    updates.duration = body.duration;
+  const defaultDateTime: Date = new Date(1900, 0, 0);
+
+  if (body.jobStart !== defaultDateTime) {
+    updates.jobStart = body.jobStart;
+  }
+
+  if (body.jobEnd !== defaultDateTime) {
+    updates.jobEnd = body.jobEnd;
   }
 
   if (body.location && ['OnSite', 'Remote', 'Hybrid'].includes(body.location)) {
