@@ -25,12 +25,12 @@ interface EnabledFilter {
 }
 
 enum sortModes {
-    "A-Z" = "A-Z",
-    "Z-A" = "Z-A",
-    "Newest" = "Newest",
-    "Oldest" = "Oldest",
-    "Followers" = "Followers",
-    "Followers Ascending" = "Followers Ascending",
+  "A-Z" = "A-Z",
+  "Z-A" = "Z-A",
+  "Newest" = "Newest",
+  "Oldest" = "Oldest",
+  "Followers" = "Followers",
+  "Followers Ascending" = "Followers Ascending",
 }
 
 export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemList }) => {
@@ -84,7 +84,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
 
       // Get majors and append it to full data
       const majors = await getMajors();
-      majors.data?.forEach((major: Major) => data?.push({ label: major.label, skillId: major.majorId, type: 'Project Type', category: "Other" } as Skill));
+      majors.data?.forEach((major: Major) => data?.push({ label: major.label, skillId: major.majorId, type: 'Major', category: "Other" } as Skill));
 
       // Construct the finalized version of the data to be moved into filterPopupTabs
       const tabs = JSON.parse(JSON.stringify(peopleTabs));
@@ -130,7 +130,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
    */
   const toggleSkill = (id: number, type: string, update?: boolean) => {
     let newActiveSkills: Skill[];
-    let newExludeSkills: Skill[];
+    let newExcludeSkills: Skill[];
     let skill: Skill | undefined;
     if (id === -1) {
       skill = { skillId: id, label: type, type: type as SkillType, category: "Other" }
@@ -142,21 +142,21 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
     if (activeSkillFilters.some(s => s.skillId === id && s.type === type)) {
       // Remove the skill from the active list
       newActiveSkills = activeSkillFilters.filter(s => s !== skill);
-      newExludeSkills = [...activeExclusionFilters, skill];
+      newExcludeSkills = [...activeExclusionFilters, skill];
     }
     else if (activeExclusionFilters.some(s => s.skillId === id && s.type === type)) {
       newActiveSkills = activeSkillFilters;
-      newExludeSkills = activeExclusionFilters.filter(s => s !== skill);
+      newExcludeSkills = activeExclusionFilters.filter(s => s !== skill);
     }
     else {
       // Add the tag to the active list
       newActiveSkills = [...activeSkillFilters, skill];
-      newExludeSkills = activeExclusionFilters;
+      newExcludeSkills = activeExclusionFilters;
     }
 
     setActiveSkillFilters(newActiveSkills);
-    setActiveExclusionFilters(newExludeSkills);
-    if (update) updateItemList(newActiveSkills, newExludeSkills, filterMode, sortMode);
+    setActiveExclusionFilters(newExcludeSkills);
+    if (update) updateItemList(newActiveSkills, newExcludeSkills, filterMode, sortMode);
   };
 
   /**
@@ -297,10 +297,10 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
 
               return (
                 <button key={`${templateSkill.type}-${skillFilterType}`}
-                  className={"discover-tag-filter" + 
-                    (activeSkillFilters.some(s => s.skillId === -1 && s.label === trueType) ? " discover-tag-filter-selected" : 
-                    activeExclusionFilters.some(s => s.skillId === -1 && s.label === trueType) ? " discover-tag-filter-excluded " :
-                    "")}
+                  className={"discover-tag-filter" +
+                    (activeSkillFilters.some(s => s.skillId === -1 && s.label === trueType) ? " discover-tag-filter-selected" :
+                      activeExclusionFilters.some(s => s.skillId === -1 && s.label === trueType) ? " discover-tag-filter-excluded " :
+                        "")}
                   data-type={templateSkill.label}
                   onClick={() => toggleSkill(templateSkill.skillId, templateSkill.type, true)}>
                   {skillFilterType}
@@ -429,13 +429,13 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                         selected={[activeSkillFilters.map(
                           skill => ({
                             ...skill,
-                            category: skill.type === "Project Type" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
+                            category: skill.type === "Major" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
                             id: skill.skillId
                           })
                         ), activeExclusionFilters.map(
                           skill => ({
                             ...skill,
-                            category: skill.type === "Project Type" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
+                            category: skill.type === "Major" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
                             id: skill.skillId
                           })
                         )]}
@@ -446,14 +446,14 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                               tab.categoryName === 'Audio Skill' ? "Audio" :
                                 tab.categoryName === 'Soft Skill' ? "Soft" :
                                   tab.categoryName === 'Engineer Skill' ? "Engineer" :
-                                    tab.categoryName === 'Major' ? "Project Type" :
+                                    tab.categoryName === 'Major' ? "Major" :
                                       tab.categoryName
                         )}
                         tabId={activeTabId}
                         all={allSkills.map(
                           skill => ({
                             ...skill,
-                            category: skill.type === "Project Type" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
+                            category: skill.type === "Major" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
                             id: skill.skillId
                           })
                         )}
@@ -461,7 +461,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                         searchData={searchedSkills.map(
                           skill => ({
                             ...skill,
-                            category: skill.type === "Project Type" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
+                            category: skill.type === "Major" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
                             id: skill.skillId
                           })
                         )}
@@ -470,7 +470,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                   </div>
                   <div id="selected-section" className="popup-section">
                     <h3>Selected</h3>
-                    <h4>Click to deselect</h4>
+                    <h4>Click once to include-<i className='fa fa-check'></i>, twice to exclude-<i className='fa fa-close'></i>, three times to remove.</h4>
                     <div id="selected-filters">
                       {activeSkillFilters.map((skill) => (
                         <Tag

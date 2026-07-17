@@ -48,9 +48,14 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
     case 'other':
     case 'purpose':
     case 'role':
+    case 'role skill':
       color = 'grey';
       break;
 
+    case "major":
+    case "major skill":
+      color = "orange";
+      break;
 
     case "developer skill":
     case "developer":
