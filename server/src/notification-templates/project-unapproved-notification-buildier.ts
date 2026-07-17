@@ -1,18 +1,18 @@
-import type { AuthenticatedRequest, NotificationBuilderResult } from '@looking-for-group/shared';
+import type {
+  AuthenticatedRequest,
+  NotificationBuilderResult,
+  UnapproveProjectInput,
+} from '@looking-for-group/shared';
 import type { Request } from 'express';
 import prisma from '#config/prisma.ts';
 import type { NotificationBuilder } from './notification-builder.ts';
 
 export class ProjectUnapprovedNotificationBuilder implements NotificationBuilder {
   async buildNotification(request: Request): Promise<NotificationBuilderResult> {
-    type TakedownBody = {
-      reason: string;
-    };
-
     // Getting info from the request
     const req: AuthenticatedRequest = request as AuthenticatedRequest;
     const projectId = parseInt(req.params.id as string);
-    const body = req.body as TakedownBody;
+    const body = req.body as UnapproveProjectInput;
     const reason = body.reason;
 
     const notification: NotificationBuilderResult = {

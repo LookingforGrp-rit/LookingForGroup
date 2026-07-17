@@ -1,24 +1,16 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import getProjectReportService from '#services/mod/get-project-reports.ts';
+import deactivateUserReportService from '#services/mod/deactivate-user-report.ts';
 
-//GET api/mod/project-report/
-//gets all project reports
-export const getProjectReports = async (
+//PATCH api/mod/user-report/{id}/deactivate
+//Deactivates a user report by setting the active field to false.
+export const deactivateUserReport = async (
   req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
-  const result = await getProjectReportService();
+  const id = parseInt(req.params.id as string);
+  const result = await deactivateUserReportService(id);
 
-  if (result === 'NOT_FOUND') {
-    const resBody: ApiResponse = {
-      status: 404,
-      error: 'User not found',
-      data: null,
-    };
-    res.status(404).json(resBody);
-    return;
-  }
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
       status: 500,

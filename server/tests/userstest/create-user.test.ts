@@ -123,7 +123,7 @@ describe('createUserService', async () => {
         preferredName: 'Gold',
         ritEmail: 'goldleaf@rit.edu',
       },
-      select: expect.any(Object),
+      select: expect.objectContaining({}),
     });
 
     expect(transformMeToPrivate).toHaveBeenCalledWith(prismaUser);

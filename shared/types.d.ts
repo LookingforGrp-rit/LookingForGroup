@@ -1319,6 +1319,36 @@ export interface ProjectWithFollowers extends ProjectDetail {
   followers: ProjectFollowers;
 }
 
+/**
+ * The full data of a project report
+ */
+export type ProjectReport = {
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+
+  /**
+   * Report ID in the DB
+   */
+  reportId: number;
+
+  /**
+   * Reporter ID
+   */
+  userId: number;
+
+  /**
+   * Reported project ID
+   */
+  projectId: number;
+
+  /**
+   * Reason for the report
+   */
+  reason: string;
+}
+
 // IMAGES
 
 /**
@@ -1429,6 +1459,41 @@ export type AddUserMajorInput = Pick<Major, "majorId">;
 export type UpdateProjectProfileVisibilityInput = {
   profileVisibility: Visibility;
 };
+
+/**
+ * The full data of a user report
+ */
+export type UserReport = {
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+
+  /**
+   * Report ID in the DB
+   */
+  reportId: number;
+
+  /**
+   * ID of the user who made the report
+   */
+  reporterId: number;
+
+  /**
+   * ID of the user being reported
+   */
+  reportedId: number;
+
+  /**
+   * Reason for the report
+   */
+  reason: string;
+
+  /**
+   * Whether the report is still active or has been resolved
+   */
+  active: boolean;
+}
 
 // PROJECTS inputs
 
@@ -1655,3 +1720,42 @@ export type CreateSkillInput = Pick<Skill, "label" | "type" | "category">;
  * Data required to edit an existing skill
  */
 export type EditSkillInput = Partial<CreateSkillInput> & { skillId: number };
+
+/**
+ * Data required to add a user report
+ */
+export type AddUserReportInput = {
+  reason: string;
+};
+
+/**
+ * Data required to add a project report
+ */
+export type AddProjectReportInput = {
+  reason: string;
+};
+
+/**
+ * Data required to unapprove an already approved project
+ */
+export type UnapproveProjectInput = {
+  reason: string;
+}
+
+/**
+ * Data required to send a notification to a moderator
+ */
+export type ModeratorNotificationInput = {
+  modUserId: number;
+  receiverId: number;
+  subjectLine: string;
+  message: string;
+}
+
+/**
+ * Data required to ban a user from the site
+ */
+export type BanUserInput = {
+  userId: number;
+  reason: string;
+}
