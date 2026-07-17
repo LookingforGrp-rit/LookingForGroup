@@ -32,7 +32,6 @@ import {
 	UserPreview,
 	ProjectMember,
 	JobAvailability,
-	JobDuration,
 	JobLocation,
 	JobCompensation,
 	Role,
@@ -42,11 +41,11 @@ import {
 } from "@looking-for-group/shared";
 import {
 	JobAvailability as JobAvailabilityEnums,
-	JobDuration as JobDurationEnums,
 	JobLocation as JobLocationEnums,
 	JobCompensation as JobCompensationEnums,
 } from "@looking-for-group/shared/enums";
 import {
+	Fillable,
 	Pending,
 	PendingProject,
 	PendingProjectMember
@@ -72,13 +71,13 @@ type UserSearchableFields = Pick<
 >;
 
 // Empty job position template used when creating new positions.
-const emptyJob: Pending<ProjectJob> = {
+const emptyJob: Fillable<Pending<ProjectJob>> = {
 	availability: null,
 	compensation: null,
 	contact: null,
 	description: "",
-	duration: null,
-	durationCount: null,
+	jobStart: null,
+	jobEnd: null,
 	localId: null,
 	location: null,
 	role: null,
@@ -184,7 +183,7 @@ export const TeamTab = ({
 	>();
 	// State tracking which job position is currently selected.
 	const [currentJob, setCurrentJob] = useState<
-		ProjectJob | Pending<ProjectJob>
+		ProjectJob | Fillable<Pending<ProjectJob>>
 	>();
 
 	// State indicating whether position editing is active
@@ -319,8 +318,8 @@ export const TeamTab = ({
 				current.role?.roleId !== original.role?.roleId ||
 				current.availability !== original.availability ||
 				current.location !== original.location ||
-				current.duration !== original.duration ||
-				current.durationCount !== original.durationCount ||
+				current.jobStart !== original.jobStart ||
+				current.jobEnd !== original.jobEnd ||
 				current.compensation !== original.compensation ||
 				current.description !== original.description ||
 				current.contact?.userId !== original.contact?.userId
@@ -897,7 +896,6 @@ export const TeamTab = ({
 				isNullOrUndefined(currentJob.role?.roleId) ||
 				isNullOrUndefined(currentJob.availability) ||
 				isNullOrUndefined(currentJob.location) ||
-				isNullOrUndefined(currentJob.duration) ||
 				isNullOrUndefined(currentJob.compensation) ||
 				isNullOrUndefined(currentJob.contact?.userId) ||
 				currentJob.jobSkills?.length === 0
@@ -905,6 +903,14 @@ export const TeamTab = ({
 				// set error
 				setErrorAddPosition("All fields are required");
 				return;
+			}
+
+			if (isNullOrUndefined(currentJob.jobStart)) {
+				currentJob.jobStart = new Date(1900, 0, 1);
+			}
+
+			if (isNullOrUndefined(currentJob.jobEnd)) {
+				currentJob.jobEnd = new Date(1900, 0, 1);
 			}
 
 			dataManager?.createJob({
@@ -918,8 +924,8 @@ export const TeamTab = ({
 					availability: currentJob.availability,
 					compensation: currentJob.compensation,
 					contactUserId: currentJob.contact.userId,
-					duration: currentJob.duration,
-					durationCount: currentJob.durationCount ?? undefined,
+					jobStart: currentJob.jobStart,
+					jobEnd: currentJob.jobEnd,
 					location: currentJob.location,
 					roleId: currentJob.role.roleId,
 					description: currentJob.description ?? undefined,
@@ -929,7 +935,7 @@ export const TeamTab = ({
 
 			//passing in the associated job's localId to get this to work properly
 			if (currentJob.jobSkills) {
-				for (let skill of currentJob.jobSkills) {
+				for (const skill of currentJob.jobSkills) {
 					console.log(skill)
 
 					dataManager?.addProjectJobSkill({
@@ -1012,8 +1018,8 @@ export const TeamTab = ({
 					compensation: currentJob.compensation ?? undefined,
 					contactUserId: currentJob.contact?.userId ?? undefined,
 					description: currentJob.description ?? undefined,
-					duration: currentJob.duration ?? undefined,
-					durationCount: currentJob.durationCount ?? undefined,
+					jobStart: currentJob.jobStart ?? undefined,
+					jobEnd: currentJob.jobEnd ?? undefined,
 					location: currentJob.location ?? undefined,
 					roleId: currentJob.role?.roleId ?? undefined
 				}
@@ -1034,6 +1040,18 @@ export const TeamTab = ({
 			updatePendingProject(projectAfterTeamChanges);
 		}
 	}, [currentJob, dataManager, isCreatingNewPosition, projectAfterTeamChanges, unmodifiedProject.jobs, updatePendingProject]);
+
+	const undefinedDateToString = (undefinedDate: Date | null | undefined) => {
+		if (undefinedDate) {
+			if (undefinedDate.toString().slice(0, 10) === "1900-01-01") {
+				return " None";
+			}
+
+			return ` ${undefinedDate.toString().slice(0, 10)}`;
+		}
+
+		return " Date was undefined";
+	}
 
 	// --- Content variables ---
 	// JSX content for viewing position details.
@@ -1172,17 +1190,22 @@ export const TeamTab = ({
 						</div>
 					</div>
 					<div id="open-position-details-right">
-						<div id="position-duration">
+						<div id="position-start">
 							<span className="position-detail-indicator">
-								Duration:{" "}
+								Job Start:
 							</span>
-							{currentJob?.durationCount
-								? `${currentJob.durationCount} `
-								: ""}
-							{currentJob &&
-								currentJob?.duration &&
-								JobDurationEnums[currentJob.duration]}
+
+							{undefinedDateToString(currentJob?.jobStart)}
 						</div>
+
+						<div id="position-end">
+							<span className="position-detail-indicator">
+								Job End:
+							</span>
+
+							{undefinedDateToString(currentJob?.jobEnd)}
+						</div>
+
 						<div id="position-compensation">
 							<span className="position-detail-indicator">
 								Compensation:{" "}
@@ -1524,89 +1547,37 @@ export const TeamTab = ({
 				</div>
 				<div id="edit-position-details-right">
 					<div className="edit-position-container">
-						<label className="edit-position-duration">
-							Duration
-							<span
-								className="required-asterisk"
-								aria-hidden="true"
-								title="Required">
-								*
-							</span>
-						</label>
+						<label className="edit-position-job-start">Job Start</label>
 						<input
-							className="edit-position-duration-count"
-							type="number"
-							min={1}
-							placeholder="#"
-							aria-label="Duration amount"
-							value={currentJob?.durationCount ?? ""}
+							type="date"
+							id="input-job-start"
+							name="job-start"
+							min="1000-01-01"
+							max="9999-12-31"
 							onChange={(e) => {
-								const raw = e.target.value;
-								setCurrentJob({
-									...currentJob,
-									durationCount:
-										raw === ""
-											? null
-											: Math.max(
-												1,
-												Math.floor(Number(raw))
-											)
-								} as ProjectJob);
-							}}
-						/>
-						<Select>
-							<SelectButton
-								placeholder="Select"
-								initialVal={
-									isCreatingNewPosition
-										? ""
-										: getProjectJob(
-											currentJob?.role
-												?.roleId as number
-										) &&
-											getProjectJob(
-												currentJob?.role
-													?.roleId as number
-											)?.duration
-											? JobDurationEnums[
-											getProjectJob(
-												currentJob?.role
-													?.roleId as number
-											)!.duration!
-											] // explicit because its checked for before
-											: ""
+								if (currentJob) {
+									currentJob.jobStart = e.currentTarget.valueAsDate;
+								} else {
+									console.log("currentJob is undefined");
 								}
-								type="input"
-							/>
-							<SelectOptions
-								callback={(e) => {
-									const key = Object.keys(
-										JobDurationEnums
-									).find(
-										(key) =>
-											JobDurationEnums[
-											key as keyof typeof JobDurationEnums
-											] ===
-											(e.target as HTMLButtonElement)
-												.value
-									);
+							}}>
+						</input>
 
-									setCurrentJob({
-										...currentJob,
-										duration: key as JobDuration
-									} as ProjectJob);
-								}}
-								options={Object.values(JobDurationEnums).map(
-									(option) => {
-										return {
-											markup: <>{option}</>,
-											value: option,
-											disabled: false
-										};
-									}
-								)}
-							/>
-						</Select>
+						<label className="edit-position-job-end">Job End</label>
+						<input
+							type="date"
+							id="input-job-end"
+							name="job-end"
+							min="1000-01-01"
+							max="9999-12-31"
+							onChange={(e) => {
+								if (currentJob) {
+									currentJob.jobEnd = e.currentTarget.valueAsDate;
+								} else {
+									console.log("currentJob is undefined");
+								}
+							}}>
+						</input>
 					</div>
 					<div className="edit-position-container">
 						<label className="edit-position-compensation">

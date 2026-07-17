@@ -1,7 +1,6 @@
 import type {
   ApiResponse,
   JobAvailability,
-  JobDuration,
   JobLocation,
   JobCompensation,
 } from '@looking-for-group/shared';
@@ -9,7 +8,6 @@ import type { Request, Response } from 'express';
 import addJobService, { type JobInput } from '#services/projects/jobs/add-job.ts';
 
 const validAvailabilities: JobAvailability[] = ['FullTime', 'PartTime', 'Flexible'];
-const validDurations: JobDuration[] = ['Days', 'Weeks', 'Months', 'Semesters', 'Years'];
 const validLocations: JobLocation[] = ['OnSite', 'Remote', 'Hybrid', 'Flexible'];
 const validCompensations: JobCompensation[] = ['Unpaid', 'Paid'];
 
@@ -31,7 +29,9 @@ const validateJobData = (data: unknown): data is JobInput => {
     typeof d.roleId === 'number' &&
     typeof d.contactUserId === 'number' &&
     validateEnum(d.availability, validAvailabilities) &&
-    validateEnum(d.duration, validDurations) &&
+    //Find a way to validate these types as dates
+    typeof d.jobStart === 'string' &&
+    typeof d.jobEnd === 'string' &&
     validateEnum(d.location, validLocations) &&
     validateEnum(d.compensation, validCompensations) &&
     typeof d.description === 'string'

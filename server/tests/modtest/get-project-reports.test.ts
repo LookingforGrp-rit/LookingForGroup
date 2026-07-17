@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
-import getProjectReportsService from '#services/projects/get-project-reports.ts';
+import getProjectReportsService from '#services/mod/get-project-reports.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
 
@@ -29,6 +29,23 @@ const prismaReports = [
   },
 ];
 
+const transformedReports = [
+  {
+    apiUrl: 'api/mod/project-report/3',
+    reportId: 3,
+    userId: 1,
+    projectId: 2,
+    reason: 'test report',
+  },
+  {
+    apiUrl: 'api/mod/project-report/7',
+    reportId: 7,
+    userId: 5,
+    projectId: 6,
+    reason: 'test report 2',
+  },
+];
+
 describe('getProjectReportsService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -38,7 +55,7 @@ describe('getProjectReportsService', async () => {
     vi.mocked(prisma.reportProject.findMany).mockResolvedValue(prismaReports);
 
     const result = await getProjectReportsService();
-    expect(result).toStrictEqual(prismaReports);
+    expect(result).toStrictEqual(transformedReports);
   });
 
   it('returns NOT_FOUND if there are no reports', async () => {

@@ -104,7 +104,7 @@ describe('getProjectFollowingService', () => {
       expect.objectContaining({
         followedAt: true,
         projects: expect.objectContaining({
-          select: expect.any(Object),
+          select: expect.objectContaining({}),
         }),
       }),
     );

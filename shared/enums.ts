@@ -60,13 +60,6 @@ export enum JobAvailability {
   PartTime = "Part-time",
   Flexible = "Flexible"
 }
-export enum JobDuration {
-  Days = "Days",
-  Weeks = "Weeks",
-  Months = "Months",
-  Semesters = "Semesters",
-  Years = "Years"
-}
 export enum JobLocation {
   OnSite = "On-Site",
   Remote = "Remote",

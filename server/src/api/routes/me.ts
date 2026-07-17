@@ -133,7 +133,7 @@ router.put(
 
 //Report project
 router.post(
-  '/projects/report/:id/:report',
+  '/projects/report/:id/',
   projectExistsAt('path', 'id'),
   authenticated(reportProjectController),
 );
@@ -216,10 +216,6 @@ router.delete('/', authenticated(deleteUser));
 router.get('/get-username', authenticated(getUsernameByGoogle));
 
 //Report user
-router.post(
-  '/users/report/:id/:report',
-  userExistsAt('path', 'id'),
-  authenticated(reportUserController),
-);
+router.post('/users/report/:id', userExistsAt('path', 'id'), authenticated(reportUserController));
 
 export default router;

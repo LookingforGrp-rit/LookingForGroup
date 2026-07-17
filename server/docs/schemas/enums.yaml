@@ -115,16 +115,6 @@ components:
         - Flexible
       example: FullTime
 
-    JobDuration:
-      type: string
-      enum:
-        - Days
-        - Weeks
-        - Months
-        - Semesters
-        - Years
-      example: Days
-
     JobLocation:
       type: string
       enum:

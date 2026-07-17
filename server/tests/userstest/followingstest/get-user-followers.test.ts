@@ -88,7 +88,7 @@ describe('getUserFollowersService', () => {
       where: { receiverId: 10 },
       orderBy: { followedAt: 'desc' },
       select: {
-        senderUser: { select: expect.any(Object) },
+        senderUser: { select: expect.objectContaining({}) },
         followedAt: true,
       },
     });

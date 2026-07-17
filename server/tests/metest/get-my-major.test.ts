@@ -52,7 +52,7 @@ describe('getUserMajorsService', () => {
     const userFindCall = vi.mocked(prisma.users.findUnique).mock.calls[0][0];
 
     expect(userFindCall.where).toEqual({ userId: 1 });
-    expect(userFindCall.include).toEqual(expect.any(Object));
+    expect(userFindCall.include).toBeTypeOf('object');
 
     expect(transformMyMajor).toHaveBeenCalledWith(prismaMajor);
     expect(result).toEqual([transformed]);
