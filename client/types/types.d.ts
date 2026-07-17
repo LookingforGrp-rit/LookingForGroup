@@ -30,10 +30,13 @@ import {
   RitStatus,
   MyMember,
   MySkill,
+  MySocial,
+  MyMajor,
   MeDetail,
-  UpdateUserProjectVisibilityInput,
+  UpdateProjectProfileVisibilityInput,
   CreateProjectVideoInput,
   AddJobSkillInput,
+  UpdateJobSkillInput,
   DeleteJobSkillInput,
   JobSkill,
   UpdateMemberRequestInput,
@@ -178,7 +181,7 @@ interface ProjectChangesUpdates {
   jobs: CRUDRequest<UpdateProjectJobInput>[];
 
   /**
-   * All jobs to be updated
+   * All job skills to be updated
    */
   jobSkills: CRUDRequest<UpdateJobSkillInput>[];
 
@@ -325,7 +328,7 @@ interface UserChangesCreates {
   /**
    * All socials to be created
    */
-  socials: CrudRequest<AddUserSocialInput>[];
+  socials: CRUDRequest<AddUserSocialInput>[];
 }
 
 /**
@@ -350,7 +353,7 @@ interface UserChangesUpdates {
   /**
    * All project visibilities to be updated
    */
-  projectVisibilities: CRUDRequest<UpdateUserProjectVisibilityInput>[];
+  projectVisibilities: CRUDRequest<UpdateProjectProfileVisibilityInput>[];
 }
 
 /**
