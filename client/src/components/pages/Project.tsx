@@ -60,15 +60,11 @@ const Project = () => {
   const [isMember, setIsMember] = useState(false);
   const [viewedPosition, setViewedPosition] = useState(0);
 
-  const [deleteResponseText, setDeleteResponseText] = useState<string | null>(null);
-  const successMessage = "Success! You declined this project request.";
-
   const [shownTags, setShownTags] = useState(3);
   const [videos, setVideos] = useState<ProjectVideo[]>();
 
   const reportMessage = useRef<HTMLTextAreaElement>(null);
-  const deleteMessage = useRef<HTMLInputElement>(null);
-  const editMessage = useRef<HTMLInputElement>(null);
+  const deleteMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>("");
 
   /**
@@ -944,46 +940,27 @@ const Project = () => {
               </div>
             </div>
 
-            {/* Mod options to approve, request edits, or reject a project request */}
+            {/* Mod options to approveor reject a project request (request edits in order to approve) */}
             {isUserAdmin && approvalStatus == 'under-review' ? <div className="mod-project-options">
-              <h4>Approve?</h4>
-              <p>You can approve, request an edit, or decline this project.</p>
-              <div id="mod-options-btns">
-                <button id="mod-approve-btn" onClick={() => { if (displayedProject) { handleApproveRequest(); } }}>Approve</button>
-                <Popup>
-                  <PopupButton className="mod-edit-btn">Request Edits</PopupButton>
-                  <PopupContent>
-                    <div className="small-popup" id="report-popup">
-                      <h3>Request Edits</h3>
-                      <p>What should the user change about their project before it can be approved?</p>
-                      <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={editMessage}></input>
-                      <div className="confirm-deny-btns">
-                        <button
-                          id="team-delete-member-cancel-button"
-                          className="button-reset"
-                        >
-                          Cancel
-                        </button>
-                        <button className="confirm-btn" onClick={() => true /* send msg to user here -- im not sure how to do this */}>Submit</button>
-                      </div>
-                    </div>
-                  </PopupContent>
-                </Popup>
-                <Popup>
-                  <PopupButton className="delete-button">Decline</PopupButton>
-                  <PopupContent>
+                <h4>Approve?</h4>
+                <p>You can approve this project or request changes.</p>
+                <div id="mod-options-btns">
+                  <button id="mod-approve-btn" onClick={ () => { if (displayedProject){ handleApproveRequest(); }}}>Approve</button>
+                  <Popup>
+                    <PopupButton className="delete-button">Decline</PopupButton>
+                    <PopupContent>
                     <div className="small-popup" id="report-popup">
                       <h3>Decline Approval Request</h3>
                       <p>Why are you declining {displayedProject?.title}?</p>
                       <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={deleteMessage}></input>
-                      <div className="confirm-deny-btns">
-                        <button
-                          id="team-delete-member-cancel-button"
-                          className="button-reset"
-                        >
-                          Cancel
-                        </button>
-                        <button className="confirm-btn" onClick={() => { handleDeleteProjectRequest(deleteMessage?.current ? deleteMessage.current.value : "No message provided."); }}>Submit</button>
+                        <div className="confirm-deny-btns">
+                          <button
+                            id="team-delete-member-cancel-button"
+                            className="button-reset"
+                          >
+                            Cancel
+                          </button>
+                          <button className="confirm-btn" onClick={() => {handleDeleteProjectRequest(deleteMessage?.current ? deleteMessage.current.value : "No message provided.");}}>Submit</button>
                       </div>
                     </div>
                   </PopupContent>
