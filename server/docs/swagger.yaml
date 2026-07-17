@@ -4316,6 +4316,61 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/mod/warn-user/{userId}:
+    put:
+      summary: Gives a warning to a particular user
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: User ID of the user to be warned
+          schema:
+            type: number
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                warning:
+                  type: string
+      responses:
+        '200':
+          description: User banned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullabe: true
+                    example: null
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/mod/unban-user/{googleId}:
     delete:
       summary: Unbans a user by removing them from a blacklist
