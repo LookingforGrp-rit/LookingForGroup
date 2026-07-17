@@ -1751,3 +1751,11 @@ export type ModeratorNotificationInput = {
   subjectLine: string;
   message: string;
 }
+
+/**
+ * Data required to ban a user from the site
+ */
+export type BanUserInput = {
+  userId: number;
+  reason: string;
+}

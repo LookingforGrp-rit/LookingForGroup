@@ -1,16 +1,16 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { ApiResponse, AuthenticatedRequest, BanUserInput } from '@looking-for-group/shared';
 import type { Response } from 'express';
 import addBlacklistService from '#services/users/blacklist/add-to-blacklist.ts';
 
-//PUT api/mod/ban-user/{googleId}/{reason}
+//POST api/mod/ban-user/{od}
 //bans a user, by logging them out, then adding them to a blacklist to prevent signing in
 export const banUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const googleId: string = req.params.googleId as string;
-  const reason: string = req.params.reason as string;
+  const id = parseInt(req.params.googleId as string);
+  const body = req.body as BanUserInput;
 
   //TODO: Implement log out
 
-  const result = await addBlacklistService(googleId, reason);
+  const result = await addBlacklistService(id, body.reason);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

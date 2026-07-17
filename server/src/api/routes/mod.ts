@@ -10,6 +10,7 @@ import { getUserReportById } from '#controllers/mod/get-user-report-by-id.ts';
 import { getUserReports } from '#controllers/mod/get-user-reports.ts';
 import { inactivateUserReport } from '#controllers/mod/inactivate-user-report.ts';
 import { unbanUser } from '#controllers/mod/unban-user.ts';
+import { userExistsAt } from '#middleware/validators/user-exists-at.ts';
 import { userReportExistsAt } from '#middleware/validators/user-report-exists-at.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresModerator from '../middleware/authorization/requires-mod.ts';
@@ -44,7 +45,7 @@ router.patch(
   authenticated(inactivateUserReport),
 );
 
-router.put('/ban-user/:googleId/:reason', authenticated(banUser));
+router.post('/ban-user/:id', userExistsAt('path', 'id'), authenticated(banUser));
 
 router.delete('/delete-project/:id/', authenticated(deleteProject));
 router.delete('/unban-user/:googleId/', authenticated(unbanUser));

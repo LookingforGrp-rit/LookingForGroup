@@ -4216,6 +4216,53 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/mod/user-report/{id}/inactivate:
+    patch:
+      summary: Inactivates a user report
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user report to be inactivated
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+
+      responses:
+        '200':
+          description: User report successfully inactivated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullabe: true
+                    example: 'NO_CONTENT'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/mod/delete-project/{id}:
     delete:
       summary: Deletes a specified project
@@ -4263,24 +4310,18 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/mod/ban-user/{googleId}/{reason}:
-    put:
+  /api/mod/ban-user/{id}:
+    post:
       summary: Bans a user by adding them to a blacklist
       tags:
         - Mod
       security:
         - shibbolethAuth: []
       parameters:
-        - name: googleId
+        - name: id
           in: path
           required: true
-          description: Google ID of the user to be banned
-          schema:
-            type: string
-        - name: reason
-          in: path
-          required: false
-          description: Reason the user is to be banned
+          description: User ID of the user to be banned
           schema:
             type: string
         - in: query
@@ -4289,6 +4330,12 @@ paths:
             type: integer
           required: false
           description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BanUserInput'
 
       responses:
         '200':
@@ -4459,6 +4506,49 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   /api/mod/user-report/{id}:
+    get:
+      summary: Get a specific user report
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of report to get
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+
+      responses:
+        '200':
+          description: User report acquired successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/UserReport'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
     delete:
       summary: Removes a user report
       tags:
@@ -5343,6 +5433,8 @@ components:
       $ref: 'schemas/users.yaml#/components/schemas/UserPreview'
     UserDetail:
       $ref: 'schemas/users.yaml#/components/schemas/UserDetail'
+    UserReport:
+      $ref: 'schemas/users.yaml#/components/schemas/UserReport'
 
     MySkill:
       $ref: 'schemas/me.yaml#/components/schemas/MySkill'
@@ -5446,6 +5538,8 @@ components:
       $ref: 'schemas/inputs.yaml#/components/schemas/AddUserReportInput'
     AddProjectReportInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectReportInput'
+    BanUserInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/BanUserInput'
 
     ErrorMessage:
       type: object

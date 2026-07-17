@@ -197,7 +197,7 @@ const Project = () => {
   const handleApproveRequest = async () => {
     if (displayedProject) {
       setApprovalStatus("approved");
-      await approveProjectRequest(projectID, displayedProject, userID ? userID : -1);
+      await approveProjectRequest(projectID, displayedProject);
     }
   };
 

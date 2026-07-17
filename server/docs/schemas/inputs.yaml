@@ -333,3 +333,17 @@ components:
         - reason
       example:
         reason: 'This project contains offensive content.'
+
+    BanUserInput:
+      type: object
+      properties:
+        userId:
+          type: string
+        reason:
+          type: string
+        required:
+          - userId
+          - reason
+      example:
+        userId: 1
+        reason: 'Several inappropriate behaviors in the community.'

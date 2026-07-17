@@ -1,6 +1,6 @@
-import { GET, DELETE, POST, PATCH } from "./index";
+import { GET, DELETE, POST, PUT, PATCH } from "./index";
 import { ApiResponse, UserAccessLevel, UnapproveProjectInput } from "@looking-for-group/shared";
-import { ProjectPreview, ProjectDetail, ProjectReport, UserReport, ModeratorNotificationInput } from "@looking-for-group/shared";
+import { ProjectPreview, ProjectDetail, ProjectReport, UserReport, ModeratorNotificationInput, BanUserInput} from "@looking-for-group/shared";
 
 /**
  * Gets the list of all pending projects
@@ -34,13 +34,11 @@ export const deleteProjectRequest = async (
  * Approves a pending project approval request
  * @param projectId The project that is being approved
  * @param projectData The project with now approved status
- * @param userId The Admin/Mod user ID that is approving the project
  * @returns Response from the API call to approve the project
  */
 export const approveProjectRequest = async (
     projectId: number,
     projectData: ProjectDetail,
-    modId: number
 ): Promise<ApiResponse> => {
     const apiURL = `/projects/${projectId}/approve`;
     
@@ -123,9 +121,10 @@ export const approveProjectReport = async(
 };
 
 /**
- * 
- * @param reportId 
- * @returns 
+ * Inactivates the user report and sends a notification to the user
+ * @param reportId Report ID of the user report to inactivate
+ * @param data Notification data
+ * @returns ApiResponse from inactivateUserReport
  */
 export const requestEditsForUserReport = async (reportId: number, data: ModeratorNotificationInput): Promise<ApiResponse> => {
     const inactivateRes = await inactivateUserReport(reportId);
@@ -153,8 +152,8 @@ export const inactivateUserReport = async (reportId: number): Promise<ApiRespons
 
 /**
  * Sends a moderator notifcation to a user
- * @param data 
- * @returns 
+ * @param data Data needed for sending a moderator notification
+ * @returns ApiResponse from the API call to send a moderation notification to a user
  */
 export const sendModeratorNotification = async (data: ModeratorNotificationInput): Promise<ApiResponse> => {
     // !! sends mod message to user (API not setup yet)
@@ -164,6 +163,19 @@ export const sendModeratorNotification = async (data: ModeratorNotificationInput
     if (res.error) console.log(`Error in sendModeratorNotification: ${res.error}`);
     return res;
 }
+
+/**
+ * Bans a user from the site
+ * @param data Data needed fro banning a user from the site
+ * @returns ApiResponse from the API call to ban a user
+ */
+export const banUser = async (data: BanUserInput): Promise<ApiResponse> => {
+    const apiUrl = `/ban-user/${data.userId}`;
+    const res = await POST(apiUrl, data);
+
+    if (res.error) console.log(`Error in banUser: ${res.error}`);
+    return res;
+};
 
 /**
  * Deletes a project report

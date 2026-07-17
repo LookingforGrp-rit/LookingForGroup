@@ -29,7 +29,7 @@ import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, 
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
-import { getReportedUsers, getUserAccessLevel, deleteUserReport, requestEditsForUserReport } from "../../api/mod-tools";
+import { getReportedUsers, getUserAccessLevel, deleteUserReport, requestEditsForUserReport, banUser } from "../../api/mod-tools";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -491,7 +491,10 @@ const Profile = (userProfile: any) => {
         });
         break;
       case 'ban':
-        
+        res = await banUser({
+          reason: modMessage?.current?.value ?? '',
+          userId: reportedUser.reportedId,
+        });
         break;
       default:
         console.error(`Unknown action: ${action}`);

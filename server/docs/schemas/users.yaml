@@ -248,3 +248,26 @@ components:
           count: 0
           apiUrl: /api/users/1/followers
         apiUrl: /api/users/1
+
+    UserReport:
+      type: object
+      properties:
+        apiUrl:
+          type: string
+        reportId:
+          type: integer
+        reporterId:
+          type: integer
+        reportedId:
+          type: integer
+        reason:
+          type: string
+        active:
+          type: boolean
+      example:
+        apiUrl: /api/mod/user-report/1
+        reportId: 1
+        reporter: 2
+        reportedId: 3
+        reason: 'Inappropriate behavior in the community.'
+        active: true
