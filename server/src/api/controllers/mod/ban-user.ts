@@ -10,7 +10,7 @@ export const banUser = async (req: AuthenticatedRequest, res: Response): Promise
 
   //TODO: Implement log out
 
-  const result = await addBlacklistService(googleId, reason);
+  const result = await addBlacklistService(req.currentUser.userId, googleId, reason);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
