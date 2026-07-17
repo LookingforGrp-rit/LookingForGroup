@@ -591,6 +591,7 @@ export const DiscoverPage = () => {
         setCurrentUserId={getAuth}
         searchOnFocus={handleSearchFocus}
         placeholderText="Search by Project"
+        mobilePlaceholderText="Projects"
       />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {heroContent}
