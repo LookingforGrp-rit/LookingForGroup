@@ -30,6 +30,9 @@ vi.mock('#config/prisma.ts', () => ({
     members: {
       findMany: vi.fn(),
     },
+    blocklist: {
+      findMany: vi.fn(),
+    },
   },
 }));
 const now = new Date();

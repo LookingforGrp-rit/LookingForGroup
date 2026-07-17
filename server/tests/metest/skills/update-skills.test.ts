@@ -16,6 +16,7 @@ import { transformMySkill } from '#services/transformers/me/parts/my-skill.ts';
 
 vi.mock('#config/prisma.ts', () => ({
   default: {
+    $transaction: vi.fn(),
     userSkills: {
       update: vi.fn(),
     },
@@ -70,6 +71,7 @@ describe('updateSkillsService', () => {
 
   it('returns transformed my skills', async () => {
     vi.mocked(getSkillsService).mockResolvedValue(skills);
+    vi.mocked(prisma.$transaction).mockResolvedValue([]);
     vi.mocked(prisma.userSkills.update).mockResolvedValue(prismaUserSkills as any);
     vi.mocked(transformMySkill).mockReturnValue(transformed);
 

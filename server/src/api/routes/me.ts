@@ -62,8 +62,7 @@ export const authenticated = (
 //All routes use requiresLogin and injectCurrentUser
 router.use(requiresLogin, injectCurrentUser);
 
-// FOLLOW ROUTES
-
+//#region Follow routes
 //Follows a project
 router.post(
   '/followings/projects/:id',
@@ -71,6 +70,7 @@ router.post(
   isUserBlocked(new ProjectInPathParameterLocation(), '', new MeParameterLocation(), ''),
   authenticated(addProjectFollowing),
 );
+
 //Unfollows a project
 router.delete(
   '/followings/projects/:id',
@@ -78,6 +78,7 @@ router.delete(
   authenticated(userAttributeExistsAt('projectFollowing', 'path', 'id')),
   authenticated(deleteProjectFollowing),
 );
+
 //Follows a user
 router.post(
   '/followings/people/:id',
@@ -85,6 +86,7 @@ router.post(
   isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
   authenticated(addUserFollowing),
 );
+
 //Unfollows a user
 router.delete(
   '/followings/people/:id',
@@ -92,24 +94,27 @@ router.delete(
   authenticated(userAttributeExistsAt('userFollowing', 'path', 'id')),
   authenticated(deleteUserFollowing),
 );
+//#endregion
 
-// MAJORS ROUTES
-
+//#region Majors routes
 //Gets the current user's majors
 router.get('/majors', authenticated(getUserMajors));
+
 //Adds a major
 router.post('/majors', attributeExistsAt('major', 'body', 'majorId'), authenticated(addUserMajor));
+
 //Deletes a major
 router.delete(
   '/majors/:id',
   authenticated(userAttributeExistsAt('major', 'path', 'id')),
   authenticated(deleteMajor),
 );
+//#endregion
 
-// PROJECTS ROUTES
-
+//#region Projects routes
 //Gets current user's projects
 router.get('/projects', authenticated(getMyProjects));
+
 //Leave a project
 router.delete(
   '/projects/:id/leave',
@@ -117,6 +122,7 @@ router.delete(
   authenticated(userAttributeExistsAt('project', 'path', 'id')),
   authenticated(leaveProjectController),
 );
+
 //Change project profile visibility
 router.put(
   '/projects/:id/visibility',
@@ -124,55 +130,85 @@ router.put(
   authenticated(userAttributeExistsAt('project', 'path', 'id')),
   authenticated(updateProjectProfileVisibilityController),
 );
+
 //Report project
 router.post(
   '/projects/report/:id/:report',
   projectExistsAt('path', 'id'),
   authenticated(reportProjectController),
 );
+//#endregion
 
-// SKILLS ROUTES
-
+//#region Skills routes
 //Gets a user's skills
 router.get('/skills', authenticated(getSkills));
+
 //Adds a skill
 router.post('/skills', attributeExistsAt('skill', 'body', 'skillId'), authenticated(addSkills));
+
 //Deletes a skill
 router.delete(
   '/skills/:id',
   authenticated(userAttributeExistsAt('skill', 'path', 'id')),
   authenticated(deleteSkill),
 );
+
 //Updates a skill's proficiency (or position if it ever becomes useful)
 router.patch(
   '/skills/:id',
   authenticated(userAttributeExistsAt('skill', 'path', 'id')),
   authenticated(updateSkills),
 );
+//#endregion
 
-// SOCIALS ROUTES
-
+//#region Socials routes
 //Gets a user's socials
 router.get('/socials', authenticated(getSocials));
+
 //Adds a social
 router.post('/socials', attributeExistsAt('social', 'body', 'websiteId'), authenticated(addSocial));
+
 //Updates a social
 router.patch(
-  '/socials/:websiteId',
-  authenticated(userAttributeExistsAt('social', 'path', 'websiteId')),
+  '/socials/:id',
+  authenticated(userAttributeExistsAt('social', 'path', 'id')),
   authenticated(updateSocial),
 );
+
 //Deletes a social
 router.delete(
-  '/socials/:websiteId',
-  authenticated(userAttributeExistsAt('social', 'path', 'websiteId')),
+  '/socials/:id',
+  authenticated(userAttributeExistsAt('social', 'path', 'id')),
   authenticated(deleteSocial),
 );
+//#endregion
+
+//#region Notifications routes
+router.get('/notifications', authenticated(getNotifications));
+
+router.get('/notifications/checkformessages', authenticated(checkForUnreadNotifications));
+
+router.get('/notifications/:id', authenticated(getNotification));
+
+router.patch('/notifications/:id/read', authenticated(readNotification));
+
+router.delete('/notifications/:id', authenticated(deleteNotification));
+//#endregion
+
+//#region Blocklist routes
+router.post('/blocklist', userExistsAt('body', 'userId'), authenticated(addToBlocklist));
+
+router.delete('/blocklist', userExistsAt('body', 'userId'), authenticated(removeFromBlocklist));
+
+router.get('/blocklist', authenticated(getBlocklist));
+//#endregion
 
 //Gets user's account
 router.get('/', authenticated(getAccount));
+
 //Updates users information
 router.patch('/', upload.single('profileImage'), authenticated(updateUserInfo));
+
 //Delete user
 router.delete('/', authenticated(deleteUser));
 
@@ -185,23 +221,5 @@ router.post(
   userExistsAt('path', 'id'),
   authenticated(reportUserController),
 );
-
-// NOTIFICATIONS ROUTES
-router.get('/notifications', authenticated(getNotifications));
-
-router.get('/notifications/:id', authenticated(getNotification));
-
-router.patch('/notifications/:id/read', authenticated(readNotification));
-
-router.delete('/notifications/:id', authenticated(deleteNotification));
-
-router.get('/notifications/checkformessages', authenticated(checkForUnreadNotifications));
-
-// BLOCKLIST ROUTES
-router.post('/blocklist', userExistsAt('body', 'userId'), authenticated(addToBlocklist));
-
-router.delete('/blocklist', userExistsAt('body', 'userId'), authenticated(removeFromBlocklist));
-
-router.get('/blocklist', authenticated(getBlocklist));
 
 export default router;

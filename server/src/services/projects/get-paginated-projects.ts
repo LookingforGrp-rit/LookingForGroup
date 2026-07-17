@@ -1,6 +1,6 @@
-import type { ProjectPreview, ProjectSortMethod } from '@looking-for-group/shared';
+import type { ProjectPreview, ProjectSortMethod, Visibility } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import { ProjectPreviewSelector } from '#services/selectors/projects/project-preview.ts';
+import { ProjectWithFollowersSelector } from '#services/selectors/projects/projects-with-followers.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformProjectToPreview } from '#services/transformers/projects/project-preview.ts';
 
@@ -23,24 +23,26 @@ const getPaginatedProjectsService = async (
     // if (count >= remainingProjects) {
     //   count = remainingProjects;
     // }
-
-    //set up sorting option
-    let orderByInput;
+    let orderByMethod;
     switch (sortMethod) {
-      case 'Newest':
-        orderByInput = { createdAt: 'desc' as const };
-        break;
       case 'A-Z':
-        orderByInput = { title: 'asc' as const };
+        orderByMethod = { title: 'asc' as const };
+        break;
+      case 'Newest':
+        orderByMethod = { createdAt: 'desc' as const };
+        break;
+      case 'Popular':
+        orderByMethod = { projectFollowings: { _count: 'desc' as const } };
         break;
     }
 
     const query = {
-      select: ProjectPreviewSelector,
+      select: ProjectWithFollowersSelector,
+      orderBy: orderByMethod,
       take: count,
-      orderBy: orderByInput,
       where: {
         approved: true,
+        globalVisibility: 'public' as Visibility,
       },
       ...(lastProjectId
         ? {
@@ -53,14 +55,7 @@ const getPaginatedProjectsService = async (
     const result = await prisma.projects.findMany(query);
 
     //return transformed projects
-    const transformedProjects = result.map(transformProjectToPreview);
-
-    //Array is alphabetized by project title
-    // transformedProjects = transformedProjects.toSorted(
-    //   (project1, project2) => project1.title.charCodeAt(0) - project2.title.charCodeAt(0),
-    // );
-
-    return transformedProjects;
+    return result.map(transformProjectToPreview);
   } catch (e) {
     console.error(`Error in getPaginatedProjectsService: ${e as Error}`);
 

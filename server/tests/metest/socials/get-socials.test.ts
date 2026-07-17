@@ -21,16 +21,20 @@ vi.mock('#services/transformers/me/parts/my-social.ts', () => ({
 const prismaUserSocials = [
   {
     userId: 1,
+    id: 1,
     label: '',
     url: '',
+    alias: '',
     websiteId: 1,
   },
 ];
 
 const transformed: MySocial = {
+  id: 1,
   apiUrl: 'api/me/socials',
   label: '',
   url: '',
+  alias: '',
   websiteId: 1,
 };
 

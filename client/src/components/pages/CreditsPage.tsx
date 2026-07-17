@@ -28,7 +28,7 @@ const Credits = () => {
   // Updates filtered members list with new search info
   const searchMembers = useCallback((searchResults: any[][]) => {
     if (!searchResults || !Array.isArray(searchResults)) return;
-    
+
     // Flatten the nested arrays
     const flattened = searchResults.flat();
 
@@ -49,7 +49,7 @@ const Credits = () => {
       const roleComparison = a.role.localeCompare(b.role);
       if (roleComparison !== 0)
         return roleComparison;
-      
+
       // If roles match, compare names
       return a.name.localeCompare(b.name);
     });
@@ -57,11 +57,12 @@ const Credits = () => {
 
   return (
     <div className="page" id="my-projects">
-      <Header 
-        dataSets={dataSet} 
-        onSearch={searchMembers} 
+      <Header
+        dataSets={dataSet}
+        onSearch={searchMembers}
         value={searchQuery}
         onChange={handleSearchChange}
+        placeholderText=""
       />
 
       <h1 id="credits-title">Meet The LFG Team</h1>
@@ -75,9 +76,9 @@ const Credits = () => {
         <ul id="credit-members-container">
           {sortedMembersList.map(member => (
             <li className="lfg-contributor" key={member.name}>
-              <img 
-                className="project-contributor-profile" 
-                src={member.photo} 
+              <img
+                className="project-contributor-profile"
+                src={member.photo}
                 alt={`Profile photo of ${member.name}`}
               />
               <div className="project-contributor-info">
@@ -87,7 +88,7 @@ const Credits = () => {
             </li>
           ))}
         </ul>
-        
+
         {sortedMembersList.length === 0 && (
           <p className='no-members'>No team members found matching your search.</p>
         )}

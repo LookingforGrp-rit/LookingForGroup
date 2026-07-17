@@ -31,7 +31,94 @@ export const authenticated = (
     next: NextFunction,
   ) => void | Promise<void>;
 
-//Approve a project
+//#region Static/Root Level Routes
+// Receive all projects
+router.get('/', PROJECT.getProjects);
+
+// Create a new project
+router.post('/', requiresLogin, injectCurrentUser, authenticated(PROJECT.createProject));
+
+// Receive paginated projects
+router.get('/paginated/:count/:id/:method', PROJECT.getPaginatedProjects);
+
+//#region Member routes
+// Get all invitations for a user
+router.get(
+  '/members/invitations',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(PROJECT.getInvitations),
+);
+
+// Get a member request
+router.get(
+  '/members/requests',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(PROJECT.getMemberRequest),
+);
+
+// Delete a member request
+router.delete(
+  '/members/requests/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(PROJECT.deleteMemberRequest),
+);
+
+// Update the status of a member request
+router.patch(
+  '/members/requests/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(PROJECT.updateMemberRequest),
+);
+//#endregion
+
+//#region Unapproved projects routes
+// Get all unapproved projects
+router.get(
+  '/unapproved',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  authenticated(PROJECT.getUnapprovedProjects),
+);
+
+// Get a specific unapproved project
+router.get(
+  '/unapproved/:id',
+  requiresLogin,
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.getUnapprovedProjectById),
+);
+
+// Place a project on the list of projects awaiting approval
+router.post(
+  '/unapproved/:id',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.requestApproval),
+);
+
+// Remove a project from approval waiting list without approving it
+router.delete(
+  '/unapproved/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.rejectProject),
+);
+//#endregion
+//#endregion
+
+//#region Project ID routes (/:id)
+// Get a specific project
+router.get('/:id', PROJECT.getProjectByID);
+
+// Approve a project
 router.patch(
   '/:id/approve',
   requiresLogin,
@@ -41,7 +128,7 @@ router.patch(
   authenticated(PROJECT.approveProject),
 );
 
-//Unapprove a project
+// Unapprove a project
 router.patch(
   '/:id/unapprove',
   requiresLogin,
@@ -85,7 +172,7 @@ router.patch(
   authenticated(PROJECT.updateProject),
 );
 
-//Deletes project through a specific id
+// Deletes project through a specific id
 router.delete(
   '/:id',
   requiresLogin,
@@ -95,24 +182,17 @@ router.delete(
   PROJECT.deleteProject,
 );
 
-//Gets the followers of a project
-router.get(
-  '/:id/followers',
-  projectExistsAt('path', 'id'),
-  // isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
-  PROJECT.getProjectFollowers,
-);
+// Gets the followers of a project
+router.get('/:id/followers', projectExistsAt('path', 'id'), PROJECT.getProjectFollowers);
+//#endregion
 
-// IMAGE ROUTES
+//#region Project Specific Routes (/:id/..)
 
-//Receives pictures from project through id
-router.get(
-  '/:id/images',
-  projectExistsAt('path', 'id'),
-  // isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
-  PROJECT.getProjectImages,
-);
-//Creates a new picture for a project
+//#region Image routes
+// Receives pictures from project through id
+router.get('/:id/images', projectExistsAt('path', 'id'), PROJECT.getProjectImages);
+
+// Creates a new picture for a project
 router.post(
   '/:id/images',
   requiresLogin,
@@ -122,7 +202,18 @@ router.post(
   upload.single('image'),
   PROJECT.addImage,
 );
-//Changes a picture for a project
+
+// Reorders a project's images (Moved UP so it doesn't clash with /:id/images/:imageId)
+router.put(
+  '/:id/images/reorder',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  PROJECT.reorderImages,
+);
+
+// Changes a picture for a project
 router.patch(
   '/:id/images/:imageId',
   requiresLogin,
@@ -133,7 +224,8 @@ router.patch(
   upload.single('image'),
   PROJECT.updateImage,
 );
-//Removes picture from a project
+
+// Removes picture from a project
 router.delete(
   '/:id/images/:imageId',
   requiresLogin,
@@ -143,19 +235,9 @@ router.delete(
   authenticated(requiresProjectOwner),
   PROJECT.removeImage,
 );
-//Reorders a project's images
-//position parameter...
-router.put(
-  '/:id/images/reorder',
-  requiresLogin,
-  injectCurrentUser,
-  projectExistsAt('path', 'id'),
-  authenticated(requiresProjectOwner),
-  PROJECT.reorderImages,
-);
+//#endregion
 
-// VIDEO ROUTES
-
+//#region Video routes
 router.post(
   '/:id/videos',
   requiresLogin,
@@ -180,13 +262,13 @@ router.delete(
   authenticated(requiresProjectOwner),
   PROJECT.deleteVideo,
 );
+//#endregion
 
-// THUMBNAIL ROUTES
-
-//Gets a project's thumbnail
+//#region Thumbnail routes
+// Gets a project's thumbnail
 router.get('/:id/thumbnail', projectExistsAt('path', 'id'), PROJECT.getThumbnail);
 
-//Updates a project's thumbnail
+// Updates a project's thumbnail
 router.put(
   '/:id/thumbnail',
   requiresLogin,
@@ -196,7 +278,7 @@ router.put(
   PROJECT.updateThumbnail,
 );
 
-//Deletes a project's thumbnail
+// Deletes a project's thumbnail
 router.delete(
   '/:id/thumbnail',
   requiresLogin,
@@ -205,17 +287,13 @@ router.delete(
   authenticated(requiresProjectOwner),
   authenticated(PROJECT.removeThumbnail),
 );
+//#endregion
 
-// MEDIUMS ROUTES
+//#region Mediums routes
+// Gets a project's mediums
+router.get('/:id/mediums', projectExistsAt('path', 'id'), PROJECT.getProjectMediums);
 
-//Gets a project's mediums
-router.get(
-  '/:id/mediums',
-  projectExistsAt('path', 'id'),
-  // isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
-  PROJECT.getProjectMediums,
-);
-//Adds mediums to a project
+// Adds mediums to a project
 router.post(
   '/:id/mediums',
   requiresLogin,
@@ -225,7 +303,8 @@ router.post(
   authenticated(requiresProjectOwner),
   PROJECT.addMediums,
 );
-//Removes mediums from a project
+
+// Removes mediums from a project
 router.delete(
   '/:id/mediums/:mediumId',
   requiresLogin,
@@ -239,35 +318,19 @@ router.delete(
   authenticated(requiresProjectOwner),
   PROJECT.deleteMediums,
 );
+//#endregion
 
-// MEMBERS ROUTES
-
-//Adds member to a specific project through id
-router.post(
-  '/:id/members',
+//#region Members routes
+// Get all applications to a project (Must precede /:id/members/:userId)
+router.get(
+  '/:id/members/applications',
   requiresLogin,
   injectCurrentUser,
-  projectExistsAt('path', 'id'),
-  userExistsAt('body', 'inviterUserId'),
-  userExistsAt('body', 'inviteeUserId'),
-  skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
   authenticated(requiresProjectOwner),
-  PROJECT.addMember,
-);
-//Edits a member of a specific project through id
-router.patch(
-  '/:id/members/:userId',
-  requiresLogin,
-  injectCurrentUser,
-  projectExistsAt('path', 'id'),
-  userExistsAt('path', 'userId'),
-  projectAttributeExistsAt('member', { type: 'path', key: 'id' }, { type: 'path', key: 'userId' }),
-  skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
-  authenticated(requiresProjectOwner),
-  PROJECT.updateMember,
+  PROJECT.getApplications,
 );
 
-//Sends an invite to a prospective member
+// Sends an invite to a prospective member (Must precede /:id/members/:userId)
 router.post(
   '/:id/members/send-invite',
   requiresLogin,
@@ -286,7 +349,7 @@ router.post(
   PROJECT.sendInvite,
 );
 
-//Request to join a prospective member
+// Request to join a prospective member (Must precede /:id/members/:userId)
 router.post(
   '/:id/members/request-to-join',
   requiresLogin,
@@ -304,48 +367,36 @@ router.post(
   PROJECT.requestToJoin,
 );
 
-//Get all applications to a project
-router.get(
-  '/:id/members/applications',
+// Get a specific project's members
+router.get('/:id/members', projectExistsAt('path', 'id'), PROJECT.getMembers);
+
+// Adds member to a specific project through id
+router.post(
+  '/:id/members',
   requiresLogin,
   injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  userExistsAt('body', 'inviterUserId'),
+  userExistsAt('body', 'inviteeUserId'),
+  skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
   authenticated(requiresProjectOwner),
-  PROJECT.getApplications,
+  PROJECT.addMember,
 );
 
-//Get all invitations for a user
-router.get(
-  '/members/invitations',
-  requiresLogin,
-  injectCurrentUser,
-  authenticated(PROJECT.getInvitations),
-);
-
-//Get a member request
-router.get(
-  '/members/requests',
-  requiresLogin,
-  injectCurrentUser,
-  authenticated(PROJECT.getMemberRequest),
-);
-
-//Delete a member request
-router.delete(
-  '/members/requests/:id',
-  requiresLogin,
-  injectCurrentUser,
-  authenticated(PROJECT.deleteMemberRequest),
-);
-
-//Update the status of a member request
+// Edits a member of a specific project through id
 router.patch(
-  '/members/requests/:id',
+  '/:id/members/:userId',
   requiresLogin,
   injectCurrentUser,
-  authenticated(PROJECT.updateMemberRequest),
+  projectExistsAt('path', 'id'),
+  userExistsAt('path', 'userId'),
+  projectAttributeExistsAt('member', { type: 'path', key: 'id' }, { type: 'path', key: 'userId' }),
+  skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
+  authenticated(requiresProjectOwner),
+  PROJECT.updateMember,
 );
 
-//Removes a member from a specific project through project and user ID
+// Removes a member from a specific project through project and user ID
 router.delete(
   '/:id/members/:userId',
   requiresLogin,
@@ -356,7 +407,7 @@ router.delete(
   authenticated(PROJECT.deleteMember),
 );
 
-//Changes the owner of a project
+// Changes the owner of a project
 router.patch(
   '/:id/change-owner/:userId',
   requiresLogin,
@@ -367,10 +418,13 @@ router.patch(
   authenticated(requiresProjectOwner),
   PROJECT.changeOwner,
 );
+//#endregion
 
-// SOCIALS ROUTES
+//#region Socials routes
+// Gets all project socials
+router.get('/:id/socials', projectExistsAt('path', 'id'), PROJECT.getProjectSocials);
 
-//Adds a project social
+// Adds a project social
 router.post(
   '/:id/socials',
   requiresLogin,
@@ -380,62 +434,43 @@ router.post(
   authenticated(requiresProjectOwner),
   PROJECT.addProjectSocial,
 );
-//Gets all project socials
-router.get(
-  '/:id/socials',
-  projectExistsAt('path', 'id'),
-  // isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
-  PROJECT.getProjectSocials,
-);
-//Updates a project social
+
+// Updates a project social
 router.patch(
-  '/:id/socials/:websiteId',
+  '/:id/socials/:socialId',
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
   projectAttributeExistsAt(
     'social',
     { type: 'path', key: 'id' },
-    { type: 'path', key: 'websiteId' },
+    { type: 'path', key: 'socialId' },
   ),
   authenticated(requiresProjectOwner),
   PROJECT.updateProjectSocial,
 );
-//Deletes a project social
+
+// Deletes a project social
 router.delete(
-  '/:id/socials/:websiteId',
+  '/:id/socials/:socialId',
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
   projectAttributeExistsAt(
     'social',
     { type: 'path', key: 'id' },
-    { type: 'path', key: 'websiteId' },
+    { type: 'path', key: 'socialId' },
   ),
   authenticated(requiresProjectOwner),
   PROJECT.deleteProjectSocial,
 );
+//#endregion
 
-// TAGS ROUTES
+//#region Tags routes
+// Get a project's tags
+router.get('/:id/tags', projectExistsAt('path', 'id'), PROJECT.getTags);
 
-//Get a project's tags
-router.get(
-  '/:id/tags',
-  projectExistsAt('path', 'id'),
-  // isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
-  PROJECT.getTags,
-);
-//Deletes a project tag
-router.delete(
-  '/:id/tags/:tagId',
-  requiresLogin,
-  injectCurrentUser,
-  projectExistsAt('path', 'id'),
-  projectAttributeExistsAt('tag', { type: 'path', key: 'id' }, { type: 'path', key: 'tagId' }),
-  authenticated(requiresProjectOwner),
-  PROJECT.deleteTag,
-);
-//Adds a project tag
+// Adds a project tag
 router.post(
   '/:id/tags',
   requiresLogin,
@@ -445,7 +480,8 @@ router.post(
   authenticated(requiresProjectOwner),
   PROJECT.addTag,
 );
-// updates order of a project's tags
+
+// Updates order of a project's tags
 router.patch(
   '/:id/tags/:tagId',
   requiresLogin,
@@ -456,16 +492,23 @@ router.patch(
   PROJECT.updateTag,
 );
 
-// JOBS ROUTES
-
-// gets all of a project's jobs
-router.get(
-  '/:id/jobs',
+// Deletes a project tag
+router.delete(
+  '/:id/tags/:tagId',
+  requiresLogin,
+  injectCurrentUser,
   projectExistsAt('path', 'id'),
-  // isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
-  PROJECT.getJobsController,
+  projectAttributeExistsAt('tag', { type: 'path', key: 'id' }, { type: 'path', key: 'tagId' }),
+  authenticated(requiresProjectOwner),
+  PROJECT.deleteTag,
 );
-// creates a new project job
+//#endregion
+
+//#region Jobs routes
+// Gets all of a project's jobs
+router.get('/:id/jobs', projectExistsAt('path', 'id'), PROJECT.getJobsController);
+
+// Creates a new project job
 router.post(
   '/:id/jobs',
   requiresLogin,
@@ -481,7 +524,8 @@ router.post(
   authenticated(requiresProjectOwner),
   PROJECT.addJobController,
 );
-// updates an existing project job
+
+// Updates an existing project job
 router.patch(
   '/:id/jobs/:jobId',
   requiresLogin,
@@ -502,7 +546,8 @@ router.patch(
   authenticated(requiresProjectOwner),
   PROJECT.updateJobController,
 );
-// deletes an existing project job
+
+// Deletes an existing project job
 router.delete(
   '/:id/jobs/:jobId',
   requiresLogin,
@@ -513,14 +558,10 @@ router.delete(
   PROJECT.deleteJobController,
 );
 
-//gets all of a project job's skills
-router.get(
-  '/:id/jobs/:jobId/skills',
-  projectExistsAt('path', 'id'),
-  // isUserBlocked(new ProjectInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
-  PROJECT.getJobSkills,
-);
-//adds a skill to a job
+// Gets all of a project job's skills
+router.get('/:id/jobs/:jobId/skills', projectExistsAt('path', 'id'), PROJECT.getJobSkills);
+
+// Adds a skill to a job
 router.post(
   '/:id/jobs/:jobId/skills',
   requiresLogin,
@@ -529,7 +570,8 @@ router.post(
   authenticated(requiresProjectOwner),
   PROJECT.addJobSkill,
 );
-//updates a job skill's proficiency or other parameters
+
+// Updates a job skill's proficiency or other parameters
 router.patch(
   '/:id/jobs/:jobId/skills/:skillId',
   requiresLogin,
@@ -539,7 +581,8 @@ router.patch(
   authenticated(requiresProjectOwner),
   PROJECT.updateJobSkill,
 );
-//deletes a skill from a job
+
+// Deletes a skill from a job
 router.delete(
   '/:id/jobs/:jobId/skills/:skillId',
   requiresLogin,
@@ -549,43 +592,20 @@ router.delete(
   authenticated(requiresProjectOwner),
   PROJECT.deleteJobSkill,
 );
+//#endregion
 
-//---UNAPPROVED PROJECTS---\\
-
-//Get all unapproved projects
-router.get(
-  '/unapproved',
-  requiresLogin,
-  injectCurrentUser,
-  authenticated(requiresModerator),
-  authenticated(PROJECT.getUnapprovedProjects),
-);
-
-//Get a specific unapproved project
-router.get(
-  '/unapproved/:id',
-  requiresLogin,
-  projectExistsAt('path', 'id'),
-  authenticated(PROJECT.getUnapprovedProjectById),
-);
-
-//Place a project on the list of projects awaiting approval.
-router.post(
-  '/unapproved/:id',
+//#region Visbility routes
+// Changes the visibility of a project
+router.patch(
+  '/:id/visibility',
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
-  authenticated(PROJECT.requestApproval),
+  authenticated(requiresProjectOwner),
+  authenticated(PROJECT.updateProjectGlobalVisibility),
 );
+//#endregion
 
-//Remove a project from the list of projects awaiting approval without approving it.
-router.delete(
-  '/unapproved/:id',
-  requiresLogin,
-  injectCurrentUser,
-  authenticated(requiresModerator),
-  projectExistsAt('path', 'id'),
-  authenticated(PROJECT.rejectProject),
-);
+//#endregion
 
 export default router;

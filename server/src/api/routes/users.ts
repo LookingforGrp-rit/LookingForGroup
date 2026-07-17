@@ -24,14 +24,32 @@ router.get('/all/:method', getAllUsers);
 //Creates a new user
 router.post('/', createUser);
 
+//Gets user by username
+router.get('/search-username/:username', getUserByUsername);
+
+// Gets user by email
+router.get('/search-email/:email', getUserByEmail);
+
+//Gets user by google id
+router.get('/search-google/:id', getUserByGoogleId);
+
+//#region Blacklist routes
+//Gets users on the blacklist
+router.get('/blacklist', requiresLogin, getBlacklistedUsers);
+//#endregion
+
+//#region id routes
+//Gets user by id
+router.get('/:id', getUserById);
+//#endregion
+
+//#region Sub id routes (/:id/...)
 //Gets another user's projects
 router.get(
   '/:id/projects/',
   //isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
   getOtherUserProjects,
 );
-
-// FOLLOW ROUTES
 
 //Gets projects user is following
 router.get(
@@ -41,6 +59,7 @@ router.get(
   //isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
   getProjectsFollowing,
 );
+
 //Gets users user is following
 router.get(
   '/:id/followings/people',

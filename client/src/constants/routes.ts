@@ -4,8 +4,8 @@ export const routes = {
   SIGNUP: '/signup',
   FORGOTPASSWORD: '/forgotPassword',
   RESETPASSWORD: '/resetPassword/:token',
-  HOME: '/discover',
-  MEET: '/meet',
+  HOME: '/projects',
+  MEET: '/people',
   // MESSAGES: '/messages',
   MYPROJECTS: '/myProjects',
   PROFILE: '/profile',
@@ -22,4 +22,5 @@ export const routes = {
   ABOUT: '/about',
   ACCOUNTACTIVATE: '/activation/:token',
   NOTFOUND: '/*',
+  MODERATION: '/moderation'
 };

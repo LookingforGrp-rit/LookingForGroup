@@ -17,6 +17,7 @@ export const addSocialService = async (
         userId: userId,
         websiteId: data.websiteId,
         url: data.url,
+        alias: data.alias,
       },
       select: MySocialSelector,
     });

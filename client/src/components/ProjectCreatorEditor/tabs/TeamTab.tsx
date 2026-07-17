@@ -44,7 +44,7 @@ import {
 	JobAvailability as JobAvailabilityEnums,
 	JobDuration as JobDurationEnums,
 	JobLocation as JobLocationEnums,
-	JobCompensation as JobCompensationEnums
+	JobCompensation as JobCompensationEnums,
 } from "@looking-for-group/shared/enums";
 import {
 	Pending,
@@ -78,6 +78,7 @@ const emptyJob: Pending<ProjectJob> = {
 	contact: null,
 	description: "",
 	duration: null,
+	durationCount: null,
 	localId: null,
 	location: null,
 	role: null,
@@ -319,6 +320,7 @@ export const TeamTab = ({
 				current.availability !== original.availability ||
 				current.location !== original.location ||
 				current.duration !== original.duration ||
+				current.durationCount !== original.durationCount ||
 				current.compensation !== original.compensation ||
 				current.description !== original.description ||
 				current.contact?.userId !== original.contact?.userId
@@ -897,7 +899,8 @@ export const TeamTab = ({
 				isNullOrUndefined(currentJob.location) ||
 				isNullOrUndefined(currentJob.duration) ||
 				isNullOrUndefined(currentJob.compensation) ||
-				isNullOrUndefined(currentJob.contact?.userId)
+				isNullOrUndefined(currentJob.contact?.userId) ||
+				currentJob.jobSkills?.length === 0
 			) {
 				// set error
 				setErrorAddPosition("All fields are required");
@@ -916,16 +919,19 @@ export const TeamTab = ({
 					compensation: currentJob.compensation,
 					contactUserId: currentJob.contact.userId,
 					duration: currentJob.duration,
+					durationCount: currentJob.durationCount ?? undefined,
 					location: currentJob.location,
 					roleId: currentJob.role.roleId,
 					description: currentJob.description ?? undefined,
-					jobSkills: (currentJob.jobSkills as JobSkill[]) ?? []
+					jobSkills: (currentJob.jobSkills as JobSkill[])
 				}
 			});
+
 			//passing in the associated job's localId to get this to work properly
 			if (currentJob.jobSkills) {
-				for (const skill of currentJob.jobSkills) {
+				for (let skill of currentJob.jobSkills) {
 					console.log(skill)
+
 					dataManager?.addProjectJobSkill({
 						id: {
 							value:
@@ -948,12 +954,11 @@ export const TeamTab = ({
 			];
 
 			updatePendingProject(projectAfterTeamChanges);
-
 			setEditMode(false);
 			setIsCreatingNewPosition(false);
+			setErrorAddPosition("");
 			setCurrentJob(currentJob);
 			console.log(currentJob)
-
 			return;
 		} else {
 			const unmodifiedSkills = unmodifiedProject.jobs.find(
@@ -1008,6 +1013,7 @@ export const TeamTab = ({
 					contactUserId: currentJob.contact?.userId ?? undefined,
 					description: currentJob.description ?? undefined,
 					duration: currentJob.duration ?? undefined,
+					durationCount: currentJob.durationCount ?? undefined,
 					location: currentJob.location ?? undefined,
 					roleId: currentJob.role?.roleId ?? undefined
 				}
@@ -1170,6 +1176,9 @@ export const TeamTab = ({
 							<span className="position-detail-indicator">
 								Duration:{" "}
 							</span>
+							{currentJob?.durationCount
+								? `${currentJob.durationCount} `
+								: ""}
 							{currentJob &&
 								currentJob?.duration &&
 								JobDurationEnums[currentJob.duration]}
@@ -1307,7 +1316,14 @@ export const TeamTab = ({
 			<div id="edit-position-skills-container">
 				<Popup>
 					<div id="edit-position-skills-label-button">
-						<label>Job Skills</label>
+						<label>Job Skills
+							<span
+								className="required-asterisk"
+								aria-hidden="true"
+								title="Required">
+								*
+							</span>
+						</label>
 						<PopupButton
 							className="edit-project-member-button"
 							doNotClose={() => currentJob === undefined}>
@@ -1517,6 +1533,27 @@ export const TeamTab = ({
 								*
 							</span>
 						</label>
+						<input
+							className="edit-position-duration-count"
+							type="number"
+							min={1}
+							placeholder="#"
+							aria-label="Duration amount"
+							value={currentJob?.durationCount ?? ""}
+							onChange={(e) => {
+								const raw = e.target.value;
+								setCurrentJob({
+									...currentJob,
+									durationCount:
+										raw === ""
+											? null
+											: Math.max(
+												1,
+												Math.floor(Number(raw))
+											)
+								} as ProjectJob);
+							}}
+						/>
 						<Select>
 							<SelectButton
 								placeholder="Select"
@@ -2341,7 +2378,9 @@ export const TeamTab = ({
 												handleSearch(
 													results as UserPreview[][]
 												);
-											}}></SearchBar>
+											}}
+											placeholderText='Search by Name'>
+										</SearchBar>
 									</DropdownButton>
 									<DropdownContent>
 										<div id="user-search-results">
@@ -2603,22 +2642,22 @@ export const TeamTab = ({
 							Save Changes
 						</PopupButton>
 						{confirm ?
-						<PopupContent useClose={false} callback={() => setConfirm(false)}>
-							<div id="confirm-editor-save-text">
-								Are you sure you want to save all changes?
-							</div>
-							<div id="confirm-editor-save">
-								<PopupButton
-									callback={saveProject}
-									closeParent={closeOuterPopup}
-									buttonId="project-editor-save">
-									Confirm
-								</PopupButton>
-								<PopupButton buttonId="team-edit-member-cancel-button">
-									Cancel
-								</PopupButton>
-							</div>
-						</PopupContent> : "" }
+							<PopupContent useClose={false} callback={() => setConfirm(false)}>
+								<div id="confirm-editor-save-text">
+									Are you sure you want to save all changes?
+								</div>
+								<div id="confirm-editor-save">
+									<PopupButton
+										callback={saveProject}
+										closeParent={closeOuterPopup}
+										buttonId="project-editor-save">
+										Confirm
+									</PopupButton>
+									<PopupButton buttonId="team-edit-member-cancel-button">
+										Cancel
+									</PopupButton>
+								</div>
+							</PopupContent> : ""}
 					</Popup>
 					<DeleteProjectButton
 						projectID={unmodifiedProject.projectId}

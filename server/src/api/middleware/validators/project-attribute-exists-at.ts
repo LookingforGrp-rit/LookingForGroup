@@ -94,10 +94,7 @@ const getAttributeById = async (projectId: number, attributeId: number, attribut
     case 'social':
       return await prisma.projectSocials.findUnique({
         where: {
-          projectId_websiteId: {
-            projectId,
-            websiteId: attributeId,
-          },
+          id: attributeId,
         },
       });
     case 'image':

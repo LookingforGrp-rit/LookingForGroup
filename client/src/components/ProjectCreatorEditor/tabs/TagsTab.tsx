@@ -14,6 +14,7 @@ import { SortableTag } from "./SortableItem";
 import { clampDragWithinContainer } from "./dragModifiers";
 import { Fragment } from "react";
 import TagDisplay from "../../TagDisplay";
+import { ThemeIcon } from "../../ThemeIcon";
 
 // --- holds the possible tabs from tag types ---
 const tagTabs = ['Project Type', 'Genre', 'Style', 'Game Engine'] as TagType[]
@@ -24,6 +25,7 @@ const tagTabColors: Record<string, string> = {
   Genre: 'green',
   Style: 'pink',
   'Game Engine': 'yellow',
+  'Project Type': 'blue'
 };
 
 let projectAfterTagsChanges: PendingProject;
@@ -95,7 +97,7 @@ export const TagsTab = ({
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
-  const[confirm, setConfirm] = useState(false);
+  const [confirm, setConfirm] = useState(false);
 
   /* ONLY used for the deleting tags button. This is needed to re-render
     the selected mediums and tags section when reseting */
@@ -337,7 +339,7 @@ export const TagsTab = ({
     <div id="project-editor-tags">
       <div id="project-editor-type-tags">
         <div className="project-editor-section-header">
-          Selected Medium(s)
+          Selected Project Type(s)
           {isMediumsUnsaved && (
             <span className="unsaved-indicator">
               (Unsaved)
@@ -345,7 +347,7 @@ export const TagsTab = ({
           )}
         </div>
         {projectAfterTagsChanges.mediums.length === 0 ? (
-          <div className="error">*At least 1 medium is required</div>
+          <div className="error">*At least 1 project type is required</div>
         ) : (
           <></>
         )}
@@ -362,9 +364,10 @@ export const TagsTab = ({
             </TagElement>
           ))}
         </div>
+        <div id="clear-all-button-align">
         <button 
             type="button" 
-            className="delete-tags-btn"
+            className="delete-position-button-alt button-reset"
             hidden={projectAfterTagsChanges.mediums.length === 0 || projectAfterTagsChanges.mediums.length == undefined} 
             onClick={() => {
               /* deletes all mediums in the data manager for the project */
@@ -386,8 +389,17 @@ export const TagsTab = ({
             }}
             title="Remove all selected tags"
           >
-            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+            <div id="clear-all-trash-row">
+            <p id="clear-all-trash-text">Clear All</p>
+            <ThemeIcon
+              id="trash"
+              width={18}
+              height={18}
+              ariaLabel="Delete position"
+            />
+            </div>
         </button>
+        </div>
       </div>
 
       <div id="project-editor-selected-tags">
@@ -421,13 +433,13 @@ export const TagsTab = ({
                 <Fragment key={t.tagId}>
                   {/* Divider marks the cutoff: the first two tags appear on the discover card */}
                   {index === 2 && <hr id="selected-tag-divider" />}
-                  <SortableTag 
+                  <SortableTag
                     id={t.tagId} tag={{
-                    skillId: t.tagId,
-                    label: t.label,
-                    type: t.type as SkillType,
-                    category: t.category as SkillCategory,
-                    }} 
+                      skillId: t.tagId,
+                      label: t.label,
+                      type: t.type as SkillType,
+                      category: t.category as SkillCategory,
+                    }}
                     onRemove={(id) => handleTagSelect(id, t.type)}
                   />
                 </Fragment>
@@ -435,9 +447,10 @@ export const TagsTab = ({
             </div>
           </SortableContext>
         </DndContext>
+        <div id="clear-all-button-align">
         <button 
             type="button" 
-            className="delete-tags-btn"
+            className="delete-position-button-alt button-reset"
             hidden={projectAfterTagsChanges.tags.length === 0 || projectAfterTagsChanges.tags.length == undefined} 
             onClick={() => {
               /* deletes all tags in the data manager for the project */
@@ -459,38 +472,55 @@ export const TagsTab = ({
             }}
             title="Remove all selected tags"
           >
-            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+            <div id="clear-all-trash-row">
+            <p id="clear-all-trash-text">Clear All</p>
+            <ThemeIcon
+							id="trash"
+							width={18}
+							height={18}
+							ariaLabel="Delete position"
+						/>
+            </div>
         </button>
+        </div>
       </div>
 
       <div id="project-editor-tag-search">
         <SearchBar
           key={currentTagsTab}
-          dataSets={[{data: [...allTags.filter((tag) => tag.type != "Positions" && tag.type != "Purpose" && tag.type != "Style" && tag.type != "Major"), ...allMediums]}]}
+          dataSets={[{ data: [...allTags.filter((tag) => tag.type != "Positions" && tag.type != "Purpose" && tag.type != "Style" && tag.type != "Major"), ...allMediums] }]}
           onSearch={handleSearch}
           value={searchValue}
           setValue={setSearchValue}
+          placeholderText='Search for Tag'
         />
         <div id="project-editor-tag-wrapper">
           <div id="project-editor-tag-search-tabs">
             {tagTabs.map((type, index) => 
+            <>
             <button
             onClick={() => setCurrentTagsTab(index)}
             className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${tagTabColors[type as string] ?? 'grey'} ${currentTagsTab === index && searchValue === "" ? "tag-search-tab-active" : ""}`}>
               {type}
-            </button>)}
+            </button>
+            {
+              type == "Project Type" &&
+              <span id="vertical-line"></span>
+            }
+            </>
+            )}
           </div>
           <hr id="tag-search-divider" />
         </div>
         <div id="project-editor-tag-search-container">
           <TagDisplay
-            selected={[
+            selected={[[
               ...projectAfterTagsChanges.tags.map(
                 tag => ({
                   ...tag,
                   category:
                     tag.type === "Game Engine" ? "Game Engine" :
-                    tag.category,
+                      tag.category,
                   id: tag.tagId
                 })
               ),
@@ -502,17 +532,17 @@ export const TagsTab = ({
                   type: "Project Type",
                 })
               )
-            ]}
+            ], []]}
             toggleTag={handleTagSelect}
             tabs={tagTabs}
             tabId={currentTagsTab}
             all={[...allTags, ...allMediums].map(
-              tag =>({
+              tag => ({
                 ...tag,
-                category: 
+                category:
                   tag.type === "Project Type" ? "Medium" :
-                  tag.type === "Game Engine" ? "Game Engine" :
-                  tag.category,
+                    tag.type === "Game Engine" ? "Game Engine" :
+                      tag.category,
                 id: tag.tagId
               })
             )}
@@ -520,10 +550,10 @@ export const TagsTab = ({
             searchData={(searchedTags as Tag[]).map(
               tag => ({
                 ...tag,
-                category: 
+                category:
                   tag.type === "Project Type" ? "Medium" :
-                  tag.type === "Game Engine" ? "Game Engine" :
-                  tag.category,
+                    tag.type === "Game Engine" ? "Game Engine" :
+                      tag.category,
                 id: tag.tagId
               })
             )}
@@ -532,39 +562,39 @@ export const TagsTab = ({
       </div>
       <div id="tags-save-info">
         <div className="editor-save-actions">
-        <Popup>
-          {saveable ? "" :
-            <div id="invalid-input-error" className={"save-error-msg-general"}>
-              <p>*{message}*</p>
-            </div>}
-          <PopupButton
-            buttonId="project-editor-save"
-            callback={() => {
-              // Incomplete form: still clickable so the save validation runs,
-              // shows the error, and auto-scrolls to the first missing field.
-              if (!saveable) saveProject?.();
-              else setConfirm(true);
-            }}
-          >
-            Save Changes
-          </PopupButton>
-          {confirm ?
-          <PopupContent useClose={false} callback={() => setConfirm(false)}>
-            <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
-            <div id="confirm-editor-save">
-              <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
-                Confirm
-              </PopupButton>
-              <PopupButton buttonId="team-edit-member-cancel-button" >
-                Cancel
-              </PopupButton>
-            </div>
-          </PopupContent> : "" }
-        </Popup>
-        <DeleteProjectButton
-          projectID={unmodifiedProject.projectId}
-          projectTitle={unmodifiedProject.title}
-        />
+          <Popup>
+            {saveable ? "" :
+              <div id="invalid-input-error" className={"save-error-msg-general"}>
+                <p>*{message}*</p>
+              </div>}
+            <PopupButton
+              buttonId="project-editor-save"
+              callback={() => {
+                // Incomplete form: still clickable so the save validation runs,
+                // shows the error, and auto-scrolls to the first missing field.
+                if (!saveable) saveProject?.();
+                else setConfirm(true);
+              }}
+            >
+              Save Changes
+            </PopupButton>
+            {confirm ?
+              <PopupContent useClose={false} callback={() => setConfirm(false)}>
+                <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+                <div id="confirm-editor-save">
+                  <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                    Confirm
+                  </PopupButton>
+                  <PopupButton buttonId="team-edit-member-cancel-button" >
+                    Cancel
+                  </PopupButton>
+                </div>
+              </PopupContent> : ""}
+          </Popup>
+          <DeleteProjectButton
+            projectID={unmodifiedProject.projectId}
+            projectTitle={unmodifiedProject.title}
+          />
         </div>
       </div>
     </div>

@@ -141,6 +141,15 @@ Project Panel component style rules
   }
 
 
+   hr {
+    /* color: var(--header-color); */
+    border: 1px solid var(--liked-section-bg);
+    margin: 0;
+    margin-bottom: min(1.73vh, 17px);
+    margin-top: min(1vh, 17px);
+  }
+
+  
   a {
     text-decoration: none;
   }
@@ -287,9 +296,10 @@ Project Panel component style rules
   background-color: var(--header-color);
   color: var(--main-text);
   position: absolute;
+  top: 0px;
   left: 0px;
   right: 0px;
-  bottom: 0;
+  bottom: 0px;
   height: auto;
   max-height: 100%;
   visibility: visible;
@@ -581,6 +591,13 @@ Project Creator and Editor Popup style rules
   margin-bottom: 28px;
 }
 
+/* Inside the profile editor's actions row the container supplies the bottom
+   spacing; the Save button's own 28px bottom margin would otherwise make its
+   box taller than the Delete button and drop Delete ~half a button lower. */
+.editor-save-actions #project-editor-save.profile-editor-save {
+  margin-bottom: 0;
+}
+
 /* #project-editor-save:hover {
   color: var(--create-text) !important;
   background-color: var(--create-bg) !important;
@@ -633,8 +650,12 @@ Project Creator and Editor Popup style rules
     font-size: 1.125rem;
   }
 
-  input {
+  textarea {
     margin: 20px;
+  }
+
+  textarea:focus{
+    outline: 0px;
   }
 }
 
@@ -1218,6 +1239,16 @@ Project Creator and Editor Popup style rules
 
 #project-editor-team-tabs {
   margin: 0px;
+}
+
+#vertical-line{
+  width: 1px;
+  border-style: solid;
+  border-width: 3px;
+  color: var(--header-color);
+  margin: 0;
+  margin-left: -2.5%;
+  margin-right: 2.5%;
 }
 
 @media only screen and (max-width: 799px) {
@@ -2112,6 +2143,43 @@ Project Creator and Editor Popup style rules
   }
 }
 
+#clear-all-button-align{
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  margin-right: 0;
+  margin-left: 0;
+  margin-top: auto;
+  align-self: flex-end;
+}
+
+.delete-position-button-alt {
+  margin-top: 1em;
+  #trash {
+    stroke: #FF3859;
+  }
+
+  svg{
+    margin-left: 0.5em;
+  }
+}
+
+#clear-all-trash-row{
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+#clear-all-trash-text{
+  width: fit-content;
+  height: fit-content;
+  color: #FF3859;
+  font-weight: bold;
+  font-size: small;
+  margin: 0;
+  margin-right: 0.15em;
+}
+
 #team-positions-popup-list-buttons {
   display: flex;
   flex-direction: column;
@@ -2243,6 +2311,15 @@ Project Creator and Editor Popup style rules
   gap: 5px;
   width: 100%;
   justify-content: left;
+}
+
+.edit-position-duration-count {
+  width: 60px;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 15px 10px;
+  text-align: center;
 }
 
 button.edit-position-contact {
@@ -3489,6 +3566,7 @@ New Project Page style rules
   display: grid;
   grid-template:
     'carousel info' auto
+    'overview mod' auto
     'overview positions' auto
     'overview people' auto / 17fr 15fr;
   margin: 0 auto;
@@ -3501,6 +3579,7 @@ New Project Page style rules
       'carousel' auto
       'info' auto
       'overview' auto
+      'mod' auto
       'positions' auto
       'people' auto;
   }
@@ -3638,8 +3717,50 @@ Project Carousel style rules
 
 }
 
+.mod-project-options, #mod-user-options {
+  grid-area: mod;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    min-width: fit-content;
+    max-width: 100%;
+    gap: 10px;
+    background-color: var(--header-color);
+    border-radius: 10px;
+    text-align: left;
+    padding: 20px;
+    max-width: calc(100vw - 340px);
+    margin-bottom: 1vw;
+    align-self: start;
+    min-height: fit-content;
+
+    h4 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 5px;
+    }
+
+    #mod-options-btns
+    {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      justify-content: center;
+      gap: 20px;
+      button {
+        width: fit-content;
+      }
+    }
+}
+
 @media only screen and (max-width: 1200px) {
   #project-info-panel {
+    max-width: calc(100vw - 80px);
+  }
+  .mod-project-options, #mod-user-options
+  {
     max-width: calc(100vw - 80px);
   }
 }
@@ -3950,6 +4071,28 @@ project-team-open-posiions-info: edit/create proj popup
   width: 100%;
   max-width: 1141px;
   height: fit-content;
+}
+
+/* Editor's Open Positions area: one unified box. The container carries the
+   background so the list and details read as two sections INSIDE a single
+   container, instead of two separate boxes floating on the popup gradient. */
+#project-team-open-positions-info {
+  background-color: var(--bg-color);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* The two inner sections become lighter sub-boxes within the container. */
+#project-team-open-positions-info>.positions-popup-list {
+  background-color: var(--header-color);
+  box-shadow: none;
+}
+
+#project-team-open-positions-info .positions-popup-info-wrapper {
+  background-color: var(--header-color);
+  box-shadow: none;
 }
 
 #positions-popup-header {
@@ -4377,6 +4520,7 @@ button#positions-popup-list-item-active {
   grid-area: overview;
   text-align: left;
   margin-top: 10px;
+  width: 95%;
 
   overflow-wrap: anywhere;
   hyphens: auto;
@@ -4418,14 +4562,30 @@ button#positions-popup-list-item-active {
   margin: 15px 0;
 
   #project-overview-links {
+    margin-top: 10px;
     display: flex;
     flex-direction: row;
-    gap: 7px;
+    flex-wrap: wrap;
+    gap: 15px;
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
     button {
       background-color: transparent;
       border: none;
       padding: 0;
+    }
+
+    a:link, a:visited {
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
   }
 }

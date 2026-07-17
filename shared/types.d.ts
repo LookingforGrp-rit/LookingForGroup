@@ -54,7 +54,7 @@ export type JobDuration = "Days" | "Weeks" | "Months" | "Semesters" | "Years";
 export type JobLocation = "OnSite" | "Remote" | "Hybrid" | "Flexible";
 export type JobCompensation = "Unpaid" | "Paid";
 export type MemberRequestStatus = "Accepted" | "Declined" | "Pending";
-export type ProjectSortMethod = "Newest" | "A-Z";
+export type ProjectSortMethod = "Newest" | "A-Z" | "Popular";
 export type UserSortMethod = "Newest" | "A-Z";
 export type Visibility = "public" | "private";
 export type UserAccessLevel = "User" | "Moderator" | "Administrator";
@@ -320,9 +320,19 @@ export interface JobSkill extends Skill {
  */
 export interface UserSocial extends Social {
   /**
+   * The DB id of this user social
+   */
+  id: number;
+
+  /**
    * The url to the user's social media account
    */
   url: string;
+
+  /**
+   * Alias for the link
+   */
+  alias: string;
 }
 
 /**
@@ -1013,9 +1023,19 @@ export interface ProjectMember {
  */
 export interface ProjectSocial extends Social {
   /**
+   * DB id of the project social
+   */
+  id: number;
+
+  /**
    * The url to the project's social media account
    */
   url: string;
+
+  /**
+  * Alias of the url
+  */
+  alias: string;
 
   /**
    * The location of this resource on the server
@@ -1061,6 +1081,12 @@ export interface ProjectJob {
    * The duration of the position, such as "Days"
    */
   duration: JobDuration;
+
+  /**
+   * The number of duration units for the position, such as 3 (to pair with a
+   * `duration` of "Months" for "3 Months"). Optional pending backend support.
+   */
+  durationCount?: number | null;
 
   /**
    * The on/off-site location of the job, such as "Remote"
@@ -1370,12 +1396,12 @@ export type SessionUserData = Partial<{
 /**
  * Data required to add a social media link to a user's profile
  */
-export type AddUserSocialInput = Pick<UserSocial, "websiteId" | "url">;
+export type AddUserSocialInput = Pick<UserSocial, "websiteId" | "url" | "alias">;
 
 /**
  * Data required to update an existing social media link on a user's profile
  */
-export type UpdateUserSocialInput = Partial<Pick<UserSocial, "url">>;
+export type UpdateUserSocialInput = Partial<Pick<UserSocial, "url" | "alias" | "websiteId">>;
 
 /**
  * Data required to add a skill to a user's profile
@@ -1535,12 +1561,12 @@ type GetMemberRequest = {
 /**
  * Data required to add a social media link to a project
  */
-export type AddProjectSocialInput = Pick<ProjectSocial, "websiteId" | "url">;
+export type AddProjectSocialInput = Pick<ProjectSocial, "websiteId" | "url" | "alias">;
 
 /**
  * Data required to update the url of an existing social media link on a project
  */
-export type UpdateProjectSocialInput = Partial<Pick<ProjectSocial, "url">>;
+export type UpdateProjectSocialInput = Partial<Pick<ProjectSocial, "url" | "alias" | "websiteId">>;
 
 /**
  * Data required to change which project image is used as the thumbnail
@@ -1571,7 +1597,7 @@ export type AddProjectMediumInput = Pick<ProjectMedium, "mediumId">;
 export type CreateProjectJobInput = Required<
   Pick<ProjectJob, "availability" | "duration" | "location" | "compensation">
 > &
-  Partial<Pick<ProjectJob, "description" | "jobSkills">> & {
+  Partial<Pick<ProjectJob, "description" | "jobSkills" | "durationCount">> & {
     roleId: number;
     contactUserId: number;
   };

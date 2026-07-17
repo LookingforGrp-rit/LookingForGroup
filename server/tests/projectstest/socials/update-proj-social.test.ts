@@ -22,16 +22,20 @@ vi.mock('#services/transformers/projects/parts/project-social.ts', () => ({
 }));
 
 const transformedSocial: ProjectSocial = {
+  id: 1,
   websiteId: 29,
   url: 'www.test.com',
   label: 'Test',
+  alias: 'Click here to test',
   apiUrl: '/api/projects/1/socials/29',
 };
 
 const testSocial = {
+  id: 1,
   projectId: 1,
-  websiteId: 29,
-  url: 'www.test.com',
+  websiteId: 12,
+  url: 'www.no-more-test.com',
+  alias: 'Click here to ban test',
 };
 
 describe('getProjectSocialsService', async () => {
@@ -42,7 +46,15 @@ describe('getProjectSocialsService', async () => {
     vi.mocked(prisma.projectSocials.findUnique).mockResolvedValue(testSocial);
     vi.mocked(prisma.projectSocials.update).mockResolvedValue(testSocial);
     vi.mocked(transformProjectSocial).mockReturnValue(transformedSocial);
-    const result = await updateProjectSocialService('www.test.com', 1, 29);
+    const result = await updateProjectSocialService(
+      {
+        url: 'www.no-more-test.com',
+        websiteId: 12,
+        alias: 'Click here to ban test',
+      },
+      1,
+      29,
+    );
 
     expect(transformProjectSocial).toHaveBeenCalled();
     expect(result).toEqual(transformedSocial);
@@ -52,7 +64,15 @@ describe('getProjectSocialsService', async () => {
     vi.mocked(prisma.projectSocials.findUnique).mockResolvedValue(null);
     vi.mocked(prisma.projectSocials.update).mockResolvedValue(testSocial);
     vi.mocked(transformProjectSocial).mockReturnValue(transformedSocial);
-    const result = await updateProjectSocialService('www.test.com', 1, 29);
+    const result = await updateProjectSocialService(
+      {
+        url: 'www.no-more-test.com',
+        websiteId: 12,
+        alias: 'Click here to ban test',
+      },
+      1,
+      29,
+    );
 
     expect(result).toEqual('NOT_FOUND');
   });
@@ -61,7 +81,15 @@ describe('getProjectSocialsService', async () => {
     vi.mocked(prisma.projectSocials.findUnique).mockRejectedValue(new Error('womp womp'));
     vi.mocked(prisma.projectSocials.update).mockResolvedValue(testSocial);
     vi.mocked(transformProjectSocial).mockReturnValue(transformedSocial);
-    const result = await updateProjectSocialService('www.test.com', 1, 29);
+    const result = await updateProjectSocialService(
+      {
+        url: 'www.no-more-test.com',
+        websiteId: 12,
+        alias: 'Click here to ban test',
+      },
+      1,
+      29,
+    );
 
     expect(result).toEqual('INTERNAL_ERROR');
   });
