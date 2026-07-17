@@ -905,6 +905,14 @@ export const TeamTab = ({
 				return;
 			}
 
+			if (isNullOrUndefined(currentJob.jobStart)) {
+				currentJob.jobStart = new Date(1900, 0, 1);
+			}
+
+			if (isNullOrUndefined(currentJob.jobEnd)) {
+				currentJob.jobEnd = new Date(1900, 0, 1);
+			}
+
 			dataManager?.createJob({
 				id: {
 					value:
@@ -1032,6 +1040,18 @@ export const TeamTab = ({
 			updatePendingProject(projectAfterTeamChanges);
 		}
 	}, [currentJob, dataManager, isCreatingNewPosition, projectAfterTeamChanges, unmodifiedProject.jobs, updatePendingProject]);
+
+	const undefinedDateToString = (undefinedDate: Date | null | undefined) => {
+		if (undefinedDate) {
+			if (undefinedDate.toString().slice(0, 10) === "1900-01-01") {
+				return " None";
+			}
+
+			return ` ${undefinedDate.toString().slice(0, 10)}`;
+		}
+
+		return " Date was undefined";
+	}
 
 	// --- Content variables ---
 	// JSX content for viewing position details.
@@ -1174,14 +1194,16 @@ export const TeamTab = ({
 							<span className="position-detail-indicator">
 								Job Start:
 							</span>
-							{` ${currentJob?.jobStart?.toString().slice(0, 10)}`}
+
+							{undefinedDateToString(currentJob?.jobStart)}
 						</div>
 
 						<div id="position-end">
 							<span className="position-detail-indicator">
 								Job End:
 							</span>
-							{` ${currentJob?.jobEnd?.toString().slice(0, 10)}`}
+
+							{undefinedDateToString(currentJob?.jobEnd)}
 						</div>
 
 						<div id="position-compensation">

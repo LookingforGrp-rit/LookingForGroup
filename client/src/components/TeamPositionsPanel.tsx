@@ -112,6 +112,18 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
     checkApplied(viewedPosition);
   }, []);
 
+  const undefinedDateToString = (undefinedDate: Date | null | undefined) => {
+    if (undefinedDate) {
+      if (undefinedDate.toString().slice(0, 10) === "1900-01-01") {
+        return " None";
+      }
+
+      return ` ${undefinedDate.toString().slice(0, 10)}`;
+    }
+
+    return " Date was undefined";
+  }
+
   return <div id="project-open-positions-popup">
     <div id="positions-popup-header">Join The Team</div>
     <div id="join-team-open-positions-info">
@@ -218,14 +230,16 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
                 <span className="position-detail-indicator">
                   Job Start:
                 </span>
-                {` ${currentJob.jobStart?.toString().slice(0, 10)}`}
+
+                {undefinedDateToString(currentJob?.jobStart)}
               </div>
 
               <div id="position-end">
                 <span className="position-detail-indicator">
                   Job End:
                 </span>
-                {` ${currentJob.jobEnd?.toString().slice(0, 10)}`}
+
+                {undefinedDateToString(currentJob?.jobEnd)}
               </div>
 
               <div id="position-compensation">
