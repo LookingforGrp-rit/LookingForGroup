@@ -279,7 +279,7 @@ const Project = () => {
         reportedProject.reportId, 
         reportedProject.projectId, 
         { 
-          reason: editMessage.current?.value
+          reason: deleteMessage.current?.value ?? ''
         } as UnapproveProjectInput
       );
 
@@ -951,8 +951,8 @@ const Project = () => {
                     <PopupContent>
                     <div className="small-popup" id="report-popup">
                       <h3>Decline Approval Request</h3>
-                      <p>Why are you declining {displayedProject?.title}?</p>
-                      <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={deleteMessage}></input>
+                      <p>What changes should be made to {displayedProject?.title} in order to receive approval?</p>
+                      <textarea placeholder="Write the requested changes here..." className="input input-multiline" ref={deleteMessage}></textarea>
                         <div className="confirm-deny-btns">
                           <button
                             id="team-delete-member-cancel-button"
@@ -963,11 +963,11 @@ const Project = () => {
                           <button className="confirm-btn" onClick={() => {handleDeleteProjectRequest(deleteMessage?.current ? deleteMessage.current.value : "No message provided.");}}>Submit</button>
                       </div>
                     </div>
-                  </PopupContent>
-                </Popup>
+                    </PopupContent>
+                  </Popup>
+                </div>
               </div>
-            </div>
-              : ""}
+            : ""}
 
             {/* Mod options to accept, decline, or request changes to a reported project // are we doing edits on reported projects?  */}
             {isUserAdmin && reportedProject ? (
@@ -983,7 +983,7 @@ const Project = () => {
                       <div className="small-popup" id="report-popup">
                         <h3>Request Edits</h3>
                         <p>What should the user change about their project?</p>
-                        <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={editMessage}></input>
+                        <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={deleteMessage}></textarea>
                         <div className="confirm-deny-btns">
                           <button
                             id="cancel-button"
