@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
-import getProjectReportsService from '#services/projects/mod/get-project-reports.ts';
+import getProjectReportsService from '#services/mod/get-project-reports.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
 

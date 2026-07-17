@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
-import deleteUserReportService from '#services/users/delete-user-report.ts';
+import deleteUserReportService from '#services/mod/delete-user-report.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
 

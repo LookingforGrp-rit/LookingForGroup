@@ -1460,6 +1460,36 @@ export type UpdateProjectProfileVisibilityInput = {
   profileVisibility: Visibility;
 };
 
+/**
+ * The full data of a user report
+ */
+export type UserReport = {
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+
+  /**
+   * Report ID in the DB
+   */
+  reportId: number;
+
+  /**
+   * ID of the user who made the report
+   */
+  reporterId: number;
+
+  /**
+   * ID of the user being reported
+   */
+  reportedId: number;
+
+  /**
+   * Reason for the report
+   */
+  reason: string;
+}
+
 // PROJECTS inputs
 
 /**

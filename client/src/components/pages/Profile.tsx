@@ -25,7 +25,7 @@ import profilePicture from "../../images/lfrog.png";
 import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles } from "../../api/users";
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
-import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail } from '@looking-for-group/shared';
+import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserReport } from '@looking-for-group/shared';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
@@ -61,7 +61,7 @@ const Profile = (userProfile: any) => {
   const [isUserAdmin, setIsUserAdmin] = useState<boolean>(false);
 
   const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
-  const [reportedUser, setReportedUser] = useState<boolean>(false);
+  const [reportedUser, setReportedUser] = useState<UserReport>();
 
   // stores all followed users to display on personal user profile
   const [followedProfilesList, setFollowedProfilesList] = useState<UserPreview[]>([]);
@@ -198,10 +198,10 @@ const Profile = (userProfile: any) => {
       const reportedUsers = (await getReportedUsers()).data;
       if (reportedUsers !== null && reportedUsers !== undefined)
       {
-        for (const user of reportedUsers) {
-          if (user.reportedId === currentUser)
+        for (const report of reportedUsers) {
+          if (report.reportedId === currentUser)
           {
-            setReportedUser(true);
+            setReportedUser(report);
           }
         }
       }
@@ -673,11 +673,12 @@ const Profile = (userProfile: any) => {
           {/* Mod options when this is a reported user */}
           {(!isUsersProfile) && isUserAdmin && reportedUser ? <div id="mod-user-options">
               <h4>Kick or Ban?</h4>
-                <p>You can ignore this request, kick the user, or ban them.</p>
+                <p>You can dismiss this report, request edits, or ban them.</p>
+                <p>Reason for this report: {reportedUser.reason}</p>
                 <div id="mod-options-btns">
-                  <button id="mod-ignore-btn">Ignore</button>
-                  <button id="mod-kick-btn">Edit</button>
-                  <button id="mod-decline-btn" className="delete-button">Ban</button>
+                  <button id="mod-ignore-btn">Dismiss Report</button>
+                  <button id="mod-kick-btn">Request Edits</button>
+                  <button id="mod-decline-btn" className="delete-button">Ban User</button>
                 </div>
             </div> : ""}
 

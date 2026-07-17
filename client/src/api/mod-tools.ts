@@ -1,6 +1,6 @@
 import { GET, DELETE, PATCH } from "./index";
 import { ApiResponse, UserAccessLevel, UnapproveProjectInput } from "@looking-for-group/shared";
-import { ProjectPreview, ProjectDetail, ProjectReport } from "@looking-for-group/shared";
+import { ProjectPreview, ProjectDetail, ProjectReport, UserReport } from "@looking-for-group/shared";
 
 /**
  * Gets a list of all pending projects
@@ -34,6 +34,7 @@ export const deleteProjectRequest = async (
  * @param projectId The project that is being approved
  * @param projectData The project with now approved status
  * @param userId The Admin/Mod user ID that is approving the project
+ * @returns Response from the API call to approve the project
  */
 export const approveProjectRequest = async (
     projectId: number,
@@ -49,6 +50,12 @@ export const approveProjectRequest = async (
     return response;
 };
 
+/**
+ * Unapproves a project that was previously approved. This is used when a mod/admin approves a project report and unapproves the project.
+ * @param projectId Project ID of the project to unapprove
+ * @param data Message to send to the project owner explaining why their project was unapproved
+ * @returns Response from the API call to unapprove the project
+ */
 export const unapproveProject = async (projectId: number, data: UnapproveProjectInput) => {
     const apiURL = `/projects/${projectId}/unapprove`;
 
@@ -91,6 +98,13 @@ export const getUserAccessLevel = async (userId: number): Promise<ApiResponse<Us
     return response;
 };
 
+/**
+ * Approves a project report by unapproving the project and deleting the report
+ * @param reportId Report ID of the project report to delete
+ * @param projectId Project ID of the project to unapprove
+ * @param data Message for project owner explaining why their project was unapproved
+ * @returns ApiResponse from unapproveProject
+ */
 export const approveProjectReport = async(
     reportId: number, 
     projectId: number, 

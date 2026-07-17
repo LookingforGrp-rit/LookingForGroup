@@ -124,9 +124,9 @@ const Project = () => {
         const currentProject = projectResp.data as ProjectPreview;
         const reportedProjects = await getReportedProjects();
         if (reportedProjects.data !== null && reportedProjects.data !== undefined) {
-          for (const project of reportedProjects.data) {
-            if (project.projectId === currentProject.projectId) {
-              setReportedProject(project);
+          for (const report of reportedProjects.data) {
+            if (report.projectId === currentProject.projectId) {
+              setReportedProject(report);
             }
           }
         }

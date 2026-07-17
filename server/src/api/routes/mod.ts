@@ -30,12 +30,16 @@ export const authenticated = (
 //All routes use requiresLogin, injectCurrentUser, and requiresModerator
 router.use(requiresLogin, injectCurrentUser, authenticated(requiresModerator));
 
-router.patch('/clear-profile/:id/', authenticated(clearProfile));
-router.delete('/delete-project/:id/', authenticated(deleteProject));
-router.put('/ban-user/:googleId/:reason', authenticated(banUser));
-router.delete('/unban-user/:googleId/', authenticated(unbanUser));
 router.get('/project-report/', authenticated(getProjectReports));
 router.get('/user-report/', authenticated(getUserReports));
+
+router.patch('/clear-profile/:id/', authenticated(clearProfile));
+
+router.put('/ban-user/:googleId/:reason', authenticated(banUser));
+
+router.delete('/delete-project/:id/', authenticated(deleteProject));
+router.delete('/unban-user/:googleId/', authenticated(unbanUser));
 router.delete('/project-report/:id', authenticated(deleteProjectReport));
 router.delete('/user-report/:id', authenticated(deleteUserReport));
+
 export default router;
