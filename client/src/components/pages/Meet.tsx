@@ -20,8 +20,8 @@ enum sortModes {
   "Z-A" = "Z-A",
   "Newest" = "Newest",
   "Oldest" = "Oldest",
-  "Followers (NOT IMPLEMENTED)" = "Followers (NOT IMPLEMENTED)",
-  "Followers Acending (NOT IMPLEMENTED)" = "Followers Acending (NOT IMPLEMENTED)",
+  "Followers" = "Followers",
+  "Followers Ascending" = "Followers Ascending",
 }
 
 type FilterData = {
@@ -174,8 +174,7 @@ export const ProfileMeetPage = () => {
  * Changes what items are shown to the user whenever a filter has been added or changed
  * @param activeTagFilters Tags that are shown to the user now
  */
-  const updateUserList = async (activeSkillFilters: Skill[], filterMode: "Match All" | "Match Any", sortMode: sortModes) => {
-    console.log(activeSkillFilters, filterMode, sortMode)
+  const updateUserList = async (activeSkillFilters: Skill[], activeExclusionFilters: Skill[], filterMode: "Match All" | "Match Any", sortMode: sortModes) => {
     if (filterData.sortMode !== sortMode) {
       sortPeople(sortMode);
     }
@@ -203,6 +202,12 @@ export const ProfileMeetPage = () => {
     }
 
     let tagFilteredList = items.filter((item) => {
+      for (let tag of activeExclusionFilters) {
+        if ((item.title === tag.label && tag.type === "Role") ||
+            item.majors.some(major => major.label === tag.label && major.majorId === tag.skillId) ||
+            item.skills.some(skill => skill.skillId === tag.skillId))
+          return false;
+      }
       if (activeSkillFilters.length === 0) return true;
       let matchesAny = false;
       let matchesAll = true;
@@ -311,11 +316,11 @@ export const ProfileMeetPage = () => {
         // Compare age inverted
         setupUserData("Newest", true);
         break;
-      case 'Followers (NOT IMPLEMENTED)':
+      case 'Followers':
         // TO IMPLIMENT once backend 
         setupUserData("A-Z", false);
         break;
-      case "Followers Acending (NOT IMPLEMENTED)":
+      case "Followers Ascending":
         // TO IMPLIMENT
         setupUserData("A-Z", true);
         break;
@@ -347,7 +352,8 @@ export const ProfileMeetPage = () => {
         onSearch={searchUsers}
         value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
         setCurrentUserId={getAuth}
-        placeholderText="Search by Name" />
+        placeholderText="Search by Name"
+        mobilePlaceholderText="People" />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {profileHero}
 
