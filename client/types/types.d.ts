@@ -32,8 +32,6 @@ import {
   MyMajor,
   MySocial,
   MySkill,
-  MySocial,
-  MyMajor,
   MeDetail,
   UpdateProjectProfileVisibilityInput,
   CreateProjectVideoInput,
