@@ -100,7 +100,21 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
                 toggleOpen();
             }}
             onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
+                const target = e.target as HTMLElement | null;
+                const isSearchInput = target?.classList?.contains('select-search-input');
+
+                if (isSearchInput) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        target.blur();
+                    } else if (e.key === ' ' || e.key === 'Spacebar') {
+                        e.stopPropagation();
+                    }
+                    return;
+                }
+
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
                     e.preventDefault();
                     toggleOpen();
                 }
@@ -123,6 +137,8 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
                             e.preventDefault();
                             e.stopPropagation();
                             e.currentTarget.blur();
+                        } else if (e.key === ' ' || e.key === 'Spacebar') {
+                            e.stopPropagation();
                         }
                     }}
                 />
