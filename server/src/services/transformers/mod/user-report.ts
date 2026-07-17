@@ -18,7 +18,7 @@ export const transformUserReport = ({
   active,
 }: UserReportGetPayload): UserReport => {
   return {
-    apiUrl: '', // There is no endpoint to get a single report yet, implement this later
+    apiUrl: `api/mod/user-report/${reportId}`,
     reportId,
     reportedId,
     reporterId,

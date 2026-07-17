@@ -17,7 +17,7 @@ export const transformProjectReport = ({
   reportText,
 }: ProjectReportGetPayload): ProjectReport => {
   return {
-    apiUrl: '', // There is no endpoint to get a single report yet, implement this later
+    apiUrl: `api/mod/project-report/${reportId}`,
     reportId,
     userId,
     projectId,

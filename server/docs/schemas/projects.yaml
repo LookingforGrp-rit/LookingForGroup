@@ -341,3 +341,23 @@ components:
               users: []
               apiUrl: /api/projects/1/followers
             apiUrl: /api/projects/1
+
+    ProjectReport:
+      type: object
+      properties:
+        apiUrl:
+          type: string
+        reportId:
+          type: integer
+        userId:
+          type: integer
+        projectId:
+          type: integer
+        reason:
+          type: string
+      example:
+        apiUrl: /api/mod/project-report/1
+        reportId: 1
+        userId: 2
+        projectId: 3
+        reason: Inappropriate content.

@@ -269,5 +269,5 @@ components:
         reportId: 1
         reporter: 2
         reportedId: 3
-        reason: 'Inappropriate behavior in the community.'
+        reason: Inappropriate behavior in the community.
         active: true
