@@ -42,8 +42,8 @@ model Jobs {
   roleId        Int              @map("role_id")
   contactUserId Int              @map("contact_user_id")
   availability  JobsAvailability
-  jobStart      DateTime         @default("1900-01-01") @db.Date()
-  jobEnd        DateTime         @default("1900-01-01") @db.Date()
+  jobStart      DateTime         @default("1900-01-01 00:00:00") @db.Date()
+  jobEnd        DateTime         @default("1900-01-01 00:00:00") @db.Date()
   location      JobsLocation
   compensation  JobsCompensation
   contact       Members          @relation(fields: [projectId, contactUserId], references: [projectId, userId])
