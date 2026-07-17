@@ -286,6 +286,11 @@ const Project = () => {
           reason: editMessage.current?.value
         } as UnapproveProjectInput
       );
+
+      if (res.status === 200) {
+        // refresh page
+        window.location.reload();
+      }
     }
   };
 

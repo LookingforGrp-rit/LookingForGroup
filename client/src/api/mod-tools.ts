@@ -58,14 +58,6 @@ export const unapproveProject = async (projectId: number, data: UnapproveProject
     return response;
 };
 
-export const approveProjectReport = async(
-    reportId: number, 
-    projectId: number, 
-    data: UnapproveProjectInput
-) => {
-    const res = unapproveProject(projectId, data);
-};
-
 /**
  * Gets the list of all reported projects
  */
@@ -97,6 +89,20 @@ export const getUserAccessLevel = async (userId: number): Promise<ApiResponse<Us
 
     if (response.error) console.log(`Error in getUserAccessLevel: ${response.error}`);
     return response;
+};
+
+export const approveProjectReport = async(
+    reportId: number, 
+    projectId: number, 
+    data: UnapproveProjectInput
+): Promise<ApiResponse> => {
+    const unapproveRes = await unapproveProject(projectId, data);
+    const deleteRes = await deleteProjectReport(reportId);
+
+    if (unapproveRes.error) console.log(`Error in approveProjectReport (unapproveProject): ${unapproveRes.error}`);
+    if (deleteRes.error) console.log(`Error in approveProjectReport (deleteProjectReport): ${deleteRes.error}`);
+
+    return unapproveRes;
 };
 
 /**
