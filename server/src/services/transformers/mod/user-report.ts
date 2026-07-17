@@ -15,6 +15,7 @@ export const transformUserReport = ({
   reporterId,
   reportedId,
   reportText,
+  active,
 }: UserReportGetPayload): UserReport => {
   return {
     apiUrl: '', // There is no endpoint to get a single report yet, implement this later
@@ -22,5 +23,6 @@ export const transformUserReport = ({
     reportedId,
     reporterId,
     reason: reportText,
+    active,
   };
 };

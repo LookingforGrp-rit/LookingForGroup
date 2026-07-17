@@ -29,7 +29,7 @@ import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, 
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
-import { getReportedUsers, getUserAccessLevel } from "../../api/mod-tools";
+import { getReportedUsers, getUserAccessLevel, deleteUserReport, requestEditsForUserReport } from "../../api/mod-tools";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -480,20 +480,28 @@ const Profile = (userProfile: any) => {
 
     switch (action) {
       case 'dismiss':
+        res = await deleteUserReport(reportedUser.reportId);
         break;
       case 'edits':
+        res = await requestEditsForUserReport(reportedUser.reportId, {
+          message: modMessage?.current?.value ?? '',
+          receiverId: reportedUser.reportedId,
+          subjectLine: 'Moderator Request for Edits',
+          modUserId: userID ?? 0,
+        });
         break;
       case 'ban':
+        
         break;
       default:
         console.error(`Unknown action: ${action}`);
         return;
     }
 
-    // if (res?.status === 200) {
-    //   // refresh page
-    //   window.location.reload();
-    // }
+    if (res?.status === 200) {
+      // refresh page
+      window.location.reload();
+    }
   };
 
   // --------------------
@@ -695,7 +703,8 @@ const Profile = (userProfile: any) => {
 
           {/* Mod options when this is a reported user */}
           {(!isUsersProfile) && isUserAdmin && reportedUser ? <div id="mod-user-options">
-            <h4>Kick or Ban?</h4>
+            <h4>Request Edits or Ban?</h4>
+            {!reportedUser.active ? <p>This report is inactive at the moment because a moderator has requested changes already.</p> : ""}
             <p>You can dismiss this report, request edits, or ban them.</p>
             <p>Reason for this report: {reportedUser.reason}</p>
             <div id="mod-options-btns">

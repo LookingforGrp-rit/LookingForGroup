@@ -3,4 +3,5 @@ export const UserReportSelector = Object.freeze({
   reporterId: true,
   reportedId: true,
   reportText: true,
+  active: true,
 });

@@ -1488,6 +1488,11 @@ export type UserReport = {
    * Reason for the report
    */
   reason: string;
+
+  /**
+   * Whether the report is still active or has been resolved
+   */
+  active: boolean;
 }
 
 // PROJECTS inputs
@@ -1735,4 +1740,14 @@ export type AddProjectReportInput = {
  */
 export type UnapproveProjectInput = {
   reason: string;
+}
+
+/**
+ * Data required to send a notification to a moderator
+ */
+export type ModeratorNotificationInput = {
+  modUserId: number;
+  receiverId: number;
+  subjectLine: string;
+  message: string;
 }

@@ -6,8 +6,11 @@ import { deleteProjectReport } from '#controllers/mod/delete-project-report.ts';
 import { deleteProject } from '#controllers/mod/delete-project.ts';
 import { deleteUserReport } from '#controllers/mod/delete-user-report.ts';
 import { getProjectReports } from '#controllers/mod/get-project-reports.ts';
+import { getUserReportById } from '#controllers/mod/get-user-report-by-id.ts';
 import { getUserReports } from '#controllers/mod/get-user-reports.ts';
+import { inactivateUserReport } from '#controllers/mod/inactivate-user-report.ts';
 import { unbanUser } from '#controllers/mod/unban-user.ts';
+import { userReportExistsAt } from '#middleware/validators/user-report-exists-at.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresModerator from '../middleware/authorization/requires-mod.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
@@ -32,8 +35,14 @@ router.use(requiresLogin, injectCurrentUser, authenticated(requiresModerator));
 
 router.get('/project-report/', authenticated(getProjectReports));
 router.get('/user-report/', authenticated(getUserReports));
+router.get('/user-report/:id', authenticated(getUserReportById));
 
 router.patch('/clear-profile/:id/', authenticated(clearProfile));
+router.patch(
+  '/user-report/:id/inactivate',
+  userReportExistsAt('path', 'id'),
+  authenticated(inactivateUserReport),
+);
 
 router.put('/ban-user/:googleId/:reason', authenticated(banUser));
 

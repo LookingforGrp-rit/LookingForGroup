@@ -1,9 +1,10 @@
-import { GET, DELETE, PATCH } from "./index";
+import { GET, DELETE, POST, PATCH } from "./index";
 import { ApiResponse, UserAccessLevel, UnapproveProjectInput } from "@looking-for-group/shared";
-import { ProjectPreview, ProjectDetail, ProjectReport, UserReport } from "@looking-for-group/shared";
+import { ProjectPreview, ProjectDetail, ProjectReport, UserReport, ModeratorNotificationInput } from "@looking-for-group/shared";
 
 /**
- * Gets a list of all pending projects
+ * Gets the list of all pending projects
+ * @returns List of all pending projects or an error message if the request fails
  */
 export const getPendingProjects = async (): Promise<ApiResponse<ProjectPreview[]>> => {
   const apiURL = "/projects/unapproved";
@@ -67,6 +68,7 @@ export const unapproveProject = async (projectId: number, data: UnapproveProject
 
 /**
  * Gets the list of all reported projects
+ * @returns List of all reported projects or an error message if the request fails
  */
 export const getReportedProjects = async (): Promise<ApiResponse<ProjectReport[]>> => {
     const apiURL = `/mod/project-report/`;
@@ -78,6 +80,7 @@ export const getReportedProjects = async (): Promise<ApiResponse<ProjectReport[]
 
 /**
  * Gets the list of all reported users
+ * @returns List of all reported users or an error message if the request fails
  */
 export const getReportedUsers = async (): Promise<ApiResponse> => {
     const apiURL = `/mod/user-report/`;
@@ -120,6 +123,49 @@ export const approveProjectReport = async(
 };
 
 /**
+ * 
+ * @param reportId 
+ * @returns 
+ */
+export const requestEditsForUserReport = async (reportId: number, data: ModeratorNotificationInput): Promise<ApiResponse> => {
+    const inactivateRes = await inactivateUserReport(reportId);
+    // !! sends mod message to user (API not setup yet)
+    // const notifyRes = await sendModeratorNotification(data);
+
+    if (inactivateRes.error) console.log(`Error in requestEditsForUserReport(inactivateUserReport): ${inactivateRes.error}`);
+    // if (notifyRes.error) console.log(`Error in requestEditsForUserReport(sendModeratorNotification): ${notifyRes.error}`);
+    
+    return inactivateRes;
+}
+
+/**
+ * Inactivates a user report
+ * @param reportId Report ID of the user report to inactivate
+ * @returns ApiResponse from the API call to inactivate the user report
+ */
+export const inactivateUserReport = async (reportId: number): Promise<ApiResponse> => {
+    const apiURL = `/mod/user-report/${reportId}/inactivate`;
+    const response = await PATCH(apiURL, {});
+
+    if (response.error) console.log(`Error in inactivateUserReport: ${response.error}`);
+    return response;
+}
+
+/**
+ * Sends a moderator notifcation to a user
+ * @param data 
+ * @returns 
+ */
+export const sendModeratorNotification = async (data: ModeratorNotificationInput): Promise<ApiResponse> => {
+    // !! sends mod message to user (API not setup yet)
+    const apiURL = `/mod/notify`;
+    const res = await POST(apiURL, data);
+
+    if (res.error) console.log(`Error in sendModeratorNotification: ${res.error}`);
+    return res;
+}
+
+/**
  * Deletes a project report
  * @param reportId The id of the report to delete
  */
@@ -128,5 +174,17 @@ export const deleteProjectReport = async (reportId: number, ): Promise<ApiRespon
     const response = await DELETE(apiURL, {});
 
     if (response.error) console.log(`Error in deleteProjectReport: ${response.error}`);
+    return response;
+};
+
+/**
+ * Deletes a user report
+ * @param reportId The id of the report to delete
+ */
+export const deleteUserReport = async (reportId: number, ): Promise<ApiResponse> => {
+    const apiURL = `/mod/user-report/${reportId}`;
+    const response = await DELETE(apiURL, {});
+
+    if (response.error) console.log(`Error in deleteUserReport: ${response.error}`);
     return response;
 };

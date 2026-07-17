@@ -231,12 +231,13 @@ model ReportProject {
 }
 
 model ReportUser {
-  reportId   Int    @id @default(autoincrement()) @map("report_id")
-  reporterId Int    @map("reporter_id")
-  reportedId Int    @map("reported_id")
-  reportText String @map("report_text")
-  reporter   Users  @relation("reporter_id", fields: [reporterId], references: [userId], map: "FK_user_report_reporter")
-  reported   Users  @relation("reported_id", fields: [reportedId], references: [userId], map: "FK_user_report_reported")
+  reportId   Int     @id @default(autoincrement()) @map("report_id")
+  reporterId Int     @map("reporter_id")
+  reportedId Int     @map("reported_id")
+  reportText String  @map("report_text")
+  active     Boolean @default(true)
+  reporter   Users   @relation("reporter_id", fields: [reporterId], references: [userId], map: "FK_user_report_reporter")
+  reported   Users   @relation("reported_id", fields: [reportedId], references: [userId], map: "FK_user_report_reported")
 
   @@unique([reporterId, reportedId])
   @@index([reporterId], map: "FK_user_report_reporter")
