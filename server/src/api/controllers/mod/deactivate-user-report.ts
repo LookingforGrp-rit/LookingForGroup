@@ -1,15 +1,15 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import inactivateUserReportService from '#services/mod/inactivate-user-report.ts';
+import deactivateUserReportService from '#services/mod/deactivate-user-report.ts';
 
-//PATCH api/mod/user-report/{id}/inactivate
-//Inactivates a user report by setting the active field to false.
-export const inactivateUserReport = async (
+//PATCH api/mod/user-report/{id}/deactivate
+//Deactivates a user report by setting the active field to false.
+export const deactivateUserReport = async (
   req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
   const id = parseInt(req.params.id as string);
-  const result = await inactivateUserReportService(id);
+  const result = await deactivateUserReportService(id);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

@@ -4216,9 +4216,9 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/mod/user-report/{id}/inactivate:
+  /api/mod/user-report/{id}/deactivate:
     patch:
-      summary: Inactivates a user report
+      summary: Deactivates a user report
       tags:
         - Mod
       security:
@@ -4227,7 +4227,7 @@ paths:
         - name: id
           in: path
           required: true
-          description: ID of the user report to be inactivated
+          description: ID of the user report to be deactivated
           schema:
             type: integer
         - in: query
@@ -4239,7 +4239,7 @@ paths:
 
       responses:
         '200':
-          description: User report successfully inactivated
+          description: User report successfully deactivated
           content:
             application/json:
               schema:

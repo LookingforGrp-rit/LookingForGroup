@@ -2,13 +2,13 @@ import type { AuthenticatedRequest } from '@looking-for-group/shared';
 import { Router, type Request, type Response, type NextFunction } from 'express';
 import { banUser } from '#controllers/mod/ban-user.ts';
 import { clearProfile } from '#controllers/mod/clear-profile.ts';
+import { deactivateUserReport } from '#controllers/mod/deactivate-user-report.ts';
 import { deleteProjectReport } from '#controllers/mod/delete-project-report.ts';
 import { deleteProject } from '#controllers/mod/delete-project.ts';
 import { deleteUserReport } from '#controllers/mod/delete-user-report.ts';
 import { getProjectReports } from '#controllers/mod/get-project-reports.ts';
 import { getUserReportById } from '#controllers/mod/get-user-report-by-id.ts';
 import { getUserReports } from '#controllers/mod/get-user-reports.ts';
-import { inactivateUserReport } from '#controllers/mod/inactivate-user-report.ts';
 import { unbanUser } from '#controllers/mod/unban-user.ts';
 import { userExistsAt } from '#middleware/validators/user-exists-at.ts';
 import { userReportExistsAt } from '#middleware/validators/user-report-exists-at.ts';
@@ -40,9 +40,9 @@ router.get('/user-report/:id', authenticated(getUserReportById));
 
 router.patch('/clear-profile/:id/', authenticated(clearProfile));
 router.patch(
-  '/user-report/:id/inactivate',
+  '/user-report/:id/deactivate',
   userReportExistsAt('path', 'id'),
-  authenticated(inactivateUserReport),
+  authenticated(deactivateUserReport),
 );
 
 router.post('/ban-user/:id', userExistsAt('path', 'id'), authenticated(banUser));

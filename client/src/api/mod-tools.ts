@@ -122,32 +122,32 @@ export const approveProjectReport = async(
 };
 
 /**
- * Inactivates the user report and sends a notification to the user
- * @param reportId Report ID of the user report to inactivate
+ * Deactivates the user report and sends a notification to the user
+ * @param reportId Report ID of the user report to deactivate
  * @param data Notification data
- * @returns ApiResponse from inactivateUserReport
+ * @returns ApiResponse from deactivateUserReport
  */
 export const warnUser = async (reportId: number, data: ModeratorNotificationInput): Promise<ApiResponse> => {
-    const inactivateRes = await inactivateUserReport(reportId);
+    const deactivateRes = await deactivateUserReport(reportId);
     // !! sends mod message to user (API not setup yet)
     // const notifyRes = await sendModeratorNotification(data);
 
-    if (inactivateRes.error) console.log(`Error in WarnUser(inactivateUserReport): ${inactivateRes.error}`);
+    if (deactivateRes.error) console.log(`Error in WarnUser(deactivateUserReport): ${deactivateRes.error}`);
     // if (notifyRes.error) console.log(`Error in WarnUser(sendModeratorNotification): ${notifyRes.error}`);
     
-    return inactivateRes;
+    return deactivateRes;
 }
 
 /**
- * Inactivates a user report
- * @param reportId Report ID of the user report to inactivate
- * @returns ApiResponse from the API call to inactivate the user report
+ * Deactivates a user report
+ * @param reportId Report ID of the user report to deactivate
+ * @returns ApiResponse from the API call to deactivate the user report
  */
-export const inactivateUserReport = async (reportId: number): Promise<ApiResponse> => {
-    const apiURL = `/mod/user-report/${reportId}/inactivate`;
+export const deactivateUserReport = async (reportId: number): Promise<ApiResponse> => {
+    const apiURL = `/mod/user-report/${reportId}/deactivate`;
     const response = await PATCH(apiURL, {});
 
-    if (response.error) console.log(`Error in inactivateUserReport: ${response.error}`);
+    if (response.error) console.log(`Error in deactivateUserReport: ${response.error}`);
     return response;
 }
 

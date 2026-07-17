@@ -4,8 +4,8 @@ import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service
 type PatchServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 type PatchServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
-//PATCH api/mod/user-report/{id}/inactivate
-const inactivateUserReport = async (
+//PATCH api/mod/user-report/{id}/deactivate
+const deactivateUserReport = async (
   id: number,
 ): Promise<PatchServiceSuccess | PatchServiceError> => {
   try {
@@ -27,4 +27,4 @@ const inactivateUserReport = async (
   }
 };
 
-export default inactivateUserReport;
+export default deactivateUserReport;
