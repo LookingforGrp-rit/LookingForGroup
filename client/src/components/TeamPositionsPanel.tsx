@@ -8,7 +8,6 @@ import { requestToJoin, getMemberRequest, getMembers } from '../api/projects.ts'
 import { Tag as TagElement } from "./Tag";
 import {
   JobAvailability as JobAvailabilityEnums,
-  JobDuration as JobDurationEnums,
   JobLocation as JobLocationEnums,
   JobCompensation as JobCompensationEnums,
 } from "@looking-for-group/shared/enums";

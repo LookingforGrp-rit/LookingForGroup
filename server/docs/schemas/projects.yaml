@@ -163,8 +163,12 @@ components:
           $ref: 'datasets.yaml#/components/schemas/Role'
         availability:
           type: 'enums.yaml#/components/schemas/JobAvailability'
-        duration:
-          type: 'enums.yaml#/components/schemas/JobDuration'
+        jobStart:
+          type: string
+          format: date-time
+        jobEnd:
+          type: string
+          format: date-time
         location:
           type: 'enums.yaml#/components/schemas/JobLocation'
         compensation:
@@ -187,7 +191,8 @@ components:
           roleId: 1
           label: Full-Stack Developer
         availability: FullTime
-        duration: Days
+        jobStart: 1900-01-01
+        jobEnd: 1900-01-01
         location: OnSite
         compensation: Unpaid
         contact:
