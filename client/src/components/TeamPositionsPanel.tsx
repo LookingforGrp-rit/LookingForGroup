@@ -5,7 +5,6 @@ import profileImage from "../images/lfrog.png";
 import { PopupButton } from "./Popup";
 import * as paths from "../constants/routes";
 import { requestToJoin, getMemberRequest, getMembers } from '../api/projects.ts';
-import { Tag as TagElement } from "./Tag";
 import {
   JobAvailability as JobAvailabilityEnums,
   JobLocation as JobLocationEnums,
@@ -100,7 +99,7 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
         setAllowApply(true);
       }
 
-    } catch (e) {
+    } catch {
       // no request made before
       setAllowApply(true);
       setSystemMessage('');

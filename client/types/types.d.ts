@@ -250,7 +250,7 @@ interface ProjectChangesDeletes {
  * An image that hasn't been saved on the server yet
  */
 interface PendingProjectImage extends Pending<ProjectImage> {
-  image: File | null;
+  image: File | string | null;
 }
 
 /**
