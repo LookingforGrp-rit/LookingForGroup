@@ -21,7 +21,7 @@ const createProjectService = async (
         globalVisibility: data.globalVisibility || 'public',
         status: data.status || undefined,
         audience: data.audience || undefined,
-        purpose: data.purpose,
+        context: data.context,
         users: {
           connect: {
             userId: userId,

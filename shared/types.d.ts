@@ -9,6 +9,8 @@ export type TagType =
   | 'Style'
   | 'Genre'
   | "Purpose"
+  | "Context"
+  | "Content Warning"
   | "Project Type"
   | "Role"
   | "Major"
@@ -18,13 +20,15 @@ export type TagType =
 export type GenreCategory = 'Game' | "Story" | 'Music';
 export type StyleCategory = 'Visual' | 'Film/Video';
 export type GameEngine = 'Unity' | 'Unreal Engine' | 'Godot' | 'Twine' | 'MonoGame'
+export type ContentWarning = 'Maturity Rating' | 'Triggers'
+export type ContextCategory = 'Usage' | 'Field'
 export type DesignerCategory = 'Discipline' | 'Design Software' | 'Art and Animation' | 'Photo Editing' | 'Video Software';
 export type DeveloperCategory = 'Discipline' | 'Framework' | 'API' | 'Software' | 'Coding Language' | 'Operating System' | 'Game Engine';
 export type SoftCategory = 'Discipline' | 'Personal' | 'Team';
 export type AudioCategory = 'Discipline' | 'DAW/Audio Editor' | 'Notation' | 'Middleware';
 export type EngineerCategory = 'Discipline' | 'Engineering Software' | 'Hardware'
 export type SkillCategory = DeveloperCategory | DesignerCategory | AudioCategory | SoftCategory | EngineerCategory | "Other";
-export type TagCategory = GenreCategory | StyleCategory | GameEngine | "Other";
+export type TagCategory = GenreCategory | StyleCategory | GameEngine | ContentWarning | ContextCategory | "Other";
 export type RitStatus =
   | "FirstYear"
   | "SecondYear"
@@ -40,7 +44,7 @@ export type SkillProficiency =
   | "Intermediate"
   | "Advanced"
   | "Expert";
-export type ProjectPurpose =
+export type ProjectContext =
   | "Personal"
   | "PortfolioPiece"
   | "Academic"
@@ -1197,9 +1201,9 @@ export interface ProjectDetail extends ProjectPreview {
   description: string;
 
   /**
-   * The project's purpose, such as "Personal", null if unset
+   * The project's context, such as "Personal" or "Academic", null if unset
    */
-  purpose: ProjectPurpose | null;
+  context: ProjectContext | null;
 
   /**
    * The current status of the project, such as "Development"
@@ -1503,7 +1507,7 @@ export type CreateProjectInput = Required<Pick<ProjectDetail, "title">> &
   Partial<
     Pick<
       ProjectDetail,
-      "hook" | "description" | "status" | "audience" | "purpose" | 'globalVisibility'
+      "hook" | "description" | "status" | "audience" | "context" | 'globalVisibility'
     >
   >;
 

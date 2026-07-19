@@ -1,4 +1,4 @@
-import type { ProjectPurpose, ProjectStatus, Visibility } from '@looking-for-group/shared';
+import type { ProjectContext, ProjectStatus, Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import { deleteMemberService } from '#services/projects/members/delete-member.ts';
@@ -25,7 +25,7 @@ const prismaProject = {
   hook: '',
   projectId: 100,
   globalVisibility: 'public' as Visibility,
-  purpose: 'Academic' as ProjectPurpose,
+  context: 'Academic' as ProjectContext,
   status: 'Planning' as ProjectStatus,
   thumbnailId: 8,
   title: 'test 1',

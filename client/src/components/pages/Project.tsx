@@ -20,7 +20,7 @@ import {
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectPreview, ProjectVideo, ProjectWithFollowers, ProjectReport, UnapproveProjectInput } from "@looking-for-group/shared";
-import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
+import { ProjectContext, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 //import { router } from "../../../../server/src/api/routes/me.ts"
 import { reportProject } from "../../api/projects";
 import { getCurrentAccount } from "../../api/users";
@@ -876,10 +876,10 @@ const Project = () => {
               <div id="project-overview-text">{displayedProject.description}</div>
               {/* Sections could also be added with some extra function, 
             title and content can be assigned to similar elements */}
-              {displayedProject.purpose && (
+              {displayedProject.context && (
                 <>
-                  <div className="project-overview-section-header">Purpose</div>
-                  <div>{ProjectPurpose[displayedProject.purpose]}</div>
+                  <div className="project-overview-section-header">Context</div>
+                  <div>{ProjectContext[displayedProject.context]}</div>
                 </>
               )}
               {displayedProject.audience?.trim() && (

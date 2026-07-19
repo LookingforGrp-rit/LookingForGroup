@@ -24,7 +24,7 @@ let index = 0;
 
 //Default should be 10
 //Determines the number of different projects for some reason
-let count = 10;
+const count = 10;
 
 //Synchronous storing of the full project list for quick reference
 let syncFullProjectList: ProjectPreview[] = [];
@@ -207,7 +207,7 @@ export const DiscoverPage = () => {
   const setupProjectData = async (method: string, invert: boolean): Promise<void> => {
     //Doesn't check if projects are alreadys in projects so many are repeated
     //I think the weirdness below fixes it? I'm not sure since the only 3 bug is still present
-    let returnedProjects: ProjectPreview[] = await getPaginatedProjects(method);
+    const returnedProjects: ProjectPreview[] = await getPaginatedProjects(method);
 
     //Probably doesn't work since it's not checking projectId?
     // returnedProjects = returnedProjects.filter((project) => !projects.includes(project));
@@ -278,7 +278,7 @@ export const DiscoverPage = () => {
         );
         break;
       case 'Popular':
-        const followersList = await Promise.all(projects.map(
+        { const followersList = await Promise.all(projects.map(
           project => getProjectFollowers(project.projectId)
         ));
         const projectsWithFollowers = projects.map((project, index) => {
@@ -294,7 +294,7 @@ export const DiscoverPage = () => {
           return p2followers - p1followers;
         })
           .map(item => item.project);
-        break;
+        break; }
     }
     
     if (invert) {
@@ -349,11 +349,11 @@ export const DiscoverPage = () => {
       }
     }
     let tagFilteredList = items.filter((item) => {
-      for (let tag of activeExclusionFilters) {
+      for (const tag of activeExclusionFilters) {
         if (item.tags.some((projectTag) => projectTag.tagId === tag.tagId && projectTag.type === tag.type) ||
             item.mediums.some((medium) => medium.mediumId === tag.tagId && tag.type === "Project Type") ||
             item.jobs.some((job) => job.jobId === tag.tagId && tag.type === "Role") ||
-            (item.purpose === tag.label && tag.type === "Purpose"))
+            (item.context === tag.label && tag.type === "Context"))
           return false;
       }
       if (activeTagFilters.length === 0) return true;
@@ -382,10 +382,10 @@ export const DiscoverPage = () => {
             matchesAll = false;
           }
         }
-        // Purpose tag 
-        else if (tag.type === 'Purpose' && item.purpose) {
-          const projectPurpose = item.purpose.toLowerCase();
-          if (projectPurpose.includes(tag.label.toLowerCase())) {
+        // Context tag 
+        else if (tag.type === 'Context' && item.context) {
+          const projectContext = item.context.toLowerCase();
+          if (projectContext.includes(tag.label.toLowerCase())) {
             matchesAny = true;
           }
           else {
