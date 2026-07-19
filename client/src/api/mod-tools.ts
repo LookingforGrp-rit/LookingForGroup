@@ -135,7 +135,7 @@ export const warnUser = async (reportId: number, data: ModeratorNotificationInpu
     // if (notifyRes.error) console.log(`Error in WarnUser(sendModeratorNotification): ${notifyRes.error}`);
     
     return deactivateRes;
-}
+};
 
 /**
  * Deactivates a user report
@@ -221,8 +221,11 @@ export const demoteToUser = async (
     const apiURL = `/admin/demote`;
     const response = await PATCH(apiURL, {userId: userToDemote});
 
-    if (response.error) console.log(`Error in promoteToMod: ${response.error}`);
- * Deletes a user report
+    if (response.error) console.log(`Error in demoteToUser: ${response.error}`);
+    return response;
+};
+
+ /* Deletes a user report
  * @param reportId The id of the report to delete
  */
 export const deleteUserReport = async (reportId: number, ): Promise<ApiResponse> => {

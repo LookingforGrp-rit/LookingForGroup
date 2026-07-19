@@ -29,8 +29,9 @@ import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, 
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
-import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser } from "../../api/mod-tools";
+import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, warnUser, banUser } from "../../api/mod-tools";
 import { PopupContext } from "../Popup";
+import { UserReport } from "@looking-for-group/shared";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;

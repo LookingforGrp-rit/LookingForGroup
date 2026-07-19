@@ -6,7 +6,7 @@ import { Popup, PopupButton, PopupContent } from "./Popup";
 import { LeaveDeleteContext } from "../contexts/LeaveDeleteContext";
 import { PagePopup } from "./PagePopup";
 import { deleteProject, requestProjectReview } from "../api/projects";
-import { ApiResponse, ProjectDetail, ProjectFollowers } from "@looking-for-group/shared";
+import { ApiResponse, ProjectDetail } from "@looking-for-group/shared";
 import { leaveProject } from "../api/users";
 import { ThemeIcon } from "./ThemeIcon";
 import placeholderThumbnail from "../images/project_temp.png";
