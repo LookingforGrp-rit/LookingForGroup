@@ -72,6 +72,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
     }
     if (setValue) setValue(newQuery);
     if (newQuery.length > 0) handleSearch(newQuery);
+    handleSearch(newQuery);
   };
 
   /**

@@ -1,9 +1,4 @@
-import type {
-  JobAvailability,
-  JobDuration,
-  JobLocation,
-  JobCompensation,
-} from '@looking-for-group/shared';
+import type { JobAvailability, JobLocation, JobCompensation } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import deleteJobService from '#services/projects/jobs/delete-job.ts';
@@ -22,7 +17,8 @@ const prismaJob = {
   createdAt: now,
   updatedAt: now,
   availability: 'FullTime' as JobAvailability,
-  duration: 'Days' as JobDuration,
+  jobStart: new Date(Date.now.toString()),
+  jobEnd: new Date(Date.now.toString()),
   location: 'Hybrid' as JobLocation,
   compensation: 'Paid' as JobCompensation,
   description: 'test job',

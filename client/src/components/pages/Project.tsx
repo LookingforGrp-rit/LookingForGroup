@@ -19,12 +19,12 @@ import {
   leaveProject as leaveProjectApi,
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
-import { MePrivate, ProjectPreview, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
+import { MePrivate, ProjectPreview, ProjectVideo, ProjectWithFollowers, ProjectReport, UnapproveProjectInput } from "@looking-for-group/shared";
 import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 //import { router } from "../../../../server/src/api/routes/me.ts"
 import { reportProject } from "../../api/projects";
 import { getCurrentAccount } from "../../api/users";
-import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel } from "../../api/mod-tools";
+import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport, approveProjectReport } from "../../api/mod-tools";
 
 //Main component for the project page
 /**
@@ -50,7 +50,7 @@ const Project = () => {
   const [displayedProject, setDisplayedProject] =
     useState<ProjectWithFollowers>();
 
-  const [reportedProject, setReportedProject] = useState<boolean>(false);
+  const [reportedProject, setReportedProject] = useState<ProjectReport>();
 
   type ApprovalStatusKey = keyof typeof ApprovalStatus;
   const [approvalStatus, setApprovalStatus] = useState<ApprovalStatusKey>('not-approved');
@@ -64,6 +64,7 @@ const Project = () => {
   const [videos, setVideos] = useState<ProjectVideo[]>();
 
   const reportMessage = useRef<HTMLTextAreaElement>(null);
+  const modMessage = useRef<HTMLTextAreaElement>(null);
   const deleteMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>("");
 
@@ -73,15 +74,13 @@ const Project = () => {
   const getUserPermissions = async () => {
     /* Ensures the user is logged in */
     const userAccount = await getCurrentAccount();
-    if (userAccount.status === 200 && userAccount.data?.userId)
-    {
-        setUserID(userAccount.data?.userId);
-        /* User must have mod permissions to access mod page */
-        const accessLevel = await getUserAccessLevel(userAccount.data.userId);
-        if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator')
-        {
-            setIsUserAdmin(true);
-        }
+    if (userAccount.status === 200 && userAccount.data?.userId) {
+      setUserID(userAccount.data?.userId);
+      /* User must have mod permissions to access mod page */
+      const accessLevel = await getUserAccessLevel(userAccount.data.userId);
+      if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator') {
+        setIsUserAdmin(true);
+      }
     }
   };
 
@@ -125,12 +124,10 @@ const Project = () => {
       const isProjectReported = async () => {
         const currentProject = projectResp.data as ProjectPreview;
         const reportedProjects = await getReportedProjects();
-        if (reportedProjects.data !== null && reportedProjects.data !== undefined)
-        {
-          for (const project of reportedProjects.data) {
-            if (project.projectId === currentProject.projectId)
-            {
-              setReportedProject(true);
+        if (reportedProjects.data !== null && reportedProjects.data !== undefined) {
+          for (const report of reportedProjects.data) {
+            if (report.projectId === currentProject.projectId) {
+              setReportedProject(report);
             }
           }
         }
@@ -150,6 +147,11 @@ const Project = () => {
       }
     }
   };
+
+  // Checks mod permissions
+  useEffect(() => {
+    getUserPermissions();
+  }, [])
 
   // Fetch attached videos and check approval status (for now)
   useEffect(() => {
@@ -186,24 +188,19 @@ const Project = () => {
 
     fetchVideos();
 
-    if (isMember) {
+    if (isMember || isUserAdmin) {
       checkApprovalRequest();
     }
 
-  }, [projectID, isMember]);
+  }, [projectID, isMember, isUserAdmin]);
 
   // Approve a project request
   const handleApproveRequest = async () => {
     if (displayedProject) {
       setApprovalStatus("approved");
-      await approveProjectRequest(projectID, displayedProject, userID ? userID : -1);
+      await approveProjectRequest(projectID, displayedProject);
     }
   };
-
-  // Checks mod permissions
-  useEffect(() => {
-    getUserPermissions();
-  }, [])
 
   //Checks to see whether or not the current user is the maker/owner of the project being displayed
   //oh do i need this too
@@ -264,8 +261,37 @@ const Project = () => {
     }
   };
 
-  const handleDeleteProjectReport = async () => {
-    //const reportedProjects = ((await getReportedProjects()).data);
+
+  /**
+   * Resolves a project report
+   * @param action The action to take on the report ('dismiss' or 'unapprove project')
+   */
+  const resolveReport = async (action: 'dismiss' | 'unapprove project') => {
+    if (!reportedProject) return;
+    let res;
+
+    switch (action) {
+      case 'dismiss':
+        res = await deleteProjectReport(reportedProject.reportId);
+        break;
+      case 'unapprove project':
+        res = await approveProjectReport(
+          reportedProject.reportId,
+          reportedProject.projectId,
+          {
+            reason: modMessage.current?.value ?? ''
+          } as UnapproveProjectInput
+        );
+        break;
+      default:
+        console.error(`Unknown action: ${action}`);
+        break;
+    }
+
+    if (res?.status === 200) {
+      // refresh page
+      window.location.reload();
+    }
   };
 
   /**
@@ -289,7 +315,7 @@ const Project = () => {
     }
    */
   const handleDeleteProjectRequest = async (message: string) => {
-    if (displayedProject){
+    if (displayedProject) {
       setApprovalStatus('not-approved');
       await deleteProjectRequest(projectID, message);
     }
@@ -390,8 +416,8 @@ const Project = () => {
                         </div>
                       </div>
                     </div>
-                </PopupContent>
-              </Popup> : "" }
+                  </PopupContent>
+                </Popup> : ""}
               {/* Leave Project */}
               <Popup>
                 <PopupButton className="project-info-dropdown-option">
@@ -920,44 +946,64 @@ const Project = () => {
 
             {/* Mod options to approveor reject a project request (request edits in order to approve) */}
             {isUserAdmin && approvalStatus == 'under-review' ? <div className="mod-project-options">
-                <h4>Approve?</h4>
-                <p>You can approve this project or request changes.</p>
-                <div id="mod-options-btns">
-                  <button id="mod-approve-btn" onClick={ () => { if (displayedProject){ handleApproveRequest(); }}}>Approve</button>
-                  <Popup>
-                    <PopupButton className="delete-button">Decline</PopupButton>
-                    <PopupContent>
+              <h4>Approve?</h4>
+              <p>You can approve this project or request changes.</p>
+              <div id="mod-options-btns">
+                <button id="mod-approve-btn" onClick={() => { if (displayedProject) { handleApproveRequest(); } }}>Approve</button>
+                <Popup>
+                  <PopupButton className="
+                                          -button">Decline</PopupButton>
+                  <PopupContent>
                     <div className="small-popup" id="report-popup">
                       <h3>Decline Approval Request</h3>
                       <p>What changes should be made to {displayedProject?.title} in order to receive approval?</p>
-                      <textarea placeholder="Write the requested changes here..." className="input input-multiline" ref={deleteMessage}></textarea>
+                      <textarea placeholder="Write the requested changes here..." className="input input-multiline" ref={modMessage}></textarea>
+                      <div className="confirm-deny-btns">
+                        <button
+                          id="team-delete-member-cancel-button"
+                          className="button-reset"
+                        >
+                          Cancel
+                        </button>
+                        <button className="confirm-btn" onClick={() => { handleDeleteProjectRequest(modMessage?.current ? modMessage.current.value : "No message provided."); }}>Submit</button>
+                      </div>
+                    </div>
+                  </PopupContent>
+                </Popup>
+              </div>
+            </div>
+              : ""}
+
+            {/* Mod options to accept, decline, or request changes to a reported project // are we doing edits on reported projects?  */}
+            {isUserAdmin && reportedProject ? (
+              <div className="mod-project-options">
+                <h4>Unapprove?</h4>
+                <p>You can ignore this report or request edits on this project.</p>
+                <p>Reason for this report: {reportedProject.reason}</p>
+                <div id="mod-options-btns">
+                  <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')}>Dismiss Report</button>
+                  <Popup>
+                    <PopupButton className="mod-edit-btn">Request Edits</PopupButton>
+                    <PopupContent>
+                      <div className="small-popup" id="report-popup">
+                        <h3>Request Edits</h3>
+                        <p>What should the user change about their project?</p>
+                        <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={modMessage}></textarea>
                         <div className="confirm-deny-btns">
                           <button
-                            id="team-delete-member-cancel-button"
+                            id="cancel-button"
                             className="button-reset"
                           >
                             Cancel
                           </button>
-                          <button className="confirm-btn" onClick={() => {handleDeleteProjectRequest(deleteMessage?.current ? deleteMessage.current.value : "No message provided.");}}>Submit</button>
+                          <button className="confirm-btn" onClick={() => resolveReport('unapprove project')}>Submit</button>
+                        </div>
                       </div>
-                    </div>
                     </PopupContent>
                   </Popup>
                 </div>
               </div>
-            : ""}
-
-            {/* Mod options to accept, decline, or request changes to a reported project // are we doing edits on reported projects?  */}
-            {isUserAdmin && reportedProject ?  <div className="mod-project-options">
-                <h4>Unapprove?</h4>
-                <p>You can ignore this request, request an edit, or unapprove this project.</p>
-                <div id="mod-options-btns">
-                  <button id="mod-ignore-btn" onClick={handleDeleteProjectReport}>Ignore</button>
-                  <button className="mod-edit-btn">Edit</button> 
-                  <button id="mod-decline-btn" className="delete-button">Unapprove</button>
-                </div>
-              </div>
-            : ""}
+            ) : ""}
 
             <div id="project-people">
               <div id="project-people-tabs">

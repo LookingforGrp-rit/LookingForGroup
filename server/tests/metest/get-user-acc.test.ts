@@ -131,7 +131,7 @@ describe('getUserByIdService', () => {
     const [args] = calls[0];
 
     expect(args.where).toEqual({ userId: 1 });
-    expect(args.select).toEqual(expect.any(Object));
+    expect(args.select).toBeTypeOf('object');
 
     expect(transformMeToPrivate).toHaveBeenCalledWith(prismaUser);
 

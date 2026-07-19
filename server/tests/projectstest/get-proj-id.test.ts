@@ -45,7 +45,7 @@ describe('getProjectByIdService', () => {
     const [args] = calls[0];
 
     expect(args?.where).toEqual({ projectId: 23 });
-    expect(args?.select).toEqual(expect.any(Object));
+    expect(args.select).toBeTypeOf('object');
 
     expect(transformProjectToWithFollowers).toHaveBeenCalledWith(prismaProject);
 

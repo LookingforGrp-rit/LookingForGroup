@@ -236,8 +236,12 @@ components:
       properties:
         availability:
           $ref: 'enums.yaml#/components/schemas/JobAvailability'
-        duration:
-          $ref: 'enums.yaml#/components/schemas/JobDuration'
+        jobStart:
+          type: string
+          format: date-time
+        jobEnd:
+          type: string
+          format: date-time
         location:
           $ref: 'enums.yaml#/components/schemas/JobLocation'
         compensation:
@@ -250,7 +254,6 @@ components:
           type: number
       required:
         - availability
-        - duration
         - location
         - compensation
         - roleId
@@ -261,8 +264,12 @@ components:
       properties:
         availability:
           $ref: 'enums.yaml#/components/schemas/JobAvailability'
-        duration:
-          $ref: 'enums.yaml#/components/schemas/JobDuration'
+        jobStart:
+          type: string
+          format: date-time
+        jobEnd:
+          type: string
+          format: date-time
         location:
           $ref: 'enums.yaml#/components/schemas/JobLocation'
         compensation:
@@ -333,3 +340,17 @@ components:
         - reason
       example:
         reason: 'This project contains offensive content.'
+
+    BanUserInput:
+      type: object
+      properties:
+        userId:
+          type: string
+        reason:
+          type: string
+        required:
+          - userId
+          - reason
+      example:
+        userId: 1
+        reason: 'Several inappropriate behaviors in the community.'

@@ -8,7 +8,8 @@ export const ProjectJobSelector = Object.freeze({
     select: RoleSelector,
   },
   availability: true,
-  duration: true,
+  jobStart: true,
+  jobEnd: true,
   location: true,
   compensation: true,
   jobSkills: {
