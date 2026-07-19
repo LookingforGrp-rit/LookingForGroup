@@ -11,7 +11,7 @@ const updateProjectsController = async (
   const updates = req.body as Omit<UpdateProjectInput, 'thumbnail'>;
   const projectId = parseInt(req.params.id as string);
 
-  const updateFields = ['title', 'hook', 'description', 'purpose', 'status', 'audience'];
+  const updateFields = ['title', 'hook', 'description', 'context', 'status', 'audience'];
 
   //validate update fields
   const invalid = Object.keys(updates).filter((field) => !updateFields.includes(field));
