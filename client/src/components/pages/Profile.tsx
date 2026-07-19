@@ -553,7 +553,7 @@ const Profile = (userProfile: any) => {
     }
     setDemoteResponseText(responseText);
   }
-     * Resolves a user report
+     /* Resolves a user report
      * @param action The action to take on the report ('dismiss', 'warn' or 'ban')
      */
   const resolveReport = async (action: 'dismiss' | 'warn' | 'ban') => {
