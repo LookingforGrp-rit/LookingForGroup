@@ -50,7 +50,6 @@ const Profile = (userProfile: any) => {
   // --------------------
 
   const navigate = useNavigate(); // Hook for navigation
-  const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
   // Get URL parameters to tell what user we're looking for and store it
   const urlParams = new URLSearchParams(window.location.search);
@@ -635,16 +634,14 @@ const Profile = (userProfile: any) => {
                 <Popup>
                   <PopupButton
                     className="project-info-dropdown-option"
+                    callback={() => {console.log(`prev: ${previousDisplayedProfileAccessLevel}`); console.log(`curr: ${displayedProfileAccessLevel}`)}}
                   >
                     <ThemeIcon id={'settings'} width={27} height={27} className={'mono-stroke'} ariaLabel={"Manage User Permissions"}/>
                     Manage Permissions
                   </PopupButton>
 
                   {/**
-                    Note for future self (will delete later)
-
-                    This does not work because of the if/else statement nature of the 2 options. One or the other of the mod/users options
-                    will appear at a time-- there can never be an instance where both dont show up.
+                    Current error: previous does not get set on PopupContent callback (closing)
                    */}
 
 
@@ -671,14 +668,14 @@ const Profile = (userProfile: any) => {
                         </div>
                       </div>
                   </PopupContent> :
-                  <PopupContent callback={() => setPreviousDisplayedProfileAccessLevel('Moderator')}>
+                  (previousDisplayedProfileAccessLevel == 'User' ? <PopupContent callback={() => {setPreviousDisplayedProfileAccessLevel('Moderator');}}>
                     <div className="small-popup">
                       <p>{promoteResponseText}</p>
-                      <PopupButton buttonId="continue-button" closeParent={closeOuterPopup}>
+                      <PopupButton buttonId="continue-button" callback={() => {setPreviousDisplayedProfileAccessLevel('Moderator');}}>
                         Continue
                       </PopupButton>
                     </div>
-                  </PopupContent>}
+                  </PopupContent> : "")}
                   {displayedProfileAccessLevel === 'Moderator' && previousDisplayedProfileAccessLevel === 'Moderator' ?
                   <PopupContent>
                       <div className="small-popup" id="manage-perms-popup">
@@ -701,14 +698,14 @@ const Profile = (userProfile: any) => {
                         </div>
                       </div>
                   </PopupContent> :
-                  <PopupContent callback={() => setPreviousDisplayedProfileAccessLevel('User')}>
+                  (previousDisplayedProfileAccessLevel == 'Moderator' ? <PopupContent callback={() => {setPreviousDisplayedProfileAccessLevel('User');}}>
                   <div className="small-popup">
                     <p>{demoteResponseText}</p>
-                    <PopupButton buttonId="continue-button" closeParent={closeOuterPopup}>
+                    <PopupButton buttonId="continue-button" callback={() => {setPreviousDisplayedProfileAccessLevel('User');}}>
                       Continue
                     </PopupButton>
                   </div>
-                  </PopupContent>}
+                  </PopupContent>: "")}
                 </Popup> : ""}
                 <ShareButton />
                 <button
@@ -752,7 +749,7 @@ const Profile = (userProfile: any) => {
                           <PopupContent>
                             <div className="small-popup">
                               <p>{reportResponseText}</p>
-                              <PopupButton buttonId="continue-button" closeParent={closeOuterPopup}>
+                              <PopupButton buttonId="continue-button">
                                 Continue
                               </PopupButton>
                             </div>

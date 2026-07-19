@@ -1,7 +1,6 @@
-import { GET, DELETE, POST, PUT, PATCH } from "./index";
+import { GET, DELETE, POST, PATCH } from "./index";
 import { ApiResponse, UserAccessLevel, UnapproveProjectInput } from "@looking-for-group/shared";
 import { ProjectPreview, ProjectDetail, ProjectReport, UserReport, ModeratorNotificationInput, BanUserInput} from "@looking-for-group/shared";
-import { deleteUser } from "./users";
 
 /**
  * Gets the list of all pending projects
