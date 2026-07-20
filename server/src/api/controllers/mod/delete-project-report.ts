@@ -34,7 +34,7 @@ export const deleteProjectReport = async (
   const resBody: ApiResponse = {
     status: 200,
     error: null,
-    data: null,
+    data: result,
   };
   res.status(200).json(resBody);
 };

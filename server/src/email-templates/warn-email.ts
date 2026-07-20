@@ -58,8 +58,8 @@ const WarnEmail = ({ receiverName, warning }: WarningEmailProps) => {
             {
               className: 'mx-0 my-[30px] p-0 text-center font-normal text-[24px] text-black',
             },
-            'You have been ',
-            createElement('strong', null, `warned`),
+            'You Have Been ',
+            createElement('strong', null, `Warned`),
             ' on Looking For Group ',
           ),
           createElement(
@@ -92,12 +92,7 @@ const WarnEmail = ({ receiverName, warning }: WarningEmailProps) => {
           createElement(
             Text,
             { className: 'text-[14px] text-black leading-[24px]' },
-            'We wish you a good day',
-          ),
-          createElement(
-            Text,
-            { className: 'text-[14px] text-black leading-[24px]' },
-            '- The LFG Team',
+            'We wish you a good day.',
           ),
           createElement(
             'tr',
