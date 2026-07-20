@@ -1,19 +1,19 @@
-import type { AuthenticatedRequest, NotificationBuilderResult } from '@looking-for-group/shared';
+import type {
+  AuthenticatedRequest,
+  NotificationBuilderResult,
+  ModeratorNotificationInput,
+} from '@looking-for-group/shared';
 import type { Request } from 'express';
 import prisma from '#config/prisma.ts';
 import type { NotificationBuilder } from './notification-builder.ts';
 
 export class WarningNotificationBuilder implements NotificationBuilder {
   async buildNotification(request: Request): Promise<NotificationBuilderResult> {
-    type Warning = {
-      warning: string;
-    };
-
     // Getting info from the request
     const req: AuthenticatedRequest = request as AuthenticatedRequest;
-    const userId = parseInt(req.params.id as string);
-    const body = req.body as Warning;
-    const warning = body.warning;
+    const data = req.body as ModeratorNotificationInput;
+    const userId = data.receiverId;
+    const warning = data.message;
 
     const notification: NotificationBuilderResult = {
       receiverId: -1,
@@ -21,20 +21,20 @@ export class WarningNotificationBuilder implements NotificationBuilder {
       message: '',
     };
 
-    const data = await prisma.users.findFirst({
+    const receiver = await prisma.users.findFirst({
       where: {
         userId: userId,
       },
     });
 
     //--BUILDING THE NOTIFICATION--//
-    notification.receiverId = data?.userId as number;
+    notification.receiverId = userId;
 
     // subject line
-    notification.subjectLine = `You have been issued a warning`;
+    notification.subjectLine = data.subjectLine;
 
     // building the message
-    notification.message = `Hello ${data?.firstName as string},<br /><br />`;
+    notification.message = `Hello ${receiver?.firstName as string},<br /><br />`;
     notification.message += `A moderator has issued you a warning. `;
     notification.message += `Here is the warning provided:<br /><br />`;
     notification.message += `"${warning}"<br /><br />`;

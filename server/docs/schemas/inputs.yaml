@@ -354,3 +354,20 @@ components:
       example:
         userId: 1
         reason: 'Several inappropriate behaviors in the community.'
+
+    ModeratorNotificationInput:
+      type: object
+      properties:
+        modUserId:
+          type: number
+        receiverId:
+          type: number
+        subjectLine:
+          type: string
+        message:
+          type: string
+      example:
+        modUserId: 1
+        receiverId: 2
+        subjectLine: 'Action Required: Changes Requested to Your Profile'
+        message: 'Inappropriate profile image, please change it.'

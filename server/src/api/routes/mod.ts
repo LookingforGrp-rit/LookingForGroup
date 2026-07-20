@@ -50,9 +50,11 @@ router.patch(
 
 router.post('/ban-user/:id', userExistsAt('path', 'id'), authenticated(banUser));
 
+router.put('/warn-user/:id/', authenticated(sendWarning));
+
 router.delete('/delete-project/:id/', authenticated(deleteProject));
 router.delete('/unban-user/:googleId/', authenticated(unbanUser));
 router.delete('/project-report/:id', authenticated(deleteProjectReport));
 router.delete('/user-report/:id', authenticated(deleteUserReport));
-router.put('/warn-user/:id/', authenticated(sendWarning));
+
 export default router;

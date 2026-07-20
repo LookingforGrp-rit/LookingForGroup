@@ -2,20 +2,11 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import warnUserService from '#services/users/blacklist/warn-user.ts';
 
-//PUT api/mod/send-warning/{userID}
+//PUT api/mod/send-warning/{id}
 //Issues a warning to a user
 export const sendWarning = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const result = await warnUserService(req);
 
-  if (result === 'CONFLICT') {
-    const resBody: ApiResponse = {
-      status: 409,
-      error: 'User already in blacklist',
-      data: null,
-    };
-    res.status(409).json(resBody);
-    return;
-  }
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
       status: 500,
@@ -39,7 +30,7 @@ export const sendWarning = async (req: AuthenticatedRequest, res: Response): Pro
   const resBody: ApiResponse = {
     status: 201,
     error: null,
-    data: null,
+    data: result,
   };
   res.status(201).json(resBody);
 };

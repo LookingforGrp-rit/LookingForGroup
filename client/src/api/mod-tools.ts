@@ -1,18 +1,17 @@
 import { GET, DELETE, POST, PUT, PATCH } from "./index";
 import { ApiResponse, UserAccessLevel, UnapproveProjectInput } from "@looking-for-group/shared";
-import { ProjectPreview, ProjectDetail, ProjectReport, UserReport, ModeratorNotificationInput, BanUserInput} from "@looking-for-group/shared";
-import { deleteUser } from "./users";
+import { ProjectPreview, ProjectDetail, ProjectReport, UserReport, ModeratorNotificationInput, BanUserInput } from "@looking-for-group/shared";
 
 /**
  * Gets the list of all pending projects
  * @returns List of all pending projects or an error message if the request fails
  */
 export const getPendingProjects = async (): Promise<ApiResponse<ProjectPreview[]>> => {
-  const apiURL = "/projects/unapproved";
-  const response = await GET(apiURL);
+    const apiURL = "/projects/unapproved";
+    const response = await GET(apiURL);
 
-  if (response.error) console.log(`Error in getPendingProjects: ${response.error}`);
-  return response;
+    if (response.error) console.log(`Error in getPendingProjects: ${response.error}`);
+    return response;
 };
 
 /**
@@ -25,7 +24,7 @@ export const deleteProjectRequest = async (
     message: string
 ): Promise<ApiResponse> => {
     const apiURL = `/projects/unapproved/${projectId}`;
-    const response = await DELETE(apiURL, {reason: message});
+    const response = await DELETE(apiURL, { reason: message });
 
     if (response.error) console.log(`Error in deleteProjectRequest: ${response.error}`);
     return response;
@@ -42,9 +41,8 @@ export const approveProjectRequest = async (
     projectData: ProjectDetail,
 ): Promise<ApiResponse> => {
     const apiURL = `/projects/${projectId}/approve`;
-    
+
     const response = await PATCH(apiURL, projectData);
-    console.log(response.status);
 
     if (response.error) console.log(`Error in approveProjectRequest: ${response.error}`);
     return response;
@@ -105,20 +103,23 @@ export const getUserAccessLevel = async (userId: number): Promise<ApiResponse<Us
  * @param reportId Report ID of the project report to delete
  * @param projectId Project ID of the project to unapprove
  * @param data Message for project owner explaining why their project was unapproved
- * @returns ApiResponse from unapproveProject
+ * @returns ApiResponse from unapproveProject and deleteProjectReport
  */
-export const approveProjectReport = async(
-    reportId: number, 
-    projectId: number, 
+export const takeDownProject = async (
+    reportId: number,
+    projectId: number,
     data: UnapproveProjectInput
-): Promise<ApiResponse> => {
+): Promise<{ unapprove: ApiResponse, deleteReport: ApiResponse }> => {
     const unapproveRes = await unapproveProject(projectId, data);
     const deleteRes = await deleteProjectReport(reportId);
 
-    if (unapproveRes.error) console.log(`Error in approveProjectReport (unapproveProject): ${unapproveRes.error}`);
-    if (deleteRes.error) console.log(`Error in approveProjectReport (deleteProjectReport): ${deleteRes.error}`);
+    if (unapproveRes.error) console.log(`Error in takeDownProject(unapproveProject): ${unapproveRes.error}`);
+    if (deleteRes.error) console.log(`Error in takeDownProject(deleteProjectReport): ${deleteRes.error}`);
 
-    return unapproveRes;
+    return {
+        unapprove: unapproveRes,
+        deleteReport: deleteRes,
+    };
 };
 
 /**
@@ -127,15 +128,20 @@ export const approveProjectReport = async(
  * @param data Notification data
  * @returns ApiResponse from deactivateUserReport
  */
-export const warnUser = async (reportId: number, data: ModeratorNotificationInput): Promise<ApiResponse> => {
+export const warnUser = async (
+    reportId: number, 
+    data: ModeratorNotificationInput
+): Promise<{ deactivate: ApiResponse, notification: ApiResponse }> => {
     const deactivateRes = await deactivateUserReport(reportId);
-    // !! sends mod message to user (API not setup yet)
-    // const notifyRes = await sendModeratorNotification(data);
+    const warnRes = await sendModeratorNotification(data);
 
     if (deactivateRes.error) console.log(`Error in WarnUser(deactivateUserReport): ${deactivateRes.error}`);
-    // if (notifyRes.error) console.log(`Error in WarnUser(sendModeratorNotification): ${notifyRes.error}`);
-    
-    return deactivateRes;
+    if (warnRes.error) console.log(`Error in WarnUser(sendModeratorNotification): ${warnRes.error}`);
+
+    return {
+        deactivate: deactivateRes,
+        notification: warnRes,
+    };
 }
 
 /**
@@ -157,9 +163,8 @@ export const deactivateUserReport = async (reportId: number): Promise<ApiRespons
  * @returns ApiResponse from the API call to send a moderation notification to a user
  */
 export const sendModeratorNotification = async (data: ModeratorNotificationInput): Promise<ApiResponse> => {
-    // !! sends mod message to user (API not setup yet)
-    const apiURL = `/mod/notify`;
-    const res = await POST(apiURL, data);
+    const apiURL = `/mod/warn-user/${data.receiverId}`;
+    const res = await PUT(apiURL, data);
 
     if (res.error) console.log(`Error in sendModeratorNotification: ${res.error}`);
     return res;
@@ -169,9 +174,12 @@ export const sendModeratorNotification = async (data: ModeratorNotificationInput
  * Bans a user from the site
  * @param reportId The id of the report to delete
  * @param data Data needed fro banning a user from the site
- * @returns ApiResponse from the API call to ban a user
+ * @returns ApiResponse from the API call to ban a user and deleteUserReport
  */
-export const banUser = async (reportId: number, data: BanUserInput): Promise<ApiResponse> => {
+export const banUser = async (
+    reportId: number, 
+    data: BanUserInput
+): Promise<{ ban: ApiResponse, deleteReport: ApiResponse }> => {
     const apiUrl = `/mod/ban-user/${data.userId}`;
     const res = await POST(apiUrl, data);
 
@@ -179,14 +187,18 @@ export const banUser = async (reportId: number, data: BanUserInput): Promise<Api
 
     if (res.error) console.log(`Error in banUser: ${res.error}`);
     if (deleteReport.error) console.log(`Error in banUser(deleteReport): ${res.error}`);
-    return res;
+
+    return {
+        ban: res,
+        deleteReport: deleteReport,
+    };
 };
 
 /**
  * Deletes a project report
  * @param reportId The id of the report to delete
  */
-export const deleteProjectReport = async (reportId: number, ): Promise<ApiResponse> => {
+export const deleteProjectReport = async (reportId: number,): Promise<ApiResponse> => {
     const apiURL = `/mod/project-report/${reportId}`;
     const response = await DELETE(apiURL, {});
 
@@ -198,7 +210,7 @@ export const deleteProjectReport = async (reportId: number, ): Promise<ApiRespon
  * Deletes a user report
  * @param reportId The id of the report to delete
  */
-export const deleteUserReport = async (reportId: number, ): Promise<ApiResponse> => {
+export const deleteUserReport = async (reportId: number,): Promise<ApiResponse> => {
     const apiURL = `/mod/user-report/${reportId}`;
     const response = await DELETE(apiURL, {});
 
