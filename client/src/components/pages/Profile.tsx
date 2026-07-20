@@ -854,7 +854,7 @@ const Profile = (userProfile: any) => {
           </div>
 
           {/* Mod options when this is a reported user */}
-          {(!isUsersProfile) && isUserMod && reportedUser ? <div id="mod-user-options">
+          {(!isUsersProfile) && isUserAdmin && reportedUser ? <div id="mod-user-options">
             <h4>Request Edits or Ban?</h4>
             {!reportedUser.active ? <p>This report is inactive at the moment because a moderator has warned the user and/or requested changes already.</p> : ""}
             <p>You can dismiss this report, request edits, or ban them.</p>
