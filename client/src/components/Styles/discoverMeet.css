@@ -706,7 +706,17 @@ Filters / Tags Style Rules
   padding-left: 10px;
 
   .popup {
-    width: auto;
+    width: calc(100vw - 220px);
+    max-width: 70vw;
+  }
+}
+
+@media only screen and (max-width:800px) {
+  #discover-more-filters-container {
+
+    .popup {
+      width: 95vw;
+    }
   }
 }
 
@@ -754,6 +764,7 @@ Filters / Tags Style Rules
   color: var(--invert-text);
   font-weight: bold;
 }
+
 .discover-tag-filter-excluded:hover {
   background-color: var(--error-delete-color);
   color: var(--invert-text);
@@ -1312,6 +1323,12 @@ Filters / Tags Style Rules
   gap: 12px;
 }
 
+@media only screen and (max-width: 800px) {
+  .popup:has#filters-popup {
+    width: 95vw;
+  }
+}
+
 /* Header Text Style */
 #filters-popup h2 {
   text-align: center;
@@ -1592,9 +1609,9 @@ Filters / Tags Style Rules
   }
 
   .filter-tab {
-  width: fit-content !important;
-  padding: 6px 12px !important;
-}
+    width: fit-content !important;
+    padding: 6px 12px !important;
+  }
 
   #filter-tags {
     /* height: 80% !important; */
