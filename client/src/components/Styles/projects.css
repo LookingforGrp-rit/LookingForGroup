@@ -2339,6 +2339,14 @@ Project Creator and Editor Popup style rules
   margin-bottom: 0.5em;
 }
 
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background-color: lightgray;
+  border-radius: 0.3em;
+  border-style: solid;
+  border-color: gray;
+  border-width: 3px;
+}
+
 @media only screen and (max-width: 520px) {
   #edit-position-details-top .edit-position-container {
     flex-wrap: wrap;
