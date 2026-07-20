@@ -4612,6 +4612,44 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/mod/bug-report/{id}:
+    get:
+      summary: Get a bug report
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the bug report
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Bug report acquired successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BugReport'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/mod/project-report/{id}:
     get:
       summary: Get a specific project report

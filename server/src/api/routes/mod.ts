@@ -6,6 +6,7 @@ import { deactivateUserReport } from '#controllers/mod/deactivate-user-report.ts
 import { deleteProjectReport } from '#controllers/mod/delete-project-report.ts';
 import { deleteProject } from '#controllers/mod/delete-project.ts';
 import { deleteUserReport } from '#controllers/mod/delete-user-report.ts';
+import { getBugReportById } from '#controllers/mod/get-bug-report-by-id.ts';
 import { getBugReports } from '#controllers/mod/get-bug-reports.ts';
 import { getProjectReportById } from '#controllers/mod/get-project-report-by-id.ts';
 import { getProjectReports } from '#controllers/mod/get-project-reports.ts';
@@ -42,6 +43,7 @@ router.get('/user-report/', authenticated(getUserReports));
 router.get('/bug-report/', authenticated(getBugReports));
 router.get('/project-report/:id', authenticated(getProjectReportById));
 router.get('/user-report/:id', authenticated(getUserReportById));
+router.get('/bug-report/:id', authenticated(getBugReportById));
 
 router.patch('/clear-profile/:id/', authenticated(clearProfile));
 router.patch(
