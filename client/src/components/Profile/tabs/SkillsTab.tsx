@@ -8,7 +8,7 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "../../ProjectCreatorEditor/tabs/SortableItem";
 import { clampDragWithinContainer } from "../../ProjectCreatorEditor/tabs/dragModifiers";
-import TagDisplay from "../../TagDisplay";
+import TagDisplay, { skillToTagOrSkill } from "../../TagDisplay";
 import { ThemeIcon } from "../../ThemeIcon";
 
 const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
@@ -393,28 +393,13 @@ export const SkillsTab = ({
         </div>
         <div id="project-editor-tag-search-container">
           <TagDisplay
-            selected={[selectedSkills.map(
-              (skill) => ({
-                ...skill,
-                id: skill.skillId
-              })
-            ), []]}
+            selected={[skillToTagOrSkill(selectedSkills), []]}
             toggleTag={handleSkillToggle}
             tabs={skillTabs}
             tabId={currentSkillsTab}
-            all={allSkills.map(
-              skill => ({
-                ...skill,
-                id: skill.skillId
-              })
-            )}
+            all={skillToTagOrSkill(allSkills)}
             searchValue={searchValue}
-            searchData={searchedSkills.map(
-              skill => ({
-                ...skill,
-                id: skill.skillId
-              })
-            )}
+            searchData={skillToTagOrSkill(searchedSkills)}
           />
         </div>
       </div>

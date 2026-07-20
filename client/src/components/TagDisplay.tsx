@@ -1,5 +1,6 @@
 import { Fragment, useMemo } from "react";
 import { Tag as TagElement } from "./Tag";
+import { Medium, Skill, Tag } from "@looking-for-group/shared";
 
 /** holds all the nesessary information for the tag or skill with shorter names 
  * @param label - the name of the tag/skill, and to be displayed
@@ -14,36 +15,93 @@ type TagOrSkill = {
   category: string;
 };
 
+export const tagToTagOrSkill = (tags: Tag[]): TagOrSkill[] => {
+  return tags.map(
+    (tag) => ({
+      id: tag.tagId,
+      label: tag.label,
+      type: tag.type,
+      category:
+        tag.type === "Project Type" ? "Project Type" :
+        tag.type === "Positions" ? "Position" :
+        tag.type === "Game Engine" ? "Game Engine" :
+        tag.type === "Context" ? "Context" :
+        tag.category,
+    })
+  );
+}
+
+export const skillToTagOrSkill = (skills: Skill[]): TagOrSkill[] => {
+  return skills.map(
+    skill => ({
+      ...skill,
+      id: skill.skillId,
+      category: 
+        skill.type === "Major" ? "Major" : 
+        skill.type === "Role" ? "Role" : 
+        skill.category === "Discipline" ? 
+        `${skill.type} ${skill.category}` :
+        skill.category,
+    })
+  );
+}
+
+export const mediumToTagOrSkill = (mediums: Medium[]): TagOrSkill[] => {
+  return mediums.map(
+    medium => ({
+      label: medium.label,
+      id: medium.mediumId,
+      category: "Project Type",
+      type: "Project Type",
+    })
+  );
+}
+
 const CatOrder: Record<string, number> = {
-  "Project Type": 28,
-  "Purpose": 27,
-  "Game": 26,
-  "Music": 25,
-  "Story": 24,
-  "Film/Video": 23,
-  "Visual": 22,
-  "API": 21,
-  "Coding Language": 20,
-  "Framework": 19,
-  "Game Engine": 18,
-  "Operating System": 17,
-  "Software": 16,
-  "Art and Animation": 15,
-  "Design Software": 14,
-  "Photo Editing": 13,
-  "Video Software": 12,
-  "DAW/Audio Editor": 11,
-  "Middleware": 10,
-  "Notation": 9,
-  "Personal": 8,
-  "Team": 7,
-  "Engineering Software": 6,
-  "Hardware": 5,
-  "Discipline": 4,
-  "Other": 3,
-  "Major": 2,
-  "Position": 1,
-  "Role": 0
+  //gaps made so you can easily add in between 
+  "Project Type":           999,
+  "Context":                990,
+  "Field":                  980,
+  "Usage":                  960,
+  "Game":                   940,
+  "Music":                  920,
+  "Story":                  900,
+  "Film/Video":             820,
+  "Visual":                 800,
+  "API":                    790,
+  "Coding Language":        780,
+  "Framework":              760,
+  "Game Engine":            740,
+  "Operating System":       720,
+  "Software":               710,
+  "Developer Discipline":   700,
+  "Maturity Rating":        620,
+  "Triggers":               600,
+  "Art and Animation":      580,
+  "Design Software":        560,
+  "Photo Editing":          540,
+  "Video Software":         520,
+  "Designer Discipline":    500,
+  "DAW/Audio Editor":       460,
+  "Middleware":             440,
+  "Notation":               420,
+  "Audio Discipline":       400,
+  "Personal":               340,
+  "Team":                   320,
+  "Soft Discipline":        300,
+  "Engineering Software":   240,
+  "Hardware":               220,
+  "Engineer Discipline":    200,
+  'Godot':                  180,
+  'MonoGame':               160,
+  'Twine':                  140,
+  'Unity':                  120,
+  'Unreal Engine':          100,
+  "Discipline":              10,
+  "Other":                    6,
+  "Major":                    4,
+  "Position":                 2,
+  "Role":                     0,
 };
 
 /** 
@@ -138,7 +196,10 @@ const TagDisplay: React.FC<TagDisplayProps> = ({ selected, toggleTag, tabs, tabI
           {multipleCategories
             ? index === 0 || (array[index - 1]?.category != array[index]?.category) ? 
               <div id="tag-category-header">
-                <p>{array[index].category == null ? "Medium" : array[index].category}</p>
+                <p>
+                  {array[index].category.includes("Discipline") && searchData.length === 0 ? 
+                    "Discipline" : array[index].category}
+                </p>
                 <hr></hr>
               </div>
             : <></>
