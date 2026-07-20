@@ -635,6 +635,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
         setCurrentUserId={getAuth}
         placeholderText={category == 'projects' ? "Search by Project" : "Search by Name"}
+        mobilePlaceholderText={category == 'projects' ? "Projects" : "People"}
       />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {heroContent}
