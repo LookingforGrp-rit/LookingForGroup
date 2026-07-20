@@ -14,6 +14,7 @@ import { getUserReportById } from '#controllers/mod/get-user-report-by-id.ts';
 import { getUserReports } from '#controllers/mod/get-user-reports.ts';
 import { sendWarning } from '#controllers/mod/send-warning.ts';
 import { unbanUser } from '#controllers/mod/unban-user.ts';
+import { updateBugReport } from '#controllers/mod/update-bug-report.ts';
 import { userExistsAt } from '#middleware/validators/user-exists-at.ts';
 import { userReportExistsAt } from '#middleware/validators/user-report-exists-at.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
@@ -44,6 +45,8 @@ router.get('/bug-report/', authenticated(getBugReports));
 router.get('/project-report/:id', authenticated(getProjectReportById));
 router.get('/user-report/:id', authenticated(getUserReportById));
 router.get('/bug-report/:id', authenticated(getBugReportById));
+
+router.patch('/bug-report/:id', authenticated(updateBugReport));
 
 router.patch('/clear-profile/:id/', authenticated(clearProfile));
 router.patch(
