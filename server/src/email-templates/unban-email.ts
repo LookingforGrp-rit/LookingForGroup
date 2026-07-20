@@ -56,9 +56,9 @@ const UnbanEmail = ({ receiverName }: UnbanEmailProps) => {
             {
               className: 'mx-0 my-[30px] p-0 text-center font-normal text-[24px] text-black',
             },
-            'You have been ',
-            createElement('strong', null, `unbanned`),
-            ' from Looking For Group ',
+            'You Have Been ',
+            createElement('strong', null, `Unbanned`),
+            ' From Looking For Group ',
           ),
           createElement(
             Text,
@@ -76,11 +76,6 @@ const UnbanEmail = ({ receiverName }: UnbanEmailProps) => {
             Text,
             { className: 'text-[14px] text-black leading-[24px]' },
             'Welcome back to Looking For Group!',
-          ),
-          createElement(
-            Text,
-            { className: 'text-[14px] text-black leading-[24px]' },
-            '- The LFG Team',
           ),
           createElement(
             'tr',
