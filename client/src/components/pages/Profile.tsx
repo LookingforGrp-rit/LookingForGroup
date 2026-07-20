@@ -21,6 +21,7 @@ import { Select, SelectButton, SelectOptions } from "../Select";
 import { ThemeIcon } from "../ThemeIcon";
 import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
+import Reporter from "../Reporter";
 import profilePicture from "../../images/lfrog.png";
 import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles } from "../../api/users";
 import { getUsersById, getCurrentAccount } from "../../api/users";
@@ -863,6 +864,7 @@ const Profile = (userProfile: any) => {
             <h4>Request Edits or Ban?</h4>
             {!reportedUser.active ? <p>This report is inactive at the moment because a moderator has warned the user and/or requested changes already.</p> : ""}
             <p>You can dismiss this report, request edits, or ban them.</p>
+            <Reporter reporterId={reportedUser.reporterId} />
             <p>Reason for this report: {reportedUser.reason}</p>
             <div id="mod-options-btns">
               <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')} >Dismiss Report</button>
