@@ -2320,6 +2320,25 @@ Project Creator and Editor Popup style rules
   gap: 15px;
 }
 
+#input-job-start,
+#input-job-end{
+  min-height: 45px;
+  font-size: 0.9375rem;
+  padding-left: 10px;
+  padding-right: 10px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  outline: none;
+  width: 80%;
+  box-sizing: border-box;
+  resize: none;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+  flex-grow: 1;
+  margin-top: 0.25em;
+  margin-bottom: 0.5em;
+}
+
 @media only screen and (max-width: 520px) {
   #edit-position-details-top .edit-position-container {
     flex-wrap: wrap;
