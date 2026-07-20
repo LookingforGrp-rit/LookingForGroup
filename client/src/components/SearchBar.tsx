@@ -1,6 +1,5 @@
 import { memo, FC, ChangeEvent, FocusEvent, useState, useCallback } from 'react';
-import { useMediaQuery } from './UseMediaQuery';
-
+import useMediaQuery from '@mui/material/useMediaQuery';
 export interface DataSet {
   data: unknown[];
 }
@@ -67,7 +66,7 @@ const deriveMobilePlaceholder = (text: string): string =>
 export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange, setValue, onFocus, placeholderText = "Search by Project", mobilePlaceholderText }) => {
   // Internal query state for uncontrolled mode
   const [internalQuery, setInternalQuery] = useState('');
-
+  
   // On mobile the full "Search by ..." text overflows, so show just the noun.
   const isMobile = useMediaQuery(MOBILE_QUERY);
   const effectivePlaceholder = isMobile
@@ -83,7 +82,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     // Convert the query to lowercase
     const newQuery = event.target.value.toLowerCase();
-
+    
     // If onChange is passed in, call it
     if (onChange) {
       onChange(event);

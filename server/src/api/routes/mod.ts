@@ -10,6 +10,7 @@ import { getProjectReportById } from '#controllers/mod/get-project-report-by-id.
 import { getProjectReports } from '#controllers/mod/get-project-reports.ts';
 import { getUserReportById } from '#controllers/mod/get-user-report-by-id.ts';
 import { getUserReports } from '#controllers/mod/get-user-reports.ts';
+import { sendWarning } from '#controllers/mod/send-warning.ts';
 import { unbanUser } from '#controllers/mod/unban-user.ts';
 import { userExistsAt } from '#middleware/validators/user-exists-at.ts';
 import { userReportExistsAt } from '#middleware/validators/user-report-exists-at.ts';
@@ -53,5 +54,5 @@ router.delete('/delete-project/:id/', authenticated(deleteProject));
 router.delete('/unban-user/:googleId/', authenticated(unbanUser));
 router.delete('/project-report/:id', authenticated(deleteProjectReport));
 router.delete('/user-report/:id', authenticated(deleteUserReport));
-
+router.put('/warn-user/:id/', authenticated(sendWarning));
 export default router;
