@@ -1412,8 +1412,45 @@ export const TeamTab = ({
 						) : "None"}
 				</div>
 			</div>
-
 			<div id="edit-position-details">
+				<div id="edit-position-details-top">
+					<div className="edit-position-container">
+						<div id="edit-position-job-start">
+							<label className="edit-position-job-start">Job Start</label>
+							<input
+								type="date"
+								id="input-job-start"
+								name="job-start"
+								min="1000-01-01"
+								max="9999-12-31"
+								onChange={(e) => {
+									if (currentJob) {
+										currentJob.jobStart = e.currentTarget.valueAsDate;
+									} else {
+										console.log("currentJob is undefined");
+									}
+								}}>
+							</input></div>
+
+						<div id="edit-position-job-end">
+							<label className="edit-position-job-end">Job End</label>
+							<input
+								type="date"
+								id="input-job-end"
+								name="job-end"
+								min="1000-01-01"
+								max="9999-12-31"
+								onChange={(e) => {
+									if (currentJob) {
+										currentJob.jobEnd = e.currentTarget.valueAsDate;
+									} else {
+										console.log("currentJob is undefined");
+									}
+								}}>
+							</input>
+						</div>
+					</div>
+				</div>
 				<div id="edit-position-details-left">
 					<div className="edit-position-container">
 						<label className="edit-position-availability">
@@ -1546,39 +1583,6 @@ export const TeamTab = ({
 
 				</div>
 				<div id="edit-position-details-right">
-					<div className="edit-position-container">
-						<label className="edit-position-job-start">Job Start</label>
-						<input
-							type="date"
-							id="input-job-start"
-							name="job-start"
-							min="1000-01-01"
-							max="9999-12-31"
-							onChange={(e) => {
-								if (currentJob) {
-									currentJob.jobStart = e.currentTarget.valueAsDate;
-								} else {
-									console.log("currentJob is undefined");
-								}
-							}}>
-						</input>
-
-						<label className="edit-position-job-end">Job End</label>
-						<input
-							type="date"
-							id="input-job-end"
-							name="job-end"
-							min="1000-01-01"
-							max="9999-12-31"
-							onChange={(e) => {
-								if (currentJob) {
-									currentJob.jobEnd = e.currentTarget.valueAsDate;
-								} else {
-									console.log("currentJob is undefined");
-								}
-							}}>
-						</input>
-					</div>
 					<div className="edit-position-container">
 						<label className="edit-position-compensation">
 							Compensation
