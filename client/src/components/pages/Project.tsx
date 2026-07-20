@@ -65,6 +65,7 @@ const Project = () => {
 
   const reportMessage = useRef<HTMLTextAreaElement>(null);
   const modMessage = useRef<HTMLTextAreaElement>(null);
+  const deleteMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>("");
 
   /**

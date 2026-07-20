@@ -1739,6 +1739,7 @@ export type AddUserReportInput = {
 export type AddProjectReportInput = {
   reason: string;
 };
+};
 
 /**
  * Data required to unapprove an already approved project

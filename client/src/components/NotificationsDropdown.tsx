@@ -53,6 +53,7 @@ const NotificationsPanel: React.FC<PanelProps> = ({
 }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [details, setDetails] = useState<Record<string, NotificationDetail>>({});
+  const [isClearing, setIsClearing] = useState(false);
 
   // Mount === open: pull the latest list whenever the dropdown opens.
   useEffect(() => {
@@ -81,12 +82,38 @@ const NotificationsPanel: React.FC<PanelProps> = ({
     }
   };
 
+  // Delete handler
+  const handleClearAll = async () => {
+    setIsClearing(true);
+    try {
+      await Promise.all(notifications.map((n) => remove(n.notificationId)));
+      await refresh();
+    } catch (err) {
+      console.error("Failed to clear all notifications", err);
+    } finally {
+      setIsClearing(false);
+    }
+  };
+
   return (
     <div id="notifications-panel">
       <div className="notifications-header">
         <span>Notifications</span>
+        
+        {/* Clear All Button */}
+        {notifications.length > 0 && !loading &&(
+          <button
+            type="button"
+            className="notification-clear-all"
+            aria-label="Clear all notifications"
+            onClick={() => void handleClearAll()}
+            disabled={isClearing}
+          >
+            <i className={`fa-solid fa-trash ${isClearing ? "fa-bounce" : ""}`}></i> {isClearing ? "Clearing..." : "Clear All"}
+          </button>
+        )}
       </div>
-
+      <hr></hr>
       {loading && notifications.length === 0 ? (
         <div className="notifications-empty">Loading...</div>
       ) : error ? (
