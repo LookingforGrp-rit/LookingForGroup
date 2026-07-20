@@ -558,37 +558,42 @@ const Profile = (userProfile: any) => {
      */
   const resolveReport = async (action: 'dismiss' | 'warn' | 'ban') => {
     if (!reportedUser) return;
-    let res;
 
-    switch (action) {
-      case 'dismiss':
-        res = await deleteUserReport(reportedUser.reportId);
-        break;
-      case 'warn':
-        res = await warnUser(reportedUser.reportId, {
-          message: modMessage?.current?.value ?? '',
-          receiverId: reportedUser.reportedId,
-          subjectLine: 'Moderator Request for Edits',
-          modUserId: userID ?? 0,
-        });
-        break;
-      case 'ban':
-        res = await banUser(
-          reportedUser.reportId,
-          {
-            reason: modMessage?.current?.value ?? '',
-            userId: reportedUser.reportedId,
-          }
-        );
-        break;
-      default:
-        console.error(`Unknown action: ${action}`);
-        return;
-    }
+    if (action === 'dismiss') {
+      const res = await deleteUserReport(reportedUser.reportId);
 
-    if (res?.status === 200) {
-      // refresh page
-      window.location.reload();
+      if (res?.status === 200) {
+        // refresh page
+        window.location.reload();
+      }
+    } else if (action === 'warn') {
+      const res = await warnUser(reportedUser.reportId, {
+        message: modMessage?.current?.value ?? '',
+        receiverId: reportedUser.reportedId,
+        subjectLine: 'Action Required: Changes Requested to Your Profile',
+        modUserId: userID ?? 0,
+        type: 'Warning',
+      });
+
+      if (res.deactivate.status === 200 && res.notification.status === 201) {
+        // refresh page
+        window.location.reload();
+      }
+    } else if (action === 'ban') {
+      const res = await banUser(
+        reportedUser.reportId,
+        {
+          reason: modMessage?.current?.value ?? '',
+          userId: reportedUser.reportedId,
+        }
+      );
+
+      if (res.ban.status === 200 && res.deleteReport.status === 200) {
+        // refresh page
+        window.location.reload();
+      }
+    } else {
+      console.error(`Unknown action: ${action}`);
     }
   };
 
