@@ -1345,27 +1345,22 @@ body.modal-open {
   }
 
   .filter-tab {
-    display: block;
-    font-size: 1rem;
-    font-weight: 400;
-    color: var(--neutral-gray);
-    /* Indicate should be clicked without being a button */
-    cursor: pointer;
-    transition: 0.2s;
-    padding: 1px;
-    /* margin: 14px 38px; */
-    width: 15%;
-    text-align: center;
-  }
+  display: block;
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--neutral-gray);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 1px 1px 5px 1px;
+  width: 15%;
+  text-align: center;
+}
 
   .filter-tab:hover {
-    color: var(--primary-color);
-    font-weight: 500;
-    transform: none;
-    padding-bottom: 5px;
-    transition: 0.2s;
-    text-decoration: underline;
-  }
+  color: var(--primary-color);
+  transform: none;
+  text-decoration: underline;
+}
 
   .filter-tab.selected {
     font-weight: 700;
