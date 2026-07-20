@@ -632,20 +632,10 @@ const Profile = (userProfile: any) => {
               <div id="profile-menu-dropdown">
                 {isUserAdmin && displayedProfileAccessLevel !== 'Administrator' ?
                 <Popup>
-                  <PopupButton
-                    className="project-info-dropdown-option"
-                    callback={() => {console.log(`prev: ${previousDisplayedProfileAccessLevel}`); console.log(`curr: ${displayedProfileAccessLevel}`)}}
-                  >
+                  <PopupButton className="project-info-dropdown-option">
                     <ThemeIcon id={'settings'} width={27} height={27} className={'mono-stroke'} ariaLabel={"Manage User Permissions"}/>
                     Manage Permissions
                   </PopupButton>
-
-                  {/**
-                    Current error: previous does not get set on PopupContent callback (closing)
-                   */}
-
-
-
                   {displayedProfileAccessLevel === 'User' && previousDisplayedProfileAccessLevel === 'User' ?
                   <PopupContent>
                       <div className="small-popup" id="manage-perms-popup">

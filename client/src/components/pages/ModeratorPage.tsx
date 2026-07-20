@@ -165,11 +165,11 @@ const ModeratorPage = () => {
                 {userIsMod ?
                 <div id="mod-tools-block">
                     <div id="mod-tools-tabs">
-                      <button id="mod-pending-tab" onClick={() => {setCurrentTab(0);}}>Pending Projects</button>
-                      <button id="mod-users-tab" onClick={() => {setCurrentTab(1);}}>Reported Users</button>
-                      <button id="mod-projects-tab" onClick={() => {setCurrentTab(2);}}>Reported Projects</button>
+                      <button id="mod-pending-tab" style={{opacity: String(1)}} onClick={() => {setCurrentTab(0);}}>Pending Projects</button>
+                      <button id="mod-users-tab" style={{opacity: String(.5)}} onClick={() => {setCurrentTab(1);}}>Reported Users</button>
+                      <button id="mod-projects-tab" style={{opacity: String(.5)}} onClick={() => {setCurrentTab(2);}}>Reported Projects</button>
                       {userIsAdmin ? 
-                        <button id="admin-mods-tab" onClick={() => {setCurrentTab(3);}}>All Moderators</button> : ""}
+                        <button id="admin-mods-tab" style={{opacity: String(.5)}} onClick={() => {setCurrentTab(3);}}>All Moderators</button> : ""}
                     </div>
                     <div id="mod-content-container">{renderTabContent()}</div>
                 </div> : "You are not a moderator!"} 

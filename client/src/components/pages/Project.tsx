@@ -951,8 +951,7 @@ const Project = () => {
               <div id="mod-options-btns">
                 <button id="mod-approve-btn" onClick={() => { if (displayedProject) { handleApproveRequest(); } }}>Approve</button>
                 <Popup>
-                  <PopupButton className="
-                                          -button">Decline</PopupButton>
+                  <PopupButton className="delete-button">Decline</PopupButton>
                   <PopupContent>
                     <div className="small-popup" id="report-popup">
                       <h3>Decline Approval Request</h3>
