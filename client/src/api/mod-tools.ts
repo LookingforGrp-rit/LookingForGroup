@@ -129,7 +129,7 @@ export const takeDownProject = async (
  * @returns ApiResponse from deactivateUserReport
  */
 export const warnUser = async (
-    reportId: number, 
+    reportId: number,
     data: ModeratorNotificationInput
 ): Promise<{ deactivate: ApiResponse, notification: ApiResponse }> => {
     const deactivateRes = await deactivateUserReport(reportId);
@@ -177,7 +177,7 @@ export const sendModeratorNotification = async (data: ModeratorNotificationInput
  * @returns ApiResponse from the API call to ban a user and deleteUserReport
  */
 export const banUser = async (
-    reportId: number, 
+    reportId: number,
     data: BanUserInput
 ): Promise<{ ban: ApiResponse, deleteReport: ApiResponse }> => {
     const apiUrl = `/mod/ban-user/${data.userId}`;
@@ -216,7 +216,7 @@ export const promoteToMod = async (
     userToPromote: number
 ): Promise<ApiResponse> => {
     const apiURL = `/admin/promote`;
-    const response = await PATCH(apiURL, {userId: userToPromote});
+    const response = await PATCH(apiURL, { userId: userToPromote });
 
     if (response.error) console.log(`Error in promoteToMod: ${response.error}`);
     return response;
@@ -232,14 +232,16 @@ export const demoteToUser = async (
     userToDemote: number
 ): Promise<ApiResponse> => {
     const apiURL = `/admin/demote`;
-    const response = await PATCH(apiURL, {userId: userToDemote});
+    const response = await PATCH(apiURL, { userId: userToDemote });
 
     if (response.error) console.log(`Error in demoteToUser: ${response.error}`);
     return response;
 };
 
- /* Deletes a user report
- * @param reportId The id of the report to delete
+/**
+ * Deletes a user report
+ * @param reportId reportId The id of the report to delete
+ * @returns ApiResponse from the API call to delete user report
  */
 export const deleteUserReport = async (reportId: number,): Promise<ApiResponse> => {
     const apiURL = `/mod/user-report/${reportId}`;
