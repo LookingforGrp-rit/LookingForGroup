@@ -1,7 +1,6 @@
-import { GET, DELETE, POST, PUT, PATCH } from "./index";
+import { GET, DELETE, POST, PATCH } from "./index";
 import { ApiResponse, UserAccessLevel, UnapproveProjectInput } from "@looking-for-group/shared";
 import { ProjectPreview, ProjectDetail, ProjectReport, UserReport, ModeratorNotificationInput, BanUserInput} from "@looking-for-group/shared";
-import { deleteUser } from "./users";
 
 /**
  * Gets the list of all pending projects
@@ -44,7 +43,6 @@ export const approveProjectRequest = async (
     const apiURL = `/projects/${projectId}/approve`;
     
     const response = await PATCH(apiURL, projectData);
-    console.log(response.status);
 
     if (response.error) console.log(`Error in approveProjectRequest: ${response.error}`);
     return response;
@@ -136,7 +134,7 @@ export const warnUser = async (reportId: number, data: ModeratorNotificationInpu
     // if (notifyRes.error) console.log(`Error in WarnUser(sendModeratorNotification): ${notifyRes.error}`);
     
     return deactivateRes;
-}
+};
 
 /**
  * Deactivates a user report
@@ -195,7 +193,38 @@ export const deleteProjectReport = async (reportId: number, ): Promise<ApiRespon
 };
 
 /**
- * Deletes a user report
+ * Promotes the user to mod
+ * @param currentUserId The person who is promoting. Must be an admin
+ * @param userToPromote The user to promote to mod
+ */
+export const promoteToMod = async (
+    currentUserId: number,
+    userToPromote: number
+): Promise<ApiResponse> => {
+    const apiURL = `/admin/promote`;
+    const response = await PATCH(apiURL, {userId: userToPromote});
+
+    if (response.error) console.log(`Error in promoteToMod: ${response.error}`);
+    return response;
+};
+
+/**
+ * Demotes the mod to a regular user
+ * @param currentUserId The person who is demoting. Must be an admin
+ * @param userToPromote The mod to demote to user
+ */
+export const demoteToUser = async (
+    currentUserId: number,
+    userToDemote: number
+): Promise<ApiResponse> => {
+    const apiURL = `/admin/demote`;
+    const response = await PATCH(apiURL, {userId: userToDemote});
+
+    if (response.error) console.log(`Error in demoteToUser: ${response.error}`);
+    return response;
+};
+
+ /* Deletes a user report
  * @param reportId The id of the report to delete
  */
 export const deleteUserReport = async (reportId: number, ): Promise<ApiResponse> => {

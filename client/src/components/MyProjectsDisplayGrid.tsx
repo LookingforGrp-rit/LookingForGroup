@@ -6,7 +6,7 @@ import { Popup, PopupButton, PopupContent } from "./Popup";
 import { LeaveDeleteContext } from "../contexts/LeaveDeleteContext";
 import { PagePopup } from "./PagePopup";
 import { deleteProject, requestProjectReview } from "../api/projects";
-import { ApiResponse, ProjectDetail, ProjectFollowers } from "@looking-for-group/shared";
+import { ApiResponse, ProjectDetail } from "@looking-for-group/shared";
 import { leaveProject } from "../api/users";
 import { ThemeIcon } from "./ThemeIcon";
 import placeholderThumbnail from "../images/project_temp.png";
@@ -156,45 +156,45 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
                 Edit Project
               </button>
               {approvalStatus === 'not-approved' ?
-                <Popup>
-                  <PopupButton className='card-leave-button'>
-                    <ThemeIcon
-                      id={"request-review"}
-                      width={21}
-                      height={21}
-                      ariaLabel={"request-Review"}
-                      className="mono-fill"
-                    />
-                    Request Review
-                  </PopupButton>
-                  <PopupContent>
-                    <div className="small-popup">
-                      <div id="project-request-review">
-                        <label id="project-request-label">
-                          Would you like to submit your project for review?
-                        </label>
-                        <div id="project-request-info">
-                          Submiting a request will make your project visible to moderators who will choose to either
-                          accept and make your project visible to all, request changes for you to make,
-                          or reject it for various reasons. <br />
-                          <strong>(Moderators are not capable of directly altering or deleting your projects)</strong>
-                        </div>
-                        <div id="project-request-buttons">
-                          <PopupButton buttonId="request-confirm-button"
-                            callback={() => {
-                              if (projectData) requestProjectReview(projectData.projectId);
-                            }}
-                          >
-                            Request Review
-                          </PopupButton>
-                          <PopupButton buttonId="request-cancel-button">
-                            Cancel
-                          </PopupButton>
-                        </div>
-                      </div>
+              <Popup>
+                <PopupButton className='card-leave-button'>
+                  <ThemeIcon
+                    id={"request-review"}
+                    width={21}
+                    height={21}
+                    ariaLabel={"request-Review"}
+                    className="mono-fill"
+                  />
+                  Request Review
+                </PopupButton>
+                <PopupContent>
+                  <div className="small-popup">
+                  <div id="project-request-review">
+                    <label id="project-request-label">
+                      Would you like to submit your project for review?
+                    </label>
+                    <div id="project-request-info">
+                      Submiting a request will make your project visible to moderators who will choose to either
+                      accept and make your project visible to all, request changes for you to make, 
+                      or reject it for various reasons. <br/>
+                      <strong>(Moderators are not capable of directly altering or deleting your projects)</strong>
                     </div>
-                  </PopupContent>
-                </Popup> : ""}
+                    <div id="project-request-buttons">
+                      <PopupButton buttonId="request-confirm-button"
+                      callback={() => {
+                        if (projectData) requestProjectReview(projectData.projectId);
+                      }}
+                      >
+                        Request Review
+                      </PopupButton>
+                      <PopupButton buttonId="request-cancel-button">
+                        Cancel
+                      </PopupButton>
+                    </div>
+                  </div>
+                   </div>
+                </PopupContent>
+              </Popup> : "" }
 
               <Popup>
                 <PopupButton className="card-leave-button">
@@ -274,7 +274,7 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
         width={"fit-content"}
         height={"fit-content"}
         popupId={"result"}
-        zIndex={16}
+        zIndex={3}
         show={showResult}
         setShow={setShowResult}
         onClose={reloadProjects}
