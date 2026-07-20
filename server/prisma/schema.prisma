@@ -288,6 +288,7 @@ model Tags {
 
   @@unique([label, type])
   @@map("tags")
+  users       Users[]
 }
 
 model UserBlacklist {
@@ -354,6 +355,7 @@ model Users {
   bio               String              @default("") @db.VarChar(600)
   privacy           Visibility          @default(public)
   mentor            Boolean             @default(false)
+  tagBlacklist      Tags[]              
   displayPhone      Boolean             @default(false) @map("display_phone")
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
