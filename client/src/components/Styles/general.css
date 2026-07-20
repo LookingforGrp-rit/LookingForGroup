@@ -1946,20 +1946,27 @@ Dropdown style rules
   width: min(340px, 90vw);
   max-height: 70vh;
   overflow-y: auto;
-  background-color: var(--header-color);
+  background-color: var(--dropdown-color);
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   text-align: left;
   scrollbar-color: var(--text-color) var(--header-color);
   scrollbar-width: thin;
+  margin-top: 10px;
+  padding: 10px;
+
+  hr {
+    border: 0;
+    height: 2px;
+    background: var(--header-color);
+  }
 }
 
 #notifications-panel .notifications-header {
   position: sticky;
   top: 0;
   z-index: 1;
-  background-color: var(--header-color);
-  padding: 10px 16px;
+  padding: 0 6px;
   font-weight: 700;
   font-size: 1rem;
   color: var(--primary-color);
@@ -1967,7 +1974,7 @@ Dropdown style rules
 }
 
 #notifications-panel .notifications-empty {
-  padding: 18px 16px;
+  padding: 8px 6px;
   color: var(--main-text);
   font-style: italic;
 }
