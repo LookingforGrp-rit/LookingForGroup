@@ -15,6 +15,7 @@ export const reportBugService = async (
       data: {
         userId,
         reportText,
+        modNotes: '',
       },
     });
 
