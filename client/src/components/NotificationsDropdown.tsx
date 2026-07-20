@@ -113,7 +113,7 @@ const NotificationsPanel: React.FC<PanelProps> = ({
           </button>
         )}
       </div>
-
+      <hr></hr>
       {loading && notifications.length === 0 ? (
         <div className="notifications-empty">Loading...</div>
       ) : error ? (
