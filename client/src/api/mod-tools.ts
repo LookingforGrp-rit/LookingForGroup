@@ -164,7 +164,7 @@ export const deactivateUserReport = async (reportId: number): Promise<ApiRespons
  */
 export const sendModeratorNotification = async (data: ModeratorNotificationInput): Promise<ApiResponse> => {
     const apiURL = `/mod/notification`;
-    const res = await PUT(apiURL, data);
+    const res = await POST(apiURL, data);
 
     if (res.error) console.log(`Error in sendModeratorNotification: ${res.error}`);
     return res;
