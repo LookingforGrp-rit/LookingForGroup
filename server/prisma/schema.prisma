@@ -253,6 +253,7 @@ model ReportBug {
   reportText String   @map("report_text")
   isResolved Boolean  @map("is_resolved") @default(false)
   modNotes   String   @map("mod_notes")
+  createdAt  DateTime @map("created_at") @default(now())
   users      Users    @relation(fields: [userId], references: [userId], map: "FK_bug_report_user")
 
   @@index([userId], map: "FK_project_report_user")

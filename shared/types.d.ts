@@ -1498,6 +1498,44 @@ export type UserReport = {
   active: boolean;
 }
 
+export type BugReport = {
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+
+  /**
+   * Report ID in the DB
+   */
+  reportId: number;
+
+  /**
+   * ID of the user who made the report
+   */
+  userId: number;
+
+  /**
+   * Text of the report
+   */
+  reportText: string;
+
+  /**
+   * Time the report was made
+   */
+  createdAt: Date;
+
+  /**
+   * Whether the report has been resolved or is still open
+   */
+  isResolved: boolean;
+
+  /**
+   * Notes from a mod about the issue
+   */
+  modNotes: string;
+
+}
+
 // PROJECTS inputs
 
 /**
