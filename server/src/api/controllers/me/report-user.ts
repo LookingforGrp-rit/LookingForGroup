@@ -1,16 +1,20 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type {
+  ApiResponse,
+  AuthenticatedRequest,
+  AddUserReportInput,
+} from '@looking-for-group/shared';
 import type { Response } from 'express';
 import { reportUserService } from '#services/me/report-user.ts';
 
 /**
- * POST api/me/users/reports/{id}/{report}
+ * POST api/me/users/reports/{id}
  * Allows authenticated users to report a user
  */
 const reportUserController = async (req: AuthenticatedRequest, res: Response) => {
   const reportedId = parseInt(req.params.id as string);
-  const report = req.params.report as string;
+  const data = req.body as AddUserReportInput;
 
-  const result = await reportUserService(req.currentUser.userId, reportedId, report);
+  const result = await reportUserService(req.currentUser.userId, reportedId, data.reason);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

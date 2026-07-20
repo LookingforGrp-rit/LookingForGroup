@@ -944,7 +944,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/me/projects/report/{id}/{report}:
+  /api/me/projects/report/{id}:
     post:
       summary: Report a project
       security:
@@ -958,18 +958,18 @@ paths:
           description: ID of the project to report
           schema:
             type: integer
-        - name: report
-          in: path
-          required: true
-          description: Report message
-          schema:
-            type: string
         - in: query
           name: devId
           schema:
             type: integer
           required: false
           description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddProjectReportInput'
       responses:
         '200':
           description: Project reported successfully
@@ -1174,7 +1174,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/me/users/report/{id}/{report}:
+  /api/me/users/report/{id}:
     post:
       summary: Report a user
       security:
@@ -1188,18 +1188,18 @@ paths:
           description: ID of the user to report
           schema:
             type: integer
-        - name: report
-          in: path
-          required: true
-          description: Report message
-          schema:
-            type: string
         - in: query
           name: devId
           schema:
             type: integer
           required: false
           description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddUserReportInput'
       responses:
         '200':
           description: User reported successfully
@@ -4114,6 +4114,7 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
   /api/projects/{id}/visibility:
     patch:
       summary: Changes the visibility of a project.
@@ -4216,6 +4217,53 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/mod/user-report/{id}/deactivate:
+    patch:
+      summary: Deactivates a user report
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user report to be deactivated
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+
+      responses:
+        '200':
+          description: User report successfully deactivated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullabe: true
+                    example: 'NO_CONTENT'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/mod/delete-project/{id}:
     delete:
       summary: Deletes a specified project
@@ -4263,24 +4311,18 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/mod/ban-user/{googleId}/{reason}:
-    put:
+  /api/mod/ban-user/{id}:
+    post:
       summary: Bans a user by adding them to a blacklist
       tags:
         - Mod
       security:
         - shibbolethAuth: []
       parameters:
-        - name: googleId
+        - name: id
           in: path
           required: true
-          description: Google ID of the user to be banned
-          schema:
-            type: string
-        - name: reason
-          in: path
-          required: false
-          description: Reason the user is to be banned
+          description: User ID of the user to be banned
           schema:
             type: string
         - in: query
@@ -4289,6 +4331,12 @@ paths:
             type: integer
           required: false
           description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BanUserInput'
 
       responses:
         '200':
@@ -4439,8 +4487,9 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    nullable: true
-                    example: null
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectReport'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -4464,12 +4513,71 @@ paths:
       responses:
         '200':
           description: User reports acquired successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserReport'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
   /api/mod/project-report/{id}:
+    get:
+      summary: Get a specific project report
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of report to get
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+
+      responses:
+        '200':
+          description: Project report acquired successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectReport'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
     delete:
       summary: Removes a project report
       tags:
@@ -4505,15 +4613,58 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    type: object
+                    type: string
                     nullabe: true
-                    example: null
+                    example: NO_CONTENT
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
   /api/mod/user-report/{id}:
+    get:
+      summary: Get a specific user report
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of report to get
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+
+      responses:
+        '200':
+          description: User report acquired successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/UserReport'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
     delete:
       summary: Removes a user report
       tags:
@@ -4549,9 +4700,9 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    type: object
+                    type: string
                     nullabe: true
-                    example: null
+                    example: NO_CONTENT
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -5398,6 +5549,8 @@ components:
       $ref: 'schemas/users.yaml#/components/schemas/UserPreview'
     UserDetail:
       $ref: 'schemas/users.yaml#/components/schemas/UserDetail'
+    UserReport:
+      $ref: 'schemas/users.yaml#/components/schemas/UserReport'
 
     MySkill:
       $ref: 'schemas/me.yaml#/components/schemas/MySkill'
@@ -5448,6 +5601,8 @@ components:
       $ref: 'schemas/projects.yaml#/components/schemas/ProjectWithFollowers'
     ProjectVideo:
       $ref: 'schemas/projects.yaml#/components/schemas/ProjectVideo'
+    ProjectReport:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectReport'
 
     UpdateUserInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/UpdateUserInput'
@@ -5497,6 +5652,12 @@ components:
       $ref: 'schemas/inputs.yaml#/components/schemas/TagInput'
     SkillInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/SkillInput'
+    AddUserReportInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddUserReportInput'
+    AddProjectReportInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectReportInput'
+    BanUserInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/BanUserInput'
 
     ErrorMessage:
       type: object

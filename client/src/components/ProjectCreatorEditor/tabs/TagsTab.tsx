@@ -17,13 +17,15 @@ import TagDisplay from "../../TagDisplay";
 import { ThemeIcon } from "../../ThemeIcon";
 
 // --- holds the possible tabs from tag types ---
-const tagTabs = ['Project Type', 'Genre', 'Style', 'Game Engine'] as TagType[]
+const tagTabs = ['Project Type', 'Genre', 'Style', 'Game Engine', 'Purpose', 'Content Warning'] as TagType[]
 
 // Category color for each tag tab, matching the tag/filter-tab colors.
 const tagTabColors: Record<string, string> = {
   Medium: 'blue',
   Genre: 'green',
   Style: 'pink',
+  Purpose: 'orange',
+  "Content Warning": 'red', //TODO: replace this red (and maybe the orange) with updated colors once those colors are decided
   'Game Engine': 'yellow',
   'Project Type': 'blue'
 };
@@ -486,7 +488,7 @@ export const TagsTab = ({
       <div id="project-editor-tag-search">
         <SearchBar
           key={currentTagsTab}
-          dataSets={[{ data: [...allTags.filter((tag) => tag.type != "Positions" && tag.type != "Purpose" && tag.type != "Major"), ...allMediums] }]}
+          dataSets={[{ data: [...allTags.filter((tag) => tag.type != "Positions" && tag.type != "Context" && tag.type != "Major"), ...allMediums] }]}
           onSearch={handleSearch}
           value={searchValue}
           setValue={setSearchValue}

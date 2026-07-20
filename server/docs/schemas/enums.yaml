@@ -45,6 +45,8 @@ components:
         - Designer Skill
         - Soft Skill
         - Purpose
+        - Context
+        - Content Warning
       example: Creative
 
     TagCategory:
@@ -112,16 +114,6 @@ components:
         - PartTime
         - Flexible
       example: FullTime
-
-    JobDuration:
-      type: string
-      enum:
-        - Days
-        - Weeks
-        - Months
-        - Semesters
-        - Years
-      example: Days
 
     JobLocation:
       type: string

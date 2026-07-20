@@ -1,16 +1,20 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type {
+  ApiResponse,
+  AuthenticatedRequest,
+  AddProjectReportInput,
+} from '@looking-for-group/shared';
 import type { Response } from 'express';
 import { reportProjectService } from '#services/me/report-proj.ts';
 
 /**
- * POST api/me/projects/reports/{id}/{report}
+ * POST api/me/projects/reports/{id}
  * Allows authenticated users to report a project
  */
 const reportProjectController = async (req: AuthenticatedRequest, res: Response) => {
   const projectId = parseInt(req.params.id as string);
-  const report = req.params.report as string;
+  const data = req.body as AddProjectReportInput;
 
-  const result = await reportProjectService(req.currentUser.userId, projectId, report);
+  const result = await reportProjectService(req.currentUser.userId, projectId, data.reason);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

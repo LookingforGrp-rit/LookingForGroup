@@ -789,7 +789,7 @@ Project Creator and Editor Popup style rules
   height: 720px;
   grid-template:
     'title title about' 1fr
-    'status purpose about' 1fr
+    'status context about' 1fr
     'audience audience about' 2fr
     'desc desc about' 3fr
     'save save save' auto / 1fr 1fr 2.5fr;
@@ -903,8 +903,8 @@ Project Creator and Editor Popup style rules
   grid-area: status;
 }
 
-#project-editor-purpose-input {
-  grid-area: purpose;
+#project-editor-context-input {
+  grid-area: context;
 }
 
 #project-editor-audience-input {

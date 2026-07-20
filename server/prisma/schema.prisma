@@ -42,7 +42,9 @@ model Jobs {
   roleId        Int              @map("role_id")
   contactUserId Int              @map("contact_user_id")
   availability  JobsAvailability
-  duration      JobsDuration
+  // default/undefined is 1/1/1900
+  jobStart      DateTime         @default("1900-01-01T00:00:00-00:00") @db.DateTime()
+  jobEnd        DateTime         @default("1900-01-01T00:00:00-00:00") @db.DateTime()
   location      JobsLocation
   compensation  JobsCompensation
   contact       Members          @relation(fields: [projectId, contactUserId], references: [projectId, userId])
@@ -182,7 +184,7 @@ model Projects {
   description       String              @default("") @db.Text
   thumbnail         ProjectImages?      @relation(fields: [thumbnailId], references: [imageId])
   thumbnailId       Int?                @unique @map("thumbnail_id")
-  purpose           ProjectsPurpose?
+  context           ProjectsContext?
   status            ProjectsStatus      @default(Planning)
   audience          String              @default("") @db.VarChar(100)
   userId            Int                 @map("user_id")
@@ -231,12 +233,13 @@ model ReportProject {
 }
 
 model ReportUser {
-  reportId   Int    @id @default(autoincrement()) @map("report_id")
-  reporterId Int    @map("reporter_id")
-  reportedId Int    @map("reported_id")
-  reportText String @map("report_text")
-  reporter   Users  @relation("reporter_id", fields: [reporterId], references: [userId], map: "FK_user_report_reporter")
-  reported   Users  @relation("reported_id", fields: [reportedId], references: [userId], map: "FK_user_report_reported")
+  reportId   Int     @id @default(autoincrement()) @map("report_id")
+  reporterId Int     @map("reporter_id")
+  reportedId Int     @map("reported_id")
+  reportText String  @map("report_text")
+  active     Boolean @default(true)
+  reporter   Users   @relation("reporter_id", fields: [reporterId], references: [userId], map: "FK_user_report_reporter")
+  reported   Users   @relation("reported_id", fields: [reportedId], references: [userId], map: "FK_user_report_reported")
 
   @@unique([reporterId, reportedId])
   @@index([reporterId], map: "FK_user_report_reporter")
@@ -400,16 +403,6 @@ enum JobsAvailability {
   @@map("jobs_availability")
 }
 
-enum JobsDuration {
-  Days      @map("Days")
-  Weeks     @map("Weeks")
-  Months    @map("Months")
-  Semesters @map("Semesters")
-  Years     @map("Years")
-
-  @@map("jobs_duration")
-}
-
 enum JobsLocation {
   OnSite   @map("On-site")
   Remote
@@ -419,13 +412,13 @@ enum JobsLocation {
   @@map("jobs_location")
 }
 
-enum ProjectsPurpose {
+enum ProjectsContext {
   Personal
   PortfolioPiece @map("Portfolio Piece")
   Academic
   CoOp           @map("Co-op")
 
-  @@map("projects_purpose")
+  @@map("projects_context")
 }
 
 enum JobsCompensation {

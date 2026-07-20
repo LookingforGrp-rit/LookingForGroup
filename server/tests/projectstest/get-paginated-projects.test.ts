@@ -1,3 +1,4 @@
+import type { Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import prisma from '#config/prisma.ts';
 import type { Projects } from '#prisma-models/index.js';
@@ -28,7 +29,7 @@ const prismaProjects: Projects[] = [
     description: '',
     hook: '',
     projectId: 100,
-    purpose: 'Academic',
+    context: 'Academic',
     status: 'Planning',
     thumbnailId: 0,
     title: 'Beta test',
@@ -43,7 +44,7 @@ const prismaProjects: Projects[] = [
     description: '',
     hook: '',
     projectId: 200,
-    purpose: 'Academic',
+    context: 'Academic',
     status: 'Planning',
     globalVisibility: 'public',
     thumbnailId: 0,
@@ -95,14 +96,17 @@ describe('getPaginatedProjectsService', async () => {
         orderBy: {
           createdAt: 'desc' as const,
         },
-        where: {
+        where: expect.objectContaining({
           approved: true,
-        },
+          globalVisibility: 'public' as Visibility,
+        }) as unknown,
       }),
     );
+
     const [[query]] = (prisma.projects.findMany as Mock).mock.calls as [[FindManyQuery]];
     expect(query).not.toHaveProperty('cursor');
     expect(query).not.toHaveProperty('skip');
+
     expect(transformProjectToPreview).toHaveBeenCalledTimes(2);
     expect(result).toEqual(mockPreviews);
   });
@@ -124,6 +128,7 @@ describe('getPaginatedProjectsService', async () => {
         },
         where: {
           approved: true,
+          globalVisibility: 'public' as Visibility,
         },
       }),
     );

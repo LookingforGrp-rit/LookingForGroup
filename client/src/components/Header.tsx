@@ -353,6 +353,13 @@ export const Header: React.FC<HeaderProps> = ({
                   Settings
                 </Link>
 
+                {/* Report a Bug button */}
+                {/* No functionality yet */}
+                <button onClick={() => {console.log("Report a bug button pressed");}}>
+                  <ThemeIcon id={'warning'} width={25} height={25} className={''} ariaLabel={'report a bug'} />
+                  Report a Bug
+                </button>{' '}
+
                 {/* LOG OUT Button */}
                 <button onClick={async () => {
                   if (userId) {

@@ -61,7 +61,7 @@ describe('getUserByUsernameService', () => {
     const [args] = calls[0];
 
     expect(args?.where).toEqual({ username: 'emberfox' });
-    expect(args?.select).toEqual(expect.any(Object));
+    expect(args?.select).toBeTypeOf('object');
 
     expect(transformUserToPreview).toHaveBeenCalledWith(prismaUser);
 
