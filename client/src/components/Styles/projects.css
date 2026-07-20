@@ -296,7 +296,7 @@ Project Panel component style rules
   background-color: var(--header-color);
   color: var(--main-text);
   position: absolute;
-  top: 0px;
+  top: auto;
   left: 0px;
   right: 0px;
   bottom: 0px;
