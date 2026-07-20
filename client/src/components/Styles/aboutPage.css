@@ -262,7 +262,7 @@
   }
 }
 
-@media (max-width: 920px) {
+@media (max-width: 1025px) {
   .features-list {
     width: 100%;
     margin-left: 0 !important;
@@ -346,6 +346,20 @@
     margin-top: 5%;
     align-self: right;
     display: none;
+  }
+
+  .lfg-contributor {
+    padding: 15px;
+
+    .project-contributor-profile {
+      width: 65px;
+      height: 65px;
+    }
+  }
+
+  #credit-members-container {
+    gap: 20px !important;
+    margin: 20px 5px !important;
   }
 }
 
