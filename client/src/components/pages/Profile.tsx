@@ -490,6 +490,7 @@ const Profile = (userProfile: any) => {
         receiverId: reportedUser.reportedId,
         subjectLine: 'Action Required: Changes Requested to Your Profile',
         modUserId: userID ?? 0,
+        type: 'Warning',
       });
 
       if (res.deactivate.status === 200 && res.notification.status === 201) {

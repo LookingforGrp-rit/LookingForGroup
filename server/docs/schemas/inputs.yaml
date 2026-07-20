@@ -366,8 +366,11 @@ components:
           type: string
         message:
           type: string
+        type:
+          $ref: 'enums.yaml#/components/schemas/ModNotficationType'
       example:
         modUserId: 1
         receiverId: 2
         subjectLine: 'Action Required: Changes Requested to Your Profile'
         message: 'Inappropriate profile image, please change it.'
+        type: Warning

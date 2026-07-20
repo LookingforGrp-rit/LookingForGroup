@@ -4364,20 +4364,14 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/mod/warn-user/{userId}:
-    put:
-      summary: Gives a warning to a particular user
+  /api/mod/notification:
+    post:
+      summary: Sends a notification to a user
       tags:
         - Mod
       security:
         - shibbolethAuth: []
       parameters:
-        - name: userId
-          in: path
-          required: true
-          description: User ID of the user to be warned
-          schema:
-            type: number
         - in: query
           name: devId
           schema:
@@ -4392,7 +4386,7 @@ paths:
               $ref: '#/components/schemas/ModeratorNotificationInput'
       responses:
         '201':
-          description: Warning sent successfully
+          description: Notification sent successfully
           content:
             application/json:
               schema:

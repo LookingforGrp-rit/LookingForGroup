@@ -13,13 +13,13 @@ import { sendEmail } from '#services/mailer.ts';
 import sendNotificationService from '#services/notifications/send-notification.ts';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
-type WarnUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
-type WarnUserServiceSuccess = ServiceSuccessSubset<'CREATED'>;
+type NotificationServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
+type NotificationServiceSuccess = ServiceSuccessSubset<'CREATED'>;
 
-//PUT api/mod/send-warning/{id}
+//POST api/mod/notification
 const warnUserService = async (
   req: AuthenticatedRequest,
-): Promise<WarnUserServiceError | WarnUserServiceSuccess> => {
+): Promise<NotificationServiceError | NotificationServiceSuccess> => {
   try {
     const data = req.body as ModeratorNotificationInput;
 
