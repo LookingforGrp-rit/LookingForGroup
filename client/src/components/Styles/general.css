@@ -1358,8 +1358,8 @@ body.modal-open {
 
   .filter-tab:hover {
   color: var(--primary-color);
+  font-weight: 700;
   transform: none;
-  text-decoration: underline;
 }
 
   .filter-tab.selected {
