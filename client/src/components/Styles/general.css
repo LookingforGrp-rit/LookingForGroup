@@ -1964,6 +1964,24 @@ Dropdown style rules
   font-size: 1rem;
   color: var(--primary-color);
   border-bottom: 1px solid var(--bg-color);
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+}
+
+.notification-clear-all {
+  background: none;
+  border: none;
+  color: #ff4d4f;
+  font-size: 0.85em;
+  cursor: pointer;
+  opacity: 1;
+}
+
+/* Dynamic state when isClearing is true */
+.notification-clear-all.clearing {
+  cursor: wait;
+  opacity: 0.6;
 }
 
 #notifications-panel .notifications-empty {
