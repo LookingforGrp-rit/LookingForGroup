@@ -17,13 +17,15 @@ import TagDisplay from "../../TagDisplay";
 import { ThemeIcon } from "../../ThemeIcon";
 
 // --- holds the possible tabs from tag types ---
-const tagTabs = ['Project Type', 'Genre', 'Style', 'Game Engine'] as TagType[]
+const tagTabs = ['Project Type', 'Genre', 'Style', 'Game Engine', 'Purpose', 'Content Warning'] as TagType[]
 
 // Category color for each tag tab, matching the tag/filter-tab colors.
 const tagTabColors: Record<string, string> = {
   Medium: 'blue',
   Genre: 'green',
   Style: 'pink',
+  Purpose: 'orange',
+  "Content Warning": 'red', //TODO: replace this red (and maybe the orange) with updated colors once those colors are decided
   'Game Engine': 'yellow',
   'Project Type': 'blue'
 };
@@ -365,23 +367,22 @@ export const TagsTab = ({
           ))}
         </div>
         <div id="clear-all-button-align">
-        <button 
-            type="button" 
+          <button
+            type="button"
             className="delete-position-button-alt button-reset"
-            hidden={projectAfterTagsChanges.mediums.length === 0 || projectAfterTagsChanges.mediums.length == undefined} 
+            hidden={projectAfterTagsChanges.mediums.length === 0 || projectAfterTagsChanges.mediums.length == undefined}
             onClick={() => {
               /* deletes all mediums in the data manager for the project */
-                for (let i = 0; i < projectAfterTagsChanges.mediums.length; i++)
-                {
-                    dataManager?.deleteMedium({
-                    id: {
-                      type: "canon",
-                      value: projectAfterTagsChanges.mediums[i].mediumId,
-                    },
-                    data: null,
-                  })
-                }
-              
+              for (let i = 0; i < projectAfterTagsChanges.mediums.length; i++) {
+                dataManager?.deleteMedium({
+                  id: {
+                    type: "canon",
+                    value: projectAfterTagsChanges.mediums[i].mediumId,
+                  },
+                  data: null,
+                })
+              }
+
               /* re-renders the current popup with 0 mediums remaining and updates
                 project */
               setMediums(projectAfterTagsChanges.mediums.splice(0));
@@ -390,15 +391,15 @@ export const TagsTab = ({
             title="Remove all selected tags"
           >
             <div id="clear-all-trash-row">
-            <p id="clear-all-trash-text">Clear All</p>
-            <ThemeIcon
-              id="trash"
-              width={18}
-              height={18}
-              ariaLabel="Delete position"
-            />
+              <p id="clear-all-trash-text">Clear All</p>
+              <ThemeIcon
+                id="trash"
+                width={18}
+                height={18}
+                ariaLabel="Delete position"
+              />
             </div>
-        </button>
+          </button>
         </div>
       </div>
 
@@ -448,23 +449,22 @@ export const TagsTab = ({
           </SortableContext>
         </DndContext>
         <div id="clear-all-button-align">
-        <button 
-            type="button" 
+          <button
+            type="button"
             className="delete-position-button-alt button-reset"
-            hidden={projectAfterTagsChanges.tags.length === 0 || projectAfterTagsChanges.tags.length == undefined} 
+            hidden={projectAfterTagsChanges.tags.length === 0 || projectAfterTagsChanges.tags.length == undefined}
             onClick={() => {
               /* deletes all tags in the data manager for the project */
-                for (let i = 0; i < projectAfterTagsChanges.tags.length; i++)
-                {
-                    dataManager?.deleteTag({
-                    id: {
-                      type: "canon",
-                      value: projectAfterTagsChanges.tags[i].tagId,
-                    },
-                    data: null,
-                  })
-                }
-              
+              for (let i = 0; i < projectAfterTagsChanges.tags.length; i++) {
+                dataManager?.deleteTag({
+                  id: {
+                    type: "canon",
+                    value: projectAfterTagsChanges.tags[i].tagId,
+                  },
+                  data: null,
+                })
+              }
+
               /* re-renders the current popup with 0 mediums remaining and updates
                 project */
               setTags(projectAfterTagsChanges.tags.splice(0));
@@ -473,22 +473,22 @@ export const TagsTab = ({
             title="Remove all selected tags"
           >
             <div id="clear-all-trash-row">
-            <p id="clear-all-trash-text">Clear All</p>
-            <ThemeIcon
-							id="trash"
-							width={18}
-							height={18}
-							ariaLabel="Delete position"
-						/>
+              <p id="clear-all-trash-text">Clear All</p>
+              <ThemeIcon
+                id="trash"
+                width={18}
+                height={18}
+                ariaLabel="Delete position"
+              />
             </div>
-        </button>
+          </button>
         </div>
       </div>
 
       <div id="project-editor-tag-search">
         <SearchBar
           key={currentTagsTab}
-          dataSets={[{ data: [...allTags.filter((tag) => tag.type != "Positions" && tag.type != "Purpose" && tag.type != "Style" && tag.type != "Major"), ...allMediums] }]}
+          dataSets={[{ data: [...allTags.filter((tag) => tag.type != "Positions" && tag.type != "Context" && tag.type != "Major"), ...allMediums] }]}
           onSearch={handleSearch}
           value={searchValue}
           setValue={setSearchValue}
@@ -496,18 +496,18 @@ export const TagsTab = ({
         />
         <div id="project-editor-tag-wrapper">
           <div id="project-editor-tag-search-tabs">
-            {tagTabs.map((type, index) => 
-            <>
-            <button
-            onClick={() => setCurrentTagsTab(index)}
-            className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${tagTabColors[type as string] ?? 'grey'} ${currentTagsTab === index && searchValue === "" ? "tag-search-tab-active" : ""}`}>
-              {type}
-            </button>
-            {
-              type == "Project Type" &&
-              <span id="vertical-line"></span>
-            }
-            </>
+            {tagTabs.map((type, index) =>
+              <>
+                <button
+                  onClick={() => setCurrentTagsTab(index)}
+                  className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${tagTabColors[type as string] ?? 'grey'} ${currentTagsTab === index && searchValue === "" ? "tag-search-tab-active" : ""}`}>
+                  {type}
+                </button>
+                {
+                  type == "Project Type" &&
+                  <span id="vertical-line"></span>
+                }
+              </>
             )}
           </div>
           <hr id="tag-search-divider" />

@@ -163,8 +163,12 @@ components:
           $ref: 'datasets.yaml#/components/schemas/Role'
         availability:
           type: 'enums.yaml#/components/schemas/JobAvailability'
-        duration:
-          type: 'enums.yaml#/components/schemas/JobDuration'
+        jobStart:
+          type: string
+          format: date-time
+        jobEnd:
+          type: string
+          format: date-time
         location:
           type: 'enums.yaml#/components/schemas/JobLocation'
         compensation:
@@ -187,7 +191,8 @@ components:
           roleId: 1
           label: Full-Stack Developer
         availability: FullTime
-        duration: Days
+        jobStart: 1900-01-01
+        jobEnd: 1900-01-01
         location: OnSite
         compensation: Unpaid
         contact:
@@ -241,8 +246,8 @@ components:
           properties:
             description:
               type: string
-            purpose:
-              type: 'enums.yaml#/components/schemas/ProjectPurpose'
+            context:
+              type: 'enums.yaml#/components/schemas/ProjectContext'
               nullable: true
             status:
               type: 'enums.yaml#/components/schemas/ProjectStatus'
@@ -283,7 +288,7 @@ components:
         mediums: []
         thumbnail: null
         description: Have you ever needed a project or a group?
-        purpose: Personal
+        context: Personal
         status: Planning
         audience: Everybody
         createdAt: 2038-01-19 03:14:07
@@ -316,7 +321,7 @@ components:
             mediums: []
             thumbnail: null
             description: Have you ever needed a project or a group?
-            purpose: Personal
+            context: Personal
             status: Planning
             audience: Everybody
             createdAt: 2038-01-19 03:14:07
@@ -341,3 +346,23 @@ components:
               users: []
               apiUrl: /api/projects/1/followers
             apiUrl: /api/projects/1
+
+    ProjectReport:
+      type: object
+      properties:
+        apiUrl:
+          type: string
+        reportId:
+          type: integer
+        userId:
+          type: integer
+        projectId:
+          type: integer
+        reason:
+          type: string
+      example:
+        apiUrl: /api/mod/project-report/1
+        reportId: 1
+        userId: 2
+        projectId: 3
+        reason: Inappropriate content.

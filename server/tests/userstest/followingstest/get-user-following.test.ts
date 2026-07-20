@@ -34,7 +34,7 @@ describe('getProjectFollowingService', () => {
       hook: 'forge a sky',
       description: 'desc',
       thumbnailId: null,
-      purpose: null,
+      context: null,
       status: 'Planning',
       globalVisibility: 'public',
       audience: '',
@@ -104,7 +104,7 @@ describe('getProjectFollowingService', () => {
       expect.objectContaining({
         followedAt: true,
         projects: expect.objectContaining({
-          select: expect.any(Object),
+          select: expect.objectContaining({}),
         }),
       }),
     );

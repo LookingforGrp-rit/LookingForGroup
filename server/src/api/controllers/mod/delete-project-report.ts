@@ -1,6 +1,6 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import deleteProjectReportService from '#services/projects/delete-project-report.ts';
+import deleteProjectReportService from '#services/mod/delete-project-report.ts';
 
 //DELETE api/mod/project-report/{id}
 //deletes a project report (moderator action)

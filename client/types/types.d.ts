@@ -29,14 +29,17 @@ import {
   UpdateUserSkillInput,
   RitStatus,
   MyMember,
+  MyMajor,
+  MySocial,
   MySkill,
   MeDetail,
-  UpdateUserProjectVisibilityInput,
+  UpdateProjectProfileVisibilityInput,
   CreateProjectVideoInput,
   AddJobSkillInput,
+  UpdateJobSkillInput,
   DeleteJobSkillInput,
   JobSkill,
-  UpdateMemberRequestInput,
+  UpdateMemberRequestInput
 } from "@looking-for-group/shared";
 
 /**
@@ -72,12 +75,12 @@ type CRUDRequest<T> = Id & { data: T };
 /**
  * Helper function to remove server-created properties and allow for null values.
  */
-type Pending<T> = Fillable<
+type Pending<T> = 
   Omit<
     T,
     "apiUrl" | "createdAt" | "updatedAt" | "memberSince" | "imageId" | "jobId"
   >
-> & { localId: number | null };
+& { localId: number | null };
 
 // PROJECT CHANGES
 
@@ -178,7 +181,7 @@ interface ProjectChangesUpdates {
   jobs: CRUDRequest<UpdateProjectJobInput>[];
 
   /**
-   * All jobs to be updated
+   * All job skills to be updated
    */
   jobSkills: CRUDRequest<UpdateJobSkillInput>[];
 
@@ -325,7 +328,7 @@ interface UserChangesCreates {
   /**
    * All socials to be created
    */
-  socials: CrudRequest<AddUserSocialInput>[];
+  socials: CRUDRequest<AddUserSocialInput>[];
 }
 
 /**
@@ -350,7 +353,7 @@ interface UserChangesUpdates {
   /**
    * All project visibilities to be updated
    */
-  projectVisibilities: CRUDRequest<UpdateUserProjectVisibilityInput>[];
+  projectVisibilities: CRUDRequest<UpdateProjectProfileVisibilityInput>[];
 }
 
 /**
@@ -411,7 +414,7 @@ interface PendingUserMember extends Exclude<MyMember, "apiUrl"> {
  */
 interface PendingUserProfile extends Exclude<MeDetail, "apiUrl"> {
   profileImage: string | null | PendingProfileImage;
-  majors: (MyMajor | PendingMajor)
+  majors: (MyMajor[] | PendingMajor[])
   ritStatus: RitStatus | null;
   projects: (MyMember | PendingUserMember)[];
   skills: (MySkill | PendingUserSkill)[];

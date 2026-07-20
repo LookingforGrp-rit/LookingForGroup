@@ -3,7 +3,7 @@ import { SearchBar } from "../../SearchBar";
 import { getSkills } from "../../../api/users";
 import { Tag } from "../../Tag";
 import { Skill, JobSkill, SkillType, ProjectJob } from "@looking-for-group/shared";
-import { Pending } from "../../../../types/types";
+import { Fillable, Pending } from "../../../../types/types";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "./SortableItem";
@@ -12,8 +12,8 @@ import { clampDragWithinContainer } from "./dragModifiers";
 const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
 
 interface JobSkillPopupProps {
-  job: ProjectJob | Pending<ProjectJob>,
-  updateJob: React.Dispatch<React.SetStateAction<ProjectJob | Pending<ProjectJob> | undefined>>,
+  job: ProjectJob | Fillable<Pending<ProjectJob>>,
+  updateJob: React.Dispatch<React.SetStateAction<ProjectJob | Fillable<Pending<ProjectJob>> | undefined>>,
 }
 
 /**

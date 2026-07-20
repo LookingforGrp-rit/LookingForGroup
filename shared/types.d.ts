@@ -1,13 +1,16 @@
+
 import UserAccessLevel = require("@looking-for-group/shared/enums");
 import type { Request } from "express";
 
 // Enums for better typing
-export type SkillType = "Developer" | "Designer" | "Engineer" | "Soft" | "Audio" | "Role" | "Project Type";
+export type SkillType = "Developer" | "Designer" | "Engineer" | "Soft" | "Audio" | "Role" | "Major";
 export type TagType =
   | "Other"
   | 'Style'
   | 'Genre'
   | "Purpose"
+  | "Context"
+  | "Content Warning"
   | "Project Type"
   | "Role"
   | "Major"
@@ -17,13 +20,15 @@ export type TagType =
 export type GenreCategory = 'Game' | "Story" | 'Music';
 export type StyleCategory = 'Visual' | 'Film/Video';
 export type GameEngine = 'Unity' | 'Unreal Engine' | 'Godot' | 'Twine' | 'MonoGame'
+export type ContentWarning = 'Maturity Rating' | 'Triggers'
+export type ContextCategory = 'Usage' | 'Field'
 export type DesignerCategory = 'Discipline' | 'Design Software' | 'Art and Animation' | 'Photo Editing' | 'Video Software';
 export type DeveloperCategory = 'Discipline' | 'Framework' | 'API' | 'Software' | 'Coding Language' | 'Operating System' | 'Game Engine';
 export type SoftCategory = 'Discipline' | 'Personal' | 'Team';
 export type AudioCategory = 'Discipline' | 'DAW/Audio Editor' | 'Notation' | 'Middleware';
 export type EngineerCategory = 'Discipline' | 'Engineering Software' | 'Hardware'
 export type SkillCategory = DeveloperCategory | DesignerCategory | AudioCategory | SoftCategory | EngineerCategory | "Other";
-export type TagCategory = GenreCategory | StyleCategory | GameEngine | "Other";
+export type TagCategory = GenreCategory | StyleCategory | GameEngine | ContentWarning | ContextCategory | "Other";
 export type RitStatus =
   | "FirstYear"
   | "SecondYear"
@@ -39,7 +44,7 @@ export type SkillProficiency =
   | "Intermediate"
   | "Advanced"
   | "Expert";
-export type ProjectPurpose =
+export type ProjectContext =
   | "Personal"
   | "PortfolioPiece"
   | "Academic"
@@ -50,7 +55,6 @@ export type ProjectStatus =
   | "PostProduction"
   | "Complete";
 export type JobAvailability = "FullTime" | "PartTime" | "Flexible";
-export type JobDuration = "Days" | "Weeks" | "Months" | "Semesters" | "Years";
 export type JobLocation = "OnSite" | "Remote" | "Hybrid" | "Flexible";
 export type JobCompensation = "Unpaid" | "Paid";
 export type MemberRequestStatus = "Accepted" | "Declined" | "Pending";
@@ -1078,15 +1082,14 @@ export interface ProjectJob {
   availability: JobAvailability;
 
   /**
-   * The duration of the position, such as "Days"
+   * The starting date for this job, as a date. The month is 0-indexed.
    */
-  duration: JobDuration;
+  jobStart: Date | null | undefined;
 
   /**
-   * The number of duration units for the position, such as 3 (to pair with a
-   * `duration` of "Months" for "3 Months"). Optional pending backend support.
+   * The ending date for this job, as a date. The month is 0-indexed.
    */
-  durationCount?: number | null;
+  jobEnd: Date | null | undefined;
 
   /**
    * The on/off-site location of the job, such as "Remote"
@@ -1198,9 +1201,9 @@ export interface ProjectDetail extends ProjectPreview {
   description: string;
 
   /**
-   * The project's purpose, such as "Personal", null if unset
+   * The project's context, such as "Personal" or "Academic", null if unset
    */
-  purpose: ProjectPurpose | null;
+  context: ProjectContext | null;
 
   /**
    * The current status of the project, such as "Development"
@@ -1319,6 +1322,36 @@ export interface ProjectWithFollowers extends ProjectDetail {
   followers: ProjectFollowers;
 }
 
+/**
+ * The full data of a project report
+ */
+export type ProjectReport = {
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+
+  /**
+   * Report ID in the DB
+   */
+  reportId: number;
+
+  /**
+   * Reporter ID
+   */
+  userId: number;
+
+  /**
+   * Reported project ID
+   */
+  projectId: number;
+
+  /**
+   * Reason for the report
+   */
+  reason: string;
+}
+
 // IMAGES
 
 /**
@@ -1430,6 +1463,41 @@ export type UpdateProjectProfileVisibilityInput = {
   profileVisibility: Visibility;
 };
 
+/**
+ * The full data of a user report
+ */
+export type UserReport = {
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+
+  /**
+   * Report ID in the DB
+   */
+  reportId: number;
+
+  /**
+   * ID of the user who made the report
+   */
+  reporterId: number;
+
+  /**
+   * ID of the user being reported
+   */
+  reportedId: number;
+
+  /**
+   * Reason for the report
+   */
+  reason: string;
+
+  /**
+   * Whether the report is still active or has been resolved
+   */
+  active: boolean;
+}
+
 // PROJECTS inputs
 
 /**
@@ -1439,7 +1507,7 @@ export type CreateProjectInput = Required<Pick<ProjectDetail, "title">> &
   Partial<
     Pick<
       ProjectDetail,
-      "hook" | "description" | "status" | "audience" | "purpose" | 'globalVisibility'
+      "hook" | "description" | "status" | "audience" | "context" | 'globalVisibility'
     >
   >;
 
@@ -1595,9 +1663,10 @@ export type AddProjectMediumInput = Pick<ProjectMedium, "mediumId">;
  * Data required to create a job listing on a project
  */
 export type CreateProjectJobInput = Required<
-  Pick<ProjectJob, "availability" | "duration" | "location" | "compensation">
+  Pick<ProjectJob, "availability" | "location" | "compensation">
 > &
-  Partial<Pick<ProjectJob, "description" | "jobSkills" | "durationCount">> & {
+  //might have to move jobStart and jobEnd to required in case the db freaks out
+  Partial<Pick<ProjectJob, "description" | "jobSkills" | "jobStart" | "jobEnd">> & {
     roleId: number;
     contactUserId: number;
   };
@@ -1655,3 +1724,42 @@ export type CreateSkillInput = Pick<Skill, "label" | "type" | "category">;
  * Data required to edit an existing skill
  */
 export type EditSkillInput = Partial<CreateSkillInput> & { skillId: number };
+
+/**
+ * Data required to add a user report
+ */
+export type AddUserReportInput = {
+  reason: string;
+};
+
+/**
+ * Data required to add a project report
+ */
+export type AddProjectReportInput = {
+  reason: string;
+};
+
+/**
+ * Data required to unapprove an already approved project
+ */
+export type UnapproveProjectInput = {
+  reason: string;
+}
+
+/**
+ * Data required to send a notification to a moderator
+ */
+export type ModeratorNotificationInput = {
+  modUserId: number;
+  receiverId: number;
+  subjectLine: string;
+  message: string;
+}
+
+/**
+ * Data required to ban a user from the site
+ */
+export type BanUserInput = {
+  userId: number;
+  reason: string;
+}

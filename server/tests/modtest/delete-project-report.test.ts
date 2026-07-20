@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
-import deleteUserReportService from '#services/users/delete-user-report.ts';
+import deleteProjectReportService from '#services/mod/delete-project-report.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
 
@@ -8,7 +8,7 @@ import deleteUserReportService from '#services/users/delete-user-report.ts';
 
 vi.mock('#config/prisma.ts', () => ({
   default: {
-    reportUser: {
+    reportProject: {
       findUnique: vi.fn(),
       delete: vi.fn(),
     },
@@ -17,33 +17,33 @@ vi.mock('#config/prisma.ts', () => ({
 
 const prismaReport = {
   reportId: 3,
-  reporterId: 1,
-  reportedId: 2,
+  userId: 1,
+  projectId: 2,
   reportText: 'test report',
 };
 
-describe('deleteUserReportService', async () => {
+describe('deleteProjectReportService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('returns NO_CONTENT if successful', async () => {
-    vi.mocked(prisma.reportUser.findUnique).mockResolvedValue(prismaReport);
+    vi.mocked(prisma.reportProject.findUnique).mockResolvedValue(prismaReport);
 
-    const result = await deleteUserReportService(3);
+    const result = await deleteProjectReportService(3);
     expect(result).toBe('NO_CONTENT');
   });
   it("returns NOT_FOUND if the report isn't found", async () => {
-    vi.mocked(prisma.reportUser.findUnique).mockResolvedValue(null);
+    vi.mocked(prisma.reportProject.findUnique).mockResolvedValue(null);
 
-    const result = await deleteUserReportService(3);
+    const result = await deleteProjectReportService(3);
     expect(result).toBe('NOT_FOUND');
   });
 
   it('returns INTERNAL_ERROR if prisma throws', async () => {
-    vi.mocked(prisma.reportUser.findUnique).mockRejectedValue(new Error('womp womp'));
+    vi.mocked(prisma.reportProject.findUnique).mockRejectedValue(new Error('womp womp'));
 
-    const result = await deleteUserReportService(3);
+    const result = await deleteProjectReportService(3);
     expect(result).toBe('INTERNAL_ERROR');
   });
 });

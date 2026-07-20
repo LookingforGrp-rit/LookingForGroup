@@ -18,7 +18,9 @@ export enum TagType {
   DeveloperSkill = "Developer Skill",
   DesignerSkill = "Designer Skill",
   SoftSkill = "Soft Skill",
-  Purpose = "Purpose"
+  Purpose = "Purpose",
+  Context = "Context",
+  ContentWarning = "Content Warning"
 }
 export enum RitStatus {
   'FirstYear' = "1st Year",
@@ -41,7 +43,7 @@ export enum SkillProficiency {
   Advanced = "Advanced",
   Expert = "Expert"
 };
-export enum ProjectPurpose {
+export enum ProjectContext {
   Personal = "Personal",
   PortfolioPiece = "Portfolio Piece",
   Academic = "Academic",
@@ -57,13 +59,6 @@ export enum JobAvailability {
   FullTime = "Full-time",
   PartTime = "Part-time",
   Flexible = "Flexible"
-}
-export enum JobDuration {
-  Days = "Days",
-  Weeks = "Weeks",
-  Months = "Months",
-  Semesters = "Semesters",
-  Years = "Years"
 }
 export enum JobLocation {
   OnSite = "On-Site",
