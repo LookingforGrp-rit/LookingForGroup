@@ -14,6 +14,38 @@ type TagOrSkill = {
   category: string;
 };
 
+const CatOrder: Record<string, number> = {
+  "Project Type": 28,
+  "Purpose": 27,
+  "Game": 26,
+  "Music": 25,
+  "Story": 24,
+  "Film/Video": 23,
+  "Visual": 22,
+  "API": 21,
+  "Coding Language": 20,
+  "Framework": 19,
+  "Game Engine": 18,
+  "Operating System": 17,
+  "Software": 16,
+  "Art and Animation": 15,
+  "Design Software": 14,
+  "Photo Editing": 13,
+  "Video Software": 12,
+  "DAW/Audio Editor": 11,
+  "Middleware": 10,
+  "Notation": 9,
+  "Personal": 8,
+  "Team": 7,
+  "Engineering Software": 6,
+  "Hardware": 5,
+  "Discipline": 4,
+  "Other": 3,
+  "Major": 2,
+  "Position": 1,
+  "Role": 0
+};
+
 /** 
  * @param selected - an array of every tag/skill that has been selected
  * @param toggleTag - an external function to set the array of selected tags/skills, and whatever else may be needed
@@ -42,6 +74,21 @@ const TagDisplay: React.FC<TagDisplayProps> = ({ selected, toggleTag, tabs, tabI
     return all;
   }, [tabId, all, tabs]);
 
+  const orderTags = (tags: TagOrSkill[][]): TagOrSkill[] => {
+    let newTags: TagOrSkill[] = [];
+    const SortedTags: TagOrSkill[][] = tags.toSorted((a, b) => {
+        const catA = CatOrder[a[0].category];
+        const catB = CatOrder[b[0].category];
+
+        return catB - catA;
+    });
+    for (const array of SortedTags) {
+      newTags = [...newTags, ...array];
+    }
+
+    return newTags;
+  };
+
   // Creates button elements for all available tags in the current category tab, with appropriate styling for selected/unselected states.
   const renderTags = useMemo(() => {
     //The final list of tags displayed to the screen.
@@ -66,9 +113,8 @@ const TagDisplay: React.FC<TagDisplayProps> = ({ selected, toggleTag, tabs, tabI
         filteredCategories.push(data.filter((allTag) => allTag.category === tag.category));
       }
     }
-    for (let tags of filteredCategories) {
-      tagsToDisplay = [...tagsToDisplay, ...tags]; 
-    }
+
+    tagsToDisplay = orderTags(filteredCategories);
 
     //only display category dividers if there are more than one categories
     const multipleCategories = foundCategories.length > 1;

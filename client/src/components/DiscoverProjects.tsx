@@ -508,9 +508,10 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                                     label: tag.label,
                                                     type: tag.type,
                                                     category:
-                                                        tag.type === "Project Type" ? "Medium" :
-                                                            tag.type === "Positions" ? "Position" :
-                                                                tag.category,
+                                                        tag.type === "Project Type" ? "Project Type" :
+                                                        tag.type === "Positions" ? "Position" :
+                                                        tag.type === "Game Engine" ? "Game Engine" :
+                                                        tag.category,
                                                 })
                                             ), activeExclusionFilters.map(
                                                 (tag) => ({
@@ -518,9 +519,10 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                                     label: tag.label,
                                                     type: tag.type,
                                                     category:
-                                                        tag.type === "Project Type" ? "Medium" :
-                                                            tag.type === "Positions" ? "Position" :
-                                                                tag.category,
+                                                        tag.type === "Project Type" ? "Project Type" :
+                                                        tag.type === "Positions" ? "Position" :
+                                                        tag.type === "Game Engine" ? "Game Engine" :
+                                                        tag.category,
                                                 })
                                             )]}
                                             toggleTag={toggleTag}
@@ -532,9 +534,10 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                                     label: tag.label,
                                                     type: tag.type,
                                                     category:
-                                                        tag.type === "Project Type" ? "Medium" :
-                                                            tag.type === "Positions" ? "Position" :
-                                                                tag.category,
+                                                        tag.type === "Project Type" ? "Project Type" :
+                                                        tag.type === "Positions" ? "Position" :
+                                                        tag.type === "Game Engine" ? "Game Engine" :
+                                                        tag.category,
                                                 })
                                             )}
                                             searchValue={searchValue}
@@ -544,9 +547,10 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                                     label: tag.label,
                                                     type: tag.type,
                                                     category:
-                                                        tag.type === "Project Type" ? "Medium" :
-                                                            tag.type === "Positions" ? "Position" :
-                                                                tag.category,
+                                                        tag.type === "Project Type" ? "Project Type" :
+                                                        tag.type === "Positions" ? "Position" :
+                                                        tag.type === "Game Engine" ? "Game Engine" :
+                                                        tag.category,
                                                 })
                                             )}
                                         />
