@@ -137,3 +137,10 @@ components:
         - Accepted
         - Declined
       example: Pending
+
+    ModNotficationType:
+      type: string
+      enum:
+        - Warning
+        - General
+      example: Warning

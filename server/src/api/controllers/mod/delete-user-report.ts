@@ -31,7 +31,7 @@ export const deleteUserReport = async (req: AuthenticatedRequest, res: Response)
   const resBody: ApiResponse = {
     status: 200,
     error: null,
-    data: null,
+    data: result,
   };
   res.status(200).json(resBody);
 };
