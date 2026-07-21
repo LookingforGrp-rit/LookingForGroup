@@ -21,6 +21,7 @@ import { deleteNotification } from '#controllers/me/notifications/delete-notific
 import { getNotification } from '#controllers/me/notifications/get-notification.ts';
 import { getNotifications } from '#controllers/me/notifications/get-notifications.ts';
 import { readNotification } from '#controllers/me/notifications/read-notification.ts';
+import { reportBugController } from '#controllers/me/report-bug.ts';
 import { reportProjectController } from '#controllers/me/report-proj.ts';
 import { reportUserController } from '#controllers/me/report-user.ts';
 import addSkills from '#controllers/me/skills/add-skills.ts';
@@ -226,5 +227,7 @@ router.get('/tag-blacklist', authenticated(getTagBlacklist));
 
 //Update a user's tag blacklist
 router.patch('/tag-blacklist', authenticated(updateTagBlacklist));
+//Report bug
+router.post('/report-bug', authenticated(reportBugController));
 
 export default router;

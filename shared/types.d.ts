@@ -3,7 +3,7 @@ import UserAccessLevel = require("@looking-for-group/shared/enums");
 import type { Request } from "express";
 
 // Enums for better typing
-export type SkillType = "Developer" | "Designer" | "Engineer" | "Soft" | "Audio" | "Role" | "Major";
+export type SkillType = "Developer" | "Designer" | "Engineer" | "Soft" | "Audio" | "Role" | "Major" | "Other";
 export type TagType =
   | "Other"
   | 'Style'
@@ -1504,6 +1504,57 @@ export type UserReport = {
   active: boolean;
 }
 
+/**
+ * The full data of a bug report
+ */
+export type BugReport = {
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+
+  /**
+   * Report ID in the DB
+   */
+  reportId: number;
+
+  /**
+   * ID of the user who made the report
+   */
+  userId: number;
+
+  /**
+   * Text of the report
+   */
+  reportText: string;
+
+  /**
+   * Time the report was made
+   */
+  createdAt: Date;
+
+  /**
+   * Whether the report has been resolved or is still open
+   */
+  isResolved: boolean;
+
+  /**
+   * Notes from a mod about the issue
+   */
+  modNotes: string;
+
+}
+
+/**
+ * Data required to create a bug report 
+ */
+export type AddBugReportInput = {
+  /**
+   * Description regarding the bud
+   */
+  reportText: string;
+}
+
 // PROJECTS inputs
 
 /**
@@ -1742,6 +1793,9 @@ export type UpdateTagBlacklistInput = {
  * Data required to add a user report
  */
 export type AddUserReportInput = {
+  /**
+   * Reason for the report
+   */
   reason: string;
 };
 
@@ -1749,6 +1803,9 @@ export type AddUserReportInput = {
  * Data required to add a project report
  */
 export type AddProjectReportInput = {
+  /**
+   * Reason for the report
+   */
   reason: string;
 };
 
@@ -1756,6 +1813,9 @@ export type AddProjectReportInput = {
  * Data required to unapprove an already approved project
  */
 export type UnapproveProjectInput = {
+  /**
+   * Reason for unapproving the project
+   */
   reason: string;
 }
 
@@ -1763,10 +1823,29 @@ export type UnapproveProjectInput = {
  * Data required to send a notification to a moderator
  */
 export type ModeratorNotificationInput = {
+  /**
+   * Moderator user id
+   */
   modUserId: number;
+
+  /**
+   * User id of the receiver of the notification
+   */
   receiverId: number;
+
+  /**
+   * Subject line of the notification
+   */
   subjectLine: string;
+
+  /**
+   * Message of the notification
+   */
   message: string;
+
+  /**
+   * Type of moderator notification
+   */
   type: ModNotficationType;
 }
 
@@ -1774,6 +1853,28 @@ export type ModeratorNotificationInput = {
  * Data required to ban a user from the site
  */
 export type BanUserInput = {
+  /**
+   * User id to ban
+   */
   userId: number;
+
+  /**
+   * Reason of the banning
+   */
   reason: string;
+}
+
+/**
+ * Data required to update a bug report 
+ */
+export type UpdateBugReportInput = {
+  /**
+   * Is the bug resolved?
+   */
+  isResolved: boolean;
+
+  /**
+   * Notes for resolving the bug
+   */
+  modNotes: string;
 }

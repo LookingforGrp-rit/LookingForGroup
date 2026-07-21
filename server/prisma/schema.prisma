@@ -247,6 +247,19 @@ model ReportUser {
   @@map("report_user")
 }
 
+model ReportBug {
+  reportId   Int      @id @default(autoincrement()) @map("report_id")
+  userId     Int      @map("user_id")
+  reportText String   @map("report_text")
+  isResolved Boolean  @map("is_resolved") @default(false)
+  modNotes   String   @map("mod_notes")
+  createdAt  DateTime @map("created_at") @default(now())
+  users      Users    @relation(fields: [userId], references: [userId], map: "FK_bug_report_user")
+
+  @@index([userId], map: "FK_project_report_user")
+  @@map("report_bug")
+}
+
 model Socials {
   websiteId      Int              @id @default(autoincrement()) @map("website_id")
   label          String           @unique @db.VarChar(50)
@@ -373,6 +386,7 @@ model Users {
   majors            Majors[]            @relation("majorstousers")
   userBlacklists    UserBlacklist[]
   reportProject     ReportProject[]
+  reportBug         ReportBug[]
   reporter          ReportUser[]        @relation("reporter_id")
   reported          ReportUser[]        @relation("reported_id")
   memberRequest     MemberRequests[]
