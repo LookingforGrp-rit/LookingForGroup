@@ -12,6 +12,7 @@ import { ShareButton } from "../ShareButton";
 import { ThemeIcon } from "../ThemeIcon";
 import { getByID, getVideos, projectApprovalRequestExists, deleteProject, requestProjectReview } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
+import Reporter from "../Reporter";
 import {
   deleteProjectFollowing,
   addProjectFollowing,
@@ -44,7 +45,7 @@ const Project = () => {
   // const [userPerms, setUserPerms] = useState(-1);
 
   const [user, setUser] = useState<MePrivate | null>();
-  const [userID, setUserID] = useState<number>();
+  const [userID, setUserID] = useState<number>(0);
   const [isUserAdmin, setIsUserAdmin] = useState<boolean>();
 
   const [displayedProject, setDisplayedProject] =
@@ -977,7 +978,8 @@ const Project = () => {
             {isUserAdmin && reportedProject ? (
               <div className="mod-project-options">
                 <h4>Unapprove?</h4>
-                <p>You can ignore this report or request edits on this project.</p>
+                <p>You can dismiss this report or request edits on this project.</p>
+                <Reporter reporterId={reportedProject.userId} modUserId={userID} />
                 <p>Reason for this report: {reportedProject.reason}</p>
                 <div id="mod-options-btns">
                   <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')}>Dismiss Report</button>

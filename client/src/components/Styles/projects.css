@@ -4042,6 +4042,79 @@ Project Carousel style rules
   }
 }
 
+#reporter {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 600px;
+  background-color: var(--bg-color);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+#reporter > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reporter-header {
+  font-size: large;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.reporter-profile:link, .reporter-profile:visited {
+  display: flex;
+  align-self: flex-start;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+.reporter-profile:hover {
+  text-decoration: underline;
+}
+
+#reporter .reporter-profile img {
+  margin: auto;
+}
+
+#reporter .open-btn {
+  height: 40px;
+  padding: 5px 16px;
+  font-size: 1.25rem;
+  border: none;
+  border-radius: 40px;
+  background-color: var(--primary-color);
+  color: var(--invert-text);
+  font-weight: 700;
+}
+
+#reporter .message-area {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#reporter .message-area textarea, 
+#reporter .message-area input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#reporter .message-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+#reporter .cancel-btn {
+  color: var(--main--text);
+  font-weight: normal;
+  background-color: transparent;
+}
+
 #project-info-edit,
 #project-open-positions-button,
 .project-people-tab,
@@ -4270,6 +4343,9 @@ button#positions-popup-list-item-active {
 }
 
 @media only screen and (max-width: 800px) {
+  #reporter > div {
+    display: block;
+  }
 
   #edit-position-details-left,
   #edit-position-details-right {
@@ -4673,7 +4749,8 @@ button#positions-popup-list-item-active {
   text-decoration: none;
 }
 
-.project-contributor-profile {
+.project-contributor-profile, 
+.reporter-profile img {
   width: clamp(45px, 15vw, 75px);
   height: clamp(45px, 15vw, 75px);
   border-radius: 50%;
