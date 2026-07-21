@@ -2320,6 +2320,33 @@ Project Creator and Editor Popup style rules
   gap: 15px;
 }
 
+#input-job-start,
+#input-job-end{
+  min-height: 45px;
+  font-size: 0.9375rem;
+  padding-left: 10px;
+  padding-right: 10px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  outline: none;
+  width: 80%;
+  box-sizing: border-box;
+  resize: none;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+  flex-grow: 1;
+  margin-top: 0.25em;
+  margin-bottom: 0.5em;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background-color: lightgray;
+  border-radius: 0.3em;
+  border-style: solid;
+  border-color: gray;
+  border-width: 3px;
+}
+
 @media only screen and (max-width: 520px) {
   #edit-position-details-top .edit-position-container {
     flex-wrap: wrap;
@@ -4697,7 +4724,12 @@ button#positions-popup-list-item-active {
   margin-bottom: 20px;
 }
 
-
+@media only screen and (max-width: 700px) {
+  .project-contributor-profile {
+    width: clamp(25px, 15vw, 50px);
+    height: clamp(25px, 15vw, 50px);
+  }
+}
 
 @media only screen and (max-width: 700px) {
   #project-open-positions .centerer {
