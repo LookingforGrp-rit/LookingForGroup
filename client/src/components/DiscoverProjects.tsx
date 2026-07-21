@@ -191,7 +191,6 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
             tag = {tagId: id, label: "New", type, category: "Other"} as Tag;
         else 
             tag = allTags.find((tag) => tag.tagId === id && tag.type === type as TagType);
-        
         if (!tag) return;
 
         if (activeTagFilters.some(t => t.tagId === id && t.type == type )) {
