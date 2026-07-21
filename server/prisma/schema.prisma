@@ -285,10 +285,11 @@ model Tags {
   category    String?       @db.VarChar(50)
   // projects    Projects[]
   projectTags ProjectTags[]
+  users       Users[]       @relation("tag_blacklist")
 
   @@unique([label, type])
   @@map("tags")
-  users       Users[]
+  
 }
 
 model UserBlacklist {
@@ -355,7 +356,6 @@ model Users {
   bio               String              @default("") @db.VarChar(600)
   privacy           Visibility          @default(public)
   mentor            Boolean             @default(false)
-  tagBlacklist      Tags[]              
   displayPhone      Boolean             @default(false) @map("display_phone")
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
@@ -365,6 +365,7 @@ model Users {
   members           Members[]
   projectFollowings ProjectFollowings[]
   projects          Projects[]
+  tagBlacklist      Tags[]              @relation("tag_blacklist")
   followers         UserFollowings[]    @relation("receiver_user")
   following         UserFollowings[]    @relation("sender_user")
   userSkills        UserSkills[]
