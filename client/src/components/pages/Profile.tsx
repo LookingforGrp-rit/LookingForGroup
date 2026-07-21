@@ -30,7 +30,7 @@ import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, 
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
-import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, warnUser, banUser } from "../../api/mod-tools";
+import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, warnUser, banUser, sendModeratorNotification } from "../../api/mod-tools";
 import { PopupContext } from "../Popup";
 import { UserReport } from "@looking-for-group/shared";
 
@@ -86,7 +86,8 @@ const Profile = (userProfile: any) => {
   const [majorsArr, setMajorsArr] = useState<string[]>([]);
 
   const reportMessage = useRef<HTMLTextAreaElement>(null);
-  const modMessage = useRef<HTMLTextAreaElement>(null);
+  const warnMessage = useRef<HTMLTextAreaElement>(null);
+  const banMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>('');
   const [promoteResponseText, setPromoteResponseText] = useState<string>('');
   const [demoteResponseText, setDemoteResponseText] = useState<string>('');
@@ -549,42 +550,89 @@ const Profile = (userProfile: any) => {
     }
     setDemoteResponseText(responseText);
   }
-  /* Resolves a user report
-  * @param action The action to take on the report ('dismiss', 'warn' or 'ban')
-  */
+
+  /**
+   * Resolves a user report
+   * @param action action The action to take on the report ('dismiss', 'warn' or 'ban')
+   * @returns void, refreshes the page if success
+   */
   const resolveReport = async (action: 'dismiss' | 'warn' | 'ban') => {
     if (!reportedUser) return;
 
     if (action === 'dismiss') {
+      // dismiss user report
       const res = await deleteUserReport(reportedUser.reportId);
 
-      if (res?.status === 200) {
+      // send an update to reporter
+      const notif = await sendModeratorNotification({
+        modUserId: userID,
+        receiverId: reportedUser.reporterId,
+        subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
+        message: 'Thank you for submitting your report. ' +
+          'Our moderation team has completed its review. ' +
+          'After carefully reviewing the information provided and any relevant evidence, ' +
+          'we have determined that this report does not warrant moderation action at this time. ' +
+          'As a result, the report has been dismissed.',
+        type: 'General',
+      });
+
+      if (res?.status === 200 && notif.status === 201) {
         // refresh page
         window.location.reload();
       }
     } else if (action === 'warn') {
+      // warn the reported user
       const res = await warnUser(reportedUser.reportId, {
-        message: modMessage?.current?.value ?? '',
+        modUserId: userID ?? 0,
         receiverId: reportedUser.reportedId,
         subjectLine: 'Action Required: Changes Requested to Your Profile',
-        modUserId: userID ?? 0,
+        message: warnMessage.current?.value ?? '',
         type: 'Warning',
       });
 
-      if (res.deactivate.status === 200 && res.notification.status === 201) {
+      // send an update to reporter
+      const notif = await sendModeratorNotification({
+        modUserId: userID,
+        receiverId: reportedUser.reporterId,
+        subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
+        message: 'Thank you for submitting your report. ' +
+          'Our moderation team has completed its review. ' +
+          'After reviewing the information provided, we have taken action on the reported user by requesting changes to their profile. ' +
+          'The user has been notified and asked to address the reported issue.',
+        type: 'General',
+      });
+
+      if (res.deactivate.status === 200 &&
+        res.notification.status === 201 &&
+        notif.status === 201) {
         // refresh page
         window.location.reload();
       }
     } else if (action === 'ban') {
+      // ban user
       const res = await banUser(
         reportedUser.reportId,
         {
-          reason: modMessage?.current?.value ?? '',
+          reason: banMessage.current?.value ?? '',
           userId: reportedUser.reportedId,
         }
       );
 
-      if (res.ban.status === 200 && res.deleteReport.status === 200) {
+      // send an update to reporter
+      const notif = await sendModeratorNotification({
+        modUserId: userID,
+        receiverId: reportedUser.reporterId,
+        subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
+        message: 'Thank you for submitting your report. ' +
+          'Our moderation team has completed its review. ' +
+          'After reviewing the information provided, we have determined that further action was necessary. ' +
+          'The reported user has been banned from Looking For Group.',
+        type: 'General',
+      });
+
+      if (res.ban.status === 200 &&
+        res.deleteReport.status === 200 &&
+        notif.status === 201) {
         // refresh page
         window.location.reload();
       }
@@ -869,7 +917,7 @@ const Profile = (userProfile: any) => {
                   <div className="small-popup" id="report-popup">
                     <h3>Warn User</h3>
                     <p>What should the user change about their profile?</p>
-                    <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={modMessage}></textarea>
+                    <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={warnMessage}></textarea>
                     <div className="confirm-deny-btns">
                       <button
                         id="cancel-button"
@@ -888,7 +936,7 @@ const Profile = (userProfile: any) => {
                   <div className="small-popup" id="report-popup">
                     <h3>Ban {displayedProfile?.firstName} {displayedProfile?.lastName} from LookingForGroup</h3>
                     <p>Why are you banning this user?</p>
-                    <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={modMessage}></textarea>
+                    <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={banMessage}></textarea>
                     <div className="confirm-deny-btns">
                       <button
                         id="cancel-button"
