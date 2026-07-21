@@ -21,6 +21,7 @@ import { Select, SelectButton, SelectOptions } from "../Select";
 import { ThemeIcon } from "../ThemeIcon";
 import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
+import Reporter from "../Reporter";
 import profilePicture from "../../images/lfrog.png";
 import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles } from "../../api/users";
 import { getUsersById, getCurrentAccount } from "../../api/users";
@@ -59,7 +60,7 @@ const Profile = (userProfile: any) => {
   const [isUsersProfile, setIsUsersProfile] = useState<boolean>(false);
 
   const [displayedProfile, setDisplayedProfile] = useState<UserDetail>();
-  const [userID, setUserID] = useState<number>();
+  const [userID, setUserID] = useState<number>(0);
 
   const [isUserMod, setIsUserMod] = useState<boolean>(false);
   const [isUserAdmin, setIsUserAdmin] = useState<boolean>(false);
@@ -185,55 +186,50 @@ const Profile = (userProfile: any) => {
   /**
      * Checks mod permissions for the user on render (in useEffect). The CURRENT user
      */
-    const getUserPermissions = async () => {
-      /* Ensures the user is logged in */
-      const userAccount = await getCurrentAccount();
-      if (userAccount.status === 200 && userAccount.data?.userId)
-      {
-          setUserID(userAccount.data?.userId);
-          /* User must have mod permissions to access mod page */
-          const accessLevel = await getUserAccessLevel(userAccount.data.userId);
-          if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator')
-          {
-              setIsUserMod(true);
-          }
-          if (accessLevel.data?.toString() == 'Administrator')
-          {
-            setIsUserAdmin(true);
-          }
+  const getUserPermissions = async () => {
+    /* Ensures the user is logged in */
+    const userAccount = await getCurrentAccount();
+    if (userAccount.status === 200 && userAccount.data?.userId) {
+      setUserID(userAccount.data?.userId);
+      /* User must have mod permissions to access mod page */
+      const accessLevel = await getUserAccessLevel(userAccount.data.userId);
+      if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator') {
+        setIsUserMod(true);
       }
-    };
+      if (accessLevel.data?.toString() == 'Administrator') {
+        setIsUserAdmin(true);
+      }
+    }
+  };
 
-    /**
-     * Checks permissions for the user of the DISPLAYED PROFILE on render (in useEffect).
-     */
-    const getProfileUserPermissions = async () => {
-      /* Ensures the user is logged in */
-      const userAccount = await getUsersById(parseInt(profileID));
-      if (userAccount.status === 200 && userAccount.data?.userId)
-      {
-          const accessLevel = await getUserAccessLevel(userAccount.data.userId);
-          switch (accessLevel.data?.toString())
-          {
-            case 'User':
-              setDisplayedProfileAccessLevel('User');
-              setPreviousDisplayedProfileAccessLevel('User');
-              break;
-            case 'Moderator':
-              setDisplayedProfileAccessLevel('Moderator');
-              setPreviousDisplayedProfileAccessLevel('Moderator');
-            break;
-            case 'Administrator':
-              setDisplayedProfileAccessLevel('Administrator');
-              setPreviousDisplayedProfileAccessLevel('Administrator');
-              break;
-            default:
-              setDisplayedProfileAccessLevel('User');
-              setPreviousDisplayedProfileAccessLevel('User');
-          }
+  /**
+   * Checks permissions for the user of the DISPLAYED PROFILE on render (in useEffect).
+   */
+  const getProfileUserPermissions = async () => {
+    /* Ensures the user is logged in */
+    const userAccount = await getUsersById(parseInt(profileID));
+    if (userAccount.status === 200 && userAccount.data?.userId) {
+      const accessLevel = await getUserAccessLevel(userAccount.data.userId);
+      switch (accessLevel.data?.toString()) {
+        case 'User':
+          setDisplayedProfileAccessLevel('User');
+          setPreviousDisplayedProfileAccessLevel('User');
+          break;
+        case 'Moderator':
+          setDisplayedProfileAccessLevel('Moderator');
+          setPreviousDisplayedProfileAccessLevel('Moderator');
+          break;
+        case 'Administrator':
+          setDisplayedProfileAccessLevel('Administrator');
+          setPreviousDisplayedProfileAccessLevel('Administrator');
+          break;
+        default:
+          setDisplayedProfileAccessLevel('User');
+          setPreviousDisplayedProfileAccessLevel('User');
       }
-    };
-    
+    }
+  };
+
 
   /**
    * Checks if the user has been reported and updates the useState
@@ -428,7 +424,7 @@ const Profile = (userProfile: any) => {
     getUserPermissions();
 
     // THIS PROFILE's user permissions
-      getProfileUserPermissions();
+    getProfileUserPermissions();
 
     // is the displayed profile a reported user
     isUserReported();
@@ -553,9 +549,9 @@ const Profile = (userProfile: any) => {
     }
     setDemoteResponseText(responseText);
   }
-     /* Resolves a user report
-     * @param action The action to take on the report ('dismiss', 'warn' or 'ban')
-     */
+  /* Resolves a user report
+  * @param action The action to take on the report ('dismiss', 'warn' or 'ban')
+  */
   const resolveReport = async (action: 'dismiss' | 'warn' | 'ban') => {
     if (!reportedUser) return;
 
@@ -636,72 +632,72 @@ const Profile = (userProfile: any) => {
             <DropdownContent>
               <div id="profile-menu-dropdown">
                 {isUserAdmin && displayedProfileAccessLevel !== 'Administrator' ?
-                <Popup>
-                  <PopupButton className="project-info-dropdown-option">
-                    <ThemeIcon id={'settings'} width={27} height={27} className={'mono-stroke'} ariaLabel={"Manage User Permissions"}/>
-                    Manage Permissions
-                  </PopupButton>
-                  {displayedProfileAccessLevel === 'User' && previousDisplayedProfileAccessLevel === 'User' ?
-                  <PopupContent>
-                      <div className="small-popup" id="manage-perms-popup">
-                        <h3>Manage {displayedProfile?.firstName ?? "User"}'s Permissions</h3>
-                      <p>Promote {displayedProfile?.firstName ?? "User"} to Moderator?</p>
-                      <div className="confirm-deny-btns">
-                        <PopupButton
-                          buttonId="team-delete-member-cancel-button"
-                          className="button-reset"
-                        >
-                          Cancel
-                        </PopupButton>
-                        <Popup>
-                          <PopupButton
-                            className="confirm-btn"
-                            callback={promoteToModPressed}>
-                            Promote
-                          </PopupButton>
-                        </Popup>
-                        </div>
-                      </div>
-                  </PopupContent> :
-                  (previousDisplayedProfileAccessLevel == 'User' ? <PopupContent callback={() => {setPreviousDisplayedProfileAccessLevel('Moderator');}}>
-                    <div className="small-popup">
-                      <p>{promoteResponseText}</p>
-                      <PopupButton buttonId="continue-button" callback={() => {setPreviousDisplayedProfileAccessLevel('Moderator');}}>
-                        Continue
-                      </PopupButton>
-                    </div>
-                  </PopupContent> : "")}
-                  {displayedProfileAccessLevel === 'Moderator' && previousDisplayedProfileAccessLevel === 'Moderator' ?
-                  <PopupContent>
-                      <div className="small-popup" id="manage-perms-popup">
-                        <h3>Manage {displayedProfile?.firstName ?? "User"}'s Permissions</h3>
-                      <p>Demote {displayedProfile?.firstName ?? "Moderator"} to User?</p>
-                      <div className="confirm-deny-btns">
-                        <PopupButton
-                          buttonId="team-delete-member-cancel-button"
-                          className="button-reset"
-                        >
-                          Cancel
-                        </PopupButton>
-                        <Popup>
-                          <PopupButton
-                            className="delete-button"
-                            callback={demoteToUserPressed}>
-                            Demote
-                          </PopupButton>
-                        </Popup>
-                        </div>
-                      </div>
-                  </PopupContent> :
-                  (previousDisplayedProfileAccessLevel == 'Moderator' ? <PopupContent callback={() => {setPreviousDisplayedProfileAccessLevel('User');}}>
-                  <div className="small-popup">
-                    <p>{demoteResponseText}</p>
-                    <PopupButton buttonId="continue-button" callback={() => {setPreviousDisplayedProfileAccessLevel('User');}}>
-                      Continue
+                  <Popup>
+                    <PopupButton className="project-info-dropdown-option">
+                      <ThemeIcon id={'settings'} width={27} height={27} className={'mono-stroke'} ariaLabel={"Manage User Permissions"} />
+                      Manage Permissions
                     </PopupButton>
-                  </div>
-                  </PopupContent>: "")}
-                </Popup> : ""}
+                    {displayedProfileAccessLevel === 'User' && previousDisplayedProfileAccessLevel === 'User' ?
+                      <PopupContent>
+                        <div className="small-popup" id="manage-perms-popup">
+                          <h3>Manage {displayedProfile?.firstName ?? "User"}'s Permissions</h3>
+                          <p>Promote {displayedProfile?.firstName ?? "User"} to Moderator?</p>
+                          <div className="confirm-deny-btns">
+                            <PopupButton
+                              buttonId="team-delete-member-cancel-button"
+                              className="button-reset"
+                            >
+                              Cancel
+                            </PopupButton>
+                            <Popup>
+                              <PopupButton
+                                className="confirm-btn"
+                                callback={promoteToModPressed}>
+                                Promote
+                              </PopupButton>
+                            </Popup>
+                          </div>
+                        </div>
+                      </PopupContent> :
+                      (previousDisplayedProfileAccessLevel == 'User' ? <PopupContent callback={() => { setPreviousDisplayedProfileAccessLevel('Moderator'); }}>
+                        <div className="small-popup">
+                          <p>{promoteResponseText}</p>
+                          <PopupButton buttonId="continue-button" callback={() => { setPreviousDisplayedProfileAccessLevel('Moderator'); }}>
+                            Continue
+                          </PopupButton>
+                        </div>
+                      </PopupContent> : "")}
+                    {displayedProfileAccessLevel === 'Moderator' && previousDisplayedProfileAccessLevel === 'Moderator' ?
+                      <PopupContent>
+                        <div className="small-popup" id="manage-perms-popup">
+                          <h3>Manage {displayedProfile?.firstName ?? "User"}'s Permissions</h3>
+                          <p>Demote {displayedProfile?.firstName ?? "Moderator"} to User?</p>
+                          <div className="confirm-deny-btns">
+                            <PopupButton
+                              buttonId="team-delete-member-cancel-button"
+                              className="button-reset"
+                            >
+                              Cancel
+                            </PopupButton>
+                            <Popup>
+                              <PopupButton
+                                className="delete-button"
+                                callback={demoteToUserPressed}>
+                                Demote
+                              </PopupButton>
+                            </Popup>
+                          </div>
+                        </div>
+                      </PopupContent> :
+                      (previousDisplayedProfileAccessLevel == 'Moderator' ? <PopupContent callback={() => { setPreviousDisplayedProfileAccessLevel('User'); }}>
+                        <div className="small-popup">
+                          <p>{demoteResponseText}</p>
+                          <PopupButton buttonId="continue-button" callback={() => { setPreviousDisplayedProfileAccessLevel('User'); }}>
+                            Continue
+                          </PopupButton>
+                        </div>
+                      </PopupContent> : "")}
+                  </Popup> : ""}
                 <ShareButton />
                 <button
                   className="profile-menu-dropdown-button"
@@ -863,6 +859,7 @@ const Profile = (userProfile: any) => {
             <h4>Request Edits or Ban?</h4>
             {!reportedUser.active ? <p>This report is inactive at the moment because a moderator has warned the user and/or requested changes already.</p> : ""}
             <p>You can dismiss this report, request edits, or ban them.</p>
+            <Reporter reporterId={reportedUser.reporterId} modUserId={userID} />
             <p>Reason for this report: {reportedUser.reason}</p>
             <div id="mod-options-btns">
               <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')} >Dismiss Report</button>

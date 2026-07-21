@@ -87,7 +87,7 @@
         border-radius: 30px;
         padding: 10px 20px;
         background-color: var(--under-review-yellow, #ffe1a2);
-        color: var(--main-text);
+        color: var(--invert-text);
         font-size: 2ch;
         width: max-content;
         margin: auto min(1vw, 10px);

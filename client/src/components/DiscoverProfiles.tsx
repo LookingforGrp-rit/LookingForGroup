@@ -451,7 +451,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                       {activeSkillFilters.map((skill) => (
                         <Tag
                           key={skill.skillId}
-                          type={skill.type.toLowerCase() + " skill"}
+                          type={(skill.type.toLowerCase() == "role" || skill.type.toLowerCase() == "major") ? skill.type.toLowerCase() : skill.type.toLowerCase() + " skill"}
                           onClick={() =>
                             toggleSkill(skill.skillId, skill.type)
                           }
@@ -464,7 +464,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                       {activeExclusionFilters.map((skill) => (
                         <Tag
                           key={skill.skillId}
-                          type={skill.type.toLowerCase() + " skill"}
+                          type={(skill.type.toLowerCase() == "role" || skill.type.toLowerCase() == "major") ? skill.type.toLowerCase() : skill.type.toLowerCase() + " skill"}
                           onClick={() =>
                             toggleSkill(skill.skillId, skill.type)
                           }
