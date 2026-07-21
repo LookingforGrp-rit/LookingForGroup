@@ -725,6 +725,34 @@ const Settings = (userProfile: any) => {
                 </div> */}
               </div>
             </div>
+
+            {/* Content Preferences */}
+            <hr />
+            <div className="settings-row">
+              <h2 className="settings-header">Content</h2>
+              <div className="settings-column">
+                <div className="subsection">
+                  <div id="content-warning-visibility">
+                    <input
+                      type="checkbox"
+                      id="toggle-content-warning-checkbox"
+                      onChange={async (e) => {
+                        const tempInfo = { ...userInfo };
+                        tempInfo.blockContentWarnings = e.target.checked;
+                        setUserInfo(tempInfo);
+                        await editUser({ blockContentWarnings: tempInfo.blockContentWarnings });
+                      }}
+                      checked={userInfo.blockContentWarnings ?? false}
+                    >
+                    </input>
+                    <label htmlFor="toggle-content-warning-checkbox">
+                      Hide projects with content warnings
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <hr />
             <div className="settings-row settings-row-actions">
               {/* Edit Profile — opens the same editor popup used on the profile page */}

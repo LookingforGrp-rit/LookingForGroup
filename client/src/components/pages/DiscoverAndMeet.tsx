@@ -14,6 +14,8 @@ import {
   MePrivate,
   Skill
 } from '@looking-for-group/shared';
+import { useBlockContentWarnings } from '../../hooks/useBlockContentWarnings';
+import { filterContentWarnings } from '../../functions/contentWarnings';
 
 //import api utils
 // Current auth and follow state are loaded with getCurrentAccount/getProjectFollowing
@@ -114,10 +116,25 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [followedProjectIds, setFollowedProjectIds] = useState<Set<number>>(new Set());
 
+  // Whether the viewer has opted to hide projects carrying a content warning.
+  const blockContentWarnings = useBlockContentWarnings();
+
+  // Applied at render (rather than at fetch) so the lists re-filter as soon as
+  // the account setting resolves, instead of racing the initial project load.
+  const visibleProjectList = useMemo(
+    () => filterContentWarnings(filteredProjectList, blockContentWarnings),
+    [filteredProjectList, blockContentWarnings]
+  );
+
+  const visibleHeroProjectList = useMemo(
+    () => filterContentWarnings(heroProjectList, blockContentWarnings),
+    [heroProjectList, blockContentWarnings]
+  );
+
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const projectDataSet = useMemo(() => {
-    return [{ data: projectSearchData }];
-  }, [projectSearchData]);
+    return [{ data: filterContentWarnings(projectSearchData, blockContentWarnings) }];
+  }, [projectSearchData, blockContentWarnings]);
   const userDataSet = useMemo(() => {
     return [{ data: userSearchData }];
   }, [userSearchData]);
@@ -128,7 +145,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     category === 'projects'
       ? (currentSearch && currentSearch.trim() !== '')
         ? null
-        : <DiscoverCarousel dataList={heroProjectList} />
+        : <DiscoverCarousel dataList={visibleHeroProjectList} />
       : profileHero;
 
   // --------------------
@@ -606,7 +623,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       discoverPanelContents = (
         <PanelBox
           category={category}
-          itemList={filteredProjectList}
+          itemList={visibleProjectList}
           projectCache={projectCache}
           followedProjectIds={followedProjectIds}
           userId={currentUserId ?? -1}

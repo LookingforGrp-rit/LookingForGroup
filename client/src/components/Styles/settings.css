@@ -629,18 +629,21 @@ input:checked+.slider:before {
 
 /* #endregion */
 
-#phone-number-visibility {
+#phone-number-visibility,
+#content-warning-visibility {
   margin-top: 2em;
   display: flex;
   flex-direction: row;
   justify-content: start;
 }
 
-#phone-number-visibility label {
+#phone-number-visibility label,
+#content-warning-visibility label {
   font-size: 1rem;
 }
 
-#phone-number-visibility input {
+#phone-number-visibility input,
+#content-warning-visibility input {
   width: 1em;
   margin-right: 1em;
 }

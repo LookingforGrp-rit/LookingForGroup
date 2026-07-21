@@ -868,9 +868,16 @@ export interface MePrivate extends MeDetail {
   phoneNumber: string | null;
 
   /**
-   * Whether or not to display the user's phone number 
+   * Whether or not to display the user's phone number
    */
   displayPhone: boolean
+
+  /**
+   * The logged-in user's preference to automatically hide any project carrying
+   * a "Content Warning" tag from project listings.
+   * Optional pending backend support.
+   */
+  blockContentWarnings?: boolean;
 
   /**
    * The logged-in user's UID
@@ -1386,6 +1393,7 @@ export type UpdateUserInput = Partial<
     | "phoneNumber"
     | 'privacy'
     | 'displayPhone'
+    | 'blockContentWarnings'
   > & {
     profileImage?: File;
     mentor?: "true" | "false";

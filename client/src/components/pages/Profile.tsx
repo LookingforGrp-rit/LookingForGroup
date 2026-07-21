@@ -9,7 +9,7 @@ import "../Styles/projects.css";
 import "../Styles/settings.css";
 import "../Styles/pages.css";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../../constants/routes";
 import { Header, loggedIn } from "../Header";
@@ -28,6 +28,8 @@ import { sendInvite } from "../../api/projects";
 import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserReport } from '@looking-for-group/shared';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
+import { useBlockContentWarnings } from "../../hooks/useBlockContentWarnings";
+import { filterContentWarnings } from "../../functions/contentWarnings";
 import { reportUser } from "../../api/users";
 import { getReportedUsers, getUserAccessLevel, deleteUserReport, warnUser, banUser } from "../../api/mod-tools";
 
@@ -74,6 +76,25 @@ const Profile = (userProfile: any) => {
   const [fullProjectList, setFullProjectList] = useState<ProjectPreview[]>([]);
   // Projects displayed for searches
   const [displayedProjects, setDisplayedProjects] = useState<ProjectPreview[]>([]);
+
+  // Whether the viewer has opted to hide projects carrying a content warning.
+  const blockContentWarnings = useBlockContentWarnings();
+
+  // The viewer's own projects stay visible on their own profile — the setting
+  // hides other people's content-warning projects, not your own work.
+  const visibleDisplayedProjects = useMemo(
+    () =>
+      isUsersProfile
+        ? displayedProjects
+        : filterContentWarnings(displayedProjects, blockContentWarnings),
+    [displayedProjects, isUsersProfile, blockContentWarnings]
+  );
+
+  // Saved/liked projects belong to other people, so they are always filtered.
+  const visibleFollowedProjects = useMemo(
+    () => filterContentWarnings(followedProjectsList, blockContentWarnings),
+    [followedProjectsList, blockContentWarnings]
+  );
 
   const [majorsArr, setMajorsArr] = useState<string[]>([]);
 
@@ -1095,11 +1116,11 @@ const Profile = (userProfile: any) => {
                   </div>
                   <div id="likes-container">
                     {isProjectLikesTab === true ?
-                      (followedProjectsList.length > 0 ?
+                      (visibleFollowedProjects.length > 0 ?
 
                         <PanelBox
                           category={"projects"}
-                          itemList={followedProjectsList}
+                          itemList={visibleFollowedProjects}
                           userId={userID as number}
                           followedProjectIds={followedProjectsIds}
                         />
@@ -1121,12 +1142,12 @@ const Profile = (userProfile: any) => {
               </div> : ""}
           </div>
 
-          {displayedProjects.length > 0 ?
+          {visibleDisplayedProjects.length > 0 ?
             <div id="profile-projects">
               <h2>Projects</h2>
               <PanelBox
                 category={"projects"}
-                itemList={displayedProjects}
+                itemList={visibleDisplayedProjects}
                 userId={userID as number}
               />
             </div> : ""}

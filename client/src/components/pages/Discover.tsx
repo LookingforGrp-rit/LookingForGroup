@@ -14,6 +14,8 @@ import {
 
 import { DiscoverProjects } from '../DiscoverProjects';
 import { GET } from '../../api';
+import { useBlockContentWarnings } from '../../hooks/useBlockContentWarnings';
+import { filterContentWarnings } from '../../functions/contentWarnings';
 
 
 //These variables should probably go somewhere else
@@ -67,15 +69,30 @@ export const DiscoverPage = () => {
 
   const [sortMode, setSortMode] = useState<sortModes>(sortModes.Newest);
 
+  // Whether the viewer has opted to hide projects carrying a content warning.
+  const blockContentWarnings = useBlockContentWarnings();
+
+  // Applied at render (rather than at fetch) so the lists re-filter as soon as
+  // the account setting resolves, instead of racing the initial project load.
+  const visibleProjectList = useMemo(
+    () => filterContentWarnings(filteredProjectList, blockContentWarnings),
+    [filteredProjectList, blockContentWarnings]
+  );
+
+  const visibleHeroProjectList = useMemo(
+    () => filterContentWarnings(heroProjectList, blockContentWarnings),
+    [heroProjectList, blockContentWarnings]
+  );
+
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const projectDataSet = useMemo(() => {
-    return [{ data: fullProjectList }];
-  }, [fullProjectList]);
+    return [{ data: filterContentWarnings(fullProjectList, blockContentWarnings) }];
+  }, [fullProjectList, blockContentWarnings]);
 
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)
   const heroContent = currentSearch.trim() === '' ? (
-    <DiscoverCarousel dataList={heroProjectList} />
+    <DiscoverCarousel dataList={visibleHeroProjectList} />
   ) : null;
 
   const [loadObj, setLoadObj] = useState<React.ReactElement>(<p>No More Projects!</p>);
@@ -530,7 +547,7 @@ export const DiscoverPage = () => {
     discoverPanelContents = (
       <PanelBox
         category={'projects'}
-        itemList={filteredProjectList}
+        itemList={visibleProjectList}
         projectCache={projectCache}
         followedProjectIds={followedProjectIds}
         userId={currentUserId ?? -1}
