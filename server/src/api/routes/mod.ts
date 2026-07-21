@@ -12,7 +12,7 @@ import { getProjectReportById } from '#controllers/mod/get-project-report-by-id.
 import { getProjectReports } from '#controllers/mod/get-project-reports.ts';
 import { getUserReportById } from '#controllers/mod/get-user-report-by-id.ts';
 import { getUserReports } from '#controllers/mod/get-user-reports.ts';
-import { sendWarning } from '#controllers/mod/send-warning.ts';
+import { sendNotification } from '#controllers/mod/send-notification.ts';
 import { unbanUser } from '#controllers/mod/unban-user.ts';
 import { updateBugReport } from '#controllers/mod/update-bug-report.ts';
 import { userExistsAt } from '#middleware/validators/user-exists-at.ts';
@@ -55,11 +55,12 @@ router.patch(
   authenticated(deactivateUserReport),
 );
 
+router.post('/notification', authenticated(sendNotification));
 router.post('/ban-user/:id', userExistsAt('path', 'id'), authenticated(banUser));
 
 router.delete('/delete-project/:id/', authenticated(deleteProject));
 router.delete('/unban-user/:googleId/', authenticated(unbanUser));
 router.delete('/project-report/:id', authenticated(deleteProjectReport));
 router.delete('/user-report/:id', authenticated(deleteUserReport));
-router.put('/warn-user/:id/', authenticated(sendWarning));
+
 export default router;

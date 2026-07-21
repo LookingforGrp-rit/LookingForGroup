@@ -13,7 +13,7 @@ import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSo
 import { SortableTag } from "./SortableItem";
 import { clampDragWithinContainer } from "./dragModifiers";
 import { Fragment } from "react";
-import TagDisplay from "../../TagDisplay";
+import TagDisplay, { mediumToTagOrSkill, tagToTagOrSkill } from "../../TagDisplay";
 import { ThemeIcon } from "../../ThemeIcon";
 
 // --- holds the possible tabs from tag types ---
@@ -515,48 +515,15 @@ export const TagsTab = ({
         <div id="project-editor-tag-search-container">
           <TagDisplay
             selected={[[
-              ...projectAfterTagsChanges.tags.map(
-                tag => ({
-                  ...tag,
-                  category:
-                    tag.type === "Game Engine" ? "Game Engine" :
-                      tag.category,
-                  id: tag.tagId
-                })
-              ),
-              ...projectAfterTagsChanges.mediums.map(
-                medium => ({
-                  label: medium.label,
-                  id: medium.mediumId,
-                  category: "Medium",
-                  type: "Project Type",
-                })
-              )
+              ...tagToTagOrSkill(projectAfterTagsChanges.tags),
+              ...mediumToTagOrSkill(projectAfterTagsChanges.mediums)
             ], []]}
             toggleTag={handleTagSelect}
             tabs={tagTabs}
             tabId={currentTagsTab}
-            all={[...allTags, ...allMediums].map(
-              tag => ({
-                ...tag,
-                category:
-                  tag.type === "Project Type" ? "Medium" :
-                    tag.type === "Game Engine" ? "Game Engine" :
-                      tag.category,
-                id: tag.tagId
-              })
-            )}
+            all={tagToTagOrSkill([...allTags, ...allMediums])}
             searchValue={searchValue}
-            searchData={(searchedTags as Tag[]).map(
-              tag => ({
-                ...tag,
-                category:
-                  tag.type === "Project Type" ? "Medium" :
-                    tag.type === "Game Engine" ? "Game Engine" :
-                      tag.category,
-                id: tag.tagId
-              })
-            )}
+            searchData={tagToTagOrSkill(searchedTags as Tag[])}
           />
         </div>
       </div>

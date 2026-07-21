@@ -141,7 +141,7 @@ Project Panel component style rules
   }
 
 
-   hr {
+  hr {
     /* color: var(--header-color); */
     border: 1px solid var(--liked-section-bg);
     margin: 0;
@@ -149,7 +149,7 @@ Project Panel component style rules
     margin-top: min(1vh, 17px);
   }
 
-  
+
   a {
     text-decoration: none;
   }
@@ -296,7 +296,7 @@ Project Panel component style rules
   background-color: var(--header-color);
   color: var(--main-text);
   position: absolute;
-  top: 0px;
+  top: auto;
   left: 0px;
   right: 0px;
   bottom: 0px;
@@ -654,7 +654,7 @@ Project Creator and Editor Popup style rules
     margin: 20px;
   }
 
-  textarea:focus{
+  textarea:focus {
     outline: 0px;
   }
 }
@@ -1241,7 +1241,7 @@ Project Creator and Editor Popup style rules
   margin: 0px;
 }
 
-#vertical-line{
+#vertical-line {
   width: 1px;
   border-style: solid;
   border-width: 3px;
@@ -2143,7 +2143,7 @@ Project Creator and Editor Popup style rules
   }
 }
 
-#clear-all-button-align{
+#clear-all-button-align {
   display: flex;
   flex-direction: row;
   justify-content: end;
@@ -2155,22 +2155,23 @@ Project Creator and Editor Popup style rules
 
 .delete-position-button-alt {
   margin-top: 1em;
+
   #trash {
     stroke: #FF3859;
   }
 
-  svg{
+  svg {
     margin-left: 0.5em;
   }
 }
 
-#clear-all-trash-row{
+#clear-all-trash-row {
   display: flex;
   justify-content: end;
   align-items: center;
 }
 
-#clear-all-trash-text{
+#clear-all-trash-text {
   width: fit-content;
   height: fit-content;
   color: #FF3859;
@@ -2281,7 +2282,8 @@ Project Creator and Editor Popup style rules
 }
 
 #edit-position-details>#edit-position-details-left>.edit-position-container>label,
-#edit-position-details>#edit-position-details-right>.edit-position-container>label {
+#edit-position-details>#edit-position-details-right>.edit-position-container>label,
+#edit-position-details>#edit-position-details-top>.edit-position-container label {
   font-size: 1rem;
 }
 
@@ -2311,6 +2313,45 @@ Project Creator and Editor Popup style rules
   gap: 5px;
   width: 100%;
   justify-content: left;
+}
+
+#edit-position-details-top .edit-position-container {
+  display: flex;
+  gap: 15px;
+}
+
+#input-job-start,
+#input-job-end{
+  min-height: 45px;
+  font-size: 0.9375rem;
+  padding-left: 10px;
+  padding-right: 10px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  outline: none;
+  width: 80%;
+  box-sizing: border-box;
+  resize: none;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+  flex-grow: 1;
+  margin-top: 0.25em;
+  margin-bottom: 0.5em;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background-color: lightgray;
+  border-radius: 0.3em;
+  border-style: solid;
+  border-color: gray;
+  border-width: 3px;
+}
+
+@media only screen and (max-width: 520px) {
+  #edit-position-details-top .edit-position-container {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }
 
 .edit-position-duration-count {
@@ -3717,50 +3758,52 @@ Project Carousel style rules
 
 }
 
-.mod-project-options, #mod-user-options {
+.mod-project-options,
+#mod-user-options {
   grid-area: mod;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  min-width: fit-content;
+  max-width: 100%;
+  gap: 10px;
+  background-color: var(--header-color);
+  border-radius: 10px;
+  text-align: left;
+  padding: 20px;
+  max-width: calc(100vw - 340px);
+  margin-bottom: 1vw;
+  align-self: start;
+  min-height: fit-content;
+
+  h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+  }
+
+  #mod-options-btns {
     display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    min-width: fit-content;
-    max-width: 100%;
-    gap: 10px;
-    background-color: var(--header-color);
-    border-radius: 10px;
-    text-align: left;
-    padding: 20px;
-    max-width: calc(100vw - 340px);
-    margin-bottom: 1vw;
-    align-self: start;
-    min-height: fit-content;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
 
-    h4 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--primary-color);
-      margin-bottom: 5px;
+    button {
+      width: fit-content;
     }
-
-    #mod-options-btns
-    {
-      display: flex;
-      align-items: center;
-      flex-direction: row;
-      justify-content: center;
-      gap: 20px;
-      button {
-        width: fit-content;
-      }
-    }
+  }
 }
 
 @media only screen and (max-width: 1200px) {
   #project-info-panel {
     max-width: calc(100vw - 80px);
   }
-  .mod-project-options, #mod-user-options
-  {
+
+  .mod-project-options,
+  #mod-user-options {
     max-width: calc(100vw - 80px);
   }
 }
@@ -3999,6 +4042,79 @@ Project Carousel style rules
   }
 }
 
+#reporter {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 600px;
+  background-color: var(--bg-color);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+#reporter > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reporter-header {
+  font-size: large;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.reporter-profile:link, .reporter-profile:visited {
+  display: flex;
+  align-self: flex-start;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+.reporter-profile:hover {
+  text-decoration: underline;
+}
+
+#reporter .reporter-profile img {
+  margin: auto;
+}
+
+#reporter .open-btn {
+  height: 40px;
+  padding: 5px 16px;
+  font-size: 1.25rem;
+  border: none;
+  border-radius: 40px;
+  background-color: var(--primary-color);
+  color: var(--invert-text);
+  font-weight: 700;
+}
+
+#reporter .message-area {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#reporter .message-area textarea, 
+#reporter .message-area input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#reporter .message-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+#reporter .cancel-btn {
+  color: var(--main--text);
+  font-weight: normal;
+  background-color: transparent;
+}
+
 #project-info-edit,
 #project-open-positions-button,
 .project-people-tab,
@@ -4082,6 +4198,11 @@ project-team-open-posiions-info: edit/create proj popup
   border-radius: 10px;
   padding: 20px;
   box-sizing: border-box;
+
+  #profile-editor-tags {
+    padding: 20px;
+    width: 95%;
+  }
 }
 
 /* The two inner sections become lighter sub-boxes within the container. */
@@ -4222,6 +4343,9 @@ button#positions-popup-list-item-active {
 }
 
 @media only screen and (max-width: 800px) {
+  #reporter > div {
+    display: block;
+  }
 
   #edit-position-details-left,
   #edit-position-details-right {
@@ -4324,12 +4448,12 @@ button#positions-popup-list-item-active {
 @media only screen and (max-width: 500px) {
   #edit-position-details {
     .select-container {
-      min-width: 200px;
+      min-width: 170px;
     }
   }
 }
 
-@media only screen and (max-width: 400px) {
+@media only screen and (max-width: 420px) {
 
   .edit-position-container {
     flex-direction: column;
@@ -4580,7 +4704,8 @@ button#positions-popup-list-item-active {
       padding: 0;
     }
 
-    a:link, a:visited {
+    a:link,
+    a:visited {
       text-decoration: none;
     }
 
@@ -4624,7 +4749,8 @@ button#positions-popup-list-item-active {
   text-decoration: none;
 }
 
-.project-contributor-profile {
+.project-contributor-profile, 
+.reporter-profile img {
   width: clamp(45px, 15vw, 75px);
   height: clamp(45px, 15vw, 75px);
   border-radius: 50%;
@@ -4675,7 +4801,12 @@ button#positions-popup-list-item-active {
   margin-bottom: 20px;
 }
 
-
+@media only screen and (max-width: 700px) {
+  .project-contributor-profile {
+    width: clamp(25px, 15vw, 50px);
+    height: clamp(25px, 15vw, 50px);
+  }
+}
 
 @media only screen and (max-width: 700px) {
   #project-open-positions .centerer {

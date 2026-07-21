@@ -4411,20 +4411,14 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/mod/warn-user/{userId}:
-    put:
-      summary: Gives a warning to a particular user
+  /api/mod/notification:
+    post:
+      summary: Sends a notification to a user
       tags:
         - Mod
       security:
         - shibbolethAuth: []
       parameters:
-        - name: userId
-          in: path
-          required: true
-          description: User ID of the user to be warned
-          schema:
-            type: number
         - in: query
           name: devId
           schema:
@@ -4436,13 +4430,10 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                warning:
-                  type: string
+              $ref: '#/components/schemas/ModeratorNotificationInput'
       responses:
-        '200':
-          description: User banned successfully
+        '201':
+          description: Notification sent successfully
           content:
             application/json:
               schema:
@@ -4458,7 +4449,7 @@ paths:
                   data:
                     type: object
                     nullabe: true
-                    example: null
+                    example: 'CREATED'
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
@@ -4762,7 +4753,7 @@ paths:
           description: The user ID to be used as the current user
       responses:
         '200':
-          description: Project reports acquired successfully
+          description: Project report deleted successfully
           content:
             application/json:
               schema:
@@ -4849,7 +4840,7 @@ paths:
           description: The user ID to be used as the current user
       responses:
         '200':
-          description: Project reports acquired successfully
+          description: User report deleted successfully
           content:
             application/json:
               schema:
@@ -5823,6 +5814,8 @@ components:
       $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectReportInput'
     BanUserInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/BanUserInput'
+    ModeratorNotificationInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/ModeratorNotificationInput'
 
     ErrorMessage:
       type: object

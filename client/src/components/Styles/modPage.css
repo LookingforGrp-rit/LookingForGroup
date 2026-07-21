@@ -22,6 +22,7 @@
         gap: 15px;
         align-items: flex-end;
         height: 40px;
+        overflow-y: scroll;
     }
     button
     {
@@ -86,7 +87,7 @@
         border-radius: 30px;
         padding: 10px 20px;
         background-color: var(--under-review-yellow, #ffe1a2);
-        color: var(--main-text);
+        color: var(--invert-text);
         font-size: 2ch;
         width: max-content;
         margin: auto min(1vw, 10px);
@@ -116,6 +117,19 @@
     margin-top: 1vw;
     width: 100%;
     max-width: calc(100% - 40px);
+}
+#manage-perms-popup {
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0 0 15px;
+  }
+
+  p,
+  button {
+    font-size: 1.125rem;
+  }
 }
 
 /* Mobile */

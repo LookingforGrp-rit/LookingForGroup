@@ -3,8 +3,8 @@ import { useState, useMemo, ChangeEvent, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 // import { PagePopup, openClosePopup } from "../PagePopup";
 import ToTopButton from '../ToTopButton';
-import MyProjectsDisplayList from '../MyProjectsDisplayList';
-import MyProjectsDisplayGrid from '../MyProjectsDisplayGrid';
+import MyProjectsDisplayList from '../MyProjectsDisplayList.tsx';
+import MyProjectsDisplayGrid from '../MyProjectsDisplayGrid.tsx';
 import { Header } from '../Header';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import { Select, SelectButton, SelectOptions } from '../Select';
@@ -680,6 +680,6 @@ const MyProjects = (userProfile: any) => {
       <ToTopButton />
     </div>
   );
-}
+};
 
 export default MyProjects;

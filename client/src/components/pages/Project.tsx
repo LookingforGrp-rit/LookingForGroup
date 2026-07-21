@@ -12,6 +12,7 @@ import { ShareButton } from "../ShareButton";
 import { ThemeIcon } from "../ThemeIcon";
 import { getByID, getVideos, projectApprovalRequestExists, deleteProject, requestProjectReview } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
+import Reporter from "../Reporter";
 import {
   deleteProjectFollowing,
   addProjectFollowing,
@@ -24,7 +25,7 @@ import { ProjectContext, ProjectStatus as ProjectStatusEnums, ProjectApprovalSta
 //import { router } from "../../../../server/src/api/routes/me.ts"
 import { reportProject } from "../../api/projects";
 import { getCurrentAccount } from "../../api/users";
-import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport, approveProjectReport } from "../../api/mod-tools";
+import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport, takeDownProject } from "../../api/mod-tools";
 
 //Main component for the project page
 /**
@@ -44,7 +45,7 @@ const Project = () => {
   // const [userPerms, setUserPerms] = useState(-1);
 
   const [user, setUser] = useState<MePrivate | null>();
-  const [userID, setUserID] = useState<number>();
+  const [userID, setUserID] = useState<number>(0);
   const [isUserAdmin, setIsUserAdmin] = useState<boolean>();
 
   const [displayedProject, setDisplayedProject] =
@@ -65,6 +66,7 @@ const Project = () => {
 
   const reportMessage = useRef<HTMLTextAreaElement>(null);
   const modMessage = useRef<HTMLTextAreaElement>(null);
+  const deleteMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>("");
 
   /**
@@ -267,29 +269,29 @@ const Project = () => {
    */
   const resolveReport = async (action: 'dismiss' | 'unapprove project') => {
     if (!reportedProject) return;
-    let res;
 
-    switch (action) {
-      case 'dismiss':
-        res = await deleteProjectReport(reportedProject.reportId);
-        break;
-      case 'unapprove project':
-        res = await approveProjectReport(
-          reportedProject.reportId,
-          reportedProject.projectId,
-          {
-            reason: modMessage.current?.value ?? ''
-          } as UnapproveProjectInput
-        );
-        break;
-      default:
-        console.error(`Unknown action: ${action}`);
-        break;
-    }
+    if (action === 'dismiss') {
+      const res = await deleteProjectReport(reportedProject.reportId);
 
-    if (res?.status === 200) {
-      // refresh page
-      window.location.reload();
+      if (res?.status === 200) {
+        // refresh page
+        window.location.reload();
+      }
+    } else if (action === 'unapprove project') {
+      const res = await takeDownProject(
+        reportedProject.reportId,
+        reportedProject.projectId,
+        {
+          reason: modMessage.current?.value ?? ''
+        } as UnapproveProjectInput
+      );
+
+      if (res.unapprove.status === 200 && res.deleteReport.status === 200) {
+        // refresh page
+        window.location.reload();
+      }
+    } else {
+      console.error(`Unknown action: ${action}`);
     }
   };
 
@@ -976,7 +978,8 @@ const Project = () => {
             {isUserAdmin && reportedProject ? (
               <div className="mod-project-options">
                 <h4>Unapprove?</h4>
-                <p>You can ignore this report or request edits on this project.</p>
+                <p>You can dismiss this report or request edits on this project.</p>
+                <Reporter reporterId={reportedProject.userId} modUserId={userID} />
                 <p>Reason for this report: {reportedProject.reason}</p>
                 <div id="mod-options-btns">
                   <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')}>Dismiss Report</button>
