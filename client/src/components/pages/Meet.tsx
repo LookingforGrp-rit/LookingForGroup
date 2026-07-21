@@ -204,8 +204,8 @@ export const ProfileMeetPage = () => {
     let tagFilteredList = items.filter((item) => {
       for (let tag of activeExclusionFilters) {
         if ((item.title === tag.label && tag.type === "Role") ||
-            item.majors.some(major => major.label === tag.label && major.majorId === tag.skillId) ||
-            item.skills.some(skill => skill.skillId === tag.skillId))
+          item.majors.some(major => major.label === tag.label && major.majorId === tag.skillId) ||
+          item.skills.some(skill => skill.type === tag.type)) //.type used instead of .skillId to accomodate for people tab filters, which reference general types and not specific skillIds
           return false;
       }
       if (activeSkillFilters.length === 0) return true;
