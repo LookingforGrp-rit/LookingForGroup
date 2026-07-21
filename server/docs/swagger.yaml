@@ -1849,6 +1849,53 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/me/report-bug:
+    post:
+      summary: Report a bug
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reportText:
+                  type: string
+      responses:
+        '200':
+          description: Report created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   # PROJECTS
   /api/projects:
     get:
@@ -4525,6 +4572,122 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/mod/bug-report/:
+    get:
+      summary: Get a list of all bug reports
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      responses:
+        '200':
+          description: Bug reports acquired successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BugReport'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mod/bug-report/{id}:
+    get:
+      summary: Get a bug report
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the bug report
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Bug report acquired successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BugReport'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      summary: Update a bug report
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the bug report
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isResolved:
+                  type: boolean
+                modNotes:
+                  type: string
+      responses:
+        '200':
+          description: Bug report updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BugReport'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/mod/project-report/{id}:
     get:
       summary: Get a specific project report
@@ -5542,6 +5705,8 @@ components:
       $ref: 'schemas/users.yaml#/components/schemas/UserDetail'
     UserReport:
       $ref: 'schemas/users.yaml#/components/schemas/UserReport'
+    BugReport:
+      $ref: 'schemas/users.yaml#/components/schemas/BugReport'
 
     MySkill:
       $ref: 'schemas/me.yaml#/components/schemas/MySkill'
