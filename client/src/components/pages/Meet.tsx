@@ -45,7 +45,7 @@ export const ProfileMeetPage = () => {
                 lightSrc={'/assets/bannerImages/people1_light.png'}
                 darkSrc={'/assets/bannerImages/people1_dark.png'}
                 id={'profile-hero-img-1'}
-                alt={'banner image'}
+                alt={'"Explore Profiles"'}
               />
               {/* <div>
                 <span className='profile-hero-highlight'>Explore profiles</span> to see each other's personality, expertise, and project history.
@@ -58,7 +58,7 @@ export const ProfileMeetPage = () => {
                 lightSrc={'/assets/bannerImages/people2_light.png'}
                 darkSrc={'/assets/bannerImages/people2_dark.png'}
                 id={'profile-hero-img-2'}
-                alt={'banner image'}
+                alt={'"Follow Users"'}
               />
               {/* <div className="panel-text">
                 Find someone interesting? <span className='profile-hero-highlight'>Send a message!</span><br/>
@@ -72,7 +72,7 @@ export const ProfileMeetPage = () => {
                 lightSrc={'/assets/bannerImages/people3_light.png'}
                 darkSrc={'/assets/bannerImages/people3_dark.png'}
                 id={'profile-hero-img-3'}
-                alt={'banner image'}
+                alt={'"Find your Group!"'}
               />
               {/* <div>
                 Keep your profile up to date with your skills, project preferences, and interests to 
@@ -204,8 +204,8 @@ export const ProfileMeetPage = () => {
     let tagFilteredList = items.filter((item) => {
       for (let tag of activeExclusionFilters) {
         if ((item.title === tag.label && tag.type === "Role") ||
-            item.majors.some(major => major.label === tag.label && major.majorId === tag.skillId) ||
-            item.skills.some(skill => skill.skillId === tag.skillId))
+          item.majors.some(major => major.label === tag.label && major.majorId === tag.skillId) ||
+          item.skills.some(skill => skill.type === tag.type)) //.type used instead of .skillId to accomodate for people tab filters, which reference general types and not specific skillIds
           return false;
       }
       if (activeSkillFilters.length === 0) return true;

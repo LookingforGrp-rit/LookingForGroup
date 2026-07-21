@@ -12,6 +12,7 @@ import { ShareButton } from "../ShareButton";
 import { ThemeIcon } from "../ThemeIcon";
 import { getByID, getVideos, projectApprovalRequestExists, deleteProject, requestProjectReview } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
+import Reporter from "../Reporter";
 import {
   deleteProjectFollowing,
   addProjectFollowing,
@@ -24,7 +25,7 @@ import { ProjectContext, ProjectStatus as ProjectStatusEnums, ProjectApprovalSta
 //import { router } from "../../../../server/src/api/routes/me.ts"
 import { reportProject } from "../../api/projects";
 import { getCurrentAccount } from "../../api/users";
-import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport, unapproveProject } from "../../api/mod-tools";
+import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport, takeDownProject, sendModeratorNotification, unapproveProject } from "../../api/mod-tools";
 
 //Main component for the project page
 /**
@@ -44,7 +45,7 @@ const Project = () => {
   // const [userPerms, setUserPerms] = useState(-1);
 
   const [user, setUser] = useState<MePrivate | null>();
-  const [userID, setUserID] = useState<number>();
+  const [userID, setUserID] = useState<number>(0);
   const [isUserAdmin, setIsUserAdmin] = useState<boolean>();
 
   const [displayedProject, setDisplayedProject] =
@@ -64,8 +65,8 @@ const Project = () => {
   const [videos, setVideos] = useState<ProjectVideo[]>();
 
   const reportMessage = useRef<HTMLTextAreaElement>(null);
-  const modMessage = useRef<HTMLTextAreaElement>(null);
-  const deleteMessage = useRef<HTMLTextAreaElement>(null);
+  const declineMessage = useRef<HTMLTextAreaElement>(null);
+  const takeDownMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>("");
 
   /**
@@ -275,7 +276,20 @@ const Project = () => {
     if (action === 'dismiss') {
       const res = await Promise.all(reportList.map(r => deleteProjectReport(r.reportId)));
 
-      if (res?.every(r => r.status === 200)) {
+      // send an update to reporter
+      const notif = await Promise.all(reportList.map(r => sendModeratorNotification({
+        modUserId: userID,
+        receiverId: r.userId,
+        subjectLine: `Update on Your Report on ${displayedProject?.title}`,
+        message: 'Thank you for submitting your report. ' +
+          'Our moderation team has completed its review. ' +
+          'After carefully reviewing the information provided and any relevant evidence, ' +
+          'we have determined that this report does not warrant moderation action at this time. ' +
+          'As a result, the report has been dismissed.',
+        type: 'General',
+      })));
+
+      if (res?.every(r => r.status === 200) && notif.every(r => r.status === 201)) {
         window.location.reload();
       }
     } else if (action === 'unapprove project') {
@@ -283,13 +297,25 @@ const Project = () => {
       const unapproveRes = await unapproveProject(
         projectID,
         {
-          reason: modMessage.current?.value ?? ''
-        } as UnapproveProjectInput
-      );
+          reason: takeDownMessage.current?.value ?? ''
+        } as UnapproveProjectInput)
 
       const deleteRes = await Promise.all(reportList.map(r => deleteProjectReport(r.reportId)));
 
-      if (unapproveRes.status === 200 && deleteRes?.every(r => r.status === 200)) {
+      const notif = await Promise.all(reportList.map(r => sendModeratorNotification({
+        modUserId: userID,
+        receiverId: r.userId,
+        subjectLine: `Update on Your Report on ${displayedProject?.title}`,
+        message: 'Thank you for submitting your report. ' +
+          'After reviewing the reported project, ' +
+          'our moderation team determined that it violated our community guidelines ' +
+          'and the project has been removed from public view.',
+        type: 'General',
+      })));
+
+      if (unapproveRes.status === 200 
+        && deleteRes?.every(r => r.status === 200)
+        && notif.every(r => r.status === 201)) {
         // refresh page
         window.location.reload();
       }
@@ -960,7 +986,7 @@ const Project = () => {
                     <div className="small-popup" id="report-popup">
                       <h3>Decline Approval Request</h3>
                       <p>What changes should be made to {displayedProject?.title} in order to receive approval?</p>
-                      <textarea placeholder="Write the requested changes here..." className="input input-multiline" ref={modMessage}></textarea>
+                      <textarea placeholder="Write the requested changes here..." className="input input-multiline" ref={declineMessage}></textarea>
                       <div className="confirm-deny-btns">
                         <button
                           id="team-delete-member-cancel-button"
@@ -968,7 +994,7 @@ const Project = () => {
                         >
                           Cancel
                         </button>
-                        <button className="confirm-btn" onClick={() => { handleDeleteProjectRequest(modMessage?.current ? modMessage.current.value : "No message provided."); }}>Submit</button>
+                        <button className="confirm-btn" onClick={() => { handleDeleteProjectRequest(declineMessage?.current ? declineMessage.current.value : "No message provided."); }}>Submit</button>
                       </div>
                     </div>
                   </PopupContent>
@@ -991,7 +1017,7 @@ const Project = () => {
                       <div className="small-popup" id="report-popup">
                         <h3>Request Edits</h3>
                         <p>What should the user change about their project?</p>
-                        <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={modMessage}></textarea>
+                        <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={takeDownMessage}></textarea>
                         <div className="confirm-deny-btns">
                           <button
                             id="cancel-button"
