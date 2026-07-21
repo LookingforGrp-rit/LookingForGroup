@@ -10,6 +10,7 @@ import { getProjectReportById } from '#controllers/mod/get-project-report-by-id.
 import { getProjectReports } from '#controllers/mod/get-project-reports.ts';
 import { getUserReportById } from '#controllers/mod/get-user-report-by-id.ts';
 import { getUserReports } from '#controllers/mod/get-user-reports.ts';
+import { sendNotification } from '#controllers/mod/send-notification.ts';
 import { unbanUser } from '#controllers/mod/unban-user.ts';
 import { userExistsAt } from '#middleware/validators/user-exists-at.ts';
 import { userReportExistsAt } from '#middleware/validators/user-report-exists-at.ts';
@@ -47,6 +48,7 @@ router.patch(
   authenticated(deactivateUserReport),
 );
 
+router.post('/notification', authenticated(sendNotification));
 router.post('/ban-user/:id', userExistsAt('path', 'id'), authenticated(banUser));
 
 router.delete('/delete-project/:id/', authenticated(deleteProject));

@@ -18,7 +18,9 @@ export enum TagType {
   DeveloperSkill = "Developer Skill",
   DesignerSkill = "Designer Skill",
   SoftSkill = "Soft Skill",
-  Purpose = "Purpose"
+  Purpose = "Purpose",
+  Context = "Context",
+  ContentWarning = "Content Warning"
 }
 export enum RitStatus {
   'FirstYear' = "1st Year",
@@ -41,7 +43,7 @@ export enum SkillProficiency {
   Advanced = "Advanced",
   Expert = "Expert"
 };
-export enum ProjectPurpose {
+export enum ProjectContext {
   Personal = "Personal",
   PortfolioPiece = "Portfolio Piece",
   Academic = "Academic",

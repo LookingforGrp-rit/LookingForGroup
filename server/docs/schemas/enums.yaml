@@ -45,6 +45,8 @@ components:
         - Designer Skill
         - Soft Skill
         - Purpose
+        - Context
+        - Content Warning
       example: Creative
 
     TagCategory:
@@ -135,3 +137,10 @@ components:
         - Accepted
         - Declined
       example: Pending
+
+    ModNotficationType:
+      type: string
+      enum:
+        - Warning
+        - General
+      example: Warning

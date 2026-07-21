@@ -16,11 +16,11 @@ import {
   getByID,
   requestProjectReview,
 } from "../../api/projects";
-import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
+import { ProjectContext as ProjectContextEnums, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
-import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, MemberRequests, } from '@looking-for-group/shared';
+import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectContext, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, MemberRequests, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 
 
@@ -207,7 +207,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       const newData = {
         title: "My Project",
         description: "",
-        purpose: null,
+        context: null,
         status: "Planning",
         audience: "",
         globalVisibility: "public",
@@ -561,8 +561,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       } else if (newProject) {
         const newStatus = Object.keys(ProjectStatusEnums).find(
           key => ProjectStatusEnums[key as keyof typeof ProjectStatusEnums] === modifiedProject.status)
-        const newPurpose = Object.keys(ProjectPurposeEnums).find(
-          key => ProjectPurposeEnums[key as keyof typeof ProjectPurposeEnums] === modifiedProject.purpose)
+        const newContext = Object.keys(ProjectContextEnums).find(
+          key => ProjectContextEnums[key as keyof typeof ProjectContextEnums] === modifiedProject.context)
 
         const response = await createNewProject({
           title: modifiedProject?.title as string,
@@ -571,7 +571,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           audience: modifiedProject?.audience as string,
           globalVisibility: modifiedProject?.globalVisibility as Visibility,
           status: newStatus as ProjectStatus,
-          purpose: newPurpose as ProjectPurpose,
+          context: newContext as ProjectContext,
         });
 
         if (!response.error && response.data) {

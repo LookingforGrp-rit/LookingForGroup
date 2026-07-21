@@ -35,7 +35,7 @@ const prismaProject: Projects = {
   description: '',
   hook: '',
   projectId: 100,
-  purpose: 'Academic',
+  context: 'Academic',
   status: 'Planning',
   globalVisibility: 'public',
   thumbnailId: 0,

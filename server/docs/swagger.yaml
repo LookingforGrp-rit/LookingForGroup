@@ -4364,6 +4364,52 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/mod/notification:
+    post:
+      summary: Sends a notification to a user
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModeratorNotificationInput'
+      responses:
+        '201':
+          description: Notification sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullabe: true
+                    example: 'CREATED'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/mod/unban-user/{googleId}:
     delete:
       summary: Unbans a user by removing them from a blacklist
@@ -4544,7 +4590,7 @@ paths:
           description: The user ID to be used as the current user
       responses:
         '200':
-          description: Project reports acquired successfully
+          description: Project report deleted successfully
           content:
             application/json:
               schema:
@@ -4631,7 +4677,7 @@ paths:
           description: The user ID to be used as the current user
       responses:
         '200':
-          description: Project reports acquired successfully
+          description: User report deleted successfully
           content:
             application/json:
               schema:
@@ -5603,6 +5649,8 @@ components:
       $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectReportInput'
     BanUserInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/BanUserInput'
+    ModeratorNotificationInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/ModeratorNotificationInput'
 
     ErrorMessage:
       type: object

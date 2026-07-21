@@ -84,8 +84,8 @@ export const reportProject = async (
   projectId: number,
   report: string,
 ): Promise<ApiResponse> => {
-  const apiURL = `/me/projects/report/${projectId}/${report}`;
-  const response = await POST(apiURL, {});
+  const apiURL = `/me/projects/report/${projectId}`;
+  const response = await POST(apiURL, {reason: report});
   
   //if (response.error) console.log(`Error in reportProject: ${response.error}`);
   //else console.log(response);
