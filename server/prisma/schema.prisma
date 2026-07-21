@@ -22,7 +22,7 @@ model Blocklist {
 model Mediums {
   mediumId Int        @id @default(autoincrement()) @map("medium_id")
   label    String     @unique @db.VarChar(50)
-  projects Projects[]
+  projects Projects[] @relation("mediumstoprojects")
 
   @@map("mediums")
 }
@@ -63,7 +63,7 @@ model Jobs {
 model Majors {
   majorId Int     @id @default(autoincrement()) @map("major_id")
   label   String  @unique @db.VarChar(100)
-  users   Users[]
+  users   Users[] @relation("majorstousers")
 
   @@map("majors")
 }
@@ -179,14 +179,14 @@ model ProjectTags {
 
 model Projects {
   projectId         Int                 @id @unique @default(autoincrement()) @map("project_id")
-  title             String              @db.VarChar(50)
+  title             String              @db.VarChar(150)
   hook              String              @default("") @db.VarChar(300)
-  description       String              @default("") @db.Text
+  description       String              @db.Text
   thumbnail         ProjectImages?      @relation(fields: [thumbnailId], references: [imageId])
   thumbnailId       Int?                @unique @map("thumbnail_id")
   context           ProjectsContext?
   status            ProjectsStatus      @default(Planning)
-  audience          String              @default("") @db.VarChar(100)
+  audience          String              @default("") @db.VarChar(300)
   userId            Int                 @map("user_id")
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
@@ -197,7 +197,7 @@ model Projects {
   projectVideos     ProjectVideos[]     @relation("ProjectVideos")
   projectSocials    ProjectSocials[]
   globalVisibility  Visibility          @map("global_visibility")
-  mediums           Mediums[]
+  mediums           Mediums[]           @relation("mediumstoprojects")
   users             Users               @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "FK_user_id")
   tags              ProjectTags[]
   approved          Boolean             @default(false)
@@ -370,7 +370,7 @@ model Users {
   following         UserFollowings[]    @relation("sender_user")
   userSkills        UserSkills[]
   userSocials       UserSocials[]
-  majors            Majors[]
+  majors            Majors[]            @relation("majorstousers")
   userBlacklists    UserBlacklist[]
   reportProject     ReportProject[]
   reporter          ReportUser[]        @relation("reporter_id")

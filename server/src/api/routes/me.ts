@@ -222,9 +222,9 @@ router.post('/users/report/:id', userExistsAt('path', 'id'), authenticated(repor
 
 //#region Tag blacklist routes
 //Gets a user's tag blacklist
-router.get('/me/tag-blacklist', authenticated(getTagBlacklist));
+router.get('/tag-blacklist', authenticated(getTagBlacklist));
 
 //Update a user's tag blacklist
-router.patch('/me/tag-blacklist', authenticated(updateTagBlacklist));
+router.patch('/tag-blacklist', authenticated(updateTagBlacklist));
 
 export default router;
