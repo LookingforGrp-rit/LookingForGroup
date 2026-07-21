@@ -1,4 +1,8 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type {
+  ApiResponse,
+  AuthenticatedRequest,
+  UpdateBugReportInput,
+} from '@looking-for-group/shared';
 import type { Response } from 'express';
 import updateBugReportService from '#services/mod/update-bug-report.ts';
 
@@ -6,7 +10,7 @@ import updateBugReportService from '#services/mod/update-bug-report.ts';
 //gets all bug reports
 export const updateBugReport = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const reportId = parseInt(req.params.id as string);
-  const body = req.body as { isResolved: boolean; modNotes: string };
+  const body = req.body as UpdateBugReportInput;
   const result = await updateBugReportService(reportId, body.isResolved, body.modNotes);
 
   if (result === 'NOT_FOUND') {

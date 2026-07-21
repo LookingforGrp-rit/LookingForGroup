@@ -1868,10 +1868,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                reportText:
-                  type: string
+              $ref: '#/components/schemas/AddBugReportInput'
       responses:
         '200':
           description: Report created successfully
@@ -4658,12 +4655,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                isResolved:
-                  type: boolean
-                modNotes:
-                  type: string
+              $ref: '#/components/schemas/UpdateBugReportInput'
       responses:
         '200':
           description: Bug report updated successfully
@@ -5816,6 +5808,10 @@ components:
       $ref: 'schemas/inputs.yaml#/components/schemas/BanUserInput'
     ModeratorNotificationInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/ModeratorNotificationInput'
+    AddBugReportInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddBugReportInput'
+    UpdateBugReportInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateBugReportInput'
 
     ErrorMessage:
       type: object

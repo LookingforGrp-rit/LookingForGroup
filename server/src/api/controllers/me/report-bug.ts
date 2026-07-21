@@ -1,4 +1,8 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type {
+  ApiResponse,
+  AuthenticatedRequest,
+  AddBugReportInput,
+} from '@looking-for-group/shared';
 import type { Response } from 'express';
 import { reportBugService } from '#services/me/report-bug.ts';
 
@@ -7,7 +11,7 @@ import { reportBugService } from '#services/me/report-bug.ts';
  * Allows authenticated users to report a user
  */
 const reportBugController = async (req: AuthenticatedRequest, res: Response) => {
-  const data = req.body as { reportText: string };
+  const data = req.body as AddBugReportInput;
 
   const result = await reportBugService(req.currentUser.userId, data.reportText);
 
