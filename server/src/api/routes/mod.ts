@@ -12,6 +12,11 @@ import { getUserReportById } from '#controllers/mod/get-user-report-by-id.ts';
 import { getUserReports } from '#controllers/mod/get-user-reports.ts';
 import { sendNotification } from '#controllers/mod/send-notification.ts';
 import { unbanUser } from '#controllers/mod/unban-user.ts';
+import { requiresNotSelf } from '#middleware/authorization/requires-not-self.ts';
+import { ProjectReportedInPathParameterLocation } from '#middleware/validators/parameter-location/project-reported-in-path-param-location.ts';
+import { ProjectReporterInPathParameterLocation } from '#middleware/validators/parameter-location/project-reporter-in-path-param-location.ts';
+import { ReportedInPathParameterLocation } from '#middleware/validators/parameter-location/reported-in-path-param-location.ts';
+import { ReporterInPathParameterLocation } from '#middleware/validators/parameter-location/reporter-in-path-param-location.ts';
 import { userExistsAt } from '#middleware/validators/user-exists-at.ts';
 import { userReportExistsAt } from '#middleware/validators/user-report-exists-at.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
@@ -38,13 +43,25 @@ router.use(requiresLogin, injectCurrentUser, authenticated(requiresModerator));
 
 router.get('/project-report/', authenticated(getProjectReports));
 router.get('/user-report/', authenticated(getUserReports));
-router.get('/project-report/:id', authenticated(getProjectReportById));
-router.get('/user-report/:id', authenticated(getUserReportById));
+router.get(
+  '/project-report/:id',
+  authenticated(requiresNotSelf(new ProjectReporterInPathParameterLocation(), '')),
+  authenticated(requiresNotSelf(new ProjectReportedInPathParameterLocation(), '')),
+  authenticated(getProjectReportById),
+);
+router.get(
+  '/user-report/:id',
+  authenticated(requiresNotSelf(new ReporterInPathParameterLocation(), '')),
+  authenticated(requiresNotSelf(new ReportedInPathParameterLocation(), '')),
+  authenticated(getUserReportById),
+);
 
 router.patch('/clear-profile/:id/', authenticated(clearProfile));
 router.patch(
   '/user-report/:id/deactivate',
   userReportExistsAt('path', 'id'),
+  authenticated(requiresNotSelf(new ReporterInPathParameterLocation(), '')),
+  authenticated(requiresNotSelf(new ReportedInPathParameterLocation(), '')),
   authenticated(deactivateUserReport),
 );
 
@@ -53,7 +70,17 @@ router.post('/ban-user/:id', userExistsAt('path', 'id'), authenticated(banUser))
 
 router.delete('/delete-project/:id/', authenticated(deleteProject));
 router.delete('/unban-user/:googleId/', authenticated(unbanUser));
-router.delete('/project-report/:id', authenticated(deleteProjectReport));
-router.delete('/user-report/:id', authenticated(deleteUserReport));
+router.delete(
+  '/project-report/:id',
+  authenticated(requiresNotSelf(new ProjectReporterInPathParameterLocation(), '')),
+  authenticated(requiresNotSelf(new ProjectReportedInPathParameterLocation(), '')),
+  authenticated(deleteProjectReport),
+);
+router.delete(
+  '/user-report/:id',
+  authenticated(requiresNotSelf(new ReporterInPathParameterLocation(), '')),
+  authenticated(requiresNotSelf(new ReportedInPathParameterLocation(), '')),
+  authenticated(deleteUserReport),
+);
 
 export default router;
