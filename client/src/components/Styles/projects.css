@@ -4047,6 +4047,10 @@ Project Carousel style rules
   text-decoration: underline;
 }
 
+#reporter .reporter-profile img {
+  margin: auto;
+}
+
 #reporter .open-btn {
   height: 40px;
   padding: 5px 16px;

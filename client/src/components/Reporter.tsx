@@ -1,19 +1,32 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import profilePicture from "../images/lfrog.png";
 import usePreloadedImage from "../functions/imageLoad";
 import { routes } from "../constants/routes";
 import { getUsersById } from "../api/users";
 import { UserDetail } from "@looking-for-group/shared";
+import { sendModeratorNotification } from "../api/mod-tools";
 
 interface ProjectPanelProps {
     reporterId: number;
+    modUserId: number;
 }
 
-const Reporter = ({ reporterId }: ProjectPanelProps) => {
+const Reporter = ({ reporterId, modUserId }: ProjectPanelProps) => {
+    // Variables ==============================================================
+    // Reporter detail
     const [reporter, setReporter] = useState<UserDetail>();
+
+    // Open state
     const [messageBoxOpen, setMessageBoxOpen] = useState<boolean>(false);
 
-    // get reporter's detail
+    // Message holders
+    const subject = useRef<HTMLInputElement>(null);
+    const message = useRef<HTMLTextAreaElement>(null);
+
+    // Loaders ================================================================
+    /**
+     * Gets the reporter's detail
+     */
     const getReporter = async () => {
         try {
             const res = await getUsersById(reporterId);
@@ -26,7 +39,7 @@ const Reporter = ({ reporterId }: ProjectPanelProps) => {
         }
     };
 
-    // load profile image
+    // Load profile image
     const imageSrc = usePreloadedImage(
         reporter?.profileImage ?? profilePicture,
         profilePicture,
@@ -36,6 +49,31 @@ const Reporter = ({ reporterId }: ProjectPanelProps) => {
         getReporter();
     }, [reporterId]);
 
+    // Helper Methods =========================================================
+    /**
+     * Sends the notification to the reporter and refresh page upon success
+     * TODO: Probably a different feedback than refresh but this for now
+     */
+    const sendMessage = async () => {
+        try {
+            const res = await sendModeratorNotification({
+                modUserId: modUserId,
+                receiverId: reporterId,
+                subjectLine: subject.current?.value ?? '',
+                message: message.current?.value ?? '',
+                type: "General",
+            });
+
+            if (res.status === 201) {
+                // refresh page
+                window.location.reload();
+            }
+        } catch (e) {
+            console.error('Error in sendMessage ', e);
+        }
+    };
+
+    // Content ================================================================
     if (reporter) {
         return <>
             <div id="reporter">
@@ -68,14 +106,16 @@ const Reporter = ({ reporterId }: ProjectPanelProps) => {
                             <input
                                 placeholder="Subject"
                                 className="input"
+                                ref={subject}
                             ></input>
                             <textarea
                                 placeholder="Write your message here..."
                                 className="input input-multiline"
+                                ref={message}
                             ></textarea>
                             <div className="message-actions">
                                 <button className="cancel-btn" onClick={() => setMessageBoxOpen(false)}>Cancel</button>
-                                <button className="confirm-btn">Send</button>
+                                <button className="confirm-btn" onClick={() => sendMessage()}>Send</button>
                             </div>
                         </div>
                     )}
@@ -84,8 +124,8 @@ const Reporter = ({ reporterId }: ProjectPanelProps) => {
         </>;
     } else {
         return <>
-            <div>
-                <p>Loading...</p>
+            <div className='placeholder-spacing'>
+                <div className='spinning-loader'></div>
             </div>
         </>;
     }
