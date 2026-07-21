@@ -22,7 +22,7 @@ model Blocklist {
 model Mediums {
   mediumId Int        @id @default(autoincrement()) @map("medium_id")
   label    String     @unique @db.VarChar(50)
-  projects Projects[] @relation("MediumsToProjects")
+  projects Projects[] @relation("mediumstoprojects")
 
   @@map("mediums")
 }
@@ -63,7 +63,7 @@ model Jobs {
 model Majors {
   majorId Int     @id @default(autoincrement()) @map("major_id")
   label   String  @unique @db.VarChar(100)
-  users   Users[] @relation("MajorsToUsers")
+  users   Users[] @relation("majorstousers")
 
   @@map("majors")
 }
@@ -197,7 +197,7 @@ model Projects {
   projectVideos     ProjectVideos[]     @relation("ProjectVideos")
   projectSocials    ProjectSocials[]
   globalVisibility  Visibility          @map("global_visibility")
-  mediums           Mediums[]           @relation("MediumsToProjects")
+  mediums           Mediums[]           @relation("mediumstoprojects")
   users             Users               @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "FK_user_id")
   tags              ProjectTags[]
   approved          Boolean             @default(false)
@@ -383,7 +383,7 @@ model Users {
   following         UserFollowings[]    @relation("sender_user")
   userSkills        UserSkills[]
   userSocials       UserSocials[]
-  majors            Majors[]            @relation("MajorsToUsers")
+  majors            Majors[]            @relation("majorstousers")
   userBlacklists    UserBlacklist[]
   reportProject     ReportProject[]
   reportBug         ReportBug[]
