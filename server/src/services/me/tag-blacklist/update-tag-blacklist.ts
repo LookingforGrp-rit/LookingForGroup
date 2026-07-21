@@ -28,11 +28,6 @@ const updateTagBlacklistService = async (
     const prismaFriendlyTagBlacklist = data.tagBlacklist.map((t) => {
       return {
         tagId: t.tagId,
-        label_type: {
-          label: t.label,
-          type: t.type,
-        },
-        category: t.category,
       };
     });
 

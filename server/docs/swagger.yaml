@@ -1038,7 +1038,60 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
+    patch:
+      summary: Updates a user's tag blacklist
+      description: Updates the list of tags a user would like to exclude from their viewed content.
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tagBlacklist:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TagWithIdInput'
+      responses:
+        '201':
+          description: Tags created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Tag'
 
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /api/me/socials:
     get:
       summary: Get current user's socials
@@ -5837,6 +5890,8 @@ components:
       $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectVideoInput'
     CreateMemberRequestInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/CreateMemberRequestInput'
+    TagWithIdInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/TagWithIdInput'
     TagInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/TagInput'
     SkillInput:
