@@ -275,6 +275,8 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
             id="filters-left-scroll"
             className={`filters-scroller ${!showLeftArrow ? 'hide' : ''}`}
             onClick={() => scrollSkills('left')}
+            value={'left'}
+            aria-label='scroll left'
           >
             <i className="fa fa-caret-left"></i>
           </button>
@@ -312,6 +314,8 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
             id="filters-right-scroll"
             className={`filters-scroller ${!showRightArrow ? 'hide' : ''}`}
             onClick={() => scrollSkills('right')}
+            value={'right'}
+            aria-label='scroll right'
           >
             <i className="fa fa-caret-right"></i>
           </button>
