@@ -186,17 +186,22 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     const toggleTag = (id: number, type: string, update?: boolean) => {
         let newActiveTags: Tag[];
         let newExclusionTags: Tag[];
-        const tag = allTags.find((tag) => tag.tagId === id && tag.type === type as TagType);
+        let tag; 
+        if (id === -1) 
+            tag = {tagId: id, label: "New", type, category: "Other"} as Tag;
+        else 
+            tag = allTags.find((tag) => tag.tagId === id && tag.type === type as TagType);
+        
         if (!tag) return;
 
-        if (activeTagFilters.some(t => t === tag)) {
+        if (activeTagFilters.some(t => t.tagId === id && t.type == type )) {
             // Remove the tag from the active list
-            newActiveTags = activeTagFilters.filter(t => t !== tag);
+            newActiveTags = activeTagFilters.filter(t => t.tagId !== id && t.type !== type );
             newExclusionTags = [...activeExclusionFilters, tag];
         }
-        else if (activeExclusionFilters.some(t => t === tag)) {
+        else if (activeExclusionFilters.some(t => t.tagId === id && t.type == type )) {
             newActiveTags = activeTagFilters;
-            newExclusionTags = activeExclusionFilters.filter(t => t !== tag);
+            newExclusionTags = activeExclusionFilters.filter(t => t.tagId !== id && t.type !== type );
         }
         else {
             // Add the tag to the active list
@@ -372,7 +377,9 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     //tagLabel === 'Soft Skills' ? "Soft" :
                                     tagLabel;
                         const type = 'Project Type';
-                        const tagObj: Tag = { tagId: allTags.find((tag) => tag.label == label)?.tagId ?? 0, label, type, category: "Other" };
+                        const id = label === "New" ? -1 :
+                            allTags.find(tag => tag.label == label)?.tagId;
+                        const tagObj: Tag = { tagId: id ?? 0, label, type, category: "Other" };
                         return (
                             <button key={`${type}-${label}`}
                                 className={"discover-tag-filter" + 
