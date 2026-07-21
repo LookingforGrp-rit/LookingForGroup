@@ -6,7 +6,7 @@ import { getMajors, getJobTitles, getSkills } from '../api/users';
 import { StringDictionary, Role, Major, Skill, SkillType } from '@looking-for-group/shared';
 import MoreFiltersButton from './MoreFiltersButton';
 import { Tag } from './Tag';
-import TagDisplay from './TagDisplay';
+import TagDisplay, { skillToTagOrSkill } from './TagDisplay';
 import { Select, SelectButton, SelectOptions } from './Select';
 
 interface DiscoverFiltersProps {
@@ -132,7 +132,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
     let newActiveSkills: Skill[];
     let newExcludeSkills: Skill[];
     let skill: Skill | undefined;
-    if (id === -1) {
+    if (id < 5) {
       skill = { skillId: id, label: type, type: type as SkillType, category: "Other" }
     }
     else
@@ -141,12 +141,12 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
 
     if (activeSkillFilters.some(s => s.skillId === id && s.type === type)) {
       // Remove the skill from the active list
-      newActiveSkills = activeSkillFilters.filter(s => s !== skill);
+      newActiveSkills = activeSkillFilters.filter(s => s.skillId !== skill.skillId);
       newExcludeSkills = [...activeExclusionFilters, skill];
     }
     else if (activeExclusionFilters.some(s => s.skillId === id && s.type === type)) {
       newActiveSkills = activeSkillFilters;
-      newExcludeSkills = activeExclusionFilters.filter(s => s !== skill);
+      newExcludeSkills = activeExclusionFilters.filter(s => s.skillId !== skill.skillId);
     }
     else {
       // Add the tag to the active list
@@ -275,6 +275,8 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
             id="filters-left-scroll"
             className={`filters-scroller ${!showLeftArrow ? 'hide' : ''}`}
             onClick={() => scrollSkills('left')}
+            value={'left'}
+            aria-label='scroll left'
           >
             <i className="fa fa-caret-left"></i>
           </button>
@@ -286,23 +288,23 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
           >
             { /* make each skill button have proper label & type */}
             {skillList.map(skillFilterType => {
-              const trueType = Object.keys(PeopleSkills)[Object.values(PeopleSkills).indexOf(skillFilterType)]
-              //template skill to be sent in for the broad horizontal filters
-              const templateSkill = {
-                skillId: -1,
-                label: trueType,
-                type: trueType as SkillType,
-                category: 'Other',
-              } as Skill;
+              //give each skill a unique skillId
+              const uniqueId = Object.values(PeopleSkills).indexOf(skillFilterType);
+              const trueType = skillFilterType === "Developers" ? "Developer" :
+                skillFilterType === "Designers" ? "Designer" :
+                  skillFilterType === "Audio Creators" ? "Audio" :
+                    skillFilterType === "Engineers" ? "Engineer" :
+                      skillFilterType;
+              const templateSkill: Skill = { skillId: uniqueId, label: trueType, type: trueType as SkillType, category: "Other" };
 
               return (
                 <button key={`${templateSkill.type}-${skillFilterType}`}
                   className={"discover-tag-filter" +
-                    (activeSkillFilters.some(s => s.skillId === -1 && s.label === trueType) ? " discover-tag-filter-selected" :
-                      activeExclusionFilters.some(s => s.skillId === -1 && s.label === trueType) ? " discover-tag-filter-excluded " :
+                    (activeSkillFilters.some(s => s.skillId === uniqueId && s.label === trueType) ? " discover-tag-filter-selected" :
+                      activeExclusionFilters.some(s => s.skillId === uniqueId && s.label === trueType) ? " discover-tag-filter-excluded " :
                         "")}
                   data-type={templateSkill.label}
-                  onClick={() => toggleSkill(templateSkill.skillId, templateSkill.type, true)}>
+                  onClick={() => toggleSkill(uniqueId, templateSkill.type, true)}>
                   {skillFilterType}
                 </button>
               )
@@ -312,6 +314,8 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
             id="filters-right-scroll"
             className={`filters-scroller ${!showRightArrow ? 'hide' : ''}`}
             onClick={() => scrollSkills('right')}
+            value={'right'}
+            aria-label='scroll right'
           >
             <i className="fa fa-caret-right"></i>
           </button>
@@ -426,19 +430,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                     <hr />
                     <div id="filter-tags">
                       <TagDisplay
-                        selected={[activeSkillFilters.map(
-                          skill => ({
-                            ...skill,
-                            category: skill.type === "Major" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
-                            id: skill.skillId
-                          })
-                        ), activeExclusionFilters.map(
-                          skill => ({
-                            ...skill,
-                            category: skill.type === "Major" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
-                            id: skill.skillId
-                          })
-                        )]}
+                        selected={[skillToTagOrSkill(activeSkillFilters), skillToTagOrSkill(activeExclusionFilters)]}
                         toggleTag={toggleSkill}
                         tabs={filterPopupTabs.map(tab =>
                           tab.categoryName === "Developer Skill" ? "Developer" :
@@ -450,21 +442,9 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                                       tab.categoryName
                         )}
                         tabId={activeTabId}
-                        all={allSkills.map(
-                          skill => ({
-                            ...skill,
-                            category: skill.type === "Major" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
-                            id: skill.skillId
-                          })
-                        )}
+                        all={skillToTagOrSkill(allSkills)}
                         searchValue={searchValue}
-                        searchData={searchedSkills.map(
-                          skill => ({
-                            ...skill,
-                            category: skill.type === "Major" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
-                            id: skill.skillId
-                          })
-                        )}
+                        searchData={skillToTagOrSkill(searchedSkills)}
                       />
                     </div>
                   </div>
@@ -475,7 +455,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                       {activeSkillFilters.map((skill) => (
                         <Tag
                           key={skill.skillId}
-                          type={skill.type.toLowerCase() + " skill"}
+                          type={(skill.type.toLowerCase() == "role" || skill.type.toLowerCase() == "major") ? skill.type.toLowerCase() : skill.type.toLowerCase() + " skill"}
                           onClick={() =>
                             toggleSkill(skill.skillId, skill.type)
                           }
@@ -488,7 +468,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                       {activeExclusionFilters.map((skill) => (
                         <Tag
                           key={skill.skillId}
-                          type={skill.type.toLowerCase() + " skill"}
+                          type={(skill.type.toLowerCase() == "role" || skill.type.toLowerCase() == "major") ? skill.type.toLowerCase() : skill.type.toLowerCase() + " skill"}
                           onClick={() =>
                             toggleSkill(skill.skillId, skill.type)
                           }

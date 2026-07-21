@@ -12,6 +12,7 @@ import { ShareButton } from "../ShareButton";
 import { ThemeIcon } from "../ThemeIcon";
 import { getByID, getVideos, projectApprovalRequestExists, deleteProject, requestProjectReview } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
+import Reporter from "../Reporter";
 import {
   deleteProjectFollowing,
   addProjectFollowing,
@@ -24,7 +25,7 @@ import { ProjectContext, ProjectStatus as ProjectStatusEnums, ProjectApprovalSta
 //import { router } from "../../../../server/src/api/routes/me.ts"
 import { reportProject } from "../../api/projects";
 import { getCurrentAccount } from "../../api/users";
-import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport, takeDownProject } from "../../api/mod-tools";
+import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport, takeDownProject, sendModeratorNotification } from "../../api/mod-tools";
 
 //Main component for the project page
 /**
@@ -44,7 +45,7 @@ const Project = () => {
   // const [userPerms, setUserPerms] = useState(-1);
 
   const [user, setUser] = useState<MePrivate | null>();
-  const [userID, setUserID] = useState<number>();
+  const [userID, setUserID] = useState<number>(0);
   const [isUserAdmin, setIsUserAdmin] = useState<boolean>();
 
   const [displayedProject, setDisplayedProject] =
@@ -64,8 +65,8 @@ const Project = () => {
   const [videos, setVideos] = useState<ProjectVideo[]>();
 
   const reportMessage = useRef<HTMLTextAreaElement>(null);
-  const modMessage = useRef<HTMLTextAreaElement>(null);
-  const deleteMessage = useRef<HTMLTextAreaElement>(null);
+  const declineMessage = useRef<HTMLTextAreaElement>(null);
+  const takeDownMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>("");
 
   /**
@@ -270,22 +271,51 @@ const Project = () => {
     if (!reportedProject) return;
 
     if (action === 'dismiss') {
+      // dismiss the report
       const res = await deleteProjectReport(reportedProject.reportId);
 
-      if (res?.status === 200) {
+      // send an update to reporter
+      const notif = await sendModeratorNotification({
+        modUserId: userID,
+        receiverId: reportedProject.userId,
+        subjectLine: `Update on Your Report on ${displayedProject?.title}`,
+        message: 'Thank you for submitting your report. ' +
+          'Our moderation team has completed its review. ' +
+          'After carefully reviewing the information provided and any relevant evidence, ' +
+          'we have determined that this report does not warrant moderation action at this time. ' +
+          'As a result, the report has been dismissed.',
+        type: 'General',
+      });
+
+      if (res?.status === 200 && notif.status === 201) {
         // refresh page
         window.location.reload();
       }
     } else if (action === 'unapprove project') {
+      // take down the reported project
       const res = await takeDownProject(
         reportedProject.reportId,
         reportedProject.projectId,
         {
-          reason: modMessage.current?.value ?? ''
+          reason: takeDownMessage.current?.value ?? ''
         } as UnapproveProjectInput
       );
 
-      if (res.unapprove.status === 200 && res.deleteReport.status === 200) {
+      // send an update to reporter
+      const notif = await sendModeratorNotification({
+        modUserId: userID,
+        receiverId: reportedProject.userId,
+        subjectLine: `Update on Your Report on ${displayedProject?.title}`,
+        message: 'Thank you for submitting your report. ' +
+          'After reviewing the reported project, ' +
+          'our moderation team determined that it violated our community guidelines ' +
+          'and the project has been removed from public view.',
+        type: 'General',
+      });
+
+      if (res.unapprove.status === 200 &&
+        res.deleteReport.status === 200 &&
+        notif.status === 201) {
         // refresh page
         window.location.reload();
       }
@@ -956,7 +986,7 @@ const Project = () => {
                     <div className="small-popup" id="report-popup">
                       <h3>Decline Approval Request</h3>
                       <p>What changes should be made to {displayedProject?.title} in order to receive approval?</p>
-                      <textarea placeholder="Write the requested changes here..." className="input input-multiline" ref={modMessage}></textarea>
+                      <textarea placeholder="Write the requested changes here..." className="input input-multiline" ref={declineMessage}></textarea>
                       <div className="confirm-deny-btns">
                         <button
                           id="team-delete-member-cancel-button"
@@ -964,7 +994,7 @@ const Project = () => {
                         >
                           Cancel
                         </button>
-                        <button className="confirm-btn" onClick={() => { handleDeleteProjectRequest(modMessage?.current ? modMessage.current.value : "No message provided."); }}>Submit</button>
+                        <button className="confirm-btn" onClick={() => { handleDeleteProjectRequest(declineMessage?.current ? declineMessage.current.value : "No message provided."); }}>Submit</button>
                       </div>
                     </div>
                   </PopupContent>
@@ -977,7 +1007,8 @@ const Project = () => {
             {isUserAdmin && reportedProject ? (
               <div className="mod-project-options">
                 <h4>Unapprove?</h4>
-                <p>You can ignore this report or request edits on this project.</p>
+                <p>You can dismiss this report or request edits on this project.</p>
+                <Reporter reporterId={reportedProject.userId} modUserId={userID} />
                 <p>Reason for this report: {reportedProject.reason}</p>
                 <div id="mod-options-btns">
                   <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')}>Dismiss Report</button>
@@ -987,7 +1018,7 @@ const Project = () => {
                       <div className="small-popup" id="report-popup">
                         <h3>Request Edits</h3>
                         <p>What should the user change about their project?</p>
-                        <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={modMessage}></textarea>
+                        <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={takeDownMessage}></textarea>
                         <div className="confirm-deny-btns">
                           <button
                             id="cancel-button"
