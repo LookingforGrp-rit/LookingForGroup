@@ -1,6 +1,8 @@
 import type { BugReport } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
+import { BugReportSelector } from '#services/selectors/mod/bug-report.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformBugReport } from '#services/transformers/mod/bug-report.ts';
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
@@ -12,14 +14,12 @@ const getBugReportByIdService = async (reportId: number): Promise<BugReport | Ge
       where: {
         reportId,
       },
+      select: BugReportSelector,
     });
 
     if (!report) return 'NOT_FOUND';
 
-    const transformedReport: BugReport = {
-      apiUrl: `api/mod/bug-report/${report.reportId.toString()}`,
-      ...report,
-    };
+    const transformedReport: BugReport = transformBugReport(report);
 
     return transformedReport;
   } catch (e) {
