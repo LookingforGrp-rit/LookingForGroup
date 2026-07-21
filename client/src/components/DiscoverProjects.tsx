@@ -353,6 +353,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                     id="filters-left-scroll"
                     className={`filters-scroller ${!showLeftArrow ? 'hide' : ''}`}
                     onClick={() => scrollTags('left')}
+                    value={'left'}
                 >
                     <i className="fa fa-caret-left"></i>
                 </button>
@@ -388,6 +389,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                     id="filters-right-scroll"
                     className={`filters-scroller ${!showRightArrow ? 'hide' : ''}`}
                     onClick={() => scrollTags('right')}
+                    value={'right'}
                 >
                     <i className="fa fa-caret-right"></i>
                 </button>

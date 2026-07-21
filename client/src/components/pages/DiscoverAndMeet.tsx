@@ -45,7 +45,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
                 lightSrc={'/assets/bannerImages/people1_light.png'}
                 darkSrc={'/assets/bannerImages/people1_dark.png'}
                 id={'profile-hero-img-1'}
-                alt={'banner image'}
+                alt={'"Explore profiles"'}
               />
               {/* <div>
                 <span className='profile-hero-highlight'>Explore profiles</span> to see each other's personality, expertise, and project history.
@@ -58,7 +58,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
                 lightSrc={'/assets/bannerImages/people2_light.png'}
                 darkSrc={'/assets/bannerImages/people2_dark.png'}
                 id={'profile-hero-img-2'}
-                alt={'banner image'}
+                alt={'"Follow Users"'}
               />
               {/* <div className="panel-text">
                 Find someone interesting? <span className='profile-hero-highlight'>Send a message!</span><br/>
@@ -72,7 +72,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
                 lightSrc={'/assets/bannerImages/people3_light.png'}
                 darkSrc={'/assets/bannerImages/people3_dark.png'}
                 id={'profile-hero-img-3'}
-                alt={'banner image'}
+                alt={'"Find your group!"'}
               />
               {/* <div>
                 Keep your profile up to date with your skills, project preferences, and interests to 

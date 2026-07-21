@@ -167,7 +167,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
     <div className="search-wrapper">
       {/* Prevent form submission from refreshing the page */}
       <div className="search-bar">
-        <div role="button" className="search-button" aria-label="Search">
+        <div className="search-button">
           <i className="fa fa-search" aria-hidden="true"></i>
         </div>
         {/* Input field for search query */}
@@ -178,7 +178,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
           value={value ?? internalQuery}
           onChange={handleChange}
           onFocus={onFocus}
-          tabIndex={2}
+          tabIndex={0}
           onKeyDown={(e) => {
             {/* Prevent odd popup behavior on enter click */ }
             if (e.key === 'Enter') {
@@ -192,7 +192,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
           }}
           aria-label='Searchbar'
           autoFocus={false}
-          autoComplete="searchbar-off"
+          autoComplete="off"
         />
       </div>
     </div>
