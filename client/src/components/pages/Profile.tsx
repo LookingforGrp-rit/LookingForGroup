@@ -9,7 +9,7 @@ import "../Styles/projects.css";
 import "../Styles/settings.css";
 import "../Styles/pages.css";
 
-import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { useState, useCallback, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../../constants/routes";
 import { Header, loggedIn } from "../Header";
@@ -21,17 +21,20 @@ import { Select, SelectButton, SelectOptions } from "../Select";
 import { ThemeIcon } from "../ThemeIcon";
 import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
+import Reporter from "../Reporter";
 import profilePicture from "../../images/lfrog.png";
 import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles } from "../../api/users";
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
-import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserReport } from '@looking-for-group/shared';
+import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel } from '@looking-for-group/shared';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { useBlockContentWarnings } from "../../hooks/useBlockContentWarnings";
 import { filterContentWarnings } from "../../functions/contentWarnings";
 import { reportUser } from "../../api/users";
-import { getReportedUsers, getUserAccessLevel, deleteUserReport, warnUser, banUser } from "../../api/mod-tools";
+import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, warnUser, banUser, sendModeratorNotification } from "../../api/mod-tools";
+import { PopupContext } from "../Popup";
+import { UserReport } from "@looking-for-group/shared";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -59,8 +62,13 @@ const Profile = (userProfile: any) => {
   const [isUsersProfile, setIsUsersProfile] = useState<boolean>(false);
 
   const [displayedProfile, setDisplayedProfile] = useState<UserDetail>();
-  const [userID, setUserID] = useState<number>();
+  const [userID, setUserID] = useState<number>(0);
+
+  const [isUserMod, setIsUserMod] = useState<boolean>(false);
   const [isUserAdmin, setIsUserAdmin] = useState<boolean>(false);
+
+  const [displayedProfileAccessLevel, setDisplayedProfileAccessLevel] = useState<UserAccessLevel>('User');
+  const [previousDisplayedProfileAccessLevel, setPreviousDisplayedProfileAccessLevel] = useState<UserAccessLevel>('User');
 
   const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
   const [reportedUser, setReportedUser] = useState<UserReport>();
@@ -99,8 +107,11 @@ const Profile = (userProfile: any) => {
   const [majorsArr, setMajorsArr] = useState<string[]>([]);
 
   const reportMessage = useRef<HTMLTextAreaElement>(null);
-  const modMessage = useRef<HTMLTextAreaElement>(null);
+  const warnMessage = useRef<HTMLTextAreaElement>(null);
+  const banMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>('');
+  const [promoteResponseText, setPromoteResponseText] = useState<string>('');
+  const [demoteResponseText, setDemoteResponseText] = useState<string>('');
 
   // ---- Invite-to-project popup state (only used when viewing someone else) ----
   // Projects the current logged-in user owns; populated lazily so we don't fetch
@@ -195,7 +206,7 @@ const Profile = (userProfile: any) => {
   }, [profileID, userID])
 
   /**
-     * Checks mod permissions for the user on render (in useEffect)
+     * Checks mod permissions for the user on render (in useEffect). The CURRENT user
      */
   const getUserPermissions = async () => {
     /* Ensures the user is logged in */
@@ -205,10 +216,42 @@ const Profile = (userProfile: any) => {
       /* User must have mod permissions to access mod page */
       const accessLevel = await getUserAccessLevel(userAccount.data.userId);
       if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator') {
+        setIsUserMod(true);
+      }
+      if (accessLevel.data?.toString() == 'Administrator') {
         setIsUserAdmin(true);
       }
     }
   };
+
+  /**
+   * Checks permissions for the user of the DISPLAYED PROFILE on render (in useEffect).
+   */
+  const getProfileUserPermissions = async () => {
+    /* Ensures the user is logged in */
+    const userAccount = await getUsersById(parseInt(profileID));
+    if (userAccount.status === 200 && userAccount.data?.userId) {
+      const accessLevel = await getUserAccessLevel(userAccount.data.userId);
+      switch (accessLevel.data?.toString()) {
+        case 'User':
+          setDisplayedProfileAccessLevel('User');
+          setPreviousDisplayedProfileAccessLevel('User');
+          break;
+        case 'Moderator':
+          setDisplayedProfileAccessLevel('Moderator');
+          setPreviousDisplayedProfileAccessLevel('Moderator');
+          break;
+        case 'Administrator':
+          setDisplayedProfileAccessLevel('Administrator');
+          setPreviousDisplayedProfileAccessLevel('Administrator');
+          break;
+        default:
+          setDisplayedProfileAccessLevel('User');
+          setPreviousDisplayedProfileAccessLevel('User');
+      }
+    }
+  };
+
 
   /**
    * Checks if the user has been reported and updates the useState
@@ -309,7 +352,7 @@ const Profile = (userProfile: any) => {
 
       // Only run this if profile data exists for user
       if (data) {
-        console.log(data);
+        //console.log(data);
         setDisplayedProfile(data);
         setMajorsArr(data.majors.map((maj) => maj.label));
         await getProfileProjectData();
@@ -399,7 +442,13 @@ const Profile = (userProfile: any) => {
       }
     };
     loadInviteOptions();
+    // CURRENT user permissions
     getUserPermissions();
+
+    // THIS PROFILE's user permissions
+    getProfileUserPermissions();
+
+    // is the displayed profile a reported user
     isUserReported();
 
     return () => {
@@ -492,42 +541,124 @@ const Profile = (userProfile: any) => {
   };
 
   /**
-     * Resolves a user report
-     * @param action The action to take on the report ('dismiss', 'warn' or 'ban')
-     */
+   * Promotes a user to mod
+   */
+  const promoteToModPressed = async () => {
+    const response = await promoteToMod(userID ? userID : -1, displayedProfile ? displayedProfile.userId : -1);
+    let responseText = response.error;
+    if (responseText === null || responseText === undefined) {
+      setDisplayedProfileAccessLevel('Moderator');
+      responseText = `Success! ${displayedProfile ? displayedProfile.firstName : "This user"} is now a Moderator!`;
+    }
+    else {
+      responseText = "Uh oh! Something went wrong when promoting the user!";
+    }
+    setPromoteResponseText(responseText);
+  }
+
+  /**
+   * Demotes a mod to user
+   */
+  const demoteToUserPressed = async () => {
+    const response = await demoteToUser(userID ? userID : -1, displayedProfile ? displayedProfile.userId : -1);;
+    let responseText = response.error;
+    if (responseText === null || responseText === undefined) {
+      setDisplayedProfileAccessLevel('User');
+      responseText = `Success! ${displayedProfile ? displayedProfile.firstName : "This user"} is now a User!`;
+    }
+    else {
+      responseText = "Uh oh! Something went wrong when demoting the user!";
+    }
+    setDemoteResponseText(responseText);
+  }
+
+  /**
+   * Resolves a user report
+   * @param action action The action to take on the report ('dismiss', 'warn' or 'ban')
+   * @returns void, refreshes the page if success
+   */
   const resolveReport = async (action: 'dismiss' | 'warn' | 'ban') => {
     if (!reportedUser) return;
-    let res;
 
-    switch (action) {
-      case 'dismiss':
-        res = await deleteUserReport(reportedUser.reportId);
-        break;
-      case 'warn':
-        res = await warnUser(reportedUser.reportId, {
-          message: modMessage?.current?.value ?? '',
-          receiverId: reportedUser.reportedId,
-          subjectLine: 'Moderator Request for Edits',
-          modUserId: userID ?? 0,
-        });
-        break;
-      case 'ban':
-        res = await banUser(
-          reportedUser.reportId,
-          {
-            reason: modMessage?.current?.value ?? '',
-            userId: reportedUser.reportedId,
-          }
-        );
-        break;
-      default:
-        console.error(`Unknown action: ${action}`);
-        return;
-    }
+    if (action === 'dismiss') {
+      // dismiss user report
+      const res = await deleteUserReport(reportedUser.reportId);
 
-    if (res?.status === 200) {
-      // refresh page
-      window.location.reload();
+      // send an update to reporter
+      const notif = await sendModeratorNotification({
+        modUserId: userID,
+        receiverId: reportedUser.reporterId,
+        subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
+        message: 'Thank you for submitting your report. ' +
+          'Our moderation team has completed its review. ' +
+          'After carefully reviewing the information provided and any relevant evidence, ' +
+          'we have determined that this report does not warrant moderation action at this time. ' +
+          'As a result, the report has been dismissed.',
+        type: 'General',
+      });
+
+      if (res?.status === 200 && notif.status === 201) {
+        // refresh page
+        window.location.reload();
+      }
+    } else if (action === 'warn') {
+      // warn the reported user
+      const res = await warnUser(reportedUser.reportId, {
+        modUserId: userID ?? 0,
+        receiverId: reportedUser.reportedId,
+        subjectLine: 'Action Required: Changes Requested to Your Profile',
+        message: warnMessage.current?.value ?? '',
+        type: 'Warning',
+      });
+
+      // send an update to reporter
+      const notif = await sendModeratorNotification({
+        modUserId: userID,
+        receiverId: reportedUser.reporterId,
+        subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
+        message: 'Thank you for submitting your report. ' +
+          'Our moderation team has completed its review. ' +
+          'After reviewing the information provided, we have taken action on the reported user by requesting changes to their profile. ' +
+          'The user has been notified and asked to address the reported issue.',
+        type: 'General',
+      });
+
+      if (res.deactivate.status === 200 &&
+        res.notification.status === 201 &&
+        notif.status === 201) {
+        // refresh page
+        window.location.reload();
+      }
+    } else if (action === 'ban') {
+      // ban user
+      const res = await banUser(
+        reportedUser.reportId,
+        {
+          reason: banMessage.current?.value ?? '',
+          userId: reportedUser.reportedId,
+        }
+      );
+
+      // send an update to reporter
+      const notif = await sendModeratorNotification({
+        modUserId: userID,
+        receiverId: reportedUser.reporterId,
+        subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
+        message: 'Thank you for submitting your report. ' +
+          'Our moderation team has completed its review. ' +
+          'After reviewing the information provided, we have determined that further action was necessary. ' +
+          'The reported user has been banned from Looking For Group.',
+        type: 'General',
+      });
+
+      if (res.ban.status === 200 &&
+        res.deleteReport.status === 200 &&
+        notif.status === 201) {
+        // refresh page
+        window.location.reload();
+      }
+    } else {
+      console.error(`Unknown action: ${action}`);
     }
   };
 
@@ -563,14 +694,79 @@ const Profile = (userProfile: any) => {
               onClick={() => followUser()}
             />
           )}
-
-          {/* TODO: Implement Share, Block, and Report functionality */}
           <Dropdown>
             <DropdownButton>
               <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'} />
             </DropdownButton>
             <DropdownContent>
               <div id="profile-menu-dropdown">
+                {isUserAdmin && displayedProfileAccessLevel !== 'Administrator' ?
+                  <Popup>
+                    <PopupButton className="project-info-dropdown-option">
+                      <ThemeIcon id={'settings'} width={27} height={27} className={'mono-stroke'} ariaLabel={"Manage User Permissions"} />
+                      Manage Permissions
+                    </PopupButton>
+                    {displayedProfileAccessLevel === 'User' && previousDisplayedProfileAccessLevel === 'User' ?
+                      <PopupContent>
+                        <div className="small-popup" id="manage-perms-popup">
+                          <h3>Manage {displayedProfile?.firstName ?? "User"}'s Permissions</h3>
+                          <p>Promote {displayedProfile?.firstName ?? "User"} to Moderator?</p>
+                          <div className="confirm-deny-btns">
+                            <PopupButton
+                              buttonId="team-delete-member-cancel-button"
+                              className="button-reset"
+                            >
+                              Cancel
+                            </PopupButton>
+                            <Popup>
+                              <PopupButton
+                                className="confirm-btn"
+                                callback={promoteToModPressed}>
+                                Promote
+                              </PopupButton>
+                            </Popup>
+                          </div>
+                        </div>
+                      </PopupContent> :
+                      (previousDisplayedProfileAccessLevel == 'User' ? <PopupContent callback={() => { setPreviousDisplayedProfileAccessLevel('Moderator'); }}>
+                        <div className="small-popup">
+                          <p>{promoteResponseText}</p>
+                          <PopupButton buttonId="continue-button" callback={() => { setPreviousDisplayedProfileAccessLevel('Moderator'); }}>
+                            Continue
+                          </PopupButton>
+                        </div>
+                      </PopupContent> : "")}
+                    {displayedProfileAccessLevel === 'Moderator' && previousDisplayedProfileAccessLevel === 'Moderator' ?
+                      <PopupContent>
+                        <div className="small-popup" id="manage-perms-popup">
+                          <h3>Manage {displayedProfile?.firstName ?? "User"}'s Permissions</h3>
+                          <p>Demote {displayedProfile?.firstName ?? "Moderator"} to User?</p>
+                          <div className="confirm-deny-btns">
+                            <PopupButton
+                              buttonId="team-delete-member-cancel-button"
+                              className="button-reset"
+                            >
+                              Cancel
+                            </PopupButton>
+                            <Popup>
+                              <PopupButton
+                                className="delete-button"
+                                callback={demoteToUserPressed}>
+                                Demote
+                              </PopupButton>
+                            </Popup>
+                          </div>
+                        </div>
+                      </PopupContent> :
+                      (previousDisplayedProfileAccessLevel == 'Moderator' ? <PopupContent callback={() => { setPreviousDisplayedProfileAccessLevel('User'); }}>
+                        <div className="small-popup">
+                          <p>{demoteResponseText}</p>
+                          <PopupButton buttonId="continue-button" callback={() => { setPreviousDisplayedProfileAccessLevel('User'); }}>
+                            Continue
+                          </PopupButton>
+                        </div>
+                      </PopupContent> : "")}
+                  </Popup> : ""}
                 <ShareButton />
                 <button
                   className="profile-menu-dropdown-button"
@@ -607,14 +803,13 @@ const Profile = (userProfile: any) => {
                         <Popup>
                           <PopupButton
                             className="delete-button"
-                            callback={reportUserPressed}
-                            closeParent={() => true}> {/* doesnt work*/}
+                            callback={reportUserPressed}>
                             Report
                           </PopupButton>
                           <PopupContent>
                             <div className="small-popup">
                               <p>{reportResponseText}</p>
-                              <PopupButton buttonId="continue-button" closeParent={() => true}>
+                              <PopupButton buttonId="continue-button">
                                 Continue
                               </PopupButton>
                             </div>
@@ -729,10 +924,11 @@ const Profile = (userProfile: any) => {
           </div>
 
           {/* Mod options when this is a reported user */}
-          {(!isUsersProfile) && isUserAdmin && reportedUser ? <div id="mod-user-options">
+          {(!isUsersProfile) && isUserMod && reportedUser ? <div id="mod-user-options">
             <h4>Request Edits or Ban?</h4>
             {!reportedUser.active ? <p>This report is inactive at the moment because a moderator has warned the user and/or requested changes already.</p> : ""}
             <p>You can dismiss this report, request edits, or ban them.</p>
+            <Reporter reporterId={reportedUser.reporterId} modUserId={userID} />
             <p>Reason for this report: {reportedUser.reason}</p>
             <div id="mod-options-btns">
               <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')} >Dismiss Report</button>
@@ -742,7 +938,7 @@ const Profile = (userProfile: any) => {
                   <div className="small-popup" id="report-popup">
                     <h3>Warn User</h3>
                     <p>What should the user change about their profile?</p>
-                    <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={modMessage}></textarea>
+                    <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={warnMessage}></textarea>
                     <div className="confirm-deny-btns">
                       <button
                         id="cancel-button"
@@ -761,7 +957,7 @@ const Profile = (userProfile: any) => {
                   <div className="small-popup" id="report-popup">
                     <h3>Ban {displayedProfile?.firstName} {displayedProfile?.lastName} from LookingForGroup</h3>
                     <p>Why are you banning this user?</p>
-                    <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={modMessage}></textarea>
+                    <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={banMessage}></textarea>
                     <div className="confirm-deny-btns">
                       <button
                         id="cancel-button"

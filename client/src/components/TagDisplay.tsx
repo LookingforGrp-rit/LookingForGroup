@@ -1,5 +1,6 @@
 import { Fragment, useMemo } from "react";
 import { Tag as TagElement } from "./Tag";
+import { Medium, Skill, Tag } from "@looking-for-group/shared";
 
 /** holds all the nesessary information for the tag or skill with shorter names 
  * @param label - the name of the tag/skill, and to be displayed
@@ -12,6 +13,96 @@ type TagOrSkill = {
   id: number;
   type: string;
   category: string;
+};
+
+export const tagToTagOrSkill = (tags: Tag[]): TagOrSkill[] => {
+  return tags.map(
+    (tag) => ({
+      id: tag.tagId,
+      label: tag.label,
+      type: tag.type,
+      category:
+        tag.type === "Project Type" ? "Project Type" :
+        tag.type === "Positions" ? "Positions" :
+        tag.type === "Game Engine" ? "Game Engines" :
+        tag.type === "Context" ? "Context" :
+        tag.category,
+    })
+  );
+}
+
+export const skillToTagOrSkill = (skills: Skill[]): TagOrSkill[] => {
+  return skills.map(
+    skill => ({
+      ...skill,
+      id: skill.skillId,
+      category: 
+        skill.type === "Major" ? "Major" : 
+        skill.type === "Role" ? "Role" : 
+        skill.category === "Discipline" ? 
+        `${skill.type} ${skill.category}` :
+        skill.category,
+    })
+  );
+}
+
+export const mediumToTagOrSkill = (mediums: Medium[]): TagOrSkill[] => {
+  return mediums.map(
+    medium => ({
+      label: medium.label,
+      id: medium.mediumId,
+      category: "Project Type",
+      type: "Project Type",
+    })
+  );
+}
+
+const CatOrder: Record<string, number> = {
+  //gaps made so you can easily add in between 
+  "Project Type":           999,
+  "Story":                  760,
+  "Game":                   740,
+  "Music":                  720,
+  "Film/Video":             700,
+  "Visual":                 680,
+  "Usage":                  660,
+  "Field":                  640,
+  "Context":                620,
+  "Maturity Rating":        600,
+  "Triggers":               580,
+  "Game Engines":           560,
+  "Developer Discipline":   540,
+  "Software":               520,
+  "Coding Language":        500,
+  "Framework":              480,
+  "API":                    460,
+  "Operating System":       440,
+  "Game Engine":            420,
+  "Designer Discipline":    400,
+  "Video Software":         380,
+  "Design Software":        360,
+  "Art and Animation":      340,
+  "Photo Editing":          320,
+  "Audio Discipline":       300,
+  "DAW/Audio Editor":       280,
+  "Middleware":             260,
+  "Notation":               240,
+  "Team":                   220,
+  "Personal":               200,
+  "Soft Discipline":        180,
+  "Engineer Discipline":    160,
+  "Engineering Software":   140,
+  "Hardware":               120,
+  'Godot':                  100,
+  'MonoGame':                80,
+  'Twine':                   60,
+  'Unity':                   40,
+  'Unreal Engine':           20,
+  "Discipline":              10,
+  "Other":                    6,
+  "Major":                    4,
+  "Positions":                2,
+  "Role":                     0,
 };
 
 /** 
@@ -42,6 +133,21 @@ const TagDisplay: React.FC<TagDisplayProps> = ({ selected, toggleTag, tabs, tabI
     return all;
   }, [tabId, all, tabs]);
 
+  const orderTags = (tags: TagOrSkill[][]): TagOrSkill[] => {
+    let newTags: TagOrSkill[] = [];
+    const SortedTags: TagOrSkill[][] = tags.toSorted((a, b) => {
+        const catA = CatOrder[a[0].category];
+        const catB = CatOrder[b[0].category];
+
+        return catB - catA;
+    });
+    for (const array of SortedTags) {
+      newTags = [...newTags, ...array];
+    }
+
+    return newTags;
+  };
+
   // Creates button elements for all available tags in the current category tab, with appropriate styling for selected/unselected states.
   const renderTags = useMemo(() => {
     //The final list of tags displayed to the screen.
@@ -66,9 +172,8 @@ const TagDisplay: React.FC<TagDisplayProps> = ({ selected, toggleTag, tabs, tabI
         filteredCategories.push(data.filter((allTag) => allTag.category === tag.category));
       }
     }
-    for (let tags of filteredCategories) {
-      tagsToDisplay = [...tagsToDisplay, ...tags]; 
-    }
+
+    tagsToDisplay = orderTags(filteredCategories);
 
     //only display category dividers if there are more than one categories
     const multipleCategories = foundCategories.length > 1;
@@ -92,7 +197,10 @@ const TagDisplay: React.FC<TagDisplayProps> = ({ selected, toggleTag, tabs, tabI
           {multipleCategories
             ? index === 0 || (array[index - 1]?.category != array[index]?.category) ? 
               <div id="tag-category-header">
-                <p>{array[index].category == null ? "Medium" : array[index].category}</p>
+                <p>
+                  {array[index].category.includes("Discipline") && searchData.length === 0 ? 
+                    "Discipline" : array[index].category}
+                </p>
                 <hr></hr>
               </div>
             : <></>

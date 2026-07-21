@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getReportedUsers } from "../../api/mod-tools";
 import { PanelBox } from "../PanelBox";
-import { UserDetail, UserPreview } from "@looking-for-group/shared";
+import { UserPreview } from "@looking-for-group/shared";
 import { getUsersById } from "../../api/users";
 
 type ReportedUsersProps = {

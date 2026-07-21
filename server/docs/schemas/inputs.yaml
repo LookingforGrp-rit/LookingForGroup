@@ -354,3 +354,42 @@ components:
       example:
         userId: 1
         reason: 'Several inappropriate behaviors in the community.'
+
+    ModeratorNotificationInput:
+      type: object
+      properties:
+        modUserId:
+          type: number
+        receiverId:
+          type: number
+        subjectLine:
+          type: string
+        message:
+          type: string
+        type:
+          $ref: 'enums.yaml#/components/schemas/ModNotficationType'
+      example:
+        modUserId: 1
+        receiverId: 2
+        subjectLine: 'Action Required: Changes Requested to Your Profile'
+        message: 'Inappropriate profile image, please change it.'
+        type: Warning
+
+    AddBugReportInput:
+      type: object
+      properties:
+        reportText:
+          type: string
+      example:
+        reportText: Can't view someone's profile, it's blank.
+
+    UpdateBugReportInput:
+      type: object
+      properties:
+        isResolved:
+          type: boolean
+        modNotes:
+          type: string
+      example:
+        isResolved: true
+        modNotes: Fixed get profile detail request bug.

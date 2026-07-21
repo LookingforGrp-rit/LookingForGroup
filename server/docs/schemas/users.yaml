@@ -271,3 +271,30 @@ components:
         reportedId: 3
         reason: Inappropriate behavior in the community.
         active: true
+
+    BugReport:
+      type: object
+      properties:
+        apiUrl:
+          type: string
+        reportId:
+          type: integer
+        userId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        reportText:
+          type: string
+        isResolved:
+          type: boolean
+        modNotes:
+          type: string
+      example:
+        apiUrl: /api/mod/user-report/1
+        reportId: 1
+        userId: 2
+        createdAt: 2038-01-19 03:14:07
+        reportText: server exploded :(
+        isResolved: false
+        modNotes: This is currently partially fixed

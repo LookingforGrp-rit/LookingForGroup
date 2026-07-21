@@ -165,13 +165,12 @@ export const editUser = async (
  */
 export const reportUser = async (
   userId: number,
-  report: string,
+  report: string
 ): Promise<ApiResponse> => {
-  const apiURL = `/me/users/report/${userId}/${report}`;
-  const response = await POST(apiURL, {});
+  const apiURL = `/me/users/report/${userId}`;
+  const response = await POST(apiURL, {reason: report});
   
-  //if (response.error) console.log(`Error in reportUser: ${response.error}`);
-  //else console.log(response);
+  if (response.error) console.log(`Error in reportUser: ${response.error}`);
   return response;
 };
 
