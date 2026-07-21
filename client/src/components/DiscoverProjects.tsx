@@ -7,7 +7,7 @@ import { Tag, StringDictionary, Medium, Role, TagType, } from '@looking-for-grou
 import { Select, SelectButton, SelectOptions } from './Select';
 import MoreFiltersButton from './MoreFiltersButton';
 import { Tag as TagElement } from './Tag';
-import TagDisplay from './TagDisplay';
+import TagDisplay, { tagToTagOrSkill } from './TagDisplay';
 
 
 interface DiscoverProjectsProps {
@@ -355,6 +355,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                     id="filters-left-scroll"
                     className={`filters-scroller ${!showLeftArrow ? 'hide' : ''}`}
                     onClick={() => scrollTags('left')}
+                    value={'left'}
                 >
                     <i className="fa fa-caret-left"></i>
                 </button>
@@ -390,6 +391,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                     id="filters-right-scroll"
                     className={`filters-scroller ${!showRightArrow ? 'hide' : ''}`}
                     onClick={() => scrollTags('right')}
+                    value={'right'}
                 >
                     <i className="fa fa-caret-right"></i>
                 </button>
@@ -504,53 +506,13 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     <hr />
                                     <div id="filter-tags">
                                         <TagDisplay
-                                            selected={[activeTagFilters.map(
-                                                (tag) => ({
-                                                    id: tag.tagId,
-                                                    label: tag.label,
-                                                    type: tag.type,
-                                                    category:
-                                                        tag.type === "Project Type" ? "Medium" :
-                                                            tag.type === "Positions" ? "Position" :
-                                                                tag.category,
-                                                })
-                                            ), activeExclusionFilters.map(
-                                                (tag) => ({
-                                                    id: tag.tagId,
-                                                    label: tag.label,
-                                                    type: tag.type,
-                                                    category:
-                                                        tag.type === "Project Type" ? "Medium" :
-                                                            tag.type === "Positions" ? "Position" :
-                                                                tag.category,
-                                                })
-                                            )]}
+                                            selected={[tagToTagOrSkill(activeTagFilters), tagToTagOrSkill(activeExclusionFilters)]}
                                             toggleTag={toggleTag}
                                             tabs={filterPopupTabs.map(tab => tab.categoryName)}
                                             tabId={activeTabId}
-                                            all={allTags.map(
-                                                (tag) => ({
-                                                    id: tag.tagId,
-                                                    label: tag.label,
-                                                    type: tag.type,
-                                                    category:
-                                                        tag.type === "Project Type" ? "Medium" :
-                                                            tag.type === "Positions" ? "Position" :
-                                                                tag.category,
-                                                })
-                                            )}
+                                            all={tagToTagOrSkill(allTags)}
                                             searchValue={searchValue}
-                                            searchData={searchedTags?.map(
-                                                (tag) => ({
-                                                    id: tag.tagId,
-                                                    label: tag.label,
-                                                    type: tag.type,
-                                                    category:
-                                                        tag.type === "Project Type" ? "Medium" :
-                                                            tag.type === "Positions" ? "Position" :
-                                                                tag.category,
-                                                })
-                                            )}
+                                            searchData={tagToTagOrSkill(searchedTags)}
                                         />
                                     </div>
                                 </div>

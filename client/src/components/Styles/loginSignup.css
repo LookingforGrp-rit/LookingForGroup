@@ -396,6 +396,10 @@ Signup process modal style rules
 
   #profile-editor-tags {
     height: fit-content;
+
+    #project-editor-tag-search-tabs {
+      height: 100%;
+    }
   }
 }
 
@@ -408,11 +412,10 @@ Signup process modal style rules
   #project-editor-selected-tags-container {
 
     scrollbar-width: thin;
-    scrollbar-color: var(--header-color) rgba(0, 0, 0, 0);
   }
 
   #project-editor-tag-wrapper {
-    min-height: fit-content;
+    min-height: 36px;
   }
 }
 
@@ -1177,6 +1180,14 @@ Signup process modal style rules
     display: flex;
     flex-direction: column;
     /* prevents x scrollbar */
+
+    #project-editor-tag-search {
+        height: 80%;
+        overflow-y: scroll;
+        max-width: auto;
+        gap: 10px;
+        padding: 15px;
+    }
   }
 
   #getStarted-select {
@@ -1199,6 +1210,11 @@ Signup process modal style rules
 
   .ChooseSkills #project-editor-selected-tags {
     width: calc(100% - 62px - 1.818px);
+    overflow-y: scroll;
+    
+    #project-editor-selected-tags-container {
+      height: 135px;
+    }
   }
 
   /* === TOS === */
@@ -1236,27 +1252,21 @@ Signup process modal style rules
   }
 }
 
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 800px) {
 
   .ChooseSkills {
     #profile-editor-tags {
-      display: flex;
-      /* flex-wrap: wrap; */
+      /* display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 20px; */
 
       #project-editor-selected-tags {
-        /* width: 93%; */
-        height: 50%;
         overflow-y: scroll;
-        order: 2;
         width: auto;
         padding: 15px;
-
       }
 
       #project-editor-tag-search {
-        /* width: 93%; */
         height: 80%;
         overflow-y: scroll;
         max-width: auto;

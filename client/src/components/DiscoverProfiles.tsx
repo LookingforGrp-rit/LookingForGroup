@@ -6,7 +6,7 @@ import { getMajors, getJobTitles, getSkills } from '../api/users';
 import { StringDictionary, Role, Major, Skill, SkillType } from '@looking-for-group/shared';
 import MoreFiltersButton from './MoreFiltersButton';
 import { Tag } from './Tag';
-import TagDisplay from './TagDisplay';
+import TagDisplay, { skillToTagOrSkill } from './TagDisplay';
 import { Select, SelectButton, SelectOptions } from './Select';
 
 interface DiscoverFiltersProps {
@@ -275,6 +275,8 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
             id="filters-left-scroll"
             className={`filters-scroller ${!showLeftArrow ? 'hide' : ''}`}
             onClick={() => scrollSkills('left')}
+            value={'left'}
+            aria-label='scroll left'
           >
             <i className="fa fa-caret-left"></i>
           </button>
@@ -312,6 +314,8 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
             id="filters-right-scroll"
             className={`filters-scroller ${!showRightArrow ? 'hide' : ''}`}
             onClick={() => scrollSkills('right')}
+            value={'right'}
+            aria-label='scroll right'
           >
             <i className="fa fa-caret-right"></i>
           </button>
@@ -426,19 +430,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                     <hr />
                     <div id="filter-tags">
                       <TagDisplay
-                        selected={[activeSkillFilters.map(
-                          skill => ({
-                            ...skill,
-                            category: skill.type === "Major" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
-                            id: skill.skillId
-                          })
-                        ), activeExclusionFilters.map(
-                          skill => ({
-                            ...skill,
-                            category: skill.type === "Major" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
-                            id: skill.skillId
-                          })
-                        )]}
+                        selected={[skillToTagOrSkill(activeSkillFilters), skillToTagOrSkill(activeExclusionFilters)]}
                         toggleTag={toggleSkill}
                         tabs={filterPopupTabs.map(tab =>
                           tab.categoryName === "Developer Skill" ? "Developer" :
@@ -450,21 +442,9 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                                       tab.categoryName
                         )}
                         tabId={activeTabId}
-                        all={allSkills.map(
-                          skill => ({
-                            ...skill,
-                            category: skill.type === "Major" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
-                            id: skill.skillId
-                          })
-                        )}
+                        all={skillToTagOrSkill(allSkills)}
                         searchValue={searchValue}
-                        searchData={searchedSkills.map(
-                          skill => ({
-                            ...skill,
-                            category: skill.type === "Major" ? "Major" : skill.type === "Role" ? "Role" : skill.category,
-                            id: skill.skillId
-                          })
-                        )}
+                        searchData={skillToTagOrSkill(searchedSkills)}
                       />
                     </div>
                   </div>

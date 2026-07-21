@@ -91,7 +91,7 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
     >
       <img
         src={usePreloadedImage(`${profileData.profileImage}`, profilePicture)}
-        alt='profile image'
+        alt={`${profileData.firstName} ${profileData.lastName}'s avatar`}
       />
 
       <div className={'profile-panel-extras'} ref={profilePanel} hidden={true}>
