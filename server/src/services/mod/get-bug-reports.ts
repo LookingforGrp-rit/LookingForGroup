@@ -1,6 +1,8 @@
 import type { BugReport } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
+import { BugReportSelector } from '#services/selectors/mod/bug-report.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformBugReport } from '#services/transformers/mod/bug-report.ts';
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
@@ -13,16 +15,12 @@ const getBugReportsService = async (): Promise<BugReport[] | GetServiceError> =>
         //Ascending order of IDs means oldest first
         reportId: 'asc',
       },
+      select: BugReportSelector,
     });
 
     if (reports.length === 0) return 'NOT_FOUND';
 
-    const transformedReports: BugReport[] = reports.map((r) => {
-      return {
-        apiUrl: `api/mod/bug-report/${r.reportId.toString()}`,
-        ...r,
-      };
-    });
+    const transformedReports: BugReport[] = reports.map((r) => transformBugReport(r));
 
     return transformedReports;
   } catch (e) {
