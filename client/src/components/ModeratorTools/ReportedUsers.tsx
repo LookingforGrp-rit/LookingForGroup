@@ -23,12 +23,16 @@ const ReportedUsers = ({currentUserId, currentTab}: ReportedUsersProps) => {
         const displayReportedUsers = async () => {
           const reportedUsers = ((await getReportedUsers()).data);
           const tempPendingUserArray = [];
+          const tempIds : Set<number> = new Set<number>();
           
           if (reportedUsers !== undefined && reportedUsers!= null) {
             for (const user of reportedUsers) {
               const userId = user.reportedId ? user.reportedId : -1;
               const userPreview = await getUsersById(userId);
-              tempPendingUserArray.push(userPreview.data as UserPreview);
+              if(!tempIds.has(userId) && user.active){
+                tempIds.add(userId);
+                tempPendingUserArray.push(userPreview.data as UserPreview);
+              }
           }
           setReportedUsers(tempPendingUserArray);
         }};

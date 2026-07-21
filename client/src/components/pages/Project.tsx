@@ -25,7 +25,7 @@ import { ProjectContext, ProjectStatus as ProjectStatusEnums, ProjectApprovalSta
 //import { router } from "../../../../server/src/api/routes/me.ts"
 import { reportProject } from "../../api/projects";
 import { getCurrentAccount } from "../../api/users";
-import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport, takeDownProject, sendModeratorNotification } from "../../api/mod-tools";
+import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport, takeDownProject, sendModeratorNotification, unapproveProject } from "../../api/mod-tools";
 
 //Main component for the project page
 /**
@@ -51,7 +51,7 @@ const Project = () => {
   const [displayedProject, setDisplayedProject] =
     useState<ProjectWithFollowers>();
 
-  const [reportedProject, setReportedProject] = useState<ProjectReport>();
+  const [reportList, setReportList] = useState<ProjectReport[]>([]);
 
   type ApprovalStatusKey = keyof typeof ApprovalStatus;
   const [approvalStatus, setApprovalStatus] = useState<ApprovalStatusKey>('not-approved');
@@ -123,15 +123,17 @@ const Project = () => {
        * Checks if the project has been reported and updates the useState
        */
       const isProjectReported = async () => {
+        const tempReportList : ProjectReport[] = [];
         const currentProject = projectResp.data as ProjectPreview;
         const reportedProjects = await getReportedProjects();
         if (reportedProjects.data !== null && reportedProjects.data !== undefined) {
           for (const report of reportedProjects.data) {
             if (report.projectId === currentProject.projectId) {
-              setReportedProject(report);
+              tempReportList.push(report);
             }
           }
         }
+        setReportList(tempReportList);
       };
 
       isProjectReported();
@@ -268,16 +270,16 @@ const Project = () => {
    * @param action The action to take on the report ('dismiss' or 'unapprove project')
    */
   const resolveReport = async (action: 'dismiss' | 'unapprove project') => {
-    if (!reportedProject) return;
+    if (!reportList) return;
 
+    //delete all the reports
     if (action === 'dismiss') {
-      // dismiss the report
-      const res = await deleteProjectReport(reportedProject.reportId);
+      const res = await Promise.all(reportList.map(r => deleteProjectReport(r.reportId)));
 
       // send an update to reporter
-      const notif = await sendModeratorNotification({
+      const notif = await Promise.all(reportList.map(r => sendModeratorNotification({
         modUserId: userID,
-        receiverId: reportedProject.userId,
+        receiverId: r.userId,
         subjectLine: `Update on Your Report on ${displayedProject?.title}`,
         message: 'Thank you for submitting your report. ' +
           'Our moderation team has completed its review. ' +
@@ -285,37 +287,35 @@ const Project = () => {
           'we have determined that this report does not warrant moderation action at this time. ' +
           'As a result, the report has been dismissed.',
         type: 'General',
-      });
+      })));
 
-      if (res?.status === 200 && notif.status === 201) {
-        // refresh page
+      if (res?.every(r => r.status === 200) && notif.every(r => r.status === 201)) {
         window.location.reload();
       }
     } else if (action === 'unapprove project') {
-      // take down the reported project
-      const res = await takeDownProject(
-        reportedProject.reportId,
-        reportedProject.projectId,
+      //unnaprove the project, then delete the reports
+      const unapproveRes = await unapproveProject(
+        projectID,
         {
           reason: takeDownMessage.current?.value ?? ''
-        } as UnapproveProjectInput
-      );
+        } as UnapproveProjectInput)
 
-      // send an update to reporter
-      const notif = await sendModeratorNotification({
+      const deleteRes = await Promise.all(reportList.map(r => deleteProjectReport(r.reportId)));
+
+      const notif = await Promise.all(reportList.map(r => sendModeratorNotification({
         modUserId: userID,
-        receiverId: reportedProject.userId,
+        receiverId: r.userId,
         subjectLine: `Update on Your Report on ${displayedProject?.title}`,
         message: 'Thank you for submitting your report. ' +
           'After reviewing the reported project, ' +
           'our moderation team determined that it violated our community guidelines ' +
           'and the project has been removed from public view.',
         type: 'General',
-      });
+      })));
 
-      if (res.unapprove.status === 200 &&
-        res.deleteReport.status === 200 &&
-        notif.status === 201) {
+      if (unapproveRes.status === 200 
+        && deleteRes?.every(r => r.status === 200)
+        && notif.every(r => r.status === 201)) {
         // refresh page
         window.location.reload();
       }
@@ -1004,12 +1004,11 @@ const Project = () => {
               : ""}
 
             {/* Mod options to accept, decline, or request changes to a reported project // are we doing edits on reported projects?  */}
-            {isUserAdmin && reportedProject ? (
+            {isUserAdmin && reportList.length !== 0 ? (
               <div className="mod-project-options">
                 <h4>Unapprove?</h4>
-                <p>You can dismiss this report or request edits on this project.</p>
-                <Reporter reporterId={reportedProject.userId} modUserId={userID} />
-                <p>Reason for this report: {reportedProject.reason}</p>
+                <p>You can ignore this report or request edits on this project.</p>
+                <p style={{whiteSpace: "pre-wrap"}}>Reasons for this report:<br /> - {reportList.map(r => r.reason).join('\n - ')}</p>
                 <div id="mod-options-btns">
                   <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')}>Dismiss Report</button>
                   <Popup>
