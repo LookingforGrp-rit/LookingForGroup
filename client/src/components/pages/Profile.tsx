@@ -29,7 +29,7 @@ import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, 
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
-import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, warnUser, banUser } from "../../api/mod-tools";
+import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, warnUser, banUser, sendModeratorNotification, deactivateUserReport } from "../../api/mod-tools";
 import { PopupContext } from "../Popup";
 import { UserReport } from "@looking-for-group/shared";
 
@@ -68,7 +68,8 @@ const Profile = (userProfile: any) => {
   const [previousDisplayedProfileAccessLevel, setPreviousDisplayedProfileAccessLevel] = useState<UserAccessLevel>('User');
 
   const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
-  const [reportedUser, setReportedUser] = useState<UserReport>();
+  const [activeReportList, setActiveReportList] = useState<UserReport[]>([]);
+  const [inactiveReportList, setInactiveReportList] = useState<UserReport[]>([]);
 
   // stores all followed users to display on personal user profile
   const [followedProfilesList, setFollowedProfilesList] = useState<UserPreview[]>([]);
@@ -239,15 +240,19 @@ const Profile = (userProfile: any) => {
    * Checks if the user has been reported and updates the useState
    */
   const isUserReported = async () => {
+    const tempActiveList: UserReport[] = [];
+    const tempInactiveList: UserReport[] = [];
     const currentUser = parseInt(profileID);
     const reportedUsers = (await getReportedUsers()).data;
     if (reportedUsers !== null && reportedUsers !== undefined) {
       for (const report of reportedUsers) {
         if (report.reportedId === currentUser) {
-          setReportedUser(report);
+          report.active ? tempActiveList.push(report) : tempInactiveList.push(report);
         }
       }
     }
+    setActiveReportList(tempActiveList);
+    setInactiveReportList(tempInactiveList);
   };
 
   /**
@@ -557,38 +562,48 @@ const Profile = (userProfile: any) => {
      * @param action The action to take on the report ('dismiss', 'warn' or 'ban')
      */
   const resolveReport = async (action: 'dismiss' | 'warn' | 'ban') => {
-    if (!reportedUser) return;
+    if (activeReportList.length === 0) return;
 
     if (action === 'dismiss') {
-      const res = await deleteUserReport(reportedUser.reportId);
+      const res = await Promise.all(
+        activeReportList.map(r => deleteUserReport(r.reportId)) 
+      );
 
-      if (res?.status === 200) {
+      if (res?.every(r => r.status === 200)) {
         // refresh page
         window.location.reload();
       }
     } else if (action === 'warn') {
-      const res = await warnUser(reportedUser.reportId, {
-        message: modMessage?.current?.value ?? '',
-        receiverId: reportedUser.reportedId,
+      debugger;
+      const warnRes = await sendModeratorNotification({
+        message: modMessage.current?.value ?? '',
+        receiverId: parseInt(profileID) ?? 0,
         subjectLine: 'Action Required: Changes Requested to Your Profile',
         modUserId: userID ?? 0,
         type: 'Warning',
       });
 
-      if (res.deactivate.status === 200 && res.notification.status === 201) {
+      const deactivateRes = await Promise.all(activeReportList.map(
+        r => deactivateUserReport(r.reportId)
+      ));
+
+      if (warnRes.status === 201 && deactivateRes?.every(r => r.status === 200)) {
         // refresh page
         window.location.reload();
       }
     } else if (action === 'ban') {
-      const res = await banUser(
-        reportedUser.reportId,
+      const banRes = await banUser(
         {
           reason: modMessage?.current?.value ?? '',
-          userId: reportedUser.reportedId,
+          userId: parseInt(profileID) ?? 0,
         }
       );
 
-      if (res.ban.status === 200 && res.deleteReport.status === 200) {
+      const deactivateRes = await Promise.all(activeReportList.map(
+        r => deactivateUserReport(r.reportId)
+      ));
+
+      if (banRes.status === 200 && deactivateRes?.every(r => r.status === 200)) {
         // refresh page
         window.location.reload();
       }
@@ -859,11 +874,11 @@ const Profile = (userProfile: any) => {
           </div>
 
           {/* Mod options when this is a reported user */}
-          {(!isUsersProfile) && isUserMod && reportedUser ? <div id="mod-user-options">
+          {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) ? <div id="mod-user-options">
             <h4>Request Edits or Ban?</h4>
-            {!reportedUser.active ? <p>This report is inactive at the moment because a moderator has warned the user and/or requested changes already.</p> : ""}
             <p>You can dismiss this report, request edits, or ban them.</p>
-            <p>Reason for this report: {reportedUser.reason}</p>
+            <p style={{whiteSpace: "pre-wrap"}}>Reasons for this report:<br /> - {activeReportList.map(r => r.reason).join('\n - ')}</p>
+            <p style={{whiteSpace: "pre-wrap"}}>Previous Reports:<br /> - {inactiveReportList.map(r => r.reason).join('\n - ')}</p>
             <div id="mod-options-btns">
               <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')} >Dismiss Report</button>
               <Popup>

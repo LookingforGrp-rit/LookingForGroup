@@ -279,7 +279,7 @@ const Project = () => {
         window.location.reload();
       }
     } else if (action === 'unapprove project') {
-      //unnaprove all the projects, then delete the reports
+      //unnaprove the project, then delete the reports
       const unapproveRes = await unapproveProject(
         projectID,
         {
@@ -982,7 +982,7 @@ const Project = () => {
               <div className="mod-project-options">
                 <h4>Unapprove?</h4>
                 <p>You can ignore this report or request edits on this project.</p>
-                <p style={{whiteSpace: "pre-wrap"}}>Reason for this report:<br /> - {reportList.map(r => r.reason).join('\n - ')}</p>
+                <p style={{whiteSpace: "pre-wrap"}}>Reasons for this report:<br /> - {reportList.map(r => r.reason).join('\n - ')}</p>
                 <div id="mod-options-btns">
                   <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')}>Dismiss Report</button>
                   <Popup>
