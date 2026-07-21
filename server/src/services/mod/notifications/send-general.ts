@@ -1,15 +1,15 @@
 import type {
   AuthenticatedRequest,
-  EmailInput,
-  UserEmail,
+  // EmailInput,
+  // UserEmail,
   ModeratorNotificationInput,
 } from '@looking-for-group/shared';
-import { createElement } from 'react';
-import { pretty, render, toPlainText } from 'react-email';
+// import { createElement } from 'react';
+// import { pretty, render, toPlainText } from 'react-email';
 import prisma from '#config/prisma.ts';
-import GeneralEmail from '#email-templates/general-email.ts';
+// import GeneralEmail from '#email-templates/general-email.ts';
 import { ModGeneralNotificationBuilder } from '#notification-templates/mod-general-notification.ts';
-import { sendEmail } from '#services/mailer.ts';
+// import { sendEmail } from '#services/mailer.ts';
 import sendNotificationService from '#services/notifications/send-notification.ts';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
@@ -36,35 +36,37 @@ const sendGeneralService = async (
     const result = await sendNotificationService(new ModGeneralNotificationBuilder(), req);
     if (result !== 'CREATED') return result;
 
+    // !! Commented out for now, but if we decide to bring back the email
+    // !! just uncomment the email code below and the imports from above
     //Send email to user
-    const html = await pretty(
-      await render(
-        createElement(GeneralEmail, {
-          receiverName: {
-            firstName: user.firstName,
-            lastName: user.lastName,
-          },
-          message: data.message,
-        }),
-      ),
-    );
+    // const html = await pretty(
+    //   await render(
+    //     createElement(GeneralEmail, {
+    //       receiverName: {
+    //         firstName: user.firstName,
+    //         lastName: user.lastName,
+    //       },
+    //       message: data.message,
+    //     }),
+    //   ),
+    // );
 
-    const text = toPlainText(html);
+    // const text = toPlainText(html);
 
-    const email: EmailInput = {
-      sender: {
-        ritEmail: 'lfg-team@lookingforgrp.com',
-        firstName: 'Looking For Group',
-        lastName: '',
-      } as UserEmail,
-      receiver: user,
-      subject: data.subjectLine,
-      textBody: text,
-      HTMLBody: html,
-    };
+    // const email: EmailInput = {
+    //   sender: {
+    //     ritEmail: 'lfg-team@lookingforgrp.com',
+    //     firstName: 'Looking For Group',
+    //     lastName: '',
+    //   } as UserEmail,
+    //   receiver: user,
+    //   subject: data.subjectLine,
+    //   textBody: text,
+    //   HTMLBody: html,
+    // };
 
-    const emailResult = await sendEmail(email);
-    if (emailResult === 'INTERNAL_ERROR') return emailResult;
+    // const emailResult = await sendEmail(email);
+    // if (emailResult === 'INTERNAL_ERROR') return emailResult;
 
     return 'CREATED';
   } catch (e) {
