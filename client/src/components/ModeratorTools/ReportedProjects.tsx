@@ -37,8 +37,8 @@ const ReportedProjects = ({ currentUserId, currentTab, displayMode }: ReportedPr
                     }
                 }
                 setReportedProjects(tempPendingProjectArray);
-                setLoaded(true);
             }
+            setLoaded(true);
         }
 
         displayReportedProjects();
