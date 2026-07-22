@@ -32,7 +32,7 @@ const ReportedUsers = ({ currentUserId, currentTab, displayMode }: ReportedUsers
                 for (const user of reportedUsers) {
                     const userId = user.reportedId ? user.reportedId : -1;
                     const userPreview = await getUsersById(userId);
-                    if (!tempIds.has(userId) && user.active) {
+                    if (!tempIds.has(userId) && user.active && userId !== currentUserId && user.reporterId !== currentUserId) {
                         tempIds.add(userId);
                         tempPendingUserArray.push(userPreview.data as UserDetail);
                     }
