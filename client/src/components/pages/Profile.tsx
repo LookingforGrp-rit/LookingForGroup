@@ -32,7 +32,7 @@ import usePreloadedImage from "../../functions/imageLoad";
 import { useBlockContentWarnings } from "../../hooks/useBlockContentWarnings";
 import { filterContentWarnings } from "../../functions/contentWarnings";
 import { reportUser } from "../../api/users";
-import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, warnUser, banUser, sendModeratorNotification } from "../../api/mod-tools";
+import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification, deactivateUserReport } from "../../api/mod-tools";
 import { PopupContext } from "../Popup";
 import { UserReport } from "@looking-for-group/shared";
 
@@ -71,7 +71,8 @@ const Profile = (userProfile: any) => {
   const [previousDisplayedProfileAccessLevel, setPreviousDisplayedProfileAccessLevel] = useState<UserAccessLevel>('User');
 
   const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
-  const [reportedUser, setReportedUser] = useState<UserReport>();
+  const [activeReportList, setActiveReportList] = useState<UserReport[]>([]);
+  const [inactiveReportList, setInactiveReportList] = useState<UserReport[]>([]);
 
   // stores all followed users to display on personal user profile
   const [followedProfilesList, setFollowedProfilesList] = useState<UserPreview[]>([]);
@@ -257,15 +258,19 @@ const Profile = (userProfile: any) => {
    * Checks if the user has been reported and updates the useState
    */
   const isUserReported = async () => {
+    const tempActiveList: UserReport[] = [];
+    const tempInactiveList: UserReport[] = [];
     const currentUser = parseInt(profileID);
     const reportedUsers = (await getReportedUsers()).data;
     if (reportedUsers !== null && reportedUsers !== undefined) {
       for (const report of reportedUsers) {
         if (report.reportedId === currentUser) {
-          setReportedUser(report);
+          report.active ? tempActiveList.push(report) : tempInactiveList.push(report);
         }
       }
     }
+    setActiveReportList(tempActiveList);
+    setInactiveReportList(tempInactiveList);
   };
 
   /**
@@ -578,16 +583,17 @@ const Profile = (userProfile: any) => {
    * @returns void, refreshes the page if success
    */
   const resolveReport = async (action: 'dismiss' | 'warn' | 'ban') => {
-    if (!reportedUser) return;
+    if (activeReportList.length === 0) return;
 
     if (action === 'dismiss') {
-      // dismiss user report
-      const res = await deleteUserReport(reportedUser.reportId);
+      const res = await Promise.all(
+        activeReportList.map(r => deleteUserReport(r.reportId)) 
+      );
 
       // send an update to reporter
-      const notif = await sendModeratorNotification({
+      const notif = await Promise.all(activeReportList.map(r => sendModeratorNotification({
         modUserId: userID,
-        receiverId: reportedUser.reporterId,
+        receiverId: r.reporterId,
         subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
         message: 'Thank you for submitting your report. ' +
           'Our moderation team has completed its review. ' +
@@ -595,65 +601,70 @@ const Profile = (userProfile: any) => {
           'we have determined that this report does not warrant moderation action at this time. ' +
           'As a result, the report has been dismissed.',
         type: 'General',
-      });
+      })));
 
-      if (res?.status === 200 && notif.status === 201) {
-        // refresh page
+      if (res?.every(r => r.status === 200) && notif.every(r => r.status === 201)) {
         window.location.reload();
-      }
+      };
+      
     } else if (action === 'warn') {
-      // warn the reported user
-      const res = await warnUser(reportedUser.reportId, {
+      const warnRes = await sendModeratorNotification({
         modUserId: userID ?? 0,
-        receiverId: reportedUser.reportedId,
+        receiverId: parseInt(profileID) ?? 0,
         subjectLine: 'Action Required: Changes Requested to Your Profile',
         message: warnMessage.current?.value ?? '',
         type: 'Warning',
       });
 
+      const deactivateRes = await Promise.all(activeReportList.map(
+        r => deactivateUserReport(r.reportId)
+      ));
+
       // send an update to reporter
-      const notif = await sendModeratorNotification({
+      const notif = await Promise.all(activeReportList.map(r => sendModeratorNotification({
         modUserId: userID,
-        receiverId: reportedUser.reporterId,
+        receiverId: r.reporterId,
         subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
         message: 'Thank you for submitting your report. ' +
           'Our moderation team has completed its review. ' +
           'After reviewing the information provided, we have taken action on the reported user by requesting changes to their profile. ' +
           'The user has been notified and asked to address the reported issue.',
         type: 'General',
-      });
+      })));
 
-      if (res.deactivate.status === 200 &&
-        res.notification.status === 201 &&
-        notif.status === 201) {
+      if (warnRes.status === 201 
+        && deactivateRes?.every(r => r.status === 200) 
+        && notif.every(r => r.status === 201)) {
         // refresh page
         window.location.reload();
       }
     } else if (action === 'ban') {
-      // ban user
-      const res = await banUser(
-        reportedUser.reportId,
+      const banRes = await banUser(
         {
-          reason: banMessage.current?.value ?? '',
-          userId: reportedUser.reportedId,
+          reason: banMessage?.current?.value ?? '',
+          userId: parseInt(profileID) ?? 0,
         }
       );
 
+      const deactivateRes = await Promise.all(activeReportList.map(
+        r => deactivateUserReport(r.reportId)
+      ));
+
       // send an update to reporter
-      const notif = await sendModeratorNotification({
+      const notif = await Promise.all(activeReportList.map(r => sendModeratorNotification({
         modUserId: userID,
-        receiverId: reportedUser.reporterId,
+        receiverId: r.reporterId,
         subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
         message: 'Thank you for submitting your report. ' +
           'Our moderation team has completed its review. ' +
           'After reviewing the information provided, we have determined that further action was necessary. ' +
           'The reported user has been banned from Looking For Group.',
         type: 'General',
-      });
+      })));
 
-      if (res.ban.status === 200 &&
-        res.deleteReport.status === 200 &&
-        notif.status === 201) {
+      if (banRes.status === 200 &&
+        deactivateRes.every(r => r.status === 201) &&
+        notif.every(r => r.status === 201)) {
         // refresh page
         window.location.reload();
       }
@@ -924,12 +935,11 @@ const Profile = (userProfile: any) => {
           </div>
 
           {/* Mod options when this is a reported user */}
-          {(!isUsersProfile) && isUserMod && reportedUser ? <div id="mod-user-options">
+          {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) ? <div id="mod-user-options">
             <h4>Request Edits or Ban?</h4>
-            {!reportedUser.active ? <p>This report is inactive at the moment because a moderator has warned the user and/or requested changes already.</p> : ""}
             <p>You can dismiss this report, request edits, or ban them.</p>
-            <Reporter reporterId={reportedUser.reporterId} modUserId={userID} />
-            <p>Reason for this report: {reportedUser.reason}</p>
+            <p style={{whiteSpace: "pre-wrap"}}>Reasons for this report:<br /> - {activeReportList.map(r => r.reason).join('\n - ')}</p>
+            <p style={{whiteSpace: "pre-wrap"}}>Previous Reports:<br /> - {inactiveReportList.map(r => r.reason).join('\n - ')}</p>
             <div id="mod-options-btns">
               <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')} >Dismiss Report</button>
               <Popup>

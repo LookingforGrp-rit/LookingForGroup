@@ -1356,10 +1356,10 @@ body.modal-open {
   text-align: center;
 }
 
-  .filter-tab:hover {
-  color: var(--primary-color);
-  font-weight: 700;
-  transform: none;
+  .filter-tab:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
   .filter-tab.selected {
