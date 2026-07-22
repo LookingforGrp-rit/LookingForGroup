@@ -1,5 +1,5 @@
 // Import statements
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import PendingProjects from "../ModeratorTools/PendingProjects";
 import ReportedProjects from "../ModeratorTools/ReportedProjects";
@@ -8,7 +8,7 @@ import { Header } from "../Header";
 import "../../components/Styles/modPage.css";
 import "../../components/Styles/projects.css";
 import { getCurrentAccount } from "../../api/users";
-import { getUserAccessLevel } from "../../api/mod-tools";
+import { getUserAccessLevel, sendModeratorNotification } from "../../api/mod-tools";
 import * as paths from '../../constants/routes';
 import AllModerators from "../ModeratorTools/admin/AllModerators";
 
@@ -20,6 +20,7 @@ const ModeratorPage = () => {
     // Variables ==============================================================
     const [currentTab, setCurrentTab] = useState<number>(0);
     const [userId, setUserId] = useState<number>(-1);
+    const [error, setError] = useState<string>('');
 
     /* Page contents only viewable by mods*/
     const [userIsMod, setUserIsMod] = useState<boolean>(false);
@@ -29,6 +30,10 @@ const ModeratorPage = () => {
 
     /* Display mode - grid or list */
     const [displayMode, setDisplayMode] = useState<'grid' | 'list'>('list');
+
+    // Message holders
+    const subject = useRef<HTMLInputElement>(null);
+    const message = useRef<HTMLTextAreaElement>(null);
 
     // Helper Methods =========================================================
     /**
@@ -78,6 +83,9 @@ const ModeratorPage = () => {
                     reportedUsersTab.style.opacity = String(.5);
                     reportedProjectsTab.style.opacity = String(1);
                     pendingProjectsTab.style.opacity = String(.5);
+                    if (userIsAdmin && allModeratorsTab != null) {
+                        allModeratorsTab.style.opacity = String(.5);
+                    }
                     break;
                 case 3:
                     if (userIsAdmin && allModeratorsTab != null) {
@@ -177,6 +185,35 @@ const ModeratorPage = () => {
         }
     };
 
+    /**
+     * Make a moderator announcement to all users on the site
+     */
+    const makeAnnouncement = async () => {
+        if (!subject.current?.value || !message.current?.value) {
+            setError("Subject and/or message of the announcement is empty. Please make sure both fields are filled out and then try again.")
+            return;
+        }
+
+        try {
+            const res = await sendModeratorNotification({
+                modUserId: userId,
+                receiverId: 0,
+                subjectLine: subject.current.value,
+                message: message.current.value,
+                type: 'Announcement',
+            });
+
+            if (res.status === 201) {
+                setError('');
+                // refresh page
+                window.location.reload();
+            }
+        } catch (e) {
+            console.error('Error in makeAnnouncement:', e);
+            setError('Uh-oh! Something happen on the server side. Please try again later.');
+        }
+    }
+
     // Runs on initial render
     useEffect(() => {
         getAccount();
@@ -203,48 +240,68 @@ const ModeratorPage = () => {
             <main id="main" tabIndex={-1} aria-label='main content'>
                 {userIsMod ? (
                     <>
-                        <div className="display-switch" onClick={() => toggleDisplayMode()}>
-                            <div className="display-switch-option list" id={displayMode === 'list' ? 'selected' : ''}>
-                                <i className="fa-solid fa-bars fa-lg"></i>
-                            </div>
-                            <div className="display-switch-option grid" id={displayMode === 'grid' ? 'selected' : ''}>
-                                <i className="fa-solid fa-border-all fa-xl"></i>
-                            </div>
-                        </div>
-                        <div id="mod-tools-block">
-                            <div id="mod-tools-tabs">
-                                <button
-                                    id="mod-pending-tab"
-                                    style={{ opacity: String(1) }}
-                                    onClick={() => { setCurrentTab(0); }}
-                                >
-                                    Pending Projects
-                                </button>
-                                <button
-                                    id="mod-users-tab"
-                                    style={{ opacity: String(.5) }}
-                                    onClick={() => { setCurrentTab(1); }}
-                                >
-                                    Reported Users
-                                </button>
-                                <button
-                                    id="mod-projects-tab"
-                                    style={{ opacity: String(.5) }}
-                                    onClick={() => { setCurrentTab(2); }}
-                                >
-                                    Reported Projects
-                                </button>
-                                {userIsAdmin && (
+                        <div id="mod-tools">
+                            <div id="mod-actions-block">
+                                <div className="display-switch" onClick={() => toggleDisplayMode()}>
+                                    <div className="display-switch-option list" id={displayMode === 'list' ? 'selected' : ''}>
+                                        <i className="fa-solid fa-bars fa-lg"></i>
+                                    </div>
+                                    <div className="display-switch-option grid" id={displayMode === 'grid' ? 'selected' : ''}>
+                                        <i className="fa-solid fa-border-all fa-xl"></i>
+                                    </div>
+                                </div>
+                                <div id="mod-actions-tabs">
                                     <button
-                                        id="admin-mods-tab"
-                                        style={{ opacity: String(.5) }}
-                                        onClick={() => { setCurrentTab(3); }}
+                                        id="mod-pending-tab"
+                                        style={{ opacity: String(1) }}
+                                        onClick={() => { setCurrentTab(0); }}
                                     >
-                                        All Moderators
+                                        Pending Projects
                                     </button>
-                                )}
+                                    <button
+                                        id="mod-users-tab"
+                                        style={{ opacity: String(.5) }}
+                                        onClick={() => { setCurrentTab(1); }}
+                                    >
+                                        Reported Users
+                                    </button>
+                                    <button
+                                        id="mod-projects-tab"
+                                        style={{ opacity: String(.5) }}
+                                        onClick={() => { setCurrentTab(2); }}
+                                    >
+                                        Reported Projects
+                                    </button>
+                                    {userIsAdmin && (
+                                        <button
+                                            id="admin-mods-tab"
+                                            style={{ opacity: String(.5) }}
+                                            onClick={() => { setCurrentTab(3); }}
+                                        >
+                                            All Moderators
+                                        </button>
+                                    )}
+                                </div>
+                                <div id="mod-content-container">{renderTabContent()}</div>
                             </div>
-                            <div id="mod-content-container">{renderTabContent()}</div>
+                            <div className="announcement-area">
+                                <h2>Make an Announcement</h2>
+                                <p>Make an announcement notificaion to all users on the site.</p>
+                                {error && <p className="error">{error}</p>}
+                                <input
+                                    placeholder="Subject"
+                                    className="input"
+                                    ref={subject}
+                                ></input>
+                                <textarea
+                                    placeholder="Write your message here..."
+                                    className="input input-multiline"
+                                    ref={message}
+                                ></textarea>
+                                <div className="message-actions">
+                                    <button className="confirm-btn" onClick={() => makeAnnouncement()}>Send</button>
+                                </div>
+                            </div>
                         </div>
                     </>
                 ) : "You are not a moderator!"}
