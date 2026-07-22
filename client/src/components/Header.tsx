@@ -393,6 +393,7 @@ export const Header: React.FC<HeaderProps> = ({
                           };
 
                           POST(`/me/report-bug`, report);
+                          window.location.reload();
                         } else {
                           const errorReport = document.querySelector("#error-report");
 
