@@ -97,6 +97,7 @@ describe('createUserService', async () => {
       developer: false,
       displayPhone: false,
       apiUrl: '',
+      tagBlacklist: [],
     };
 
     vi.mocked(prisma.users.create).mockResolvedValue(prismaUser);
