@@ -6,12 +6,15 @@ import { deactivateUserReport } from '#controllers/mod/deactivate-user-report.ts
 import { deleteProjectReport } from '#controllers/mod/delete-project-report.ts';
 import { deleteProject } from '#controllers/mod/delete-project.ts';
 import { deleteUserReport } from '#controllers/mod/delete-user-report.ts';
+import { getBugReportById } from '#controllers/mod/get-bug-report-by-id.ts';
+import { getBugReports } from '#controllers/mod/get-bug-reports.ts';
 import { getProjectReportById } from '#controllers/mod/get-project-report-by-id.ts';
 import { getProjectReports } from '#controllers/mod/get-project-reports.ts';
 import { getUserReportById } from '#controllers/mod/get-user-report-by-id.ts';
 import { getUserReports } from '#controllers/mod/get-user-reports.ts';
 import { sendNotification } from '#controllers/mod/send-notification.ts';
 import { unbanUser } from '#controllers/mod/unban-user.ts';
+import { updateBugReport } from '#controllers/mod/update-bug-report.ts';
 import { requiresNotSelf } from '#middleware/authorization/requires-not-self.ts';
 import { PathParameterLocation } from '#middleware/validators/parameter-location/path-param-location.ts';
 import { ProjectReportedInPathParameterLocation } from '#middleware/validators/parameter-location/project-reported-in-path-param-location.ts';
@@ -56,6 +59,10 @@ router.get(
   authenticated(requiresNotSelf(new ReportedInPathParameterLocation(), '')),
   authenticated(getUserReportById),
 );
+router.get('/bug-report/', authenticated(getBugReports));
+router.get('/bug-report/:id', authenticated(getBugReportById));
+
+router.patch('/bug-report/:id', authenticated(updateBugReport));
 
 router.patch('/clear-profile/:id/', authenticated(clearProfile));
 router.patch(

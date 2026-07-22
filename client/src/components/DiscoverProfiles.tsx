@@ -132,7 +132,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
     let newActiveSkills: Skill[];
     let newExcludeSkills: Skill[];
     let skill: Skill | undefined;
-    if (id === -1) {
+    if (id < 5) {
       skill = { skillId: id, label: type, type: type as SkillType, category: "Other" }
     }
     else
@@ -141,12 +141,12 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
 
     if (activeSkillFilters.some(s => s.skillId === id && s.type === type)) {
       // Remove the skill from the active list
-      newActiveSkills = activeSkillFilters.filter(s => s !== skill);
+      newActiveSkills = activeSkillFilters.filter(s => s.skillId !== skill.skillId);
       newExcludeSkills = [...activeExclusionFilters, skill];
     }
     else if (activeExclusionFilters.some(s => s.skillId === id && s.type === type)) {
       newActiveSkills = activeSkillFilters;
-      newExcludeSkills = activeExclusionFilters.filter(s => s !== skill);
+      newExcludeSkills = activeExclusionFilters.filter(s => s.skillId !== skill.skillId);
     }
     else {
       // Add the tag to the active list
@@ -288,23 +288,23 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
           >
             { /* make each skill button have proper label & type */}
             {skillList.map(skillFilterType => {
-              const trueType = Object.keys(PeopleSkills)[Object.values(PeopleSkills).indexOf(skillFilterType)]
-              //template skill to be sent in for the broad horizontal filters
-              const templateSkill = {
-                skillId: -1,
-                label: trueType,
-                type: trueType as SkillType,
-                category: 'Other',
-              } as Skill;
+              //give each skill a unique skillId
+              const uniqueId = Object.values(PeopleSkills).indexOf(skillFilterType);
+              const trueType = skillFilterType === "Developers" ? "Developer" :
+                skillFilterType === "Designers" ? "Designer" :
+                  skillFilterType === "Audio Creators" ? "Audio" :
+                    skillFilterType === "Engineers" ? "Engineer" :
+                      skillFilterType;
+              const templateSkill: Skill = { skillId: uniqueId, label: trueType, type: trueType as SkillType, category: "Other" };
 
               return (
                 <button key={`${templateSkill.type}-${skillFilterType}`}
                   className={"discover-tag-filter" +
-                    (activeSkillFilters.some(s => s.skillId === -1 && s.label === trueType) ? " discover-tag-filter-selected" :
-                      activeExclusionFilters.some(s => s.skillId === -1 && s.label === trueType) ? " discover-tag-filter-excluded " :
+                    (activeSkillFilters.some(s => s.skillId === uniqueId && s.label === trueType) ? " discover-tag-filter-selected" :
+                      activeExclusionFilters.some(s => s.skillId === uniqueId && s.label === trueType) ? " discover-tag-filter-excluded " :
                         "")}
                   data-type={templateSkill.label}
-                  onClick={() => toggleSkill(templateSkill.skillId, templateSkill.type, true)}>
+                  onClick={() => toggleSkill(uniqueId, templateSkill.type, true)}>
                   {skillFilterType}
                 </button>
               )
