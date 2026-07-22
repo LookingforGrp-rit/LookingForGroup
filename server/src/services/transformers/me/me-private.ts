@@ -1,6 +1,7 @@
 import type { MePrivate } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { MePrivateSelector } from '#services/selectors/me/me-private.ts';
+import { transformTag } from '../datasets/tag.ts';
 import { transformMeToDetail } from './me-detail.ts';
 
 //sample project from prisma to be mapped
@@ -22,5 +23,6 @@ export const transformMeToPrivate = (user: UsersGetPayload): MePrivate => {
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
     displayPhone: user.displayPhone,
+    tagBlacklist: user.tagBlacklist.map((t) => transformTag(t)),
   };
 };

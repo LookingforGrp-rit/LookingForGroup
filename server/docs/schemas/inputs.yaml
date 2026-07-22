@@ -307,6 +307,23 @@ components:
         type: Creative
         category: Game
 
+    TagWithIdInput:
+      type: object
+      properties:
+        tagId:
+          type: number
+        label:
+          type: string
+        type:
+          $ref: 'enums.yaml#/components/schemas/TagType'
+        category:
+          $ref: 'enums.yaml#/components/schemas/TagCategory'
+      example:
+        tagId: 44
+        label: RPG
+        type: Genre
+        category: Game
+
     SkillInput:
       type: object
       properties:

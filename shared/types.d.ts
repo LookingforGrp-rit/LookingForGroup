@@ -879,6 +879,11 @@ export interface MePrivate extends MeDetail {
   googleId: string;
 
   /**
+   * The user's blacklisted tags
+   */
+  tagBlacklist: Tag[]
+
+  /**
    * The date on which the logged-in user's account was created
    */
   createdAt: Date;
@@ -1776,6 +1781,13 @@ export type CreateSkillInput = Pick<Skill, "label" | "type" | "category">;
  * Data required to edit an existing skill
  */
 export type EditSkillInput = Partial<CreateSkillInput> & { skillId: number };
+
+/**
+ * Data required to update a user's tag blacklist
+ */
+export type UpdateTagBlacklistInput = {
+  tagBlacklist: Tag[]
+}
 
 /**
  * Data required to add a user report
