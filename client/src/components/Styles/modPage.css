@@ -4,8 +4,7 @@
 
 ================== */
 
-#mod-tools-block
-{
+#mod-tools-block {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -24,8 +23,8 @@
         height: 40px;
         overflow-y: scroll;
     }
-    button
-    {
+
+    button {
         color: var(--primary-color);
         background-color: var(--liked-section-bg);
         border-top-left-radius: 10px;
@@ -37,12 +36,13 @@
         padding-bottom: 0.4rem;
         font-weight: 600;
     }
+
     button:hover {
-      transform: none;
-      padding-bottom: 10px;
+        transform: none;
+        padding-bottom: 10px;
     }
-    #mod-content-container
-    {
+
+    #mod-content-container {
         width: calc(100% - 30px);
         min-height: 100px;
         background-color: var(--liked-section-bg);
@@ -56,21 +56,22 @@
         overflow-x: hidden;
     }
 }
+
 .mod-page {
     .page-title {
         padding: 20px;
     }
-    #mod-page-description
-    {
+
+    #mod-page-description {
         width: 90%;
         text-align: center;
     }
 }
-#mod-options-btns
-{
+
+#mod-options-btns {
     flex-wrap: wrap;
-    #mod-approve-btn
-    {
+
+    #mod-approve-btn {
         border: none;
         border-radius: 30px;
         padding: 10px 20px;
@@ -81,8 +82,8 @@
         margin: auto min(1vw, 10px);
         font-weight: 700;
     }
-    .mod-edit-btn
-    {
+
+    .mod-edit-btn {
         border: none;
         border-radius: 30px;
         padding: 10px 20px;
@@ -93,8 +94,8 @@
         margin: auto min(1vw, 10px);
         font-weight: 700;
     }
-    #mod-dismiss-btn
-    {
+
+    #mod-dismiss-btn {
         border: none;
         border-radius: 30px;
         padding: 10px 20px;
@@ -105,50 +106,183 @@
         margin: auto min(1vw, 10px);
         font-weight: 700;
     }
+
     /* decline btn styled by delete-button */
-    #mod-decline-btn
-    {
+    #mod-decline-btn {
         color: var(--main-text);
     }
 }
 
-#mod-user-options
-{
+#mod-user-options {
     margin-top: 1vw;
     width: 100%;
     max-width: calc(100% - 40px);
 }
-#manage-perms-popup {
-  h3 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin: 0 0 15px;
-  }
 
-  p,
-  button {
-    font-size: 1.125rem;
-  }
+#manage-perms-popup {
+    h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin: 0 0 15px;
+    }
+
+    p,
+    button {
+        font-size: 1.125rem;
+    }
+}
+
+/* List View */
+.pending-projects .responsive-table {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+/* Data Rows */
+.pending-projects .pending-project-list-card {
+    box-sizing: border-box;
+    background-color: var(--header-color);
+
+    border: 0px;
+    border-radius: 10px;
+    height: fit-content;
+    font-size: 1.25rem;
+}
+
+.pending-projects .pending-project-list-card:hover {
+    transform: translateY(-2px);
+    cursor: pointer;
+    transition: transform 0.2s ease-in;
+
+    .list-card-title {
+        text-decoration: underline;
+    }
+}
+
+.pending-projects .responsive-table tr td {
+    padding: 10px;
+}
+
+.pending-projects .responsive-table tr td:first-child {
+    text-align: left;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    width: fit-content;
+    padding: 10px;
+}
+
+.pending-projects .responsive-table tr td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    padding: 10px;
 }
 
 /* Mobile */
-@media screen and (max-width: 700px)
-{
-    #mod-tools-block
-    {
+@media only screen and (max-width: 900px) {
+    .pending-projects .pending-project-list-card {
+        flex-wrap: wrap;
+    }
+
+    .pending-projects .list-card-title {
+        width: auto;
+        order: 1;
+    }
+}
+
+@media only screen and (min-width:601px) and (max-width:950px) {
+    .pending-projects .responsive-table tr td {
+        font-size: 0.8em;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    #mod-tools-block {
         button {
             font-size: 1em;
             height: fit-content;
         }
-        #mod-tools-tabs
-        {
+
+        #mod-tools-tabs {
             height: fit-content;
         }
     }
-    #mod-user-options
-    {
-        margin: 20px 0;
 
+    #mod-user-options {
+        margin: 20px 0;
+    }
+
+    .pending-projects .pending-projects-list-header {
+        display: none;
+    }
+
+    .pending-projects .list-card-title {
+        grid-area: name;
+        box-sizing: border-box;
+        padding: 5px;
+        word-break: break-word;
+        hyphens: auto;
+    }
+
+    .pending-projects .list-card-status {
+        grid-area: status;
+    }
+
+    .pending-projects .list-card-date {
+        grid-area: date;
+    }
+
+    .pending-projects .pending-project-list-card {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        grid-template-areas: "name menu"
+            "status date";
+    }
+
+    /* Hide table headers (but not display: none;, for accessibility) */
+    .pending-projects .responsive-table thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .pending-projects .responsive-table tr {
+        display: block;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+    }
+
+    .pending-projects .responsive-table tr td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem;
+        margin-left: 5px;
+        border: none;
+        font-size: 0.7em;
+        text-align: right;
+    }
+
+    .pending-projects .responsive-table td:first-child {
+        display: block;
+    }
+
+    /* Inject the column header label */
+    .pending-projects .responsive-table td::before {
+        content: attr(data-label);
+        line-height: 1.5em;
+        font-weight: bold;
+        color: var(--main-text);
+        text-align: left;
+    }
+}
+
+@media screen and (max-width: 350px) {
+    .pending-projects .responsive-table td::before {
+        max-width: 7ch;
     }
 }
