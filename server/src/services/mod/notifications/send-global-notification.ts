@@ -1,8 +1,8 @@
 import type { Request } from 'express';
 import prisma from '#config/prisma.ts';
+import sendNotificationService from '#services/notifications/send-notification.ts';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
-import type { NotificationBuilder } from '../../notification-templates/notification-builder.ts';
-import sendNotificationService from './send-notification.ts';
+import type { NotificationBuilder } from '../../../notification-templates/notification-builder.ts';
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 

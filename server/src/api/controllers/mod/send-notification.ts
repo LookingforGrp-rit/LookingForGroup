@@ -4,7 +4,9 @@ import type {
   ModeratorNotificationInput,
 } from '@looking-for-group/shared';
 import type { Response } from 'express';
+import { ModGeneralNotificationBuilder } from '#notification-templates/mod-general-notification.ts';
 import sendGeneralService from '#services/mod/notifications/send-general.ts';
+import sendGlobalNotificationService from '#services/mod/notifications/send-global-notification.ts';
 import warnUserService from '#services/mod/notifications/warn-user.ts';
 
 //PUT api/mod/notification
@@ -19,6 +21,9 @@ export const sendNotification = async (req: AuthenticatedRequest, res: Response)
       break;
     case 'General':
       result = await sendGeneralService(req);
+      break;
+    case 'Announcement':
+      result = await sendGlobalNotificationService(new ModGeneralNotificationBuilder(), req);
       break;
   }
 
