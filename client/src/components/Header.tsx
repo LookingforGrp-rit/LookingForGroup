@@ -366,24 +366,21 @@ export const Header: React.FC<HeaderProps> = ({
 
                   <PopupContent>
                     {/* Using the editor styles temporarily because they look good for this menu */}
-                    <div className="editor-header">Report a Bug</div>
-                    <div className="editor-extra-info">
-                      Please explain what the bug is, and the steps leading up to it occuring.
-                    </div>
+                    <div className="small-popup" id="report-popup">
+                    <h3>Report a Bug</h3>
+                    <p>Please explain what the bug is, and the steps leading up to it occuring.</p>
 
-                    <input type='text'
+                    <textarea
                       id='input-bug-report'
                       name='input-bug-report'
+                      placeholder="Write your reasoning here..."
+                      className="input input-multiline"
                       required
                       minLength={1}
                       maxLength={200}
                       onChange={(e) => {
                         bugReportText = e.currentTarget.value;
-                      }}></input> <span className='required-asterisk'>*</span>
-
-                    <div id='error-report'>
-
-                    </div>
+                      }}></textarea> <span className='required-asterisk'>*</span>
 
                     <button type='submit' id="btn-bug-report-submit"
                       onClick={() => {
@@ -402,6 +399,7 @@ export const Header: React.FC<HeaderProps> = ({
                           }
                         }
                       }}>Submit</button>
+                    </div>
                   </PopupContent>
                 </Popup>
 
