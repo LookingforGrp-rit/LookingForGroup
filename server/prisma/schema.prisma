@@ -92,6 +92,7 @@ model Notifications {
   subjectLine    String   @map("subject_line")
   message        String   @map("message")
   hasBeenRead    Boolean  @default(false) @map("has_been_read")
+  isGlobal       Boolean  @default(false) @map("is_global")
   receiver       Users    @relation(name: "FK_receiver_to_notification", fields: [receiverId], references: [userId], onDelete: NoAction, onUpdate: Cascade)
 
   @@map("notifications")
