@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { routes } from '../../constants/routes';
+import ProjectListView from "./ListViews/ProjectListView";
 import { ProjectDetail } from "@looking-for-group/shared";
 import { getPendingProjects } from "../../api/mod-tools";
 import { PanelBox } from "../PanelBox";
@@ -22,11 +21,6 @@ const PendingProjects = ({ currentUserId, currentTab, displayMode }: PendingProj
     const [pendingProjectsIds, setPendingProjectsIds] = useState<Set<number>>(new Set);
 
     // Helper Methods =========================================================
-    /**
-     * Used for navigation to other pages
-     */
-    const navigate = useNavigate();
-
     useEffect(() => {
         //get reported projects to display
         const displayPendingProjects = async () => {
@@ -48,38 +42,6 @@ const PendingProjects = ({ currentUserId, currentTab, displayMode }: PendingProj
         displayPendingProjects();
     }, [currentTab]);
 
-    /**
-     * Converts ISO date string to MM/DD/YYYY format
-     * @param dateStr ISO date string
-     * @returns MM/DD/YYYY
-     */
-    const formatDate = (dateStr: string) => {
-        if (!dateStr) return 'No data';
-        const [date] = dateStr.split('T');
-        const [year, month, day] = date.split('-');
-        return `${month}/${day}/${year}`;
-    };
-
-    /**
-     * Converts into list view data row
-     * @param project Project detail
-     * @returns list view data row
-     */
-    const listView = (project: ProjectDetail) => {
-        return <>
-            <tr 
-                key={'pending-project-' + project.projectId}
-                className="pending-project-list-card" 
-                onClick={() => navigate(`${routes.PROJECT}?projectID=${project.projectId}`)}
-            >
-                <td className="list-card-title">{project.title}</td>
-                <td className="list-card-owner" data-label="Project Owner">{project.owner.firstName} {project.owner.lastName}</td>
-                <td className="list-card-status" data-label="Status">{project.status}</td>
-                <td className="list-card-date" data-label="Date Created">{formatDate(project.createdAt.toString())}</td>
-            </tr>
-        </>;
-    };
-
     // The final component ====================================================
     if (loaded) {
         return (
@@ -94,21 +56,7 @@ const PendingProjects = ({ currentUserId, currentTab, displayMode }: PendingProj
                                 userId={currentUserId}
                             ></PanelBox>
                             // List view
-                            : <table className='responsive-table'>
-                                {/* Projects List header */}
-                                <thead className="pending-projects-list-header">
-                                    <tr>
-                                        <th className="project-header-label title">Project Title</th>
-                                        <th className="project-header-label owner">Owner</th>
-                                        <th className="project-header-label status">Status</th>
-                                        <th className="project-header-label date">Date Created</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody className='pending-projects-list'>
-                                    {pendingProjects.map(p => listView(p))}
-                                </tbody>
-                            </table>
+                            : <ProjectListView projects={pendingProjects} />
                         : "No pending projects!"}
                 </div>
             </div>

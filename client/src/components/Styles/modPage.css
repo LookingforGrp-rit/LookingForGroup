@@ -133,8 +133,52 @@
     }
 }
 
+/* Display switch */
+.display-switch {
+    box-sizing: border-box;
+    background-color: var(--header-color);
+    border: 0px;
+    border-radius: 100px;
+    padding: 2px;
+    margin-bottom: 20px;
+    cursor: pointer;
+
+    display: flex;
+    width: fit-content;
+}
+
+.display-switch .display-switch-option {
+    box-sizing: border-box;
+    background-color: #00000000;
+    border: 0px;
+    border-radius: 100px;
+    width: 41px;
+    height: 41px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    i {
+        color: var(--primary-color);
+    }
+}
+
+.display-switch .display-switch-option:hover {
+    transition-duration: 0.25s;
+    background-color: var(--invert-text);
+}
+
+.display-switch .display-switch-option#selected {
+    background-color: var(--primary-color);
+
+    i {
+        color: var(--invert-text);
+    }
+}
+
 /* List View */
-.pending-projects .responsive-table {
+#mod-tools .responsive-table {
     box-sizing: border-box;
     width: 100%;
     max-width: 100%;
@@ -142,8 +186,24 @@
     border-spacing: 0 10px;
 }
 
+/* Headers */
+.header-label {
+    color: var(--primary-color);
+    text-align: left;
+    font-size: 1.25rem;
+    font-family: Inter;
+    font-weight: bold;
+    line-height: 28px;
+    letter-spacing: 0%;
+    padding: 10px;
+}
+
+.header-label.date {
+    max-width: 10ch;
+}
+
 /* Data Rows */
-.pending-projects .pending-project-list-card {
+#mod-tools .list-card {
     box-sizing: border-box;
     background-color: var(--header-color);
 
@@ -153,7 +213,7 @@
     font-size: 1.25rem;
 }
 
-.pending-projects .pending-project-list-card:hover {
+#mod-tools .list-card:hover {
     transform: translateY(-2px);
     cursor: pointer;
     transition: transform 0.2s ease-in;
@@ -163,11 +223,11 @@
     }
 }
 
-.pending-projects .responsive-table tr td {
+#mod-tools .responsive-table tr td {
     padding: 10px;
 }
 
-.pending-projects .responsive-table tr td:first-child {
+#mod-tools .responsive-table tr td:first-child {
     text-align: left;
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
@@ -175,26 +235,36 @@
     padding: 10px;
 }
 
-.pending-projects .responsive-table tr td:last-child {
+#mod-tools .responsive-table tr td:last-child {
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
     padding: 10px;
 }
 
 /* Mobile */
+@media only screen and (max-width: 1200px) {
+    .list-card-status {
+        flex-basis: 150px;
+    }
+
+    .header-label.status {
+        flex-basis: 150px;
+    }
+}
+
 @media only screen and (max-width: 900px) {
-    .pending-projects .pending-project-list-card {
+    #mod-tools .list-card {
         flex-wrap: wrap;
     }
 
-    .pending-projects .list-card-title {
+    #mod-tools .list-card-title {
         width: auto;
         order: 1;
     }
 }
 
 @media only screen and (min-width:601px) and (max-width:950px) {
-    .pending-projects .responsive-table tr td {
+    #mod-tools .responsive-table tr td {
         font-size: 0.8em;
     }
 }
@@ -215,11 +285,11 @@
         margin: 20px 0;
     }
 
-    .pending-projects .pending-projects-list-header {
+    #mod-tools .list-header {
         display: none;
     }
 
-    .pending-projects .list-card-title {
+    #mod-tools .list-card-title {
         grid-area: name;
         box-sizing: border-box;
         padding: 5px;
@@ -227,15 +297,15 @@
         hyphens: auto;
     }
 
-    .pending-projects .list-card-status {
+    #mod-tools .list-card-status {
         grid-area: status;
     }
 
-    .pending-projects .list-card-date {
+    #mod-tools .list-card-date {
         grid-area: date;
     }
 
-    .pending-projects .pending-project-list-card {
+    #mod-tools .list-card {
         display: grid;
         grid-template-columns: 3fr 1fr;
         grid-template-rows: 1fr 1fr;
@@ -244,19 +314,19 @@
     }
 
     /* Hide table headers (but not display: none;, for accessibility) */
-    .pending-projects .responsive-table thead tr {
+    #mod-tools .responsive-table thead tr {
         position: absolute;
         top: -9999px;
         left: -9999px;
     }
 
-    .pending-projects .responsive-table tr {
+    #mod-tools .responsive-table tr {
         display: block;
         margin-bottom: 1rem;
         padding: 0.5rem;
     }
 
-    .pending-projects .responsive-table tr td {
+    #mod-tools .responsive-table tr td {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -267,12 +337,12 @@
         text-align: right;
     }
 
-    .pending-projects .responsive-table td:first-child {
+    #mod-tools .responsive-table td:first-child {
         display: block;
     }
 
     /* Inject the column header label */
-    .pending-projects .responsive-table td::before {
+    #mod-tools .responsive-table td::before {
         content: attr(data-label);
         line-height: 1.5em;
         font-weight: bold;
@@ -282,7 +352,7 @@
 }
 
 @media screen and (max-width: 350px) {
-    .pending-projects .responsive-table td::before {
+    #mod-tools .responsive-table td::before {
         max-width: 7ch;
     }
 }

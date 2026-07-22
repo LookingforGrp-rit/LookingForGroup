@@ -28,7 +28,7 @@ const ModeratorPage = () => {
     const [userIsAdmin, setUserIsAdmin] = useState<boolean>(false);
 
     /* Display mode - grid or list */
-    const [displayMode, setDisplayMode] = useState<'grid' | 'list'>('grid');
+    const [displayMode, setDisplayMode] = useState<'grid' | 'list'>('list');
 
     // Helper Methods =========================================================
     /**
@@ -135,15 +135,45 @@ const ModeratorPage = () => {
     const renderTabContent = () => {
         switch (currentTab) {
             case 0:
-                return (<PendingProjects currentUserId={userId} currentTab={currentTab} displayMode={displayMode}></PendingProjects>);
+                return (
+                    <PendingProjects
+                        currentUserId={userId}
+                        currentTab={currentTab}
+                        displayMode={displayMode}
+                    ></PendingProjects>
+                );
             case 1:
-                return (<ReportedUsers currentUserId={userId} currentTab={currentTab}></ReportedUsers>);
+                return (
+                    <ReportedUsers
+                        currentUserId={userId}
+                        currentTab={currentTab}
+                        displayMode={displayMode}
+                    ></ReportedUsers>
+                );
             case 2:
-                return (<ReportedProjects currentUserId={userId} currentTab={currentTab}></ReportedProjects>);
+                return (
+                    <ReportedProjects
+                        currentUserId={userId}
+                        currentTab={currentTab}
+                        displayMode={displayMode}
+                    ></ReportedProjects>
+                );
             case 3:
-                return (<AllModerators currentUserId={userId} currentTab={currentTab}></AllModerators>);
+                return (
+                    <AllModerators
+                        currentUserId={userId}
+                        currentTab={currentTab}
+                        displayMode={displayMode}
+                    ></AllModerators>
+                );
             default:
-                return (<PendingProjects currentUserId={userId} currentTab={currentTab} displayMode={displayMode}></PendingProjects>);
+                return (
+                    <PendingProjects
+                        currentUserId={userId}
+                        currentTab={currentTab}
+                        displayMode={displayMode}
+                    ></PendingProjects>
+                );
         }
     };
 
@@ -173,7 +203,7 @@ const ModeratorPage = () => {
             <main id="main" tabIndex={-1} aria-label='main content'>
                 {userIsMod ? (
                     <>
-                        <div className="my-projects-display-switch" onClick={() => toggleDisplayMode()}>
+                        <div className="display-switch" onClick={() => toggleDisplayMode()}>
                             <div className="display-switch-option list" id={displayMode === 'list' ? 'selected' : ''}>
                                 <i className="fa-solid fa-bars fa-lg"></i>
                             </div>
