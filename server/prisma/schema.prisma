@@ -181,7 +181,7 @@ model Projects {
   projectId         Int                 @id @unique @default(autoincrement()) @map("project_id")
   title             String              @db.VarChar(150)
   hook              String              @default("") @db.VarChar(300)
-  description       String              @db.Text
+  description       String              @default("") @db.Text
   thumbnail         ProjectImages?      @relation(fields: [thumbnailId], references: [imageId])
   thumbnailId       Int?                @unique @map("thumbnail_id")
   context           ProjectsContext?
