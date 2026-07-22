@@ -13,6 +13,7 @@ import { getUserReports } from '#controllers/mod/get-user-reports.ts';
 import { sendNotification } from '#controllers/mod/send-notification.ts';
 import { unbanUser } from '#controllers/mod/unban-user.ts';
 import { requiresNotSelf } from '#middleware/authorization/requires-not-self.ts';
+import { PathParameterLocation } from '#middleware/validators/parameter-location/path-param-location.ts';
 import { ProjectReportedInPathParameterLocation } from '#middleware/validators/parameter-location/project-reported-in-path-param-location.ts';
 import { ProjectReporterInPathParameterLocation } from '#middleware/validators/parameter-location/project-reporter-in-path-param-location.ts';
 import { ReportedInPathParameterLocation } from '#middleware/validators/parameter-location/reported-in-path-param-location.ts';
@@ -66,7 +67,12 @@ router.patch(
 );
 
 router.post('/notification', authenticated(sendNotification));
-router.post('/ban-user/:id', userExistsAt('path', 'id'), authenticated(banUser));
+router.post(
+  '/ban-user/:id',
+  userExistsAt('path', 'id'),
+  authenticated(requiresNotSelf(new PathParameterLocation(), 'id')),
+  authenticated(banUser),
+);
 
 router.delete('/delete-project/:id/', authenticated(deleteProject));
 router.delete('/unban-user/:googleId/', authenticated(unbanUser));
