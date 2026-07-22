@@ -26,17 +26,17 @@ const ReportedProjects = ({ currentUserId, currentTab, displayMode }: ReportedPr
 
         //get reported projects to display
         const displayReportedProjects = async () => {
-            const reportedProjects = ((await getReportedProjects()).data);
-            const tempPendingProjectArray = [];
-            let tempIds: Set<number> = new Set();
-
-            if (reportedProjects !== undefined && reportedProjects != null) {
-                for (const project of reportedProjects) {
-                    const reportedId = await getByID(project.projectId);
-                    tempPendingProjectArray.push(reportedId.data as ProjectWithFollowers);
-                    tempIds.add(project.projectId);
-                }
-                setReportedProjectsIds(tempIds);
+          const reportedProjects = ((await getReportedProjects()).data);
+          const tempPendingProjectArray = [];
+          let tempIds :Set<number> = new Set();
+          
+          if (reportedProjects !== undefined && reportedProjects!= null) {
+            for (const project of reportedProjects) {
+              const reportedId = await getByID(project.projectId);
+              if(reportedId.data?.projectId !== undefined && !tempIds.has(reportedId.data?.projectId)) {
+                tempPendingProjectArray.push(reportedId.data as ProjectWithFollowers);
+                tempIds.add(project.projectId);
+              }
             }
             setReportedProjects(tempPendingProjectArray);
             setLoaded(true);
