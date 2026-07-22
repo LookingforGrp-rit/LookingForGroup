@@ -19,27 +19,27 @@ const ReportedProjects = ({ currentUserId, currentTab, displayMode }: ReportedPr
     // Variables ==============================================================
     const [loaded, setLoaded] = useState<boolean>(false);
     const [reportedProjects, setReportedProjects] = useState<ProjectWithFollowers[]>([]);
-    const [reportedProjectsIds, setReportedProjectsIds] = useState<Set<number>>(new Set);
 
     // Helper Methods =========================================================
     useEffect(() => {
 
         //get reported projects to display
         const displayReportedProjects = async () => {
-          const reportedProjects = ((await getReportedProjects()).data);
-          const tempPendingProjectArray = [];
-          let tempIds :Set<number> = new Set();
-          
-          if (reportedProjects !== undefined && reportedProjects!= null) {
-            for (const project of reportedProjects) {
-              const reportedId = await getByID(project.projectId);
-              if(reportedId.data?.projectId !== undefined && !tempIds.has(reportedId.data?.projectId)) {
-                tempPendingProjectArray.push(reportedId.data as ProjectWithFollowers);
-                tempIds.add(project.projectId);
-              }
+            const reportedProjects = ((await getReportedProjects()).data);
+            const tempPendingProjectArray = [];
+            let tempIds: Set<number> = new Set();
+
+            if (reportedProjects !== undefined && reportedProjects != null) {
+                for (const project of reportedProjects) {
+                    const reportedId = await getByID(project.projectId);
+                    if (reportedId.data?.projectId !== undefined && !tempIds.has(reportedId.data?.projectId)) {
+                        tempPendingProjectArray.push(reportedId.data as ProjectWithFollowers);
+                        tempIds.add(project.projectId);
+                    }
+                }
+                setReportedProjects(tempPendingProjectArray);
+                setLoaded(true);
             }
-            setReportedProjects(tempPendingProjectArray);
-            setLoaded(true);
         }
 
         displayReportedProjects();
