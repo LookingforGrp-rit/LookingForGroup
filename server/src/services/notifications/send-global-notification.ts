@@ -2,30 +2,34 @@ import type { Request } from 'express';
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 import type { NotificationBuilder } from '../../notification-templates/notification-builder.ts';
+import sendNotificationService from './send-notification.ts';
+
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 type SendNotificationServiceError = ServiceErrorSubset<'CONFLICT' | 'INTERNAL_ERROR'>;
 type SendNotificationServiceSuccess = ServiceSuccessSubset<'CREATED'>;
 
-const sendNotificationService = async (
+const sendGlobalNotificationService = async (
   builder: NotificationBuilder,
   request: Request,
-  isGlobal?: boolean,
 ): Promise<SendNotificationServiceError | SendNotificationServiceSuccess> => {
   // notification is created in the database
   try {
-    const notification = await builder.buildNotification(request);
-
-    await prisma.notifications.create({
-      data: {
-        receiverId: notification.receiverId,
-        subjectLine: notification.subjectLine,
-        message: notification.message,
-        timeSent: new Date(Date.now()),
-        isGlobal: isGlobal ?? false,
+    const userIDs = await prisma.users.findMany({
+      select: {
+        userId: true,
       },
     });
 
-    return 'CREATED';
+    const res = await Promise.all(
+      userIDs.map((id) => {
+        const newReq = { ...request, body: { ...request.body, receiverId: id } } as Request;
+        return sendNotificationService(builder, newReq, true);
+      }),
+    );
+
+    if (res.every((r) => r === 'CREATED')) return 'CREATED';
+    return 'INTERNAL_ERROR';
   } catch (e) {
     console.error('There was an error in sendNotification: ', e);
 
@@ -41,4 +45,4 @@ const sendNotificationService = async (
   }
 };
 
-export default sendNotificationService;
+export default sendGlobalNotificationService;

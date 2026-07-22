@@ -129,7 +129,7 @@ const Project = () => {
        * Checks if the project has been reported and updates the useState
        */
       const isProjectReported = async () => {
-        const tempReportList : ProjectReport[] = [];
+        const tempReportList: ProjectReport[] = [];
         const currentProject = projectResp.data as ProjectPreview;
         const reportedProjects = await getReportedProjects();
         if (reportedProjects.data !== null && reportedProjects.data !== undefined) {
@@ -319,7 +319,7 @@ const Project = () => {
         type: 'General',
       })));
 
-      if (unapproveRes.status === 200 
+      if (unapproveRes.status === 200
         && deleteRes?.every(r => r.status === 200)
         && notif.every(r => r.status === 201)) {
         // refresh page
@@ -945,7 +945,7 @@ const Project = () => {
               <div id="project-overview-title">Project Overview</div>
               <div id="project-overview-text">{displayedProject.description}</div>
               {/* Sections could also be added with some extra function, 
-            title and content can be assigned to similar elements */}
+                title and content can be assigned to similar elements */}
               {displayedProject.context && (
                 <>
                   <div className="project-overview-section-header">Context</div>
@@ -1048,7 +1048,7 @@ const Project = () => {
               <div className="mod-project-options">
                 <h4>Unapprove?</h4>
                 <p>You can ignore this report or request edits on this project.</p>
-                <p style={{whiteSpace: "pre-wrap"}}>Reasons for this report:<br /> - {reportList.map(r => r.reason).join('\n - ')}</p>
+                {reportList.map(r => <Reporter modUserId={userID} reporterId={r.userId} reason={r.reason} key={'reporter-' + r.userId} />)}
                 <div id="mod-options-btns">
                   <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')}>Dismiss Report</button>
                   <Popup>

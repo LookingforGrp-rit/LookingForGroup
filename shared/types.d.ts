@@ -62,7 +62,7 @@ export type ProjectSortMethod = "Newest" | "A-Z" | "Popular";
 export type UserSortMethod = "Newest" | "A-Z";
 export type Visibility = "public" | "private";
 export type UserAccessLevel = "User" | "Moderator" | "Administrator";
-export type ModNotficationType = "Warning" | "General";
+export type ModNotificationType = "Warning" | "General";
 //do we even need this visibility enum at all? it's stored as a 0/1 in the db anyway
 //a problem for another day, i really don't feel like fixing it right now
 
@@ -1841,7 +1841,7 @@ export type ModeratorNotificationInput = {
   /**
    * Type of moderator notification
    */
-  type: ModNotficationType;
+  type: ModNotificationType;
 }
 
 /**
