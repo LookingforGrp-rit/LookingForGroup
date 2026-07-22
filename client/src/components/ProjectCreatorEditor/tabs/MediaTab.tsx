@@ -293,7 +293,7 @@ export const MediaTab = ({
   // Checks whether the thumbnail has been modified and updates modifiedProject
   const handleThumbnailChange = useCallback(
     async (projectImage: ProjectImage | PendingProjectImage) => {
-      if (!projectId) return;
+      //if (!projectId) return;
 
 
       const thumbId = typeof projectImage.image === 'string'
