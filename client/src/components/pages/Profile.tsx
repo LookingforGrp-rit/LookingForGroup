@@ -244,7 +244,12 @@ const Profile = (userProfile: any) => {
     if (reportedUsers !== null && reportedUsers !== undefined) {
       for (const report of reportedUsers) {
         if (report.reportedId === currentUser) {
-          report.active ? tempActiveList.push(report) : tempInactiveList.push(report);
+          if(report.active){
+            if(report.reporterId !== userID) tempActiveList.push(report)
+          }
+          else {
+            tempInactiveList.push(report);
+          } 
         }
       }
     }

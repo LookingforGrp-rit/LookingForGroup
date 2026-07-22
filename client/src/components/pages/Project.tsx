@@ -128,7 +128,7 @@ const Project = () => {
         const reportedProjects = await getReportedProjects();
         if (reportedProjects.data !== null && reportedProjects.data !== undefined) {
           for (const report of reportedProjects.data) {
-            if (report.projectId === currentProject.projectId) {
+            if (report.projectId === currentProject.projectId && data?.userId !== report.userId) {
               tempReportList.push(report);
             }
           }
