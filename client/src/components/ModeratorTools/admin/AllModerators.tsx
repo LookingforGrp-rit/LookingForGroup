@@ -49,7 +49,7 @@ const AllModerators = ({ currentUserId, currentTab, displayMode }: AllModerators
     // The final component ====================================================
     if (loaded) {
         return (
-            <div id="mod-tools">
+            <div className="mod-tool">
                 <div className="pending-projects">
                     {allModerators.length > 0 ?
                         displayMode === 'grid' ?

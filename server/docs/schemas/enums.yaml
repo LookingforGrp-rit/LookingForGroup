@@ -143,4 +143,5 @@ components:
       enum:
         - Warning
         - General
+        - Announcement
       example: Warning
