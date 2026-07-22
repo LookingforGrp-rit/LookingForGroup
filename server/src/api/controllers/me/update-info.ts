@@ -25,6 +25,7 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     'phoneNumber',
     'mentor',
     'displayPhone',
+    'blockContentWarnings',
   ];
 
   //validate update fields
@@ -88,6 +89,11 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
   if (body.displayPhone !== undefined) {
     updates.displayPhone = body.displayPhone.toString() === 'true';
     //weird workaround bc the boolean passes through here as a string
+  }
+
+  if (body.blockContentWarnings !== undefined) {
+    updates.blockContentWarnings = body.blockContentWarnings.toString() === 'true';
+    //same string-boolean workaround as displayPhone above
   }
 
   const result = await updateUserInfoService(req.currentUser.userId, updates);

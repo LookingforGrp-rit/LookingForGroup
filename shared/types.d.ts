@@ -876,9 +876,8 @@ export interface MePrivate extends MeDetail {
   /**
    * The logged-in user's preference to automatically hide any project carrying
    * a "Content Warning" tag from project listings.
-   * Optional pending backend support.
    */
-  blockContentWarnings?: boolean;
+  blockContentWarnings: boolean;
 
   /**
    * The logged-in user's UID

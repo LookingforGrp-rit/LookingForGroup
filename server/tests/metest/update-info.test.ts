@@ -115,6 +115,7 @@ const transformed: MePrivate = {
   username: '',
   privacy: 'public',
   displayPhone: false,
+  blockContentWarnings: false,
 };
 
 describe('updateUserInfoService', () => {

@@ -9,4 +9,5 @@ export const MePrivateSelector = Object.freeze({
   createdAt: true,
   updatedAt: true,
   displayPhone: true,
+  blockContentWarnings: true,
 });

@@ -22,5 +22,6 @@ export const transformMeToPrivate = (user: UsersGetPayload): MePrivate => {
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
     displayPhone: user.displayPhone,
+    blockContentWarnings: user.blockContentWarnings,
   };
 };

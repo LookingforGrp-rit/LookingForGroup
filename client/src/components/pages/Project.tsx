@@ -25,6 +25,8 @@ import { ProjectContext, ProjectStatus as ProjectStatusEnums, ProjectApprovalSta
 //import { router } from "../../../../server/src/api/routes/me.ts"
 import { reportProject } from "../../api/projects";
 import { getCurrentAccount } from "../../api/users";
+import { useBlockContentWarnings } from "../../hooks/useBlockContentWarnings";
+import { hasContentWarning } from "../../functions/contentWarnings";
 import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport, takeDownProject, sendModeratorNotification } from "../../api/mod-tools";
 
 //Main component for the project page
@@ -68,6 +70,9 @@ const Project = () => {
   const declineMessage = useRef<HTMLTextAreaElement>(null);
   const takeDownMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>("");
+
+  // Whether the viewer has opted to hide projects carrying a content warning.
+  const blockContentWarnings = useBlockContentWarnings();
 
   /**
    * Checks mod permissions for the user on render (in useEffect)
@@ -793,6 +798,38 @@ const Project = () => {
     </div>
   );
 
+  // Owners and members always see their own project, so the setting can't lock
+  // someone out of their own work.
+  const isOwnProject =
+    isMember || (!!user && displayedProject?.owner.userId === user.userId);
+
+  // Hide the project behind a notice when the viewer has opted out of content
+  // warnings. Reached via direct link, search, or navigation.
+  const isContentWarningBlocked =
+    !!displayedProject &&
+    blockContentWarnings &&
+    hasContentWarning(displayedProject) &&
+    !isOwnProject;
+
+  //Page layout for a project hidden by the viewer's content-warning setting
+  const blockedProject = (
+    <main id="main" tabIndex={-1} aria-label="main content">
+      <div id="project-content-warning-block">
+        <h1>This project is hidden</h1>
+        <p>
+          It carries a content warning, and your settings are set to hide
+          projects with content warnings.
+        </p>
+        <button
+          className="white-button"
+          onClick={() => navigate(paths.routes.SETTINGS)}
+        >
+          Change this in Settings
+        </button>
+      </div>
+    </main>
+  );
+
   return (
     <div className="page">
       <Header
@@ -808,6 +845,8 @@ const Project = () => {
 
       {displayedProject === undefined ? (
         loadingProject
+      ) : isContentWarningBlocked ? (
+        blockedProject
       ) : (
         <main id="main" tabIndex={-1} aria-label="main content" >
           <div id="project-page-content">

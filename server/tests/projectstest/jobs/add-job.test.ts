@@ -110,6 +110,7 @@ const prismaUser = {
   firstName: 'Gold',
   lastName: 'Leaf',
   displayPhone: false,
+  blockContentWarnings: false,
   preferredName: 'Leafleaf',
   ritEmail: 'gold@rit.edu',
   privacy: 'public' as Visibility,

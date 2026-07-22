@@ -27,6 +27,10 @@ components:
           type: string
         mentor:
           type: boolean
+        displayPhone:
+          type: boolean
+        blockContentWarnings:
+          type: boolean
         profileImage:
           type: string
           format: binary

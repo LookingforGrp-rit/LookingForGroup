@@ -38,6 +38,7 @@ const prismaUser: Users = {
   createdAt: new Date(),
   updatedAt: new Date(),
   displayPhone: false,
+  blockContentWarnings: false,
   location: '',
   bio: '',
   privacy: 'public',

@@ -244,6 +244,10 @@ components:
             phoneNumber:
               type: string
               nullable: true
+            displayPhone:
+              type: boolean
+            blockContentWarnings:
+              type: boolean
             googleId:
               type: string
             createdAt:
@@ -289,6 +293,7 @@ components:
         visibility: 1
         phoneNumber: null
         displayPhone: false
+        blockContentWarnings: false
         googleId: 11111111
         createdAt: 2038-01-19 03:14:07
         updatedAt: 2038-01-19 03:14:07

@@ -12,6 +12,7 @@ import * as paths from '../../constants/routes';
 import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editUser } from '../../api/users';
 import { MePrivate, UpdateUserInput } from '@looking-for-group/shared';
 import { ProfileEditPopup } from '../Profile/ProfileEditPopup';
+import { useBlockContentWarnings, writeBlockContentWarnings } from '../../hooks/useBlockContentWarnings';
 type JsonData = Record<string, unknown>;
 
 /**
@@ -40,6 +41,9 @@ const Settings = (userProfile: any) => {
   // const [visibilityOption, setVisibilityOption] = useState('Public Account');
 
   const [notValid, setNotValid] = useState(true);
+
+  // Content-warning preference. Saves to the API as soon as it's toggled.
+  const blockContentWarnings = useBlockContentWarnings();
 
   // If user is not logged in, redirect to login page
   useEffect(() => {
@@ -737,12 +741,9 @@ const Settings = (userProfile: any) => {
                       type="checkbox"
                       id="toggle-content-warning-checkbox"
                       onChange={async (e) => {
-                        const tempInfo = { ...userInfo };
-                        tempInfo.blockContentWarnings = e.target.checked;
-                        setUserInfo(tempInfo);
-                        await editUser({ blockContentWarnings: tempInfo.blockContentWarnings });
+                        await writeBlockContentWarnings(e.target.checked);
                       }}
-                      checked={userInfo.blockContentWarnings ?? false}
+                      checked={blockContentWarnings}
                     >
                     </input>
                     <label htmlFor="toggle-content-warning-checkbox">

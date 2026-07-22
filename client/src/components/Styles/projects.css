@@ -3603,6 +3603,24 @@ New Project Page style rules
 */
 /* #region project page post */
 
+/* Shown in place of a project the viewer has hidden via the
+   "hide projects with content warnings" account setting. */
+#project-content-warning-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 16px;
+  max-width: 520px;
+  margin: 96px auto;
+  padding: 0 24px;
+}
+
+#project-content-warning-block p {
+  font-size: 1rem;
+}
+
 #project-page-content {
   display: grid;
   grid-template:
