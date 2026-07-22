@@ -3,6 +3,7 @@ import { Tag } from "./Tag";
 import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 import { ProjectWithFollowers } from "@looking-for-group/shared";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import usePreloadedImage from '../functions/imageLoad.tsx';
 import { Link } from "react-router-dom";
@@ -20,6 +21,7 @@ type DiscoverCarouselProps = {
  * @returns A styled carousel populated with dynamically generated project slides.
  */
 export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [] }) => {
+  const isDesktop = useMediaQuery('(max-width: 1360px');
 
   if (dataList.length === 0) {
     return (
@@ -29,6 +31,7 @@ export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [
         </div>
         ]
       }>
+        {isDesktop ?
         <div className='discover-carousel'>
           <div className='carousel-row'>
             <CarouselButton
@@ -46,7 +49,24 @@ export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [
           <div className='carousel-row'>
             <CarouselTabs className='discover-carousel-tabs' />
           </div>
-        </div>
+        </div> :
+        
+        <div className='discover-carousel'>
+          <CarouselContent className='discover-carousel-content' />
+          <div className='carousel-row'>
+              <CarouselButton 
+                  direction='left'
+                  className='discover-carousel-btn'
+                  size='small'
+              />
+              <CarouselTabs className='discover-carousel-tabs'></CarouselTabs>
+              <CarouselButton 
+                  direction='right'
+                  className='discover-carousel-btn'
+                  size='small'
+              />
+          </div>
+        </div>}
       </Carousel>
     );
   }

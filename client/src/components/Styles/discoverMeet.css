@@ -293,12 +293,6 @@ Image carousel style rules
   opacity: 1;
 }
 
-@media only screen and (max-width: 700px) {
-  .discover-carousel-btn {
-    display: none;
-  }
-}
-
 .carousel-contents {
   display: flex;
   flex-wrap: nowrap;
