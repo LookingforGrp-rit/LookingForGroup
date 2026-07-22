@@ -12,7 +12,9 @@ import { getUserAccessLevel } from '../api/mod-tools.ts';
 
 //user utils
 import { getCurrentAccount, getCurrentUsername, googleLogout } from '../api/users.ts';
-import { MePrivate } from '@looking-for-group/shared';
+import { AddBugReportInput, MePrivate } from '@looking-for-group/shared';
+import { Popup, PopupButton, PopupContent, PopupContext } from './Popup.tsx';
+import { POST } from '../api/index.ts';
 
 //Header component to be used in pages
 
@@ -86,21 +88,21 @@ export const Header: React.FC<HeaderProps> = ({
 
   const navigate = useNavigate(); // Hook for navigation
 
+  let bugReportText: string = "";
+
   /**
    * Checks mod permissions for the user on render (in useEffect)
    */
   const getUserPermissions = async () => {
     /* Ensures the user is logged in */
     const userAccount = await getCurrentAccount();
-    if (userAccount.status === 200 && userAccount.data?.userId)
-    {
-        setUserId(userAccount.data?.userId);
-        /* User must have mod permissions to access mod page */
-        const accessLevel = await getUserAccessLevel(userAccount.data.userId);
-        if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator')
-        {
-            setIsUserAdmin(true);
-        }
+    if (userAccount.status === 200 && userAccount.data?.userId) {
+      setUserId(userAccount.data?.userId);
+      /* User must have mod permissions to access mod page */
+      const accessLevel = await getUserAccessLevel(userAccount.data.userId);
+      if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator') {
+        setIsUserAdmin(true);
+      }
     }
   };
 
@@ -335,13 +337,13 @@ export const Header: React.FC<HeaderProps> = ({
                 <hr />
                 {/* Moderation Page Link */}
                 {/* TO DO: Change icon when a new icon is found */}
-                {isUserAdmin ? 
-                <a href={paths.routes.MODERATION}>
-                  <ThemeIcon id={'settings'} width={25} height={25} className={'mono-stroke'} ariaLabel={'settings'} />
-                  Moderation
-                </a>
-                : ""}
-                
+                {isUserAdmin ?
+                  <a href={paths.routes.MODERATION}>
+                    <ThemeIcon id={'settings'} width={25} height={25} className={'mono-stroke'} ariaLabel={'settings'} />
+                    Moderation
+                  </a>
+                  : ""}
+
                 {/* Dark/Light Theme Switcher */}
                 <button onClick={switchTheme}>
                   <ThemeIcon id={'mode'} width={25} height={25} className={'mono-stroke'} ariaLabel={'current mode'} />
@@ -354,12 +356,53 @@ export const Header: React.FC<HeaderProps> = ({
                   Settings
                 </Link>
 
-                {/* Report a Bug button */}
-                {/* No functionality yet */}
-                <button onClick={() => {console.log("Report a bug button pressed");}}>
-                  <ThemeIcon id={'warning'} width={25} height={25} className={''} ariaLabel={'report a bug'} />
-                  Report a Bug
-                </button>{' '}
+                {/* Bug report popup */}
+                <Popup>
+                  {/* Report a Bug button */}
+                  <PopupButton buttonId='btn-report-bug'>
+                    <ThemeIcon id={'warning'} width={25} height={25} className={''} ariaLabel={'report a bug'} />
+                    Report a Bug
+                  </PopupButton>
+
+                  <PopupContent>
+                    {/* Using the editor styles temporarily because they look good for this menu */}
+                    <div className="editor-header">Report a Bug</div>
+                    <div className="editor-extra-info">
+                      Please explain what the bug is, and the steps leading up to it occuring.
+                    </div>
+
+                    <input type='text'
+                      id='input-bug-report'
+                      name='input-bug-report'
+                      required
+                      minLength={1}
+                      maxLength={200}
+                      onChange={(e) => {
+                        bugReportText = e.currentTarget.value;
+                      }}></input> <span className='required-asterisk'>*</span>
+
+                    <div id='error-report'>
+
+                    </div>
+
+                    <button type='submit' id="btn-bug-report-submit"
+                      onClick={() => {
+                        if (bugReportText.trim().length !== 0) {
+                          const report: AddBugReportInput = {
+                            reportText: bugReportText
+                          };
+
+                          POST(`/me/report-bug`, report);
+                        } else {
+                          const errorReport = document.querySelector("#error-report");
+
+                          if (errorReport) {
+                            errorReport.textContent = "Please fill submit a description of the bug.";
+                          }
+                        }
+                      }}>Submit</button>
+                  </PopupContent>
+                </Popup>
 
                 {/* LOG OUT Button */}
                 <button onClick={async () => {

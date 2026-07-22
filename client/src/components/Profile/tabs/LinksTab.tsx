@@ -275,21 +275,21 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                   }}
                 />
                 <div id="clear-all-trash-row">
-                <button
-                  type="button"
-                  className="delete-position-button-alt button-reset"
-                  onClick={() => handleDeleteSocial(index)}
-                  title="Remove social link"
-                >
-                  <div id="clear-all-trash-row">
-                  <ThemeIcon
-                    id="trash"
-                    width={18}
-                    height={18}
-                    ariaLabel="Delete position"
-                  />
-                  </div>
-                </button>
+                  <button
+                    type="button"
+                    className="delete-position-button-alt button-reset"
+                    onClick={() => handleDeleteSocial(index)}
+                    title="Remove social link"
+                  >
+                    <div id="clear-all-trash-row">
+                      <ThemeIcon
+                        id="trash"
+                        width={18}
+                        height={18}
+                        ariaLabel="Delete position"
+                      />
+                    </div>
+                  </button>
                 </div>
               </div>
             );
