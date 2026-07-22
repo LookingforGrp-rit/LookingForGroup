@@ -217,6 +217,7 @@ export const Header: React.FC<HeaderProps> = ({
             onFocus={searchOnFocus}
             placeholderText={placeholderText}
             mobilePlaceholderText={mobilePlaceholderText}
+            relevantData={dataSets[0]}
           />
         </div>
       )}

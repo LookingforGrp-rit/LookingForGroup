@@ -40,7 +40,19 @@ interface SearchBarProps {
   //If omitted, it's derived from placeholderText by dropping the leading
   //"Search by "/"Search for " (e.g. "Search by Project" -> "Project").
   mobilePlaceholderText?: string;
+
+  relevantData?: object;
 }
+
+//Force typing to remove extra data and only check for relevant data
+type RelevantData = {
+  firstName: string,
+  lastName: string,
+  preferredName: string,
+  email: string,
+  title: string,
+  label: string,
+};
 
 //Screens this narrow can't fit the full "Search by ..." placeholder.
 const MOBILE_QUERY = '(max-width: 500px)';
@@ -63,7 +75,7 @@ const deriveMobilePlaceholder = (text: string): string =>
  * @returns JSX element containing a styled search input with icon
  */
 //FIXME: create way to update results if a new dataset is provided: discover page filter and project editor tag filters do not save search state
-export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange, setValue, onFocus, placeholderText = "Search by Project", mobilePlaceholderText }) => {
+export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange, setValue, onFocus, placeholderText = "Search by Project", mobilePlaceholderText, relevantData }) => {
   // Internal query state for uncontrolled mode
   const [internalQuery, setInternalQuery] = useState('');
   
@@ -90,7 +102,6 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
       setInternalQuery(newQuery);
     }
     if (setValue) setValue(newQuery);
-    if (newQuery.length > 0) handleSearch(newQuery);
     handleSearch(newQuery);
   };
 
@@ -110,12 +121,15 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
           // ONLY return fields we want to match, this avoids unintended searchbar behavior
           // Search using all string props on the item
           const includesInValue = (val: unknown): boolean => {
-            if (val === null) return false;
+            if (!val) return false;
             if (typeof val === 'string') {
+              if (val.toLowerCase().includes("api")) return false;
+              if (val.toLowerCase().includes(currentQuery))
+                console.log(val);
               return val.toLowerCase().includes(currentQuery);
             }
             if (Array.isArray(val)) {
-              return val.some((el) => typeof el === 'string' && el.toLowerCase().includes(currentQuery));
+              return val.some(includesInValue);
             }
             if (val && typeof val === 'object') {
               return Object.values(val).some(includesInValue);
@@ -124,29 +138,16 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
           };
 
           if (item === null) return false;
-
-          //Force typing to remove extra data and only check for relevant data
-          type RelevantData = {
-            firstName: string,
-            lastName: string,
-            preferredName: string,
-            email: string,
-            title: string,
-            label: string,
-          };
-          const proccessedItem = item as RelevantData;
-          const finalItem = {
-            firstName: proccessedItem.firstName ?? null,
-            lastName: proccessedItem.lastName ?? null,
-            preferredName: proccessedItem.preferredName ?? null,
-            email: proccessedItem.email ?? null,
-            title: proccessedItem.title ?? null,
-            label: proccessedItem.label ?? null,
-          };
+          
+          let proccessedItem;
+          if (relevantData)
+            proccessedItem = item as typeof relevantData;
+          else 
+            proccessedItem = item as RelevantData;
 
           for (const q of splitSearchQuery) {
             currentQuery = q;
-            if (!Object.values(finalItem).some(includesInValue)) return false;
+            if (!Object.values(proccessedItem).some(includesInValue)) return false;
           }
           return true;
         }
