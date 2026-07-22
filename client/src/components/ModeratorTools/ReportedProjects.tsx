@@ -22,11 +22,10 @@ const ReportedProjects = ({ currentUserId, currentTab, displayMode }: ReportedPr
 
     // Helper Methods =========================================================
     useEffect(() => {
-
         //get reported projects to display
         const displayReportedProjects = async () => {
             const reportedProjects = ((await getReportedProjects()).data);
-            const tempPendingProjectArray = [];
+            const tempPendingProjectArray: ProjectWithFollowers[] = [];
             let tempIds: Set<number> = new Set();
 
             if (reportedProjects !== undefined && reportedProjects != null) {
@@ -38,8 +37,8 @@ const ReportedProjects = ({ currentUserId, currentTab, displayMode }: ReportedPr
                     }
                 }
                 setReportedProjects(tempPendingProjectArray);
-                setLoaded(true);
             }
+            setLoaded(true);
         }
 
         displayReportedProjects();
