@@ -488,6 +488,15 @@ export const userDataManager = async () => {
       existingSkillUpdate,
     ];
   };
+  
+  const changeExcludedTags = (tagBlacklistRequest: CRUDRequest<UpdateTagBlacklistInput>) => {
+    if(changes.update.tagBlacklist.length > 0){
+      changes.update.tagBlacklist[0] = tagBlacklistRequest; //literally i just replace the one that's in there
+    }
+    else{
+      changes.update.tagBlacklist.push(tagBlacklistRequest); //and if there isn't one in there i push the one they give me
+    }
+  }
 
   /**
    * Updates an existing social for a user
@@ -626,6 +635,7 @@ export const userDataManager = async () => {
     updateProjectProfileVisibility,
     updateSkill,
     updateSocial,
+    changeExcludedTags,
     deleteMajor,
     deleteSkill,
     deleteSocial,
