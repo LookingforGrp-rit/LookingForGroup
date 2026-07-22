@@ -19,7 +19,7 @@ export const requiresNotSelf = (subjectParamLocation: ParameterLocation, subject
     if (meId === subjectResult) {
       const res: ApiResponse = {
         status: 403,
-        error: 'You cannot moderate yourself.',
+        error: 'You cannot do this yourself.',
       };
       response.status(res.status).json(res);
       return;
