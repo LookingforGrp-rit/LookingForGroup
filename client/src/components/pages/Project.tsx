@@ -975,7 +975,7 @@ const Project = () => {
             </div>
 
             {/* Mod options to approveor reject a project request (request edits in order to approve) */}
-            {isUserAdmin && approvalStatus == 'under-review' ? <div className="mod-project-options">
+            {isUserAdmin && approvalStatus == 'under-review' && userID !== displayedProject.owner.userId ? <div className="mod-project-options">
               <h4>Approve?</h4>
               <p>You can approve this project or request changes.</p>
               <div id="mod-options-btns">
@@ -1004,7 +1004,7 @@ const Project = () => {
               : ""}
 
             {/* Mod options to accept, decline, or request changes to a reported project // are we doing edits on reported projects?  */}
-            {isUserAdmin && reportList.length !== 0 ? (
+            {isUserAdmin && reportList.length !== 0 && userID !== displayedProject.owner.userId ? (
               <div className="mod-project-options">
                 <h4>Unapprove?</h4>
                 <p>You can ignore this report or request edits on this project.</p>
