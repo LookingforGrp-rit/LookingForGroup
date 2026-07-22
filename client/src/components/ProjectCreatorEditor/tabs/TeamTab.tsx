@@ -117,6 +117,7 @@ type TeamTabProps = {
 	message: string;
 	messages: string[];
 	setMessages: React.Dispatch<React.SetStateAction<string[]>>;
+	isSaving: boolean;
 };
 
 /**
@@ -154,7 +155,8 @@ export const TeamTab = ({
 	updateFailCheck,
 	message,
 	messages,
-	setMessages
+	setMessages,
+	isSaving
 }: TeamTabProps) => {
 	// --- Hooks ---
 	// State for storing all available roles from the API.
@@ -2606,16 +2608,25 @@ export const TeamTab = ({
 								<p>*{message}*</p>
 							</div>
 						)}
-						<PopupButton
-							buttonId="project-editor-save"
-							callback={() => {
-								// Incomplete form: still clickable so the save validation
-								// runs, shows the error, and auto-scrolls to the missing field.
-								if (!saveable) saveProject?.();
-								else setConfirm(true)
-							}}>
-							Save Changes
-						</PopupButton>
+						{isSaving ? 
+							(
+								// Currently Saving
+								<div className='spinning-loader'></div>
+							) : (
+								// Save is complete or hasn't been pressed
+								<PopupButton
+									buttonId="project-editor-save"
+									callback={() => {
+										// Incomplete form: still clickable so the save validation
+										// runs, shows the error, and auto-scrolls to the missing field.
+										if (!saveable) saveProject?.();
+										else setConfirm(true)
+									}}>
+									Save Changes
+								</PopupButton>
+							)
+						}
+
 						{confirm ?
 							<PopupContent useClose={false} callback={() => setConfirm(false)}>
 								<div id="confirm-editor-save-text">
@@ -2632,12 +2643,22 @@ export const TeamTab = ({
 										Cancel
 									</PopupButton>
 								</div>
-							</PopupContent> : ""}
+							</PopupContent> : ""
+						}
 					</Popup>
-					<DeleteProjectButton
-						projectID={unmodifiedProject.projectId}
-						projectTitle={unmodifiedProject.title}
-					/>
+
+					{isSaving ?
+						(
+							// Just here for blank space and to prevent 
+							// accidental deletion while a project is saving
+							""
+						) : (
+							<DeleteProjectButton
+								projectID={unmodifiedProject.projectId}
+								projectTitle={unmodifiedProject.title}
+							/>
+						)
+					}
 				</div>
 			</div>
 		</div>
