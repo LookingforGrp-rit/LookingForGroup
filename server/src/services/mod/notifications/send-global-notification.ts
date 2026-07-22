@@ -1,10 +1,9 @@
+import type { ModeratorNotificationInput } from '@looking-for-group/shared';
 import type { Request } from 'express';
 import prisma from '#config/prisma.ts';
 import sendNotificationService from '#services/notifications/send-notification.ts';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 import type { NotificationBuilder } from '../../../notification-templates/notification-builder.ts';
-
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 type SendNotificationServiceError = ServiceErrorSubset<'CONFLICT' | 'INTERNAL_ERROR'>;
 type SendNotificationServiceSuccess = ServiceSuccessSubset<'CREATED'>;
@@ -23,7 +22,13 @@ const sendGlobalNotificationService = async (
 
     const res = await Promise.all(
       userIDs.map((id) => {
-        const newReq = { ...request, body: { ...request.body, receiverId: id } } as Request;
+        const newReq = {
+          ...request,
+          body: {
+            ...request.body,
+            receiverId: id.userId,
+          } as ModeratorNotificationInput,
+        } as Request;
         return sendNotificationService(builder, newReq, true);
       }),
     );

@@ -47,7 +47,7 @@ const ReportedProjects = ({ currentUserId, currentTab, displayMode }: ReportedPr
     // The final component ====================================================
     if (loaded) {
         return (
-            <div id="mod-tools">
+            <div className="mod-tool">
                 <div className="project-reports">
                     {reportedProjects.length > 0 ?
                         displayMode === 'grid' ?
