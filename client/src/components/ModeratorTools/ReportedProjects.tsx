@@ -31,7 +31,9 @@ const ReportedProjects = ({ currentUserId, currentTab, displayMode }: ReportedPr
             if (reportedProjects !== undefined && reportedProjects != null) {
                 for (const project of reportedProjects) {
                     const reportedId = await getByID(project.projectId);
-                    if (reportedId.data?.projectId !== undefined && !tempIds.has(reportedId.data?.projectId)) {
+                    if (reportedId.data?.projectId !== undefined 
+                        && reportedId.data?.owner?.userId !== currentUserId
+                        && !tempIds.has(reportedId.data?.projectId)) {
                         tempPendingProjectArray.push(reportedId.data as ProjectWithFollowers);
                         tempIds.add(project.projectId);
                     }
