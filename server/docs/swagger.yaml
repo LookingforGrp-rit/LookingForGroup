@@ -4980,7 +4980,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ProjectPreview'
+                      $ref: '#/components/schemas/ProjectDetail'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
