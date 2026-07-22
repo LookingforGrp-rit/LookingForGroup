@@ -9,9 +9,10 @@ import { sendModeratorNotification } from "../api/mod-tools";
 interface ProjectPanelProps {
     reporterId: number;
     modUserId: number;
+    reason: string;
 }
 
-const Reporter = ({ reporterId, modUserId }: ProjectPanelProps) => {
+const Reporter = ({ reporterId, modUserId, reason }: ProjectPanelProps) => {
     // Variables ==============================================================
     // Reporter detail
     const [reporter, setReporter] = useState<UserDetail>();
@@ -120,6 +121,7 @@ const Reporter = ({ reporterId, modUserId }: ProjectPanelProps) => {
                         </div>
                     )}
                 </div>
+                <p style={{ whiteSpace: "pre-wrap" }}>Reason: {reason}</p>
             </div>
         </>;
     } else {

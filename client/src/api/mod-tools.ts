@@ -1,12 +1,12 @@
 import { GET, DELETE, POST, PATCH } from "./index";
 import { ApiResponse, UserAccessLevel, UnapproveProjectInput } from "@looking-for-group/shared";
-import { ProjectPreview, ProjectDetail, ProjectReport, UserReport, ModeratorNotificationInput, BanUserInput } from "@looking-for-group/shared";
+import { ProjectDetail, ProjectReport, UserReport, ModeratorNotificationInput, BanUserInput } from "@looking-for-group/shared";
 
 /**
  * Gets the list of all pending projects
  * @returns List of all pending projects or an error message if the request fails
  */
-export const getPendingProjects = async (): Promise<ApiResponse<ProjectPreview[]>> => {
+export const getPendingProjects = async (): Promise<ApiResponse<ProjectDetail[]>> => {
     const apiURL = "/projects/unapproved";
     const response = await GET(apiURL);
 
@@ -177,21 +177,14 @@ export const sendModeratorNotification = async (data: ModeratorNotificationInput
  * @returns ApiResponse from the API call to ban a user and deleteUserReport
  */
 export const banUser = async (
-    reportId: number,
     data: BanUserInput
-): Promise<{ ban: ApiResponse, deleteReport: ApiResponse }> => {
+): Promise<ApiResponse> => {
     const apiUrl = `/mod/ban-user/${data.userId}`;
     const res = await POST(apiUrl, data);
 
-    const deleteReport = await deleteUserReport(reportId);
-
     if (res.error) console.log(`Error in banUser: ${res.error}`);
-    if (deleteReport.error) console.log(`Error in banUser(deleteReport): ${res.error}`);
 
-    return {
-        ban: res,
-        deleteReport: deleteReport,
-    };
+    return res;
 };
 
 /**

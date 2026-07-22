@@ -94,7 +94,6 @@ textarea {
 .editor-input-item button:hover,
 #profile-editor-add-link:hover,
 .close-btn:hover,
-#profile-editor-tags button:hover,
 .project-editor-tab:hover {
   transform: translateY(-1px);
   opacity: 0.92;

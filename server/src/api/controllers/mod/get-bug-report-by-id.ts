@@ -1,6 +1,6 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import getBugReportByIdService from '#services/mod/get-bug-reports-by-id.ts';
+import getBugReportByIdService from '#services/mod/get-bug-report-by-id.ts';
 
 //GET api/mod/bug-report/{id}
 //gets all bug reports
