@@ -636,7 +636,7 @@ export const DiscoverPage = () => {
   return (
     //TEMP FIX for spamming requests: use onScrollEnd
     //Looks alright but theres probably better solutions
-    <div className="page discover-page" tabIndex={-1} onScrollEnd={scrollEvent}>
+    <main className="page discover-page" tabIndex={-1} onScrollEnd={scrollEvent}>
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={projectDataSet}
         onSearch={searchProjects}
@@ -655,7 +655,7 @@ export const DiscoverPage = () => {
         Clicking a tag filter adds it to a list & updates panel display based on that list
         Changes to filters via filter menu are only applied after a confirmation
       */}
-      <main id="main" tabIndex={-1} aria-label='main content'>
+      <article id="main" tabIndex={-1} aria-label='main content'>
         <DiscoverProjects updateItemList={updateProjectList} />
 
         {/* Panel container. itemAddInterval can be whatever. 25 feels good for now */}
@@ -665,8 +665,8 @@ export const DiscoverPage = () => {
         </div>
 
         {loadObj}
-      </main>
+      </article>
       <ToTopButton />
-    </div>
+    </main>
   );
 }
