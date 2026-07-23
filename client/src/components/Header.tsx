@@ -14,6 +14,7 @@ import { getUserAccessLevel } from '../api/mod-tools.ts';
 import { getCurrentAccount, getCurrentUsername, googleLogout } from '../api/users.ts';
 import { AddBugReportInput, MePrivate } from '@looking-for-group/shared';
 import { Popup, PopupButton, PopupContent, PopupContext } from './Popup.tsx';
+import { Input } from './Input.tsx';
 import { POST } from '../api/index.ts';
 
 //Header component to be used in pages
@@ -370,17 +371,20 @@ export const Header: React.FC<HeaderProps> = ({
                     <h3>Report a Bug</h3>
                     <p>Please explain what the bug is, and the steps leading up to it occuring.</p>
 
-                    <textarea
-                      id='input-bug-report'
-                      name='input-bug-report'
-                      placeholder="Write your reasoning here..."
-                      className="input input-multiline"
-                      required
-                      minLength={1}
-                      maxLength={200}
-                      onChange={(e) => {
-                        bugReportText = e.currentTarget.value;
-                      }}></textarea> <span className='required-asterisk'>*</span>
+                    <div id='bug-report-field'>
+                      <Input
+                        id='input-bug-report'
+                        name='input-bug-report'
+                        type='multi'
+                        placeholder="Write your reasoning here..."
+                        required
+                        minLength={1}
+                        maxLength={200}
+                        onChange={(e) => {
+                          bugReportText = e.target.value;
+                        }} />
+                      <span className='required-asterisk' aria-hidden="true" title="Required">*</span>
+                    </div>
 
                     <button type='submit' id="btn-bug-report-submit"
                       onClick={() => {
