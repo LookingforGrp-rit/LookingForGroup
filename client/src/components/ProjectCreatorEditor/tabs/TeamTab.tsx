@@ -2136,32 +2136,42 @@ export const TeamTab = ({
 										<PopupButton
 											buttonId="team-edit-member-save-button"
 											callback={() => {
-												// TODO error messages
-												if (!currentMember) return;
-												if (
-													isNullOrUndefined(
-														currentMember.user
-													)
-												)
+												if (!currentMember) {
+													setErrorAddMember("No member selected");
 													return;
+												};
+												if (!currentMember.user || !currentMember.user.userId) {
+													setErrorAddMember("Member is missing user information");
+													return;
+												} // cant edit owner role
+												if (currentMember.user.userId === projectAfterTeamChanges.owner?.userId) {
+													setErrorAddMember("The project owners role cannot be changed");
+													return;
+												}
+												//if (isNullOrUndefined(currentMember.user)) return;
 
 												// update member in data manager
-												dataManager?.updateMember({
-													id: {
-														type:
-															"localId" in
-																currentMember
-																? "local"
-																: "canon",
-														value: currentMember
-															.user?.userId
-													},
-													data: {
-														roleId: currentMember
-															.role?.roleId
-													}
-												});
-
+												try {
+													dataManager?.updateMember({
+														id: {
+															type:
+																"localId" in
+																	currentMember
+																	? "local"
+																	: "canon",
+															value: currentMember
+																.user?.userId
+														},
+														data: {
+															roleId: currentMember
+																.role?.roleId
+														}
+													});
+												} catch (e) {
+													console.error(e);
+													setErrorAddMember("Failed to update member");
+													return;
+												}
 												// update team changes array
 												projectAfterTeamChanges.members =
 													projectAfterTeamChanges.members.map(
@@ -2219,48 +2229,55 @@ export const TeamTab = ({
 													<PopupButton
 														className="delete-button"
 														callback={() => {
-															if (
-																!currentMember
-															) {
-																// TODO: error message here
+															if (!currentMember) {
+																setErrorAddMember("no member selected");
 																return;
 															}
-															if (
-																isNullOrUndefined(
-																	currentMember.user
-																)
-															) {
-																// TODO: error message here
+															if (!currentMember.user || !currentMember.user.userId) {
+																setErrorAddMember("Member is missing user information")
+																return;
+															} //no deleting project owner
+															if (currentMember.user.userId === projectAfterTeamChanges.owner?.userId) {
+																setErrorAddMember("Owner cannot be removed");
 																return;
 															}
 
-															if (
-																"localId" in
-																currentMember
-															) {
-																dataManager?.deleteMember(
-																	{
-																		id: {
-																			type: "local",
-																			value: currentMember
-																				.user
-																				.userId
-																		},
-																		data: null
-																	}
-																);
+															if ("localId" in currentMember) {
+																try {
+																	dataManager?.deleteMember(
+																		{
+																			id: {
+																				type: "local",
+																				value: currentMember
+																					.user
+																					.userId
+																			},
+																			data: null
+																		}
+																	);
+																} catch (e) {
+																	console.error(e);
+																	setErrorAddMember("Failed to delete member");
+																	return;
+																}
 															} else {
-																dataManager?.deleteMember(
-																	{
-																		id: {
-																			type: "canon",
-																			value: currentMember
-																				.user
-																				.userId
-																		},
-																		data: null
-																	}
-																);
+																try {
+																	dataManager?.deleteMember(
+																		{
+																			id: {
+																				type: "canon",
+																				value: currentMember
+																					.user
+																					.userId
+																			},
+																			data: null
+																		}
+																	);
+																} catch (e) {
+																	console.error(e);
+																	setErrorAddMember("Failed to delete member");
+																	return;
+																}
 															}
 															projectAfterTeamChanges.members =
 																projectAfterTeamChanges.members.filter(
