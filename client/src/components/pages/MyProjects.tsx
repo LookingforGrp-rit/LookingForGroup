@@ -368,6 +368,11 @@ const MyProjects = (userProfile: any) => {
                 <MyProjectsDisplayGrid
                   projectData={project}
                   approvalStatus={approvalStatuses[project.projectId]}
+                  setApprovalStatus={(newStatus) => {
+                    let newStatuses = structuredClone(approvalStatuses);
+                    newStatuses[project.projectId] = newStatus;
+                    setApprovalStatuses(newStatuses);
+                  }}
                 />
               </LeaveDeleteContext.Provider>
             );
@@ -416,6 +421,11 @@ const MyProjects = (userProfile: any) => {
                   <MyProjectsDisplayList
                     projectData={project}
                     approvalStatus={approvalStatuses[project.projectId]}
+                    setApprovalStatus={(newStatus) => {
+                      let newStatuses = structuredClone(approvalStatuses);
+                      newStatuses[project.projectId] = newStatus;
+                      setApprovalStatuses(newStatuses);
+                    }}
                   />
                 </LeaveDeleteContext.Provider>
               );

@@ -20,6 +20,7 @@ type ApprovalStatusKey = keyof typeof ApprovalStatus;
 type MyProjectsDisplayGridProps = {
   projectData: ProjectDetail;
   approvalStatus: ApprovalStatusKey;
+  setApprovalStatus: (status: ApprovalStatusKey) => void;
 };
 /**
  * MyProjectsDisplayGrid renders a single project card in a grid layout for the "My Projects" page.
@@ -41,7 +42,7 @@ type MyProjectsDisplayGridProps = {
  * @param approvalStatus - Project approval status (keyof ProjectApprovalStatus from "@looking-for-group/shared/enums")
  * @returns The project card element.
  */
-const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDisplayGridProps) => {
+const MyProjectsDisplayGrid = ({ projectData, approvalStatus, setApprovalStatus, }: MyProjectsDisplayGridProps) => {
   //Navigation hook
   const navigate = useNavigate();
   // Context providing project ID, ownership status, and reload function
@@ -182,7 +183,10 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
                         <div id="project-request-buttons">
                           <PopupButton buttonId="request-confirm-button"
                             callback={() => {
-                              if (projectData) requestProjectReview(projectData.projectId);
+                              if (projectData) {
+                                requestProjectReview(projectData.projectId);
+                                setApprovalStatus("under-review");
+                              }
                             }}
                           >
                             Request Review
