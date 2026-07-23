@@ -30,11 +30,11 @@ import type {
   MyMember,
   SessionUserData,
   CreateUserInput,
+  UpdateTagBlacklistInput,
 } from "@looking-for-group/shared";
 
-/* USER CRUD */
+//#region USER CRUD/LOGIN
 
-//This probably will change with shibboleth???
 /**
  * Creates a new user
  * @param userData - data for creating a user
@@ -185,7 +185,7 @@ export const deleteUser = async (): Promise<ApiResponse> => {
 
 /* ACCOUNT INFO/ PASSWORD RESET*/
 
-/* LOOKUP USER */
+//#region USER LOOKUP
 
 /**
  * Get User by Username
@@ -216,8 +216,9 @@ export const getUserByEmail = async (
   //console.log(response);
   return response;
 };
+//#endregion
 
-/* USER FOLLOWINGS */
+//#region USER FOLLOWINGS
 
 /**
  * Get people that a user is following.
@@ -273,8 +274,42 @@ export const deleteUserFollowing = async (id: number) => {
   //console.log(response);
   return response;
 };
+//#endregion
 
-/* PROJECT FOLLOWINGS/VISIBILITY */
+//#region TAG BLACKLIST
+
+/**
+ * Get the current user's tag blacklist
+ * @returns 200 if successful, 404 if not
+ */
+export const getTagExclusion = async (): Promise<
+  ApiResponse<Tag[]>
+> => {
+  const url = `/me/tag-blacklist`;
+  const response = await GET(url);
+
+  return response;
+};
+
+/**
+ * Update the current user's tag blacklist
+ * @param {Tag[]} newBlacklist - The updated tag blacklist
+ * @returns 201 if successful, 404 if not
+ */
+export const updateTagExclusion = async (
+  newBlacklist: UpdateTagBlacklistInput
+): Promise<ApiResponse<Tag[]>> => {
+  const url = `/me/tag-blacklist`;
+  const response = await POST(url, newBlacklist);
+
+  if (response.error) console.log(`Error in updateTagBlacklist: ${response.error}`);
+  //console.log(response);
+  return response as ApiResponse<Tag[]>;
+};
+
+//#endregion
+
+// #region PROJECT FOLLOWINGS/VISIBILITY
 
 //Get the current user's projects
 export const getProjectsByUser = async (): Promise<
@@ -381,6 +416,9 @@ export const deleteProjectFollowing = async (
   return response;
 };
 
+//#endregion
+
+//#region SOCIALS
 // Get socials for the current user based on ID.
 export const getUserSocials = async (): Promise<ApiResponse<MySocial[]>> => {
   const url = `/me/socials`;
@@ -436,7 +474,9 @@ export const deleteUserSocial = async (
   //console.log(response);
   return response;
 };
+//#endregion
 
+//#region SKILLS
 // Get skills for the current user based on ID
 export const getUserSkills = async (): Promise<ApiResponse<MySkill[]>> => {
   const url = `/me/skills`;
@@ -493,6 +533,9 @@ export const deleteUserSkill = async (
   return response as ApiResponse<null>;
 };
 
+//#endregion
+
+//#region MAJORS
 // Get majors for the current user based on ID
 export const getUserMajors = async (): Promise<ApiResponse<MyMajor[]>> => {
   const url = `/me/majors`;
@@ -527,8 +570,9 @@ export const deleteUserMajor = async (
   //console.log(response);
   return response as ApiResponse<null>;
 };
+//#endregion
 
-/* DATASETS */
+//#region DATASETS
 
 /**
  * Retrieves list of majors.
@@ -595,6 +639,7 @@ export const getSocials = async (): Promise<ApiResponse<Social[]>> => {
   //console.log(response);
   return response;
 };
+//#endregion
 
 export default {
   createNewUser,
