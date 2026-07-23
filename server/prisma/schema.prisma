@@ -415,7 +415,7 @@ model JobSkills {
 enum JobsAvailability {
   FullTime @map("Full-time")
   PartTime @map("Part-time")
-  Flexible
+  PtFt     @map("Part-time/Full-time")
 
   @@map("jobs_availability")
 }
