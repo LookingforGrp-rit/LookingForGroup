@@ -45,7 +45,7 @@ const updateJobController = async (req: Request, res: Response): Promise<void> =
     };
   }
 
-  if (body.availability && ['FullTime', 'PartTime', 'Flexible'].includes(body.availability)) {
+  if (body.availability && ['FullTime', 'PartTime', 'PtFt'].includes(body.availability)) {
     updates.availability = body.availability;
   }
 
