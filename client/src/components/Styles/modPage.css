@@ -3,8 +3,36 @@
     Most of the css styling rules for the Moderator page and mod options
 
 ================== */
+#mod-tools {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
 
-#mod-tools-block {
+    .announcement-area {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        width: 50%;
+        height: fit-content;
+
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        p {
+            width: 90%;
+            text-align: center;
+            margin: 0;
+        }
+    }
+}
+
+#mod-actions-block {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -14,14 +42,16 @@
     background-color: var(--header-color);
     border-radius: 10px;
     padding: 10px;
+    margin-bottom: 20px;
     height: auto;
 
-    #mod-tools-tabs {
+    #mod-actions-tabs {
         display: flex;
         gap: 15px;
         align-items: flex-end;
-        height: 40px;
-        overflow-y: scroll;
+        overflow-x: auto;
+        scrollbar-color: var(--primary-color) var(--liked-section-bg);
+        scrollbar-width: thin;
     }
 
     button {
@@ -140,6 +170,7 @@
     border: 0px;
     border-radius: 100px;
     padding: 2px;
+    margin: 0 auto;
     margin-bottom: 20px;
     cursor: pointer;
 
@@ -178,7 +209,7 @@
 }
 
 /* List View */
-#mod-tools .responsive-table {
+.mod-tool .responsive-table {
     box-sizing: border-box;
     width: 100%;
     max-width: 100%;
@@ -190,12 +221,12 @@
 .header-label {
     color: var(--primary-color);
     text-align: left;
-    font-size: 1.25rem;
+    font-size: 1rem;
     font-family: Inter;
     font-weight: bold;
     line-height: 28px;
     letter-spacing: 0%;
-    padding: 10px;
+    padding: 0 10px;
 }
 
 .header-label.date {
@@ -203,7 +234,7 @@
 }
 
 /* Data Rows */
-#mod-tools .list-card {
+.mod-tool .list-card {
     box-sizing: border-box;
     background-color: var(--header-color);
 
@@ -213,7 +244,7 @@
     font-size: 1.25rem;
 }
 
-#mod-tools .list-card:hover {
+.mod-tool .list-card:hover {
     transform: translateY(-2px);
     cursor: pointer;
     transition: transform 0.2s ease-in;
@@ -223,11 +254,12 @@
     }
 }
 
-#mod-tools .responsive-table tr td {
+.mod-tool .responsive-table tr td {
+    font-size: 1rem;
     padding: 10px;
 }
 
-#mod-tools .responsive-table tr td:first-child {
+.mod-tool .responsive-table tr td:first-child {
     text-align: left;
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
@@ -235,7 +267,7 @@
     padding: 10px;
 }
 
-#mod-tools .responsive-table tr td:last-child {
+.mod-tool .responsive-table tr td:last-child {
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
     padding: 10px;
@@ -253,30 +285,44 @@
 }
 
 @media only screen and (max-width: 900px) {
-    #mod-tools .list-card {
+    #mod-tools {
+        display: block;
+        width: 95%;
+        margin: 0 auto;
+
+        .announcement-area {
+            width: auto;
+        }
+
+        #mod-actions-block {
+            width: 100%;
+        }
+    }
+
+    .mod-tool .list-card {
         flex-wrap: wrap;
     }
 
-    #mod-tools .list-card-title {
+    .mod-tool .list-card-title {
         width: auto;
         order: 1;
     }
 }
 
 @media only screen and (min-width:601px) and (max-width:950px) {
-    #mod-tools .responsive-table tr td {
+    .mod-tool .responsive-table tr td {
         font-size: 0.8em;
     }
 }
 
 @media screen and (max-width: 700px) {
-    #mod-tools-block {
+    #mod-actions-block {
         button {
             font-size: 1em;
             height: fit-content;
         }
 
-        #mod-tools-tabs {
+        #mod-actions-tabs {
             height: fit-content;
         }
     }
@@ -285,11 +331,11 @@
         margin: 20px 0;
     }
 
-    #mod-tools .list-header {
+    .mod-tool .list-header {
         display: none;
     }
 
-    #mod-tools .list-card-title {
+    .mod-tool .list-card-title {
         grid-area: name;
         box-sizing: border-box;
         padding: 5px;
@@ -297,15 +343,15 @@
         hyphens: auto;
     }
 
-    #mod-tools .list-card-status {
+    .mod-tool .list-card-status {
         grid-area: status;
     }
 
-    #mod-tools .list-card-date {
+    .mod-tool .list-card-date {
         grid-area: date;
     }
 
-    #mod-tools .list-card {
+    .mod-tool .list-card {
         display: grid;
         grid-template-columns: 3fr 1fr;
         grid-template-rows: 1fr 1fr;
@@ -314,19 +360,19 @@
     }
 
     /* Hide table headers (but not display: none;, for accessibility) */
-    #mod-tools .responsive-table thead tr {
+    .mod-tool .responsive-table thead tr {
         position: absolute;
         top: -9999px;
         left: -9999px;
     }
 
-    #mod-tools .responsive-table tr {
+    .mod-tool .responsive-table tr {
         display: block;
         margin-bottom: 1rem;
         padding: 0.5rem;
     }
 
-    #mod-tools .responsive-table tr td {
+    .mod-tool .responsive-table tr td {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -337,12 +383,12 @@
         text-align: right;
     }
 
-    #mod-tools .responsive-table td:first-child {
+    .mod-tool .responsive-table td:first-child {
         display: block;
     }
 
     /* Inject the column header label */
-    #mod-tools .responsive-table td::before {
+    .mod-tool .responsive-table td::before {
         content: attr(data-label);
         line-height: 1.5em;
         font-weight: bold;
@@ -352,7 +398,7 @@
 }
 
 @media screen and (max-width: 350px) {
-    #mod-tools .responsive-table td::before {
+    .mod-tool .responsive-table td::before {
         max-width: 7ch;
     }
 }

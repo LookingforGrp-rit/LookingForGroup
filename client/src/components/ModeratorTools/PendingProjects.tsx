@@ -45,7 +45,7 @@ const PendingProjects = ({ currentUserId, currentTab, displayMode }: PendingProj
     // The final component ====================================================
     if (loaded) {
         return (
-            <div id="mod-tools">
+            <div className="mod-tool">
                 <div className="pending-projects">
                     {pendingProjects.length > 0 ?
                         displayMode === 'grid' ?
