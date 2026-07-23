@@ -244,7 +244,12 @@ const Profile = (userProfile: any) => {
     if (reportedUsers !== null && reportedUsers !== undefined) {
       for (const report of reportedUsers) {
         if (report.reportedId === currentUser) {
-          report.active ? tempActiveList.push(report) : tempInactiveList.push(report);
+          if(report.active){
+            if(report.reporterId !== userID) tempActiveList.push(report)
+          }
+          else {
+            tempInactiveList.push(report);
+          } 
         }
       }
     }
@@ -566,7 +571,7 @@ const Profile = (userProfile: any) => {
 
     if (action === 'dismiss') {
       const res = await Promise.all(
-        activeReportList.map(r => deleteUserReport(r.reportId)) 
+        activeReportList.map(r => deleteUserReport(r.reportId))
       );
 
       // send an update to reporter
@@ -585,7 +590,7 @@ const Profile = (userProfile: any) => {
       if (res?.every(r => r.status === 200) && notif.every(r => r.status === 201)) {
         window.location.reload();
       };
-      
+
     } else if (action === 'warn') {
       const warnRes = await sendModeratorNotification({
         modUserId: userID ?? 0,
@@ -611,8 +616,8 @@ const Profile = (userProfile: any) => {
         type: 'General',
       })));
 
-      if (warnRes.status === 201 
-        && deactivateRes?.every(r => r.status === 200) 
+      if (warnRes.status === 201
+        && deactivateRes?.every(r => r.status === 200)
         && notif.every(r => r.status === 201)) {
         // refresh page
         window.location.reload();
@@ -914,11 +919,13 @@ const Profile = (userProfile: any) => {
           </div>
 
           {/* Mod options when this is a reported user */}
-          {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) ? <div id="mod-user-options">
+          {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div id="mod-user-options">
             <h4>Request Edits or Ban?</h4>
             <p>You can dismiss this report, request edits, or ban them.</p>
-            <p style={{whiteSpace: "pre-wrap"}}>Reasons for this report:<br /> - {activeReportList.map(r => r.reason).join('\n - ')}</p>
-            <p style={{whiteSpace: "pre-wrap"}}>Previous Reports:<br /> - {inactiveReportList.map(r => r.reason).join('\n - ')}</p>
+            <h5>Active Reports</h5>
+            {activeReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'active-reporter-' + r.reporterId} />)}
+            {inactiveReportList.length !== 0 && <h5>Inactive Reports</h5>}
+            {inactiveReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'inactive-reporter-' + r.reporterId} />)}
             <div id="mod-options-btns">
               <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')} >Dismiss Report</button>
               <Popup>

@@ -22,7 +22,7 @@ import { projectDataManager } from "../../api/data-managers/project-data-manager
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
 import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectContext, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, MemberRequests, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
-
+import { setIsSaving, getIsSaving } from "../pages/MyProjects";
 
 type ApprovalStatusKey = keyof typeof ApprovalStatus;
 
@@ -118,6 +118,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   // Tracks details on the current user, used when creating a project, not when editing
   const [currentUser, setCurrentUser] = useState<UserDetail>();
 
+  
   // Check if the current project can be saved
   let valid = false;
   if ((modifiedProject?.title != "" && modifiedProject?.title != undefined && modifiedProject?.title != null)
@@ -169,14 +170,22 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
    * @param updatedPendingProject - parameter of updateDisplayedProject, using is faster than trying for modifiedProject
    */
   const fastUpdateMessage = (updatedPendingProject: PendingProject) => {
-    let newMessage = "Project cannot have same title as existing project!"; //for some reason, the initial newMessage value pops up if you've met all the requirements *and then* change title to a duplicate name. so, default value is now the duplicate title error text
+    let newMessage = "";
     if (updatedPendingProject.title !== null && updatedPendingProject.title !== undefined) { getUniqueProjectTitle(updatedPendingProject?.title, projectID); }
-    if (updatedPendingProject.title === "" || updatedPendingProject.title === undefined) newMessage = "Project is missing a title!";
-    else if (!isUniqueTitle) newMessage = "Project cannot have same title as existing project!";
-    else if (updatedPendingProject.hook === "" || updatedPendingProject.hook === undefined) newMessage = "Project is missing a Short Description!";
-    else if (updatedPendingProject.description === "" || updatedPendingProject.description === undefined) newMessage = "Project is missing a Project Overview!";
-    else if (updatedPendingProject.mediums.length == 0) newMessage = "Project is missing a medium!";
-    else if (updatedPendingProject.tags.length == 0) newMessage = "Project is missing tags!";
+    if(getIsSaving())
+    {
+        newMessage = "Project is saving! Please wait a moment!"
+    }
+    else
+    {
+      newMessage = "Project cannot have same title as existing project!"; //for some reason, the initial newMessage value pops up if you've met all the requirements *and then* change title to a duplicate name. so, default value is now the duplicate title error text
+      if (updatedPendingProject.title === "" || updatedPendingProject.title === undefined) newMessage = "Project is missing a title!";
+      else if (!isUniqueTitle) newMessage = "Project cannot have same title as existing project!";
+      else if (updatedPendingProject.hook === "" || updatedPendingProject.hook === undefined) newMessage = "Project is missing a Short Description!";
+      else if (updatedPendingProject.description === "" || updatedPendingProject.description === undefined) newMessage = "Project is missing a Project Overview!";
+      else if (updatedPendingProject.mediums.length == 0) newMessage = "Project is missing a medium!";
+      else if (updatedPendingProject.tags.length == 0) newMessage = "Project is missing tags!";
+    }
 
     setMessage(newMessage);
   }
@@ -200,7 +209,16 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     }
     setSaved(true);
     setConfirm(false);
-    setMessage("Project is missing a Short Description!");
+
+    if(getIsSaving())
+    {
+      setMessage("Project is saving! Please wait a moment!");
+    }
+    else
+    {
+        
+      setMessage("Project is missing a Short Description!");
+    }
 
     if (newProject) {
       // Setup default project for creation
@@ -465,7 +483,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
    * @returns Promise<void>
    */
   const saveProject = async () => {
-
+    
     // default to no errors
     setFailCheck(false);
 
@@ -544,6 +562,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     // }
 
     try {
+      // Used to set the save changes button to a loading icon
+      await setIsSaving(true);
+
       // EXISTING PROJECT
       if (!newProject && projectID) {
         //Updates display automatically when adding members        
@@ -693,19 +714,21 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           await dataManager.saveChanges();
         }
       }
-
+      
       // Mark project as saved so cleanup won't delete it
       setSaved(true);
       setProjectData(dataManager.getSavedProject());
       // Remove the unload blocker before reloading the page, otherwise the prior
       // `saved === false` closure can still fire and trigger a browser prompt.
       window.onbeforeunload = null;
-      projectID !== 0
-        ? window.location.reload()
-        : navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
+      window.location.reload();
+      // projectID !== 0
+      // ? window.location.reload()
+      // : navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
     } catch (err) {
       console.error(err);
     }
+    
   };
 
   const updatePendingProject = (updatedPendingProject: PendingProject) => {
@@ -849,6 +872,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 failCheck={failCheck}
                 updateFailCheck={updateFailCheck}
                 message={message}
+                isSaving={getIsSaving()}
               />
             ) : currentTab === 1 ? (
               <MediaTab
@@ -861,6 +885,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 failCheck={failCheck}
                 updateFailCheck={updateFailCheck}
                 message={message}
+                isSaving={getIsSaving()}
               />
             ) : currentTab === 2 ? (
               <TagsTab
@@ -873,6 +898,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 failCheck={failCheck}
                 updateFailCheck={updateFailCheck}
                 message={message}
+                isSaving={getIsSaving()}
               />
             ) : currentTab === 3 ? (
               <TeamTab
@@ -897,6 +923,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 message={message}
                 messages={projectMessages}
                 setMessages={setProjectMessages}
+                isSaving={getIsSaving()}
               />
             ) : currentTab === 4 ? (
               <LinksTab
@@ -911,6 +938,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 updateFailCheck={updateFailCheck}
                 message={message}
                 currentUser={currentUser as UserDetail}
+                isSaving={getIsSaving()}
               />
             ) : (
               <></>

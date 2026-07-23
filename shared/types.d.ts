@@ -62,7 +62,7 @@ export type ProjectSortMethod = "Newest" | "A-Z" | "Popular";
 export type UserSortMethod = "Newest" | "A-Z";
 export type Visibility = "public" | "private";
 export type UserAccessLevel = "User" | "Moderator" | "Administrator";
-export type ModNotficationType = "Warning" | "General";
+export type ModNotificationType = "Warning" | "General" | "Announcement";
 //do we even need this visibility enum at all? it's stored as a 0/1 in the db anyway
 //a problem for another day, i really don't feel like fixing it right now
 
@@ -877,6 +877,11 @@ export interface MePrivate extends MeDetail {
    * The logged-in user's UID
    */
   googleId: string;
+
+  /**
+   * The user's blacklisted tags
+   */
+  tagBlacklist: Tag[]
 
   /**
    * The date on which the logged-in user's account was created
@@ -1778,6 +1783,13 @@ export type CreateSkillInput = Pick<Skill, "label" | "type" | "category">;
 export type EditSkillInput = Partial<CreateSkillInput> & { skillId: number };
 
 /**
+ * Data required to update a user's tag blacklist
+ */
+export type UpdateTagBlacklistInput = {
+  tagBlacklist: Tag[]
+}
+
+/**
  * Data required to add a user report
  */
 export type AddUserReportInput = {
@@ -1834,7 +1846,7 @@ export type ModeratorNotificationInput = {
   /**
    * Type of moderator notification
    */
-  type: ModNotficationType;
+  type: ModNotificationType;
 }
 
 /**
