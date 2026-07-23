@@ -190,7 +190,7 @@ export const projectDataManager = async (projectId: number) => {
    * Failed changes do not return to the {@link changes} object.
    */
   const saveChanges = async () => {
-    console.log(changes);
+    //console.log(changes);
     let errorMessage = "";
 
     // first delete all existing resources
@@ -216,8 +216,8 @@ export const projectDataManager = async (projectId: number) => {
 
     // fetch new canonical data
     await reloadSavedProject();
-    console.log("New data: ");
-    console.log(savedProject);
+    //console.log("New data: ");
+    //console.log(savedProject);
 
     // clear changes object
     resetChanges();

@@ -909,7 +909,7 @@ Filters / Tags Style Rules
     color: var(--tag-text-selected) !important;
   }
 }
-
+/*
 .tag-unselected {
   /*
   p {
@@ -919,8 +919,8 @@ Filters / Tags Style Rules
   .fa {
     color: var(--tag-text-unselected-red) !important;
   }
-    */
-}
+    
+}*/
 
 .tag-red,
 .tag-button-red-selected {

@@ -79,8 +79,6 @@ export const ProjectCarousel = ({ project, videos }: { project: ProjectDetail, v
                         size='small'
                     />
                 </div> : ""}
-                {/* <div className='carousel-row'>
-                </div> */}
             </div>
         </Carousel>
     );

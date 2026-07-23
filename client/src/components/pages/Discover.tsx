@@ -181,7 +181,7 @@ export const DiscoverPage = () => {
 
       if (scrollPercent >= 0.95) {
         sortProjects();
-        console.log("load more projects");
+        //console.log("load more projects");
       }
     }
   });

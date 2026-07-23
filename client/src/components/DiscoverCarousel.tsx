@@ -21,7 +21,7 @@ type DiscoverCarouselProps = {
  * @returns A styled carousel populated with dynamically generated project slides.
  */
 export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [] }) => {
-  const isDesktop = useMediaQuery('(max-width: 1360px');
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
 
   if (dataList.length === 0) {
     return (
@@ -31,8 +31,8 @@ export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [
         </div>
         ]
       }>
-        {isDesktop ?
-        <div className='discover-carousel'>
+          {isDesktop ?
+          <div className='discover-carousel'>
           <div className='carousel-row'>
             <CarouselButton
               direction='left'
@@ -45,28 +45,25 @@ export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [
               className='discover-carousel-btn'
               size='large'
             />
+          </div></div> :
+          <div className='discover-carousel'>
+          <div className='carousel-row'>
+            <CarouselContent className='discover-carousel-content' />
           </div>
           <div className='carousel-row'>
+            <CarouselButton
+              direction='left'
+              className='discover-carousel-btn'
+              size='small'
+            />
             <CarouselTabs className='discover-carousel-tabs' />
+            <CarouselButton
+              direction='right'
+              className='discover-carousel-btn'
+              size='small'
+            />
           </div>
-        </div> :
-        
-        <div className='discover-carousel'>
-          <CarouselContent className='discover-carousel-content' />
-          <div className='carousel-row'>
-              <CarouselButton 
-                  direction='left'
-                  className='discover-carousel-btn'
-                  size='small'
-              />
-              <CarouselTabs className='discover-carousel-tabs'></CarouselTabs>
-              <CarouselButton 
-                  direction='right'
-                  className='discover-carousel-btn'
-                  size='small'
-              />
-          </div>
-        </div>}
+          </div>}
       </Carousel>
     );
   }
@@ -84,7 +81,7 @@ export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [
               src={project.thumbnail?.image ?? placeholderThumbnail}
             // A fix for this would be to usePreloadedImage, but for some reason this sometimes displays images of different projects
             // src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
-              alt={`${project.title} banner`}
+              alt={project.title}
             />
           </Link>
         </div>
