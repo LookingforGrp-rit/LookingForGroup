@@ -30,8 +30,10 @@ const PendingProjects = ({ currentUserId, currentTab, displayMode }: PendingProj
 
             if (pendingProjects.data !== undefined && pendingProjects.data !== null) {
                 for (const project of pendingProjects.data) {
-                    tempPendingProjectArray.push(project);
-                    tempIds.add(project.projectId);
+                    if(project.owner.userId !== currentUserId){
+                        tempPendingProjectArray.push(project);
+                        tempIds.add(project.projectId);
+                    }
                 }
                 setPendingProjectsIds(tempIds);
             }

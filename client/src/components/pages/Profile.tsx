@@ -244,7 +244,12 @@ const Profile = (userProfile: any) => {
     if (reportedUsers !== null && reportedUsers !== undefined) {
       for (const report of reportedUsers) {
         if (report.reportedId === currentUser) {
-          report.active ? tempActiveList.push(report) : tempInactiveList.push(report);
+          if(report.active){
+            if(report.reporterId !== userID) tempActiveList.push(report)
+          }
+          else {
+            tempInactiveList.push(report);
+          } 
         }
       }
     }
@@ -914,7 +919,7 @@ const Profile = (userProfile: any) => {
           </div>
 
           {/* Mod options when this is a reported user */}
-          {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) ? <div id="mod-user-options">
+          {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div id="mod-user-options">
             <h4>Request Edits or Ban?</h4>
             <p>You can dismiss this report, request edits, or ban them.</p>
             <h5>Active Reports</h5>

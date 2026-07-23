@@ -118,6 +118,7 @@ describe('getUserByIdService', () => {
       location: '',
       majors: [],
       displayPhone: false,
+      tagBlacklist: [],
     };
 
     vi.mocked(prisma.users.findUnique).mockResolvedValue(prismaUser as any);

@@ -54,7 +54,7 @@ export type ProjectStatus =
   | "Development"
   | "PostProduction"
   | "Complete";
-export type JobAvailability = "FullTime" | "PartTime" | "Flexible";
+export type JobAvailability = "FullTime" | "PartTime" | "PtFt";
 export type JobLocation = "OnSite" | "Remote" | "Hybrid" | "Flexible";
 export type JobCompensation = "Unpaid" | "Paid";
 export type MemberRequestStatus = "Accepted" | "Declined" | "Pending";
@@ -877,6 +877,11 @@ export interface MePrivate extends MeDetail {
    * The logged-in user's UID
    */
   googleId: string;
+
+  /**
+   * The user's blacklisted tags
+   */
+  tagBlacklist: Tag[]
 
   /**
    * The date on which the logged-in user's account was created
@@ -1776,6 +1781,13 @@ export type CreateSkillInput = Pick<Skill, "label" | "type" | "category">;
  * Data required to edit an existing skill
  */
 export type EditSkillInput = Partial<CreateSkillInput> & { skillId: number };
+
+/**
+ * Data required to update a user's tag blacklist
+ */
+export type UpdateTagBlacklistInput = {
+  tagBlacklist: Tag[]
+}
 
 /**
  * Data required to add a user report

@@ -8,6 +8,7 @@ import {
   UpdateProjectProfileVisibilityInput,
   UpdateUserSkillInput,
   UpdateUserSocialInput,
+  UpdateTagBlacklistInput,
 } from "@looking-for-group/shared";
 import {
   CRUDRequest,
@@ -28,6 +29,7 @@ import {
   updateProjectProfileVisibility as APIUpdateProjectProfileVisibility,
   updateUserSkill,
   updateUserSocial,
+  updateTagExclusion,
 } from "../users";
 
 /**
@@ -71,6 +73,7 @@ export const userDataManager = async () => {
         skills: [],
         socials: [],
         projectVisibilities: [],
+        tagBlacklist: []
       },
       delete: {
         majors: [],
@@ -189,6 +192,16 @@ export const userDataManager = async () => {
         "Updating user skill",
         updates.skills,
         ({ id, data }) => updateUserSkill(id.value, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    try {
+      await runAndCollectErrors<UpdateTagBlacklistInput>(
+        "Updating user skill",
+        updates.tagBlacklist,
+        ({ data }) => updateTagExclusion(data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -475,6 +488,15 @@ export const userDataManager = async () => {
       existingSkillUpdate,
     ];
   };
+  
+  const changeExcludedTags = (tagBlacklistRequest: CRUDRequest<UpdateTagBlacklistInput>) => {
+    if(changes.update.tagBlacklist.length > 0){
+      changes.update.tagBlacklist[0] = tagBlacklistRequest; //literally i just replace the one that's in there
+    }
+    else{
+      changes.update.tagBlacklist.push(tagBlacklistRequest); //and if there isn't one in there i push the one they give me
+    }
+  }
 
   /**
    * Updates an existing social for a user
@@ -613,6 +635,7 @@ export const userDataManager = async () => {
     updateProjectProfileVisibility,
     updateSkill,
     updateSocial,
+    changeExcludedTags,
     deleteMajor,
     deleteSkill,
     deleteSocial,
