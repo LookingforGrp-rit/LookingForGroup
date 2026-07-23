@@ -84,7 +84,7 @@ export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [
               src={project.thumbnail?.image ?? placeholderThumbnail}
             // A fix for this would be to usePreloadedImage, but for some reason this sometimes displays images of different projects
             // src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
-              alt={project.title}
+              alt={`${project.title} banner`}
             />
           </Link>
         </div>
