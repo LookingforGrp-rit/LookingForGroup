@@ -657,6 +657,27 @@ Project Creator and Editor Popup style rules
   textarea:focus {
     outline: 0px;
   }
+
+  #btn-bug-report-submit {
+    border: none;
+    border-radius: 30px;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: var(--invert-text);
+    font-size: 2ch;
+    width: max-content;
+    margin: auto min(1vw, 10px);
+    font-weight: 700;
+  }
+
+  #input-bug-report{
+    margin-bottom: 0;
+  }
+
+  .required-asterisk{
+    margin-bottom: 0.5em;
+    margin-top: 0;
+  }
 }
 
 .share-response-popup {

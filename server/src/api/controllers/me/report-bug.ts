@@ -7,7 +7,7 @@ import type { Response } from 'express';
 import { reportBugService } from '#services/me/report-bug.ts';
 
 /**
- * POST api/me/users/reports/{id}
+ * POST api/me/report-bug
  * Allows authenticated users to report a user
  */
 const reportBugController = async (req: AuthenticatedRequest, res: Response) => {
