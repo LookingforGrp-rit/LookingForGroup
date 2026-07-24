@@ -1538,12 +1538,12 @@ Header style rules
   height: 90px;
   position: sticky;
   top: 0;
-  z-index: 9;
+  z-index: 22;
   box-sizing: border-box;
 }
 
 #header.active {
-  z-index: 15;
+  z-index: 22;
 }
 
 @media screen and (max-width: 800px) {
@@ -1914,7 +1914,7 @@ Dropdown style rules
   /* box-shadow: 1px 2px 2px var(--dark-lighttheme); */
   position: absolute;
   background: none;
-  z-index: 15;
+  z-index: 23;
 }
 
 /* Notifications bell badge + dropdown panel */
