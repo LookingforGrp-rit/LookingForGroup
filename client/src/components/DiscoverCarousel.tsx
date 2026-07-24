@@ -3,10 +3,9 @@ import { Tag } from "./Tag";
 import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 import { ProjectWithFollowers } from "@looking-for-group/shared";
-import useMediaQuery from "@mui/material/useMediaQuery";
-
-import usePreloadedImage from '../functions/imageLoad.tsx';
 import { Link } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import { Activity } from "react";
 
 type DiscoverCarouselProps = {
   dataList?: ProjectWithFollowers[]
@@ -21,7 +20,18 @@ type DiscoverCarouselProps = {
  * @returns A styled carousel populated with dynamically generated project slides.
  */
 export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [] }) => {
-  const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const [width, setWidth] = useState(window.innerWidth); // Current window width
+  const breakpoint = 1024;
+  const [isDesktop, setIsDesktop] = useState<boolean>(width > breakpoint);
+
+  /**
+     * Handles window resize events and updates width state.
+     */
+    useEffect(() => {
+      const handleResize = () => {setWidth(window.innerWidth); setIsDesktop(width > breakpoint);};
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
   if (dataList.length === 0) {
     return (
@@ -31,39 +41,41 @@ export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [
         </div>
         ]
       }>
-          {isDesktop ?
+          <Activity mode={isDesktop ? "visible" : "hidden"}>
           <div className='discover-carousel'>
-          <div className='carousel-row'>
-            <CarouselButton
-              direction='left'
-              className='discover-carousel-btn'
-              size='large'
-            />
-            <CarouselContent className='discover-carousel-content' />
-            <CarouselButton
-              direction='right'
-              className='discover-carousel-btn'
-              size='large'
-            />
-          </div></div> :
+            <div className='carousel-row'>
+              <CarouselButton
+                direction='left'
+                className='discover-carousel-btn'
+                size='large'
+              />
+              <CarouselContent className='discover-carousel-content' />
+              <CarouselButton
+                direction='right'
+                className='discover-carousel-btn'
+                size='large'
+              />
+            </div>
+          </div> : </Activity>
+          <Activity mode={!isDesktop ? "visible" : "hidden"}>
           <div className='discover-carousel'>
-          <div className='carousel-row'>
-            <CarouselContent className='discover-carousel-content' />
-          </div>
-          <div className='carousel-row'>
-            <CarouselButton
-              direction='left'
-              className='discover-carousel-btn'
-              size='small'
-            />
-            <CarouselTabs className='discover-carousel-tabs' />
-            <CarouselButton
-              direction='right'
-              className='discover-carousel-btn'
-              size='small'
-            />
-          </div>
-          </div>}
+            <div className='carousel-row'>
+              <CarouselContent className='discover-carousel-content' />
+            </div>
+            <div className='carousel-row'>
+              <CarouselButton
+                direction='left'
+                className='discover-carousel-btn'
+                size='small'
+              />
+              <CarouselTabs className='discover-carousel-tabs' />
+              <CarouselButton
+                direction='right'
+                className='discover-carousel-btn'
+                size='small'
+              />
+            </div>
+          </div></Activity>
       </Carousel>
     );
   }
