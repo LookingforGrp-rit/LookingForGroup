@@ -40,7 +40,8 @@ import {
   DeleteJobSkillInput,
   JobSkill,
   UpdateMemberRequestInput,
-  UpdateTagBlacklistInput
+  UpdateTagBlacklistInput,
+  ChangeOwnerInput
 } from "@looking-for-group/shared";
 
 /**
@@ -101,6 +102,9 @@ interface ProjectChanges {
    * All resources to be deleted
    */
   delete: ProjectChangesDeletes;
+  /**
+   * 
+   */
 }
 
 /**
@@ -195,6 +199,11 @@ interface ProjectChangesUpdates {
    * All member requests to be updated
    */
   memberRequests: CRUDRequest<UpdateMemberRequestInput>[];
+
+  /**
+   * Ownership change
+   */
+  ownerChanges: CRUDRequest<number>[];
 }
 
 /**

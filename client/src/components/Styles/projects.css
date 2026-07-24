@@ -1985,11 +1985,25 @@ Project Creator and Editor Popup style rules
 
 #project-team-add-member-name,
 #project-team-add-member-role,
+#project-team-change-owner,
 #project-team-add-member-permissions {
   display: flex;
   align-items: center;
   align-self: stretch;
   gap: 8px;
+}
+
+#project-team-change-owner {
+  margin-top: 20px;
+  flex-direction: column;
+
+  label {
+    text-align: center;
+  }
+
+  #user-search-results {
+    background-color: var(--dropdown-color);
+  }
 }
 
 #project-team-add-member-name label {

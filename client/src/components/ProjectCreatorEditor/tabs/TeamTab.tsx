@@ -25,7 +25,8 @@ import {
 	getCurrentAccount
 } from "../../../api/users";
 import {
-	getMemberRequestByProjectID
+	getMemberRequestByProjectID,
+	changeOwner,
 } from "../../../api/projects"
 import {
 	ProjectJob,
@@ -222,6 +223,9 @@ export const TeamTab = ({
 	const [messageText, setMessageText] = useState("");
 
 	const [confirm, setConfirm] = useState(false);
+
+  const [newOwner, setNewOwner] = useState<UserPreview | null>(null);
+  const [ownerChange, setOwnerChange] = useState("");
 	/**
 	 * Handles invitation request in local and data manager
 	 */
@@ -2130,26 +2134,135 @@ export const TeamTab = ({
 											/>
 										</Select>
 									</div>
+									{projectAfterTeamChanges.owner.userId === currentMember?.user?.userId 
+									&& currentMember.role?.label.toLowerCase() !== "owner"? 
+										<div id="project-team-change-owner">
+											<label>Choose a member to take ownership of the project</label>
+											<div id="user-search-container">
+												<Dropdown>
+													<DropdownButton buttonId="user-search-dropdown-button">
+														<SearchBar
+															key={searchBarKey}
+															value={ownerChange}
+															onChange={(e) =>
+																setOwnerChange(e.target.value)
+															}
+															dataSets={[
+																{ data: projectAfterTeamChanges.members }
+															]}
+															onSearch={(results) => {
+																handleSearch(
+																	results as UserPreview[][]
+																);
+															}}
+															placeholderText='Search Members'>
+														</SearchBar>
+													</DropdownButton>
+													<DropdownContent>
+														<div id="user-search-results">
+															{projectAfterTeamChanges.members.map(
+																(user, index) => (
+																	<DropdownButton
+																		key={user.user?.userId}
+																		className={`user-search-item
+																		${index === 0 ? "top" : ""}
+																		${index === searchResults.length - 1 ? "bottom" : ""}`}
+																		callback={() => {
+                                        setNewOwner(user.user);
+                                        setOwnerChange(`${user.user?.firstName} ${user.user?.lastName} (${user.user?.username})`)
+                                        if (errorAddMember === "To relinquish ownership, you must select a new owner.")
+                                          setErrorAddMember("");
+                                      }
+                                    }
+                                    >
+																		<p className="user-search-name">
+																			{user.user?.firstName}{" "}
+																			{user.user?.lastName}
+																		</p>
+																		<p className="user-search-username">
+																			{user.user?.username}
+																		</p>
+																	</DropdownButton>
+																)
+															)}
+														</div>
+													</DropdownContent>
+												</Dropdown>
+											</div>
+										</div> : 
+										""
+										}
+                  {errorAddMember !== "" ? 
+                    <div>
+                      {errorAddMember} 
+                    </div>
+                  : ""}
 									{/* Action buttons */}
 									<div className="project-editor-button-pair">
 										{/* Save Button */}
 										<PopupButton
 											buttonId="team-edit-member-save-button"
+											doNotClose={() => 
+                        !currentMember || 
+                        !currentMember.user || 
+                        !currentMember.user.userId || 
+                        (currentMember.user.userId === projectAfterTeamChanges.owner?.userId && !newOwner)
+                      }
 											callback={() => {
 												if (!currentMember) {
-													setErrorAddMember("No member selected");
+													setErrorAddMember("No member selected.");
 													return;
 												};
 												if (!currentMember.user || !currentMember.user.userId) {
-													setErrorAddMember("Member is missing user information");
+													setErrorAddMember("Member is missing user information.");
 													return;
 												} // cant edit owner role
-												if (currentMember.user.userId === projectAfterTeamChanges.owner?.userId) {
-													setErrorAddMember("The project owners role cannot be changed");
+												if (currentMember.user.userId === projectAfterTeamChanges.owner?.userId && !newOwner) {
+													setErrorAddMember("To relinquish ownership, you must select a new owner.");
 													return;
 												}
 												//if (isNullOrUndefined(currentMember.user)) return;
-
+                        
+                        if (newOwner) {
+                          dataManager?.swapOwner({
+                            id: {
+                              type: "canon",
+                              value: newOwner.userId,
+                            },
+                            data: newOwner.userId,
+                          });
+                          dataManager?.updateMember({
+                            id: {
+                              type: "canon",
+                              value: newOwner.userId,
+                            },
+                            data: {
+                              roleId: 77,
+                              profileVisibility: "public"
+                            }
+                          })
+                          let newMembers = structuredClone(projectAfterTeamChanges.members).map(
+														(member) => {
+															// if this member matches the updated member
+															if (
+                                newOwner
+																	.userId ===
+																member.user
+																	?.userId
+															) {
+																// update role
+																return {
+																	...member,
+																	role: { label: "Owner", roleId: 77}
+																} as PendingProjectMember;
+															} else {
+																// if it doesn't match, do nothing to the member
+																return member;
+															}
+														}
+													);
+                          projectAfterTeamChanges.members = newMembers;
+                        }
 												// update member in data manager
 												try {
 													dataManager?.updateMember({
