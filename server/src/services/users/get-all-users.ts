@@ -127,9 +127,6 @@ export const getAllUsersService = async (
 
     const transformedUsers = users.map(transformUserToPreview);
 
-    //For when the preferred name column is implemented in the database
-    // transformedUsers = transformedUsers.toSorted((transformedUser1, transformedUser2) =>
-    //   transformedUser1.preferredName.charCodeAt(0) - transformedUser2.preferredName.charCodeAt(0));
     return transformedUsers;
   } catch (error) {
     console.error('Error in getAllUsersService:', error);
