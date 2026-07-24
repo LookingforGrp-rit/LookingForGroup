@@ -24,7 +24,6 @@ it('DEBUG: returns required preview fields, if we change user fields change this
     'userId',
     'firstName',
     'lastName',
-    'preferredName',
     'username',
     'headline',
     'pronouns',

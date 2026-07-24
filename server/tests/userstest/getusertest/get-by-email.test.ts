@@ -39,7 +39,6 @@ describe('getUserByEmailService', () => {
       apiUrl: '/api/users/1',
       firstName: '',
       lastName: '',
-      preferredName: '',
       profileImage: null,
       mentor: false,
       designer: false,

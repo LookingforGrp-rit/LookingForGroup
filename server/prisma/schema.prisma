@@ -181,7 +181,7 @@ model ProjectTags {
 model Projects {
   projectId         Int                 @id @unique @default(autoincrement()) @map("project_id")
   title             String              @db.VarChar(100)
-  hook              String              @default("") @db.VarChar(300)
+  hook              String              @default("") @db.VarChar(600)
   description       String              @default("") @db.VarChar(2000)
   thumbnail         ProjectImages?      @relation(fields: [thumbnailId], references: [imageId])
   thumbnailId       Int?                @unique @map("thumbnail_id")
@@ -374,7 +374,6 @@ model Users {
   updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
   phoneNumber       String?             @map("phone_number") @db.VarChar(20)
   googleId          String              @unique(map: "google_id_UNIQUE") @default("bill of rights") @map("google_id")
-  preferredName     String              @default("") @map("preferred_name") @db.VarChar(50)
   members           Members[]
   projectFollowings ProjectFollowings[]
   projects          Projects[]

@@ -55,7 +55,6 @@ describe('getProjectFollowingService', () => {
         pfpId: 1,
         firstName: 'Test',
         lastName: 'Owner',
-        preferredName: 'Test',
         profileImage: 'test-pfp',
         mentor: false,
         designer: false,

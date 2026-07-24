@@ -33,7 +33,7 @@ export class ProjectRejectedNotificationBuilder implements NotificationBuilder {
         title: true,
         users: {
           select: {
-            preferredName: true,
+            firstName: true,
           },
         },
       },
@@ -47,7 +47,7 @@ export class ProjectRejectedNotificationBuilder implements NotificationBuilder {
     notification.subjectLine = `The approval request for your project, ${data?.title as string}, has been rejected.`;
 
     // building the message
-    notification.message = `Hello ${data?.users.preferredName as string},<br /><br />`;
+    notification.message = `Hello ${data?.users.firstName as string},<br /><br />`;
     notification.message += `Unfortunately, the approval request for your project, <strong>${data?.title as string}</strong>, has been rejected. `;
     if (reason) {
       notification.message += `Here is the reason provided:<br /><br />`;
