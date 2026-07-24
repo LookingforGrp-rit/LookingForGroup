@@ -38,12 +38,12 @@ export class InviteReceivedNotificationBuilder implements NotificationBuilder {
             title: true,
             userId: true,
             users: {
-              select: { preferredName: true },
+              select: { firstName: true },
             },
           },
         },
         users: {
-          select: { preferredName: true },
+          select: { firstName: true },
         },
       },
     });
@@ -61,14 +61,14 @@ export class InviteReceivedNotificationBuilder implements NotificationBuilder {
     const inviteLink = `${clientUrl}/acceptInvite/${String(data?.requestId)}`;
     const projectLink = `${clientUrl}/project?projectID=${String(data?.projectId)}`;
     const profileLink = `${clientUrl}/profile?userID=${String(data?.projects.userId)}`;
-    const projectOwnerName = data?.projects.users.preferredName as string;
+    const projectOwnerName = data?.projects.users.firstName as string;
 
     //--BUILDING NOTIFICATION--//
     notification.receiverId = receiverId;
     notification.subjectLine = `You've been invited to join ${data?.projects.title as string}`;
 
     // building the message
-    notification.message = `Hello ${data?.users.preferredName as string},<br /><br />`;
+    notification.message = `Hello ${data?.users.firstName as string},<br /><br />`;
     notification.message += `You have been invited to join <strong>${data?.projects.title as string}</strong> `;
     notification.message += `as a <strong>${roleData?.label as string}</strong>.<br /><br />`;
     if (message) {

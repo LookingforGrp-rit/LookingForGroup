@@ -8,8 +8,6 @@ export const banUser = async (req: AuthenticatedRequest, res: Response): Promise
   const id = parseInt(req.params.id as string);
   const body = req.body as BanUserInput;
 
-  //TODO: Implement log out
-
   const result = await addBlacklistService(id, body.reason);
 
   if (result === 'NOT_FOUND') {

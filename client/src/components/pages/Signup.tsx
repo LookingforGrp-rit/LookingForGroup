@@ -32,7 +32,6 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
   // State variables
   const [firstName, setFirstName] = useState(''); // User's first name
   const [lastName, setLastName] = useState(''); // User's last name
-  const [preferredName, setPreferredName] = useState(''); // User's preferred name
   const [email, setEmail] = useState('');
   const [sessionData, setSessionData] = useState<SessionUserData>();
   // const [username, setUsername] = useState('');
@@ -76,7 +75,6 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
   const userInfo = {
     firstName: firstName,
     lastName: lastName,
-    preferredName: preferredName, // default to first name for now
     ritEmail: email,
     googleId: sessionData?.googleId,
     username: '',
@@ -154,7 +152,6 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
         // New user: start the signup flow inline.
         setFirstName(sessionData.data.firstName);
         setLastName(sessionData.data.lastName);
-        setPreferredName(sessionData.data.firstName);  // default preferred name to first name
         setEmail(sessionData.data.email);
         //setShowSkillsModal(true);
         setShowCreateProfileRedirectModal(true);
