@@ -31,7 +31,7 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
         roleId: true,
         users: {
           select: {
-            preferredName: true,
+            firstName: true,
             lastName: true,
             username: true,
           },
@@ -40,7 +40,7 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
           select: {
             title: true,
             users: {
-              select: { preferredName: true },
+              select: { firstName: true },
             },
           },
         },
@@ -57,8 +57,8 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
     });
 
     const projectTitle = data.projects.title;
-    const ownerName = data.projects.users.preferredName;
-    const requesterName = data.users.preferredName;
+    const ownerName = data.projects.users.firstName;
+    const requesterName = data.users.firstName;
     const requesterLastName = data.users.lastName;
     const requesterUsername = data.users.username;
     const roleName = roleData?.label;
