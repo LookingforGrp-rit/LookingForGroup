@@ -9,8 +9,8 @@ type ReportedBugsProps = {
 };
 
 /**
- * Gets all pending projects for the tab in Mod Page
- * @param PendingProjectsProps current user ID and the current tab of Mod Page
+ * Gets all bug reports for the tab in Mod Page
+ * @param ReportedBugsProps current user ID and the current tab of Mod Page
  */
 const ReportedBugs = ({ currentUserId, currentTab }: ReportedBugsProps) => {
     // Variables ==============================================================
