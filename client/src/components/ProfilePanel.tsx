@@ -116,6 +116,7 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
           height={27}
           id={"heart-filled"}
           ariaLabel="unfollow profile"
+          role='button'
           onClick={(e) => { toggleFollow(); e.stopPropagation(); }} // stopPropagation cancels the redirect of the parent
         />
           : profileData.userId !== currentUserId ? <ThemeIcon
@@ -123,6 +124,7 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
             height={27}
             id={"heart-empty"}
             ariaLabel="follow profile"
+            role='button'
             onClick={(e) => { toggleFollow(); e.stopPropagation(); }} // stopPropagation cancels the redirect of the parent
           /> : ""}
 
