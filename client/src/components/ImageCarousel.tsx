@@ -125,7 +125,6 @@ export const CarouselTabs = ({ className = '' }: { className?: string }) => {
                         ref={(el) => {tabRefs.current[index] = el;}}
                         className={`carousel-tab${isActive ? ' carousel-tab-active' : ''}`}
                         onClick={() => handleIndexChange(index)}
-                        aria-selected={isActive}
                         aria-label={`Go to slide ${index + 1}`}
                         tabIndex={isActive ? 0 : -1}
                         key={index}

@@ -169,6 +169,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
                 id={"heart-filled"}
                 ariaLabel="following"
                 onClick={(e) => {e.stopPropagation(); e.preventDefault(); handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>);}}
+                role='button'
               />
             ) : (
               <ThemeIcon
@@ -177,6 +178,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
                 id={"heart-empty"}
                 ariaLabel="following"
                 onClick={(e) => {e.stopPropagation(); e.preventDefault(); handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>);}}
+                role='button'
               />
             )}
             
