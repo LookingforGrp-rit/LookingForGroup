@@ -467,7 +467,6 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                         value={searchValue}
                                         setValue={setSearchValue}
                                         placeholderText='Search for Tag'
-                                        relevantData={allTags[0]}
                                     ></SearchBar>
                                     <div id="more-filters-scroll-container">
                                         <button
