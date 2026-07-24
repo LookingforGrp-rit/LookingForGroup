@@ -339,7 +339,7 @@ export const Header: React.FC<HeaderProps> = ({
                 {/* TO DO: Change icon when a new icon is found */}
                 {isUserAdmin ?
                   <a href={paths.routes.MODERATION}>
-                    <ThemeIcon id={'settings'} width={25} height={25} className={'mono-stroke'} ariaLabel={'settings'} />
+                    <ThemeIcon id={'moderation'} width={25} height={25} className={'mono-fill'} ariaLabel={'moderation'} />
                     Moderation
                   </a>
                   : ""}
