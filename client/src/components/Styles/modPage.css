@@ -69,7 +69,7 @@
 
     button:hover {
         transform: none;
-        padding-bottom: 10px;
+        font-weight: 800;
     }
 
     #mod-content-container {
