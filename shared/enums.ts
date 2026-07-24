@@ -58,7 +58,7 @@ export enum ProjectStatus {
 export enum JobAvailability {
   FullTime = "Full-time",
   PartTime = "Part-time",
-  Flexible = "Flexible"
+  PtFt = "Part-time/Full-time"
 }
 export enum JobLocation {
   OnSite = "On-Site",

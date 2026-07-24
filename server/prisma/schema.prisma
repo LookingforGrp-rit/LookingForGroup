@@ -43,8 +43,8 @@ model Jobs {
   contactUserId Int              @map("contact_user_id")
   availability  JobsAvailability
   // default/undefined is 1/1/1900
-  jobStart      DateTime         @default("1900-01-01T00:00:00-00:00") @db.DateTime()
-  jobEnd        DateTime         @default("1900-01-01T00:00:00-00:00") @db.DateTime()
+  jobStart      DateTime         @default("1900-01-01T00:00:00-00:00") @db.DateTime(0)
+  jobEnd        DateTime         @default("1900-01-01T00:00:00-00:00") @db.DateTime(0)
   location      JobsLocation
   compensation  JobsCompensation
   contact       Members          @relation(fields: [projectId, contactUserId], references: [projectId, userId])
@@ -62,7 +62,7 @@ model Jobs {
 
 model Majors {
   majorId Int     @id @default(autoincrement()) @map("major_id")
-  label   String  @unique @db.VarChar(100)
+  label   String  @unique @db.VarChar(50)
   users   Users[] @relation("majorstousers")
 
   @@map("majors")
@@ -89,8 +89,8 @@ model Notifications {
   notificationId String   @id @unique @default(uuid()) @map("notification_id")
   receiverId     Int      @map("receiver_id")
   timeSent       DateTime @map("time_sent")
-  subjectLine    String   @map("subject_line")
-  message        String   @map("message")
+  subjectLine    String   @map("subject_line") @db.VarChar(300)
+  message        String   @map("message") @db.VarChar(2000)
   hasBeenRead    Boolean  @default(false) @map("has_been_read")
   isGlobal       Boolean  @default(false) @map("is_global")
   receiver       Users    @relation(name: "FK_receiver_to_notification", fields: [receiverId], references: [userId], onDelete: NoAction, onUpdate: Cascade)
@@ -129,7 +129,7 @@ model ProjectFollowings {
 
 model ProjectImages {
   imageId    Int       @id @default(autoincrement()) @map("image_id")
-  image      String    @db.VarChar(100)
+  image      String    @db.VarChar(500)
   altText    String    @db.VarChar(150)
   position   Int
   projectId  Int       @map("project_id")
@@ -142,7 +142,7 @@ model ProjectImages {
 
 model ProjectVideos {
   videoId   Int      @id @default(autoincrement()) @map("video_id")
-  videoUrl  String   @map("video_url") @db.VarChar(100)
+  videoUrl  String   @map("video_url") @db.VarChar(500)
   title     String   @db.VarChar(150)
   position  Int
   projectId Int      @map("project_id")
@@ -156,8 +156,8 @@ model ProjectSocials {
   id        Int      @id @default(autoincrement())
   projectId Int      @map("project_id")
   websiteId Int      @map("website_id")
-  url       String   @db.VarChar(2000)
-  alias     String   @db.VarChar(45)
+  url       String   @db.VarChar(500)
+  alias     String   @db.VarChar(50)
   projects  Projects @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_socials_projects")
   socials   Socials  @relation(fields: [websiteId], references: [websiteId], map: "FK_project_socials_socials")
 
@@ -180,9 +180,9 @@ model ProjectTags {
 
 model Projects {
   projectId         Int                 @id @unique @default(autoincrement()) @map("project_id")
-  title             String              @db.VarChar(150)
+  title             String              @db.VarChar(100)
   hook              String              @default("") @db.VarChar(300)
-  description       String              @default("") @db.Text
+  description       String              @default("") @db.VarChar(2000)
   thumbnail         ProjectImages?      @relation(fields: [thumbnailId], references: [imageId])
   thumbnailId       Int?                @unique @map("thumbnail_id")
   context           ProjectsContext?
@@ -251,10 +251,10 @@ model ReportUser {
 model ReportBug {
   reportId   Int      @id @default(autoincrement()) @map("report_id")
   userId     Int      @map("user_id")
-  reportText String   @map("report_text")
-  isResolved Boolean  @map("is_resolved") @default(false)
-  modNotes   String   @map("mod_notes")
-  createdAt  DateTime @map("created_at") @default(now())
+  reportText String   @map("report_text") @db.VarChar(2000)
+  isResolved Boolean  @default(false) @map("is_resolved")
+  modNotes   String   @map("mod_notes") @db.VarChar(2000)
+  createdAt  DateTime @default(now()) @map("created_at")
   users      Users    @relation(fields: [userId], references: [userId], map: "FK_bug_report_user")
 
   @@index([userId], map: "FK_project_report_user")
@@ -303,7 +303,6 @@ model Tags {
 
   @@unique([label, type])
   @@map("tags")
-  
 }
 
 model UserBlacklist {
@@ -345,8 +344,8 @@ model UserSocials {
   id        Int     @id @default(autoincrement())
   userId    Int     @map("user_id")
   websiteId Int     @map("website_id")
-  url       String  @db.VarChar(2000)
-  alias     String  @db.VarChar(45)
+  url       String  @db.VarChar(500)
+  alias     String  @db.VarChar(50)
   socials   Socials @relation(fields: [websiteId], references: [websiteId], map: "FK_user_socials_socials")
   users     Users   @relation(fields: [userId], references: [userId], map: "FK_user_socials_users")
 
@@ -364,7 +363,7 @@ model Users {
   profileImage      String?             @map("profile_image") @db.VarChar(100)
   headline          String              @default("") @db.VarChar(100)
   pronouns          String              @default("") @db.VarChar(20)
-  title             String              @default("") @db.VarChar(50)
+  title             String              @default("") @db.VarChar(100)
   ritStatus         UsersRitStatus?     @map("rit_status")
   location          String              @default("") @db.VarChar(150)
   bio               String              @default("") @db.VarChar(600)
@@ -416,7 +415,7 @@ model JobSkills {
 enum JobsAvailability {
   FullTime @map("Full-time")
   PartTime @map("Part-time")
-  Flexible
+  PtFt     @map("Part-time/Full-time")
 
   @@map("jobs_availability")
 }

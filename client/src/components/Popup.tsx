@@ -48,54 +48,54 @@ export const PopupContext = createContext<PopupContextType>({
  * @param closeParent — optional function to close parent popup
  * @returns JSX.Element button
  */
-export const 
-PopupButton = ({
-  children,
-  buttonId = '',
-  className = '',
-  callback = async () => { },
-  doNotClose = () => false,
-  closeParent,
-  disabled = false,
-  ref = undefined,
-}: {
-  children: ReactNode;
-  buttonId?: string;
-  className?: string;
-  callback?: () => void;
-  doNotClose?: () => boolean;
-  closeParent?: (value : boolean) => void;
-  disabled?: boolean;
-  ref?: (React.RefObject<HTMLButtonElement | null>);
-}) => {
-  const { open, setOpen } = useContext(PopupContext);
+export const
+  PopupButton = ({
+    children,
+    buttonId = '',
+    className = '',
+    callback = async () => { },
+    doNotClose = () => false,
+    closeParent,
+    disabled = false,
+    ref = undefined,
+  }: {
+    children: ReactNode;
+    buttonId?: string;
+    className?: string;
+    callback?: () => void;
+    doNotClose?: () => boolean;
+    closeParent?: (value: boolean) => void;
+    disabled?: boolean;
+    ref?: (React.RefObject<HTMLButtonElement | null>);
+  }) => {
+    const { open, setOpen } = useContext(PopupContext);
 
-  const toggleOpen = () => {
-    setOpen(!open);
-    callback();
+    const toggleOpen = () => {
+      setOpen(!open);
+      callback();
 
-    if (ref) {
-      console.log(`Save ref: ${ref.current}`);
+      if (ref) {
+        console.log(`Save ref: ${ref.current}`);
+      }
+
+      if (closeParent) closeParent(false);
+    };
+
+    // If button should not close the popup, just execute callback 
+    if (doNotClose()) {
+      return (
+        <button id={buttonId} className={className} tabIndex={0} onClick={callback} disabled={disabled} ref={ref}>
+          {children}
+        </button>
+      );
     }
 
-    if (closeParent) closeParent(false);
-  };
-
-  // If button should not close the popup, just execute callback 
-  if (doNotClose()) {
     return (
-      <button id={buttonId} className={className} tabIndex={0} onClick={callback} disabled={disabled} ref={ref}>
+      <button id={buttonId} className={className} tabIndex={0} onClick={toggleOpen} disabled={disabled} ref={ref}>
         {children}
       </button>
     );
-  }
-
-  return (
-    <button id={buttonId} className={className} tabIndex={0} onClick={toggleOpen} disabled={disabled} ref={ref}>
-      {children}
-    </button>
-  );
-};
+  };
 
 /**
  * PopupContent
@@ -188,7 +188,7 @@ export const PopupContent = ({
     } else {
       document.body.classList.remove('modal-open');
     }
-    
+
     // Cleanup class if the component unmounts unexpectedly
     return () => {
       document.body.classList.remove('modal-open');
@@ -203,7 +203,7 @@ export const PopupContent = ({
         <div className="popup" ref={popupRef}>
           {useClose ? (
             <button className={`popup-close ${profilePopup === true ? 'popup-close-edit' : ''}`}
-                onClick={closePopup} ref={closeButtonRef}>
+              onClick={closePopup} ref={closeButtonRef}>
               <img src={close} alt="close" />
             </button>) : <></>}
           {children}
