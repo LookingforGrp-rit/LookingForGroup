@@ -4,7 +4,7 @@ import type { Prisma } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import addGalleryImageService from '#services/me/gallery/add-image.ts';
 
-//POST api/me/{userId}/gallery/images
+//POST api/me/gallery/{userId}/images
 //adds an image to a users gallery
 const addGalleryImageController = async (req: AuthenticatedRequest, res: Response) => {
   const { altText } = req.body as { altText?: string };

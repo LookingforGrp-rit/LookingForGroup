@@ -5,7 +5,7 @@ import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type AddGalleryImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
-//POST api/me/{userId}/gallery/images
+//POST api/me/gallery/{userId}/images
 //adds an image to a users gallery
 const addGalleryImageService = async (
   data: Prisma.GalleryImagesCreateInput,
