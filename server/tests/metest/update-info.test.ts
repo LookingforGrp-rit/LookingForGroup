@@ -78,7 +78,6 @@ const transformed: MePrivate = {
   designer: false,
   developer: true,
   firstName: 'Eric',
-  preferredName: 'Eric',
   followers: {
     users: [],
     count: 0,

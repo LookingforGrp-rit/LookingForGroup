@@ -21,10 +21,6 @@ export const getBlacklistedUsersService = async () => {
       .map(transformUserToPreview)
       .toSorted((user1, user2) => user1.firstName.charCodeAt(0) - user2.firstName.charCodeAt(0));
 
-    //For when preferredName is implemented
-    // transformedBlacklist = transformedBlacklist.toSorted((user1, user2) =>
-    //     user1.preferredName.charCodeAt(0) - user2.preferredName.charCodeAt(0));
-
     return transformedBlacklist;
   } catch (e) {
     console.error('Error in addBlacklistService:', e);

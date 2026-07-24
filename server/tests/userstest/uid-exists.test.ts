@@ -28,7 +28,6 @@ describe('uidExists test service,', async () => {
       ritEmail: 'real@rit.edu',
       firstName: 'Real',
       lastName: 'User',
-      preferredName: 'Real',
       profileImage: null,
       headline: 'Testing',
       pronouns: 'they/them',

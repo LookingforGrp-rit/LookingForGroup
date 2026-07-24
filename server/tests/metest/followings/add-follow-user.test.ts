@@ -39,7 +39,6 @@ const transformedUserPreview: UserPreview = {
   displayPhone: false,
   privacy: 'public',
   firstName: 'Eric',
-  preferredName: 'Eric',
   headline: '',
   lastName: '',
   location: '',
