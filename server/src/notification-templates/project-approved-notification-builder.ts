@@ -23,7 +23,7 @@ export class ProjectApprovedNotificationBuilder implements NotificationBuilder {
         title: true,
         users: {
           select: {
-            preferredName: true,
+            firstName: true,
           },
         },
       },
@@ -36,7 +36,7 @@ export class ProjectApprovedNotificationBuilder implements NotificationBuilder {
     notification.subjectLine = `Your project, ${data?.title as string}, has been approved!`;
 
     // building message
-    let message = `Hello ${data?.users.preferredName as string},`;
+    let message = `Hello ${data?.users.firstName as string},`;
     message += `<br /><br />Your project, <strong>${data?.title as string}</strong>, has been approved. `;
     message += `People can now view, like, and request to join your project.`;
     message += `<br /><br />We wish you luck in all your endeavors!`;

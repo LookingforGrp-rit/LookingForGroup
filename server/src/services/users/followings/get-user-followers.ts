@@ -31,10 +31,6 @@ export const getUserFollowersService = async (
         userFollowing2.senderUser.firstName.charCodeAt(0),
     );
 
-    //For when the preferredName column is added in the database
-    // userFollowings = userFollowings.toSorted((userFollowing1, userFollowing2) =>
-    //   userFollowing1.senderUser.preferredName.charCodeAt(0) - userFollowing2.senderUser.preferredName.charCodeAt(0));
-
     const followings: UserFollowsList = {
       count: userFollowings.length,
       users: userFollowings.map(({ followedAt, senderUser }) => ({
