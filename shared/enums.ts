@@ -80,7 +80,8 @@ export enum BaseSocialUrl {
   'YouTube' = 'https://youtube.com/',
   'Steam' = 'https://',
   'Itch' = 'https://', //because itch links might have the itch.io part later in the url
-  'Other' = 'https://'
+  'Other' = 'https://',
+  'Tumblr' = 'https://tumblr.com/'
 }
 export interface BaseUrlValidation { //a surprise tool that'll help us later
   Instagram: 'https://instagram.com/',
@@ -92,7 +93,8 @@ export interface BaseUrlValidation { //a surprise tool that'll help us later
   YouTube: 'https://youtube.com/' | 'youtu.be',
   Steam: 'https://steamcommunity.com/' | 'https://store.steampowered.com/app/',
   Itch: '.itch.io',
-  Other: 'https://' //idk what imma do with this but for now we'll just make sure it's a working link (TERRIBLE! AWFUL IDEA!)
+  Other: 'https://', //idk what imma do with this but for now we'll just make sure it's a working link (TERRIBLE! AWFUL IDEA!)
+  Tumblr: 'https://tumblr.com/'
 }
 
 export enum AspectRatios {
