@@ -273,6 +273,20 @@
     padding: 10px;
 }
 
+.bug-panel {
+  width: 100%;
+  height: auto;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--header-color);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  max-width: none;
+  overflow: hidden;
+  text-decoration: none;
+  margin: 10px 0;
+}
 /* Mobile */
 @media only screen and (max-width: 1200px) {
     .list-card-status {

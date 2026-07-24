@@ -243,3 +243,29 @@ export const deleteUserReport = async (reportId: number,): Promise<ApiResponse> 
     if (response.error) console.log(`Error in deleteUserReport: ${response.error}`);
     return response;
 };
+
+/**
+ * Gets all bug reports
+ * @returns ApiResponse from the API call to get bug reports
+ */
+export const getBugReports = async (): Promise<ApiResponse> => {
+    const apiURL = `/mod/bug-report/`;
+    const response = await GET(apiURL);
+
+    if (response.error) console.log(`Error in getBugReports: ${response.error}`);
+    return response;
+};
+
+/**
+ * Gets the specified bug report by its id
+ * @param reportId reportId The id of the report to get
+ * @returns ApiResponse from the API call to get the specified bug report
+ */
+export const getBugReportById = async (reportId: number): Promise<ApiResponse> => {
+    const apiURL = `/mod/bug-report/${reportId}`;
+    const response = await GET(apiURL);
+
+    if (response.error) console.log(`Error in getBugReportById: ${response.error}`);
+    return response;
+};
+
