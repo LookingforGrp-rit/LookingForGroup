@@ -48,11 +48,14 @@
     #mod-actions-tabs {
         display: flex;
         gap: 15px;
+        height: 40px;
+        padding-top:10px;
         align-items: flex-end;
         overflow-x: auto;
         scrollbar-color: var(--primary-color) var(--liked-section-bg);
         scrollbar-width: thin;
     }
+
 
     button {
         color: var(--primary-color);
@@ -69,7 +72,7 @@
 
     button:hover {
         transform: none;
-        font-weight: 730;
+        padding-bottom: 10px;
     }
 
     #mod-content-container {
@@ -322,8 +325,13 @@
             height: fit-content;
         }
 
+        #mod-content-container{
+                 border-top-right-radius: 0px;
+        }
+
         #mod-actions-tabs {
-            height: fit-content;
+            height: 60px;
+            padding-right: 5px;
         }
     }
 
