@@ -106,7 +106,7 @@ model MemberRequests {
   sentFromProject     Boolean             @map("sent_from_project")
   requestStatus       MemberRequestStatus @map("request_status")
   projects            Projects            @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "request_project_id")
-  users               Users               @relation(fields: [prospectiveMemberId], references: [userId], onDelete: Cascade, map: "request_prospective_id")
+  users               Users               @relation(fields: [prospectiveMemberId], references: [userId], onDelete: Cascade, map: "prospective_member_user")
 
   @@unique([prospectiveMemberId, projectId, roleId])
   @@index([projectId], map: "request_project_id")
@@ -223,7 +223,7 @@ model ReportProject {
   reportId   Int      @id @default(autoincrement()) @map("report_id")
   userId     Int      @map("user_id")
   projectId  Int      @map("project_id")
-  reportText String   @map("report_text")
+  reportText String   @map("report_text") @db.VarChar(2000)
   users      Users    @relation(fields: [userId], references: [userId], map: "FK_project_report_users")
   projects   Projects @relation(fields: [projectId], references: [projectId], map: "FK_project_report_projects")
 
@@ -237,7 +237,7 @@ model ReportUser {
   reportId   Int     @id @default(autoincrement()) @map("report_id")
   reporterId Int     @map("reporter_id")
   reportedId Int     @map("reported_id")
-  reportText String  @map("report_text")
+  reportText String  @map("report_text") @db.VarChar(2000)
   active     Boolean @default(true)
   reporter   Users   @relation("reporter_id", fields: [reporterId], references: [userId], map: "FK_user_report_reporter")
   reported   Users   @relation("reported_id", fields: [reportedId], references: [userId], map: "FK_user_report_reported")
