@@ -2,10 +2,10 @@ import { ChangeEvent, useCallback, useMemo, useState } from 'react';
 import { Header } from '../Header';
 import { members } from '../../constants/lfgmembers';
 import '../Styles/pages.css';
-import AboutFooter from '../AboutFooter';
+// import AboutFooter from '../AboutFooter';
 import ToTopButton from '../ToTopButton';
 import { ThemeImage } from '../ThemeIcon';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 /**
  * About page detailing the purpose and features of LFG
@@ -18,7 +18,7 @@ const AboutPage = () => {
     // Format data for use with SearchBar, which requires it to be: [{ data: }]
     const dataSet = useMemo(() => [{ data: members }], []);
 
-    const navigate = useNavigate(); // Hook for navigation
+    // const navigate = useNavigate(); // Hook for navigation
 
     // Allows for the variable to update and display to the user
     const handleSearchChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -66,6 +66,7 @@ const AboutPage = () => {
                     hideSearchBar={true}
                     hideBackButton={false}
                     placeholderText=''
+                    searchBlocklist={["photo"]}
                 />
             </aside>
 
