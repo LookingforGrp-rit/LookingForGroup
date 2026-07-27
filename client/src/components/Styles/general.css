@@ -1352,7 +1352,10 @@ body.modal-open {
   cursor: pointer;
   transition: color 0.2s ease;
   padding: 1px 1px 5px 1px;
-  width: 15%;
+  width: max-content;
+  white-space: nowrap;
+  flex-shrink: 0;
+  
   text-align: center;
 }
 
@@ -1441,7 +1444,7 @@ body.modal-open {
       overflow-x: scroll;
       scroll-behavior: smooth;
       scrollbar-width: none;
-      justify-content: left !important;
+      justify-content: flex-start !important;
       ;
       column-gap: 5vw;
     }
