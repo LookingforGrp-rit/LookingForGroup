@@ -565,6 +565,7 @@ export type MyProjectFollowing = {
   apiUrl: string;
 };
 
+
 // USERS
 
 /**
@@ -883,6 +884,28 @@ export interface MePrivate extends MeDetail {
    * The date on which the logged-in user's account was last updated
    */
   updatedAt: Date;
+}
+
+/**
+ * Data for images added to user gallery
+ */
+export interface GalleryImage {
+  galleryImageId: number;
+  image: string;
+  altText: string;
+  position: number;
+  userId: number;
+}
+
+/**
+ * Data for viseos added to user gallery
+ */
+export interface GalleryVideo {
+  galleryVideoId: number;
+  videoUrl: string;
+  title: string;
+  position: number;
+  userId: number;
 }
 
 // PROjECT DATA

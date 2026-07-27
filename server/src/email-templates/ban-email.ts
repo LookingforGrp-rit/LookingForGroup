@@ -23,7 +23,7 @@ interface BanEmailProps {
 const logoUrl = 'https://lookingforgrp.com/api/images/lfg-logo.png';
 
 const BanEmail = ({ receiverName, banReason }: BanEmailProps) => {
-  const previewText = `You have been banned on Looking For Group`;
+  const previewText = `[DO NOT REPLY] You have been banned on Looking For Group`;
 
   return createElement(
     Html,

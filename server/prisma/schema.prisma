@@ -373,6 +373,7 @@ model Users {
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
   phoneNumber       String?             @map("phone_number") @db.VarChar(20)
+  galleryEnabled    Boolean             @default(false)
   googleId          String              @unique(map: "google_id_UNIQUE") @default("bill of rights") @map("google_id")
   members           Members[]
   projectFollowings ProjectFollowings[]
@@ -395,8 +396,34 @@ model Users {
   receiver         Notifications[] @relation(name: "FK_receiver_to_notification")
   blocklistBlocker Blocklist[]     @relation(name: "UserToBlocker")
   blocklistBlocked Blocklist[]     @relation(name: "UserToBlocked")
+  galleryImages    GalleryImages[]
+  galleryVideos    GalleryVideos[]
 
   @@map("users")
+}
+
+model GalleryImages {
+  galleryImageId Int    @id @default(autoincrement())
+  image          String
+  altText        String
+  position       Int    @default(0)
+
+  userId Int
+  user  Users @relation(fields: [userId], references: [userId])
+
+  @@map("gallery_images")
+}
+
+model GalleryVideos {
+  galleryVideoId Int    @id @default(autoincrement())
+  videoUrl       String
+  title          String
+  position       Int    @default(0)
+
+  userId Int
+  user  Users @relation(fields: [userId], references: [userId])
+
+  @@map("gallery_videos")
 }
 
 model JobSkills {
