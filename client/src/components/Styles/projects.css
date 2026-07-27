@@ -140,6 +140,11 @@ Project Panel component style rules
     }
   }
 
+  .project-link-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
 
   hr {
     /* color: var(--header-color); */
@@ -227,6 +232,8 @@ Project Panel component style rules
       }
 
       svg {
+        position: relative;
+        z-index: 2;
         cursor: pointer;
         transform: scale(1.2);
       }
@@ -288,6 +295,10 @@ Project Panel component style rules
     visibility: visible;
     opacity: 1;
     cursor: pointer;
+  }
+
+  h2 {
+    text-decoration: underline;
   }
 }
 

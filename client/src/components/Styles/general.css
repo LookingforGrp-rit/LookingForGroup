@@ -290,10 +290,12 @@ button {
 }
 
 button:focus-visible,
+[role="button"]:focus-visible,
 #back:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible,
+.project-panel:has(.project-link-overlay:focus-visible),
 textarea:focus-visible {
   transition: 0s;
   outline: 3px solid var(--primary-color);
