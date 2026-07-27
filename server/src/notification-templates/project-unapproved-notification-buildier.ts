@@ -28,7 +28,7 @@ export class ProjectUnapprovedNotificationBuilder implements NotificationBuilder
         title: true,
         users: {
           select: {
-            preferredName: true,
+            firstName: true,
           },
         },
       },
@@ -41,7 +41,7 @@ export class ProjectUnapprovedNotificationBuilder implements NotificationBuilder
     notification.subjectLine = `Your project, ${data?.title as string}, has been taken down.`;
 
     // building the message
-    notification.message = `Hello ${data?.users.preferredName as string},<br /><br />`;
+    notification.message = `Hello ${data?.users.firstName as string},<br /><br />`;
     notification.message += `Unfortunately, your project, <strong>${data?.title as string}</strong>, has been taken down. `;
     notification.message += `Here is the reason provided:<br /><br />`;
     notification.message += `"${reason}"<br /><br />`;

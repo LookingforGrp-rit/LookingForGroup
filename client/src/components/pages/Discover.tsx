@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, ChangeEvent, useEffect, useEffectEvent } from 'react';
+import React, { useMemo, useState, useCallback, useEffect, useEffectEvent } from 'react';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
@@ -171,17 +171,13 @@ export const DiscoverPage = () => {
 
   //Attempt at detecting when the user has scrolled to near the bottom of the screen
   const scrollEvent = useEffectEvent(() => {
-    //console.log(`scrolled by ${}`);
-    //document.documentElement.scrollBy() is always 0 
-
-    //WAAAAAAIT DID I FIND IT
     const fullPage = document.querySelector('.page'); //the element that holds all of the page stuff
     if (fullPage) {
-      const scrollPercent = fullPage.scrollTop / (fullPage.clientHeight / 2); //clientHeight seemed to be doubled so i halved it
-
-      if (scrollPercent >= 0.95) {
+      //scrollTop seems to be the difference between scrollHeight and an accurate reading of the height, 
+      //percent will now always equal 1 when at the bottom.
+      const scrollPercent =  fullPage.clientHeight / (fullPage.scrollHeight - fullPage.scrollTop);
+      if (scrollPercent >= 0.70) {
         sortProjects();
-        console.log("load more projects");
       }
     }
   });
@@ -261,7 +257,7 @@ export const DiscoverPage = () => {
 
     setLoadObj(returnedProjects.length < count ?
       <p style={{ color: 'red' }}>No More Projects!</p> :
-      <button id='btn-loadmore' onClick={() => sortProjects()}>Load More Projects</button>);
+      <button id='btn-loadmore' onClick={projectLoadButton}>Load More Projects</button>);
 
     
 
@@ -419,7 +415,7 @@ export const DiscoverPage = () => {
 
   useEffect(() => {
     sortProjects();
-    setLoadObj(<button id='btn-loadmore' onClick={() => sortProjects()}>Load More Projects</button>);
+    setLoadObj(<button id='btn-loadmore' onClick={projectLoadButton}>Load More Projects</button>);
   }, []);
 
   const sortProjects = useCallback((newSortMode?: sortModes) => {
@@ -453,6 +449,11 @@ export const DiscoverPage = () => {
     }
     if (newSortMode) setSortMode(newSortMode);
   }, [sortMode]);
+
+  const projectLoadButton = useCallback(() => {
+    sortProjects();
+    setCurrentSearch('');
+  }, []);
 
   /**
   * Updates the filtered project list with new search information
@@ -572,7 +573,7 @@ export const DiscoverPage = () => {
   }, [fullProjectList, projectCache]);
 
   //gets the discover stuff at the bottom
-  let discoverPanelContents: React.ReactElement
+  let discoverPanelContents: React.ReactElement;
   if (!loaded) {
     discoverPanelContents = (
       <div className='placeholder-spacing'>
@@ -640,11 +641,13 @@ export const DiscoverPage = () => {
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={projectDataSet}
         onSearch={searchProjects}
-        value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
+        value={currentSearch}
+        setSearch={setCurrentSearch}
         setCurrentUserId={getAuth}
         searchOnFocus={handleSearchFocus}
         placeholderText="Search by Project"
         mobilePlaceholderText="Projects"
+        searchBlocklist={["username", "createdat", "updatedat"]}
       />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {heroContent}
