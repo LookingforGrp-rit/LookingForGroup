@@ -23,7 +23,7 @@ interface GeneralEmailProps {
 const logoUrl = 'https://lookingforgrp.com/api/images/lfg-logo.png';
 
 const GeneralEmail = ({ receiverName, message }: GeneralEmailProps) => {
-  const previewText = `You have received a notification from the Looking For Group moderation team`;
+  const previewText = `[DO NOT REPLY] You have received a notification from the Looking For Group moderation team`;
 
   return createElement(
     Html,

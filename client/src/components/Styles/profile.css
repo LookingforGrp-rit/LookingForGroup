@@ -251,18 +251,9 @@ Profile Panel component style rules
   opacity: 1;
 }
 
-@media (max-width: 499px) {
+@media screen and (max-width:1050px) {
   .profile-panel {
-    width: clamp(180px, 250px, 250px) !important;
-    display: flex;
-
-
-    img {
-      border-radius: 10px !important;
-      object-fit: contain !important;
-      margin-left: auto !important;
-      margin-right: auto !important;
-    }
+    width: clamp(180px, 340px, 340px) !important;
   }
 }
 
@@ -270,15 +261,13 @@ Profile Panel component style rules
   .profile-panel {
     width: 98% !important;
     display: flex;
-
   }
 }
 
 @media (min-width: 556px) and (max-width: 799px) {
   .profile-panel {
-    width: clamp(180px, 250px, 250px) !important;
+    width: clamp(180px, 90%, 350px) !important;
     display: flex;
-
 
     img {
       border-radius: 10px !important;
@@ -289,6 +278,19 @@ Profile Panel component style rules
   }
 }
 
+@media (max-width: 499px) {
+  .profile-panel {
+    width: clamp(120px, 100%, 100%) !important;
+    display: flex;
+
+    img {
+      border-radius: 10px !important;
+      object-fit: contain !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+  }
+}
 
 
 
@@ -1887,7 +1889,8 @@ New Profile page style rules
   width: 100%;
 }
 
-#about-me-buttons a:link, #about-me-buttons a:visited {
+#about-me-buttons a:link,
+#about-me-buttons a:visited {
   display: flex;
   gap: 10px;
   align-items: center;

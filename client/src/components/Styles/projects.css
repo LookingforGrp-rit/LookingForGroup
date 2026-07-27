@@ -3777,6 +3777,51 @@ Project Carousel style rules
   }
 }
 
+/* Full-image viewer opened by clicking a carousel image.
+   Sits above the popup cover (z-index 20) so it works even over a popup. */
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5vh 5vw;
+  background-color: rgba(0, 0, 0, 0.8);
+  cursor: zoom-out;
+}
+
+/* The image renders at its natural size, only scaling DOWN to fit the viewport.
+   This is what makes the viewer's size track the image's size. */
+.image-lightbox-img {
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.6);
+  cursor: default;
+}
+
+.image-lightbox-close {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.image-lightbox-close img {
+  width: 100%;
+  height: 100%;
+  filter: invert(1);
+}
+
 #project-info-panel {
   grid-area: info;
   display: flex;
