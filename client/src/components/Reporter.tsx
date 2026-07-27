@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import profilePicture from "../images/lfrog.png";
+import { ThemeIcon } from './ThemeIcon';
 import usePreloadedImage from "../functions/imageLoad";
 import { routes } from "../constants/routes";
 import { getUsersById } from "../api/users";
 import { UserDetail } from "@looking-for-group/shared";
-import { sendModeratorNotification } from "../api/mod-tools";
+import { sendModeratorNotification, getUserAccessLevel } from "../api/mod-tools";
 
 interface ProjectPanelProps {
     reporterId: number;
@@ -16,6 +17,7 @@ const Reporter = ({ reporterId, modUserId, reason }: ProjectPanelProps) => {
     // Variables ==============================================================
     // Reporter detail
     const [reporter, setReporter] = useState<UserDetail>();
+    const [isModAdmin, setIsModAdmin] = useState<boolean>(false);
 
     // Open state
     const [messageBoxOpen, setMessageBoxOpen] = useState<boolean>(false);
@@ -34,9 +36,27 @@ const Reporter = ({ reporterId, modUserId, reason }: ProjectPanelProps) => {
 
             if (res.data) {
                 setReporter(res.data);
+                await getAccessLevel(res.data.userId);
             }
         } catch (e) {
             console.error('Error in getReporter: ', e);
+        }
+    };
+
+    /**
+     * Gets the user's access level
+     * @param userId User id
+     */
+    const getAccessLevel = async (userId: number) => {
+        try {
+            const res = await getUserAccessLevel(userId);
+
+            if (res.data) {
+                setIsModAdmin(res.data === 'Administrator' || res.data === 'Moderator');
+            }
+
+        } catch (e) {
+            console.error('Error in getAccessLevel', e);
         }
     };
 
@@ -77,23 +97,30 @@ const Reporter = ({ reporterId, modUserId, reason }: ProjectPanelProps) => {
     // Content ================================================================
     if (reporter) {
         return <>
-            <div id="reporter">
-                <p className="reporter-header">Reporter</p>
+            <div className="reporter">
                 <div>
-                    <a
-                        href={`${routes.PROFILE}?userID=${reporter.userId}`}
-                        className="reporter-profile"
-                    >
-                        <img
-                            src={imageSrc}
-                            alt={`${reporter.firstName} ${reporter.lastName}'s avatar`}
-                            onError={(e) => {
-                                const profileImg = e.target as HTMLImageElement;
-                                profileImg.src = profilePicture;
-                            }}
-                        ></img>
-                        <p>{reporter.firstName} {reporter.lastName}</p>
-                    </a>
+                    <div className="reporter-info">
+                        <p className="reporter-header">Reporter</p>
+                        <a href={`${routes.PROFILE}?userID=${reporter.userId}`} className="reporter-profile">
+                            <img
+                                src={imageSrc}
+                                alt={`${reporter.firstName} ${reporter.lastName}'s avatar`}
+                                onError={(e) => {
+                                    const profileImg = e.target as HTMLImageElement;
+                                    profileImg.src = profilePicture;
+                                }}
+                            ></img>
+                            <p>
+                                {isModAdmin && (
+                                    <span className="tooltip">
+                                        <ThemeIcon id={'moderation'} width={25} height={25} className={'color-fill'} ariaLabel={'moderation'} />
+                                        <span className="tooltip-text">This Reporter is a Mod/Admin</span>
+                                    </span>
+                                )}
+                                {reporter.firstName} {reporter.lastName}
+                            </p>
+                        </a>
+                    </div>
                     {!messageBoxOpen && (
                         <button
                             className="open-btn"
@@ -121,7 +148,7 @@ const Reporter = ({ reporterId, modUserId, reason }: ProjectPanelProps) => {
                         </div>
                     )}
                 </div>
-                <p style={{ whiteSpace: "pre-wrap" }}>Reason: {reason}</p>
+                <p className="reason">Reason: {reason}</p>
             </div>
         </>;
     } else {
