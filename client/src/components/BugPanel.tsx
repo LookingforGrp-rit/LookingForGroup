@@ -27,7 +27,6 @@ export const BugPanel = ({currentUserId, reporterId, reportId }: BugPanelProps) 
 
   const [bugReport, setBugReport] = useState<BugReport>();
   const [reporter, setReporter] = useState<UserDetail>();
-  const [isResolved, setIsResolved] = useState<boolean>();
   const BUG_REPORT_MAX = 500;
 
   const [bugReportText, setBugReportText] = useState<string>('');
@@ -61,7 +60,6 @@ export const BugPanel = ({currentUserId, reporterId, reportId }: BugPanelProps) 
    */
   const handleUpdateReport = async (isResolved: boolean) => {
     const response = await updateBugReport(reportId, bugReportText, isResolved);
-    setIsResolved(true);
   };
 
   // Mirrors the old Input component: the count turns yellow/orange/red as it fills up
