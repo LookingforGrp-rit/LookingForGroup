@@ -201,7 +201,10 @@ const Project = () => {
   const handleApproveRequest = async () => {
     if (displayedProject) {
       setApprovalStatus("approved");
-      await approveProjectRequest(projectID, displayedProject);
+      const res = await approveProjectRequest(projectID, displayedProject);
+      if (res.status === 204) {
+        navigate(paths.routes.MODERATION);
+      }
     }
   };
 
@@ -290,7 +293,7 @@ const Project = () => {
       })));
 
       if (res?.every(r => r.status === 200) && notif.every(r => r.status === 201)) {
-        window.location.reload();
+        navigate(paths.routes.MODERATION);
       }
     } else if (action === 'unapprove project') {
       //unnaprove the project, then delete the reports
@@ -316,8 +319,7 @@ const Project = () => {
       if (unapproveRes.status === 200
         && deleteRes?.every(r => r.status === 200)
         && notif.every(r => r.status === 201)) {
-        // refresh page
-        window.location.reload();
+        navigate(paths.routes.MODERATION);
       }
     } else {
       console.error(`Unknown action: ${action}`);
@@ -347,7 +349,10 @@ const Project = () => {
   const handleDeleteProjectRequest = async (message: string) => {
     if (displayedProject) {
       setApprovalStatus('not-approved');
-      await deleteProjectRequest(projectID, message);
+      const res = await deleteProjectRequest(projectID, message);
+      if (res.status === 204) {
+        navigate(paths.routes.MODERATION);
+      }
     }
   };
 
@@ -976,24 +981,24 @@ const Project = () => {
 
             {/* Mod options to approveor reject a project request (request edits in order to approve) */}
             {isUserAdmin && approvalStatus == 'under-review' && userID !== displayedProject.owner.userId ? <div className="mod-project-options">
-              <h4>Approve?</h4>
-              <p>You can approve this project or request changes.</p>
-              <div className="mod-options-btns">
+              <h4>Project Review Request</h4>
+              <p>You can approve this project and it will show up in the public view from now on or request changes by declining the request.</p>
+              <div id="mod-options-btns">
                 <button id="mod-approve-btn" onClick={() => { if (displayedProject) { handleApproveRequest(); } }}>Approve</button>
                 <Popup>
                   <PopupButton className="delete-button">Decline</PopupButton>
                   <PopupContent>
                     <div className="small-popup" id="report-popup">
                       <h3>Decline Approval Request</h3>
-                      <p>What changes should be made to {displayedProject?.title} in order to receive approval?</p>
+                      <p>What changes should be made to <strong>{displayedProject?.title}</strong> in order to receive approval?</p>
                       <textarea placeholder="Write the requested changes here..." className="input input-multiline" ref={declineMessage}></textarea>
                       <div className="confirm-deny-btns">
-                        <button
-                          id="team-delete-member-cancel-button"
+                        <PopupButton
+                          buttonId="request-decline-button"
                           className="button-reset"
                         >
                           Cancel
-                        </button>
+                        </PopupButton>
                         <button className="confirm-btn" onClick={() => { handleDeleteProjectRequest(declineMessage?.current ? declineMessage.current.value : "No message provided."); }}>Submit</button>
                       </div>
                     </div>
@@ -1006,8 +1011,8 @@ const Project = () => {
             {/* Mod options to accept, decline, or request changes to a reported project // are we doing edits on reported projects?  */}
             {isUserAdmin && reportList.length !== 0 && userID !== displayedProject.owner.userId ? (
               <div className="mod-project-options">
-                <h4>Unapprove?</h4>
-                <p>You can ignore this report or request edits on this project.</p>
+                <h4>Reports</h4>
+                <p>You can dismiss this report or request edits. Requesting edits will remove the project from public view until the requested changes have been made and approved.</p>
                 {reportList.map(r => <Reporter modUserId={userID} reporterId={r.userId} reason={r.reason} key={'reporter-' + r.userId} />)}
                 <div className="mod-options-btns">
                   <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')}>Dismiss Report</button>
@@ -1016,15 +1021,15 @@ const Project = () => {
                     <PopupContent>
                       <div className="small-popup" id="report-popup">
                         <h3>Request Edits</h3>
-                        <p>What should the user change about their project?</p>
+                        <p>Explain what the user should change about their project. Their project will be taken down from public view until the requested changes have been made and approved.</p>
                         <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={takeDownMessage}></textarea>
                         <div className="confirm-deny-btns">
-                          <button
-                            id="cancel-button"
+                          <PopupButton
+                            buttonId="edits-cancel-button"
                             className="button-reset"
                           >
                             Cancel
-                          </button>
+                          </PopupButton>
                           <button className="confirm-btn" onClick={() => resolveReport('unapprove project')}>Submit</button>
                         </div>
                       </div>
