@@ -4,7 +4,6 @@ import placeholderThumbnail from '../images/project_temp.png'; // if this gets u
 import { ProjectDetail, ProjectVideo } from '@looking-for-group/shared';
 import { getYouTubeEmbedURL } from "../functions/parseYoutube";
 import { ImageLightbox } from "./ImageLightbox";
-import { useYouTubePlayback } from "../hooks/useYouTubePlayback";
 
 /**
  * Displays a carousel of project assets (videos and images).
@@ -19,9 +18,6 @@ export const ProjectCarousel = ({ project, videos }: { project: ProjectDetail, v
     // Full-image viewer: holds the src of the image being viewed, or null when closed
     const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
-    // Lets the carousel hold still while someone is actually watching a video
-    const { isPlaying, playerProps } = useYouTubePlayback();
-
     // Process the video elements into something displayable
     const videoElements = (videos || []).map((video, index) => {
         const embedUrl = getYouTubeEmbedURL(video.videoUrl); 
@@ -30,9 +26,7 @@ export const ProjectCarousel = ({ project, videos }: { project: ProjectDetail, v
         return (
             <iframe
                 key={`video-${index}`}
-                {...playerProps}
-                // enablejsapi lets the player report its play/pause state back to us
-                src={`${embedUrl}?enablejsapi=1&origin=${encodeURIComponent(window.location.origin)}`}
+                src={embedUrl}
                 title={video.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -77,7 +71,7 @@ export const ProjectCarousel = ({ project, videos }: { project: ProjectDetail, v
 
     return (
         <>
-        <Carousel dataList={carouselContents} paused={isPlaying}>
+        <Carousel dataList={carouselContents}>
             <div className='project-carousel'>
                 <CarouselContent className='project-carousel-content' />
                 {carouselContents.length > 1 ?
