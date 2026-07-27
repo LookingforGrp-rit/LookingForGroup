@@ -51,7 +51,7 @@ const InviteEmail = ({
   inviteLink,
   projectApproved,
 }: InviteEmailProps) => {
-  const previewText = `Join ${senderName.firstName} ${senderName.lastName} on Looking For Group`;
+  const previewText = `[DO NOT REPLY] Join ${senderName.firstName} ${senderName.lastName} on Looking For Group`;
 
   return createElement(
     Html,

@@ -244,12 +244,12 @@ const Profile = (userProfile: any) => {
     if (reportedUsers !== null && reportedUsers !== undefined) {
       for (const report of reportedUsers) {
         if (report.reportedId === currentUser) {
-          if(report.active){
-            if(report.reporterId !== userID) tempActiveList.push(report)
+          if (report.active) {
+            if (report.reporterId !== userID) tempActiveList.push(report)
           }
           else {
             tempInactiveList.push(report);
-          } 
+          }
         }
       }
     }
@@ -588,7 +588,7 @@ const Profile = (userProfile: any) => {
       })));
 
       if (res?.every(r => r.status === 200) && notif.every(r => r.status === 201)) {
-        window.location.reload();
+        navigate(paths.routes.MODERATION);
       };
 
     } else if (action === 'warn') {
@@ -619,8 +619,7 @@ const Profile = (userProfile: any) => {
       if (warnRes.status === 201
         && deactivateRes?.every(r => r.status === 200)
         && notif.every(r => r.status === 201)) {
-        // refresh page
-        window.location.reload();
+        navigate(paths.routes.MODERATION);
       }
     } else if (action === 'ban') {
       const banRes = await banUser(
@@ -649,8 +648,7 @@ const Profile = (userProfile: any) => {
       if (banRes.status === 200 &&
         deactivateRes.every(r => r.status === 201) &&
         notif.every(r => r.status === 201)) {
-        // refresh page
-        window.location.reload();
+        navigate(paths.routes.MODERATION);
       }
     } else {
       console.error(`Unknown action: ${action}`);
@@ -920,11 +918,15 @@ const Profile = (userProfile: any) => {
 
           {/* Mod options when this is a reported user */}
           {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div id="mod-user-options">
-            <h4>Request Edits or Ban?</h4>
-            <p>You can dismiss this report, request edits, or ban them.</p>
-            <h5>Active Reports</h5>
+            <h2>Reports</h2>
+            <p>You can dismiss this report, warn the user and request edits from them, or ban the user.</p>
+            <h3>Active Reports</h3>
+            <p>These reports are currently under review and have not yet been resolved. Resolve them by dismissing the reports, warning the user, or banning the user. All active reports will be resolved using the same action.</p>
             {activeReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'active-reporter-' + r.reporterId} />)}
-            {inactiveReportList.length !== 0 && <h5>Inactive Reports</h5>}
+            {inactiveReportList.length !== 0 && (<>
+              <h3>Inactive Reports</h3>
+              <p>These reports have already been reviewed and are no longer active.</p>
+            </>)}
             {inactiveReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'inactive-reporter-' + r.reporterId} />)}
             <div id="mod-options-btns">
               <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')} >Dismiss Report</button>
@@ -936,12 +938,12 @@ const Profile = (userProfile: any) => {
                     <p>What should the user change about their profile?</p>
                     <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={warnMessage}></textarea>
                     <div className="confirm-deny-btns">
-                      <button
-                        id="cancel-button"
+                      <PopupButton
+                        buttonId="edits-cancel-button"
                         className="button-reset"
                       >
                         Cancel
-                      </button>
+                      </PopupButton>
                       <button className="confirm-btn" onClick={() => resolveReport('warn')}>Submit</button>
                     </div>
                   </div>
@@ -955,12 +957,12 @@ const Profile = (userProfile: any) => {
                     <p>Why are you banning this user?</p>
                     <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={banMessage}></textarea>
                     <div className="confirm-deny-btns">
-                      <button
-                        id="cancel-button"
+                      <PopupButton
+                        buttonId="ban-cancel-button"
                         className="button-reset"
                       >
                         Cancel
-                      </button>
+                      </PopupButton>
                       <button className="confirm-btn" onClick={() => resolveReport('ban')}>Submit</button>
                     </div>
                   </div>
