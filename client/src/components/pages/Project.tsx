@@ -1014,7 +1014,7 @@ const Project = () => {
                 <h4>Reports</h4>
                 <p>You can dismiss this report or request edits. Requesting edits will remove the project from public view until the requested changes have been made and approved.</p>
                 {reportList.map(r => <Reporter modUserId={userID} reporterId={r.userId} reason={r.reason} key={'reporter-' + r.userId} />)}
-                <div id="mod-options-btns">
+                <div className="mod-options-btns">
                   <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')}>Dismiss Report</button>
                   <Popup>
                     <PopupButton className="mod-edit-btn">Request Edits</PopupButton>

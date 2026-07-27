@@ -70,7 +70,7 @@ const SideBar = () => {
       // Only the mobile layout specifically displays the "own profile" sidebar button
       // Default "profile" brings you to your own page
 
-      if (width < breakpoint && window.location.href.endsWith(`userID=${userId}`)) {
+      if (width <= breakpoint && window.location.href.endsWith(`userID=${userId}`)) {
         // Is it the mobile layout, and is it DEFINITELY your own page?
         startingPage = "My Profile";
         for (const i of sidebarBtns) {
@@ -232,7 +232,7 @@ const SideBar = () => {
   }
 
   // Mobile layout
-  if (width < breakpoint) {
+  if (width <= breakpoint) {
     return (
       <nav>
         <div className={active ? "sideBarContainer active" : "sideBarContainer"}>

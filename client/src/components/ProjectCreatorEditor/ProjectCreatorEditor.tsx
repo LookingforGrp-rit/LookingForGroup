@@ -237,7 +237,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           user: currentUser ?? (await getCurrentAccount()).data,
           role: {
             roleId: 77,
-            label: "owner"
+            label: "Owner"
           },
           memberSince: new Date(Date.now()),
           apiUrl: "api/user/" + currentUser?.userId
@@ -248,6 +248,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         tags: [] as Tag[],
         mediums: [] as Medium[],
         approved: false,
+        owner: {...currentUser ?? (await getCurrentAccount()).data}
       } as ProjectWithFollowers;
 
       setProjectData(newData);
