@@ -396,32 +396,18 @@ const Project = () => {
           updateDisplayedProject={setDisplayedProject}
         /*permissions={userPerms}*/
         />
-        {/* Owner options: leave or delete the project */}
-        <Dropdown>
-          <DropdownButton className="project-info-dropdown-btn">
-            <ThemeIcon
-              id={"menu"}
-              width={40}
-              height={40}
-              className={"color-fill dropdown-menu"}
-              ariaLabel={"More options"}
-            />
-          </DropdownButton>
-          <DropdownContent rightAlign={true}>
-            <div id="project-info-dropdown">
-              {/* Share Button */}
-              <ShareButton />
-              {approvalStatus == 'not-approved' ?
+
+        {approvalStatus == 'not-approved' ?
                 <Popup>
                   {/* Request Review button */}
-                  <PopupButton className='project-info-dropdown-option'>
-                    <ThemeIcon
+                  <PopupButton buttonId='project-info-request'>
+                    {/* <ThemeIcon
                       id={"request-review"}
                       width={27}
                       height={27}
                       ariaLabel={"request-Review"}
                       className="mono-fill"
-                    />
+                    /> */}
                     Request Review
                   </PopupButton>
                   <PopupContent>
@@ -453,6 +439,22 @@ const Project = () => {
                     </div>
                   </PopupContent>
                 </Popup> : ""}
+
+        {/* Owner options: leave or delete the project */}
+        <Dropdown>
+          <DropdownButton className="project-info-dropdown-btn">
+            <ThemeIcon
+              id={"menu"}
+              width={40}
+              height={40}
+              className={"color-fill dropdown-menu"}
+              ariaLabel={"More options"}
+            />
+          </DropdownButton>
+          <DropdownContent rightAlign={true}>
+            <div id="project-info-dropdown">
+              {/* Share Button */}
+              <ShareButton />
               {/* Leave Project */}
               <Popup>
                 <PopupButton className="project-info-dropdown-option">

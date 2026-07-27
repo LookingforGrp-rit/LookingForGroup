@@ -3942,7 +3942,7 @@ Project Carousel style rules
 
 #project-info-buttons {
   display: flex;
-  margin-left: auto;
+  margin-left: 10px;
   align-items: center;
   /* For alignment with Project Title */
   gap: 7px;
@@ -4134,7 +4134,8 @@ Project Carousel style rules
 #project-info-edit,
 #project-open-positions-button,
 .project-people-tab,
-#project-open-positions-header {
+#project-open-positions-header,
+#project-info-request {
   border: none;
   border-radius: 40px;
   background-color: var(--primary-color);
