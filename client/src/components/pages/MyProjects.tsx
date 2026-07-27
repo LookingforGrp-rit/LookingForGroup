@@ -29,7 +29,7 @@ const getIsSaving = () => {
  * My Projects page. Creates a customizable page that showcases the user's projects.
  * @returns JSX Element
  */
-const MyProjects = (userProfile: any) => {
+const MyProjects = (/*userProfile: any*/) => {
 
   //const navigate = useNavigate();
 
@@ -541,6 +541,7 @@ const MyProjects = (userProfile: any) => {
         onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
         setCurrentUserId={setUserProjects}
         placeholderText='Search by Project'
+        searchBlocklist={["username", "createdat", "updatedat"]}
       />
 
       {/* Banner */}
