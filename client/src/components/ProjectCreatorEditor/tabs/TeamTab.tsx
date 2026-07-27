@@ -1197,7 +1197,8 @@ export const TeamTab = ({
 								Job Start:
 							</span>
 
-							{undefinedDateToString(currentJob?.jobStart)}
+							{//if no date was inserted, "none" appears
+								currentJob?.jobStart ? (currentJob?.jobStart.getFullYear() == 1900 ? " None" : undefinedDateToString(currentJob?.jobStart)) : "None"}
 						</div>
 
 						<div id="position-end">
@@ -1205,7 +1206,7 @@ export const TeamTab = ({
 								Job End:
 							</span>
 
-							{undefinedDateToString(currentJob?.jobEnd)}
+							{currentJob?.jobEnd ? (currentJob?.jobEnd.getFullYear() == 1900 ? " None" : undefinedDateToString(currentJob?.jobEnd)) : "None"}
 						</div>
 
 						<div id="position-compensation">
@@ -2625,7 +2626,7 @@ export const TeamTab = ({
 								<p>*{message}*</p>
 							</div>
 						)}
-						{isSaving ? 
+						{isSaving ?
 							(
 								// Currently Saving
 								<div className='spinning-loader'></div>

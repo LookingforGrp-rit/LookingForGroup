@@ -2,7 +2,7 @@ import { SearchBar, DataSet } from './SearchBar';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { NotificationsDropdown } from './NotificationsDropdown';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect, useContext, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
+import { useState, useEffect, useContext, ChangeEvent, FocusEvent, /*KeyboardEvent,*/ SetStateAction } from 'react';
 import * as paths from '../constants/routes';
 import { ThemeIcon } from './ThemeIcon';
 import { ThemeContext } from '../contexts/ThemeContext';
@@ -11,9 +11,9 @@ import profilePicture from '../images/lfrog.png';
 import { getUserAccessLevel } from '../api/mod-tools.ts';
 
 //user utils
-import { getCurrentAccount, getCurrentUsername, googleLogout } from '../api/users.ts';
+import { getCurrentAccount, /*getCurrentUsername,*/ googleLogout } from '../api/users.ts';
 import { AddBugReportInput, MePrivate } from '@looking-for-group/shared';
-import { Popup, PopupButton, PopupContent, PopupContext } from './Popup.tsx';
+import { Popup, PopupButton, PopupContent, /*PopupContext*/ } from './Popup.tsx';
 import { POST } from '../api/index.ts';
 
 //Header component to be used in pages
@@ -29,6 +29,7 @@ type HeaderProps = {
   dataSets: DataSet[];
   onSearch: (results: unknown[][]) => void;
   value?: string;
+  setSearch?: React.Dispatch<SetStateAction<string>>;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   hideSearchBar?: boolean;
   hideBackButton?: boolean;
@@ -37,6 +38,7 @@ type HeaderProps = {
   searchOnFocus?: (e: FocusEvent<HTMLInputElement>) => void;
   placeholderText: string;
   mobilePlaceholderText?: string;
+  searchBlocklist?: string[];
 };
 
 /**
@@ -58,6 +60,7 @@ export const Header: React.FC<HeaderProps> = ({
   dataSets,
   onSearch,
   value = "",
+  setSearch,
   onChange,
   hideSearchBar = false,
   hideBackButton = true,
@@ -65,7 +68,8 @@ export const Header: React.FC<HeaderProps> = ({
   setCurrentUserId,
   searchOnFocus,
   placeholderText = "",
-  mobilePlaceholderText }) => {
+  mobilePlaceholderText,
+  searchBlocklist = [] }) => {
   // User info state
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
@@ -161,24 +165,25 @@ export const Header: React.FC<HeaderProps> = ({
   // },[]);
 
   // Navigate to a page and optionally update sidebar (if implemented)
-  const handlePageChange = (path: string) => {
-    //Have code to update sidebar display (unsure of how to do this yet)
-    //Navigate to desired page
-    navigate(path);
-  };
+  // const handlePageChange = (path: string) => {
+  //   //Have code to update sidebar display (unsure of how to do this yet)
+  //   //Navigate to desired page
+  //   navigate(path);
+  // };
 
-  // Navigate to the current user's profile
-  const handleProfileAccess = async () => {
-    // navigate to Profile, attach userID
-    const res = await getCurrentUsername();
-    const userId = res.data?.userId;
-    navigate(`${paths.routes.PROFILE}?userID=${userId}`);
+  // // Navigate to the current user's profile
+  // const handleProfileAccess = async () => {
+  //   // navigate to Profile, attach userID
+  //   const res = await getCurrentUsername();
+  //   const userId = res.data?.userId;
+  //   navigate(`${paths.routes.PROFILE}?userID=${userId}`);
 
-    // Collapse the dropwdown if coming from another user's page
-    if (window.location.href.includes("profile")) {
-      window.location.reload();
-    }
-  };
+  //   // Collapse the dropwdown if coming from another user's page
+  //   if (window.location.href.includes("profile")) {
+  //     window.location.reload();
+  //   }
+  // };
+
   const returnProfileAccess = () => {
     // navigate to Profile, attach userID
     if (userId) return (`${paths.routes.PROFILE}?userID=${userId}`);
@@ -214,11 +219,13 @@ export const Header: React.FC<HeaderProps> = ({
           <SearchBar
             dataSets={dataSets}
             onSearch={onSearch}
+            setValue={setSearch}
             value={value}
             onChange={onChange}
             onFocus={searchOnFocus}
             placeholderText={placeholderText}
             mobilePlaceholderText={mobilePlaceholderText}
+            searchBlocks={searchBlocklist}
           />
         </div>
       )}
@@ -339,7 +346,7 @@ export const Header: React.FC<HeaderProps> = ({
                 {/* TO DO: Change icon when a new icon is found */}
                 {isUserAdmin ?
                   <a href={paths.routes.MODERATION}>
-                    <ThemeIcon id={'settings'} width={25} height={25} className={'mono-stroke'} ariaLabel={'settings'} />
+                    <ThemeIcon id={'moderation'} width={25} height={25} className={'mono-fill'} ariaLabel={'moderation'} />
                     Moderation
                   </a>
                   : ""}
