@@ -2,7 +2,7 @@ import { SearchBar, DataSet } from './SearchBar';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { NotificationsDropdown } from './NotificationsDropdown';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect, useContext, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
+import { useState, useEffect, useContext, ChangeEvent, FocusEvent, /*KeyboardEvent,*/ SetStateAction } from 'react';
 import * as paths from '../constants/routes';
 import { ThemeIcon } from './ThemeIcon';
 import { ThemeContext } from '../contexts/ThemeContext';
@@ -11,8 +11,10 @@ import profilePicture from '../images/lfrog.png';
 import { getUserAccessLevel } from '../api/mod-tools.ts';
 
 //user utils
-import { getCurrentAccount, getCurrentUsername, googleLogout } from '../api/users.ts';
-import { MePrivate } from '@looking-for-group/shared';
+import { getCurrentAccount, /*getCurrentUsername,*/ googleLogout } from '../api/users.ts';
+import { AddBugReportInput, MePrivate } from '@looking-for-group/shared';
+import { Popup, PopupButton, PopupContent, /*PopupContext*/ } from './Popup.tsx';
+import { POST } from '../api/index.ts';
 
 //Header component to be used in pages
 
@@ -27,6 +29,7 @@ type HeaderProps = {
   dataSets: DataSet[];
   onSearch: (results: unknown[][]) => void;
   value?: string;
+  setSearch?: React.Dispatch<SetStateAction<string>>;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   hideSearchBar?: boolean;
   hideBackButton?: boolean;
@@ -35,6 +38,7 @@ type HeaderProps = {
   searchOnFocus?: (e: FocusEvent<HTMLInputElement>) => void;
   placeholderText: string;
   mobilePlaceholderText?: string;
+  searchBlocklist?: string[];
 };
 
 /**
@@ -56,6 +60,7 @@ export const Header: React.FC<HeaderProps> = ({
   dataSets,
   onSearch,
   value = "",
+  setSearch,
   onChange,
   hideSearchBar = false,
   hideBackButton = true,
@@ -63,7 +68,8 @@ export const Header: React.FC<HeaderProps> = ({
   setCurrentUserId,
   searchOnFocus,
   placeholderText = "",
-  mobilePlaceholderText }) => {
+  mobilePlaceholderText,
+  searchBlocklist = [] }) => {
   // User info state
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
@@ -86,21 +92,21 @@ export const Header: React.FC<HeaderProps> = ({
 
   const navigate = useNavigate(); // Hook for navigation
 
+  let bugReportText: string = "";
+
   /**
    * Checks mod permissions for the user on render (in useEffect)
    */
   const getUserPermissions = async () => {
     /* Ensures the user is logged in */
     const userAccount = await getCurrentAccount();
-    if (userAccount.status === 200 && userAccount.data?.userId)
-    {
-        setUserId(userAccount.data?.userId);
-        /* User must have mod permissions to access mod page */
-        const accessLevel = await getUserAccessLevel(userAccount.data.userId);
-        if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator')
-        {
-            setIsUserAdmin(true);
-        }
+    if (userAccount.status === 200 && userAccount.data?.userId) {
+      setUserId(userAccount.data?.userId);
+      /* User must have mod permissions to access mod page */
+      const accessLevel = await getUserAccessLevel(userAccount.data.userId);
+      if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator') {
+        setIsUserAdmin(true);
+      }
     }
   };
 
@@ -159,24 +165,25 @@ export const Header: React.FC<HeaderProps> = ({
   // },[]);
 
   // Navigate to a page and optionally update sidebar (if implemented)
-  const handlePageChange = (path: string) => {
-    //Have code to update sidebar display (unsure of how to do this yet)
-    //Navigate to desired page
-    navigate(path);
-  };
+  // const handlePageChange = (path: string) => {
+  //   //Have code to update sidebar display (unsure of how to do this yet)
+  //   //Navigate to desired page
+  //   navigate(path);
+  // };
 
-  // Navigate to the current user's profile
-  const handleProfileAccess = async () => {
-    // navigate to Profile, attach userID
-    const res = await getCurrentUsername();
-    const userId = res.data?.userId;
-    navigate(`${paths.routes.PROFILE}?userID=${userId}`);
+  // // Navigate to the current user's profile
+  // const handleProfileAccess = async () => {
+  //   // navigate to Profile, attach userID
+  //   const res = await getCurrentUsername();
+  //   const userId = res.data?.userId;
+  //   navigate(`${paths.routes.PROFILE}?userID=${userId}`);
 
-    // Collapse the dropwdown if coming from another user's page
-    if (window.location.href.includes("profile")) {
-      window.location.reload();
-    }
-  };
+  //   // Collapse the dropwdown if coming from another user's page
+  //   if (window.location.href.includes("profile")) {
+  //     window.location.reload();
+  //   }
+  // };
+
   const returnProfileAccess = () => {
     // navigate to Profile, attach userID
     if (userId) return (`${paths.routes.PROFILE}?userID=${userId}`);
@@ -212,11 +219,13 @@ export const Header: React.FC<HeaderProps> = ({
           <SearchBar
             dataSets={dataSets}
             onSearch={onSearch}
+            setValue={setSearch}
             value={value}
             onChange={onChange}
             onFocus={searchOnFocus}
             placeholderText={placeholderText}
             mobilePlaceholderText={mobilePlaceholderText}
+            searchBlocks={searchBlocklist}
           />
         </div>
       )}
@@ -335,13 +344,13 @@ export const Header: React.FC<HeaderProps> = ({
                 <hr />
                 {/* Moderation Page Link */}
                 {/* TO DO: Change icon when a new icon is found */}
-                {isUserAdmin ? 
-                <a href={paths.routes.MODERATION}>
-                  <ThemeIcon id={'settings'} width={25} height={25} className={'mono-stroke'} ariaLabel={'settings'} />
-                  Moderation
-                </a>
-                : ""}
-                
+                {isUserAdmin ?
+                  <a href={paths.routes.MODERATION}>
+                    <ThemeIcon id={'moderation'} width={25} height={25} className={'mono-fill'} ariaLabel={'moderation'} />
+                    Moderation
+                  </a>
+                  : ""}
+
                 {/* Dark/Light Theme Switcher */}
                 <button onClick={switchTheme}>
                   <ThemeIcon id={'mode'} width={25} height={25} className={'mono-stroke'} ariaLabel={'current mode'} />
@@ -354,12 +363,52 @@ export const Header: React.FC<HeaderProps> = ({
                   Settings
                 </Link>
 
-                {/* Report a Bug button */}
-                {/* No functionality yet */}
-                <button onClick={() => {console.log("Report a bug button pressed");}}>
-                  <ThemeIcon id={'warning'} width={25} height={25} className={''} ariaLabel={'report a bug'} />
-                  Report a Bug
-                </button>{' '}
+                {/* Bug report popup */}
+                <Popup>
+                  {/* Report a Bug button */}
+                  <PopupButton buttonId='btn-report-bug'>
+                    <ThemeIcon id={'warning'} width={25} height={25} className={''} ariaLabel={'report a bug'} />
+                    Report a Bug
+                  </PopupButton>
+
+                  <PopupContent>
+                    {/* Using the editor styles temporarily because they look good for this menu */}
+                    <div className="small-popup" id="report-popup">
+                    <h3>Report a Bug</h3>
+                    <p>Please explain what the bug is, and the steps leading up to it occuring.</p>
+
+                    <textarea
+                      id='input-bug-report'
+                      name='input-bug-report'
+                      placeholder="Write your reasoning here..."
+                      className="input input-multiline"
+                      required
+                      minLength={1}
+                      maxLength={200}
+                      onChange={(e) => {
+                        bugReportText = e.currentTarget.value;
+                      }}></textarea> <span className='required-asterisk'>*</span>
+
+                    <button type='submit' id="btn-bug-report-submit"
+                      onClick={() => {
+                        if (bugReportText.trim().length !== 0) {
+                          const report: AddBugReportInput = {
+                            reportText: bugReportText
+                          };
+
+                          POST(`/me/report-bug`, report);
+                          window.location.reload();
+                        } else {
+                          const errorReport = document.querySelector("#error-report");
+
+                          if (errorReport) {
+                            errorReport.textContent = "Please fill submit a description of the bug.";
+                          }
+                        }
+                      }}>Submit</button>
+                    </div>
+                  </PopupContent>
+                </Popup>
 
                 {/* LOG OUT Button */}
                 <button onClick={async () => {

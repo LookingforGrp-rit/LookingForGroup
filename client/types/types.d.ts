@@ -39,7 +39,8 @@ import {
   UpdateJobSkillInput,
   DeleteJobSkillInput,
   JobSkill,
-  UpdateMemberRequestInput
+  UpdateMemberRequestInput,
+  UpdateTagBlacklistInput
 } from "@looking-for-group/shared";
 
 /**
@@ -344,6 +345,12 @@ interface UserChangesUpdates {
    * All skills to be updated
    */
   skills: CRUDRequest<UpdateUserSkillInput>[];
+
+  
+  /**
+   * Tag blacklist to be updated
+   */
+  tagBlacklist: CRUDRequest<UpdateTagBlacklistInput>[];
 
   /**
    * All socials to be updated

@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
-import { UserPreview } from "@looking-for-group/shared";
+import UserListView from "../ListViews/UserListView";
+import { UserDetail } from "@looking-for-group/shared";
 import { getUserAccessLevel } from "../../../api/mod-tools";
 import { PanelBox } from "../../PanelBox";
-import { getUsers } from "../../../api/users";
+import { getUsers, getUsersById } from "../../../api/users";
 
 type AllModeratorsProps = {
-  currentUserId: number,
-  currentTab: number
+    currentUserId: number,
+    currentTab: number,
+    displayMode: 'grid' | 'list',
 };
 
 /**
@@ -14,45 +16,60 @@ type AllModeratorsProps = {
  * @param PendingProjectsProps user ID of current user, moderation page tab currently in use
  * @returns 
  */
-const AllModerators = ({currentUserId, currentTab}: AllModeratorsProps) => {
+const AllModerators = ({ currentUserId, currentTab, displayMode }: AllModeratorsProps) => {
+    // Variables ==============================================================
+    const [loaded, setLoaded] = useState<boolean>(false);
+    const [allModerators, setAllModerators] = useState<UserDetail[]>([]);
 
-    const [allModerators, setAllModerators] = useState<UserPreview[]>([]);
-
+    // Helper Methods =========================================================
     useEffect(() => {
 
         //get reported projects to display
         const displayAllModerators = async () => {
-          const allUsers = (await getUsers()).data;
-          const tempModsArray = [];
-          if (allUsers !== null && allUsers !== undefined) {
-            for (const user of allUsers)
-            {
-                const accessLevel = await getUserAccessLevel(user.userId);
-                if (accessLevel.data?.toString() == 'Moderator')
-                {
-                    tempModsArray.push(user);
+            const allUsers = (await getUsers()).data;
+            const tempModsArray: UserDetail[] = [];
+            if (allUsers !== null && allUsers !== undefined) {
+                for (const user of allUsers) {
+                    const accessLevel = await getUserAccessLevel(user.userId);
+                    if (accessLevel.data?.toString() == 'Moderator') {
+                        const userDetail = await getUsersById(user.userId);
+
+                        if (userDetail.data)
+                            tempModsArray.push(userDetail.data);
+                    }
                 }
+                setAllModerators(tempModsArray);
             }
-            setAllModerators(tempModsArray);
-            }
+            setLoaded(true);
         }
 
         displayAllModerators();
     }, [currentTab]);
-    
-    // The final component
-    return (
-        <div id="mod-tools">
-            <div className="pending-projects">
-                {allModerators.length > 0 ? 
-                    <PanelBox
-                        category={"profiles"}
-                        itemList={allModerators ? allModerators : []}
-                        userId={currentUserId}
-                    ></PanelBox> 
-                : "No moderators!"}
+
+    // The final component ====================================================
+    if (loaded) {
+        return (
+            <div className="mod-tool">
+                <div className="pending-projects">
+                    {allModerators.length > 0 ?
+                        displayMode === 'grid' ?
+                            // Grid view
+                            <PanelBox
+                                category={"profiles"}
+                                itemList={allModerators ? allModerators : []}
+                                userId={currentUserId}
+                            ></PanelBox>
+                            : <UserListView users={allModerators} />
+                        : "No moderators!"}
+                </div>
             </div>
-        </div>
-    );
+        );
+    } else {
+        return (
+            <div className='placeholder-spacing'>
+                <div className='spinning-loader'></div>
+            </div>
+        );
+    }
 };
 export default AllModerators;

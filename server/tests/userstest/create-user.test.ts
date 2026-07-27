@@ -34,7 +34,6 @@ describe('createUserService', async () => {
       username: 'goldleaf',
       firstName: 'Gold',
       lastName: 'Leaf',
-      preferredName: 'Gold',
       ritEmail: 'goldleaf@rit.edu',
       profileImage: null,
       displayPhone: false,
@@ -57,7 +56,6 @@ describe('createUserService', async () => {
       username: 'goldleaf',
       firstName: 'Gold',
       lastName: 'Leaf',
-      preferredName: 'Gold',
       ritEmail: 'goldleaf@rit.edu',
       googleId: '1234',
       privacy: 'public',
@@ -97,6 +95,7 @@ describe('createUserService', async () => {
       developer: false,
       displayPhone: false,
       apiUrl: '',
+      tagBlacklist: [],
     };
 
     vi.mocked(prisma.users.create).mockResolvedValue(prismaUser);
@@ -107,7 +106,6 @@ describe('createUserService', async () => {
         username: 'goldleaf',
         firstName: 'Gold',
         lastName: 'Leaf',
-        preferredName: 'Gold',
         ritEmail: 'goldleaf@rit.edu',
         googleId: '1234',
       },
@@ -120,7 +118,6 @@ describe('createUserService', async () => {
         username: 'goldleaf',
         firstName: 'Gold',
         lastName: 'Leaf',
-        preferredName: 'Gold',
         ritEmail: 'goldleaf@rit.edu',
       },
       select: expect.objectContaining({}),

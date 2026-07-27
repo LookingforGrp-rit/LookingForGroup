@@ -32,6 +32,8 @@ import { addSocial } from '#controllers/me/socials/add-social.ts';
 import { deleteSocial } from '#controllers/me/socials/delete-social.ts';
 import { getSocials } from '#controllers/me/socials/get-socials.ts';
 import { updateSocial } from '#controllers/me/socials/update-social.ts';
+import { getTagBlacklist } from '#controllers/me/tag-blacklist/get-tag-blacklist.ts';
+import { updateTagBlacklist } from '#controllers/me/tag-blacklist/update-tag-blacklist.ts';
 import { updateUserInfo } from '#controllers/me/update-info.ts';
 import { updateProjectProfileVisibilityController } from '#controllers/me/update-project-profile-visibility.ts';
 import { isUserBlocked } from '#middleware/validators/is-user-blocked.ts';
@@ -219,6 +221,12 @@ router.get('/get-username', authenticated(getUsernameByGoogle));
 //Report user
 router.post('/users/report/:id', userExistsAt('path', 'id'), authenticated(reportUserController));
 
+//#region Tag blacklist routes
+//Gets a user's tag blacklist
+router.get('/tag-blacklist', authenticated(getTagBlacklist));
+
+//Update a user's tag blacklist
+router.patch('/tag-blacklist', authenticated(updateTagBlacklist));
 //Report bug
 router.post('/report-bug', authenticated(reportBugController));
 

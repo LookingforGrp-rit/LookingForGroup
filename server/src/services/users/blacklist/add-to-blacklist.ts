@@ -3,6 +3,7 @@ import { createElement } from 'react';
 import { pretty, render, toPlainText } from 'react-email';
 import prisma from '#config/prisma.ts';
 import BanEmail from '#email-templates/ban-email.ts';
+import deleteSessionsByGoogleService from '#services/authentication/delete-sessions-by-google.ts';
 import { sendEmail } from '#services/mailer.ts';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
@@ -31,6 +32,11 @@ const addBlacklistService = async (
         banReason: reason,
       },
     });
+
+    //Log the user out of every session they have open
+    const sessionResult = await deleteSessionsByGoogleService(user.googleId);
+
+    if (sessionResult === 'INTERNAL_ERROR') return sessionResult;
 
     //Send email to user
     const html = await pretty(
