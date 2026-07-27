@@ -1002,7 +1002,7 @@ const Profile = (userProfile: any) => {
                             {modActionComplete
                               ? (<>
                                 <p>{banned
-                                  ? "The user's account will be frozen, preventing them from logging in to Looking For Group. The banned user will receive an email with the reason provided. All reporters will receive an update notification informing them that action has been taken."
+                                  ? "The user's account has been frozen and they can no longer log in to Looking For Group. The banned user has received an email explaining the ban and the reason provided. All reporters have received an update notification informing them that action has been taken."
                                   : banReasonSystemMsg}
                                 </p>
                                 <PopupButton buttonId="continue-button" callback={() => { if (banned) navigate(paths.routes.MODERATION); }}>
