@@ -201,7 +201,7 @@ interface ProjectChangesUpdates {
   memberRequests: CRUDRequest<UpdateMemberRequestInput>[];
 
   /**
-   * Ownership change
+   * Ownership change, special data type doesn't seem nessecary
    */
   ownerChanges: CRUDRequest<number>[];
 }
