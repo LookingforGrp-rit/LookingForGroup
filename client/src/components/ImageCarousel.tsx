@@ -220,14 +220,17 @@ export const CarouselContent = ({ className = '' }: { className?: string }) => {
 /**
  * Primary carousel provider component that manages state and auto-scrolling.
  * @param dataList array of React elements to display in the carousel
+ * @param paused suspends auto-scrolling while true (manual navigation still works)
  * @param children nested carousel components like CarouselButton, CarouselTabs, CarouselContent
  * @returns A JSX Context Provider wrapping the carousel children
  */
 export const Carousel = ({
     dataList = [],
+    paused = false,
     children,
 }: {
     dataList?: ReactNode[];
+    paused?: boolean;
     children: ReactNode;
 }) => {
     const length = dataList.length;
@@ -371,8 +374,12 @@ export const Carousel = ({
 
     /**
      * Auto-scroll logic: advances carousel by one slide unless skipAuto or hovering is true.
+     * While paused no timer runs at all, so resuming starts a fresh interval rather
+     * than advancing the moment the pause lifts.
      */
     useEffect(() => {
+        if (paused) return;
+
         const autoScroll = () => {
             if (skipAuto.current) {
                 if (!hovering)
@@ -385,7 +392,7 @@ export const Carousel = ({
 
         const interval = setInterval(autoScroll, 10_000);
         return () => clearInterval(interval);
-    }, [dataList.length, hovering]);
+    }, [dataList.length, hovering, paused]);
 
     /**
      * Focus shifting logic. Waits until displayIndex matches the target real slide
