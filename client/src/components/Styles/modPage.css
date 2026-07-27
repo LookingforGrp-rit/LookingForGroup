@@ -342,10 +342,6 @@
     margin: auto min(1vw, 10px);
     font-weight: 700;
   }
-  #input-bug-report-message
-  {
-    margin: 20px !important;
-  }
   .popup:has(#report-popup) {
     overflow-x: hidden;
   }

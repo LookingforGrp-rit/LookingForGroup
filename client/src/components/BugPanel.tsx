@@ -27,7 +27,10 @@ export const BugPanel = ({currentUserId, reporterId, reportId }: BugPanelProps) 
 
   const [bugReport, setBugReport] = useState<BugReport>();
   const [reporter, setReporter] = useState<UserDetail>();
-  let bugReportText: string = "";
+  const [isResolved, setIsResolved] = useState<boolean>();
+  const BUG_REPORT_MAX = 500;
+
+  const [bugReportText, setBugReportText] = useState<string>('');
 
   // Fetch bug report
   useEffect(() => {
@@ -58,6 +61,17 @@ export const BugPanel = ({currentUserId, reporterId, reportId }: BugPanelProps) 
    */
   const handleUpdateReport = async (isResolved: boolean) => {
     const response = await updateBugReport(reportId, bugReportText, isResolved);
+    setIsResolved(true);
+  };
+
+  // Mirrors the old Input component: the count turns yellow/orange/red as it fills up
+  const bugReportCountClass = () => {
+    const percentLeft = (BUG_REPORT_MAX - bugReportText.length) / BUG_REPORT_MAX;
+    let className = 'character-count';
+    if (percentLeft <= 0.3) className += ' character-count-near';
+    if (percentLeft <= 0.2) className += ' character-count-close';
+    if (percentLeft <= 0.1) className += ' character-count-danger';
+    return className;
   };
 
   return (
@@ -80,19 +94,31 @@ export const BugPanel = ({currentUserId, reporterId, reportId }: BugPanelProps) 
 
                       <p>You can send the user a message about their report, or close the report as resolved.</p>
 
-                      <textarea
-                        id='input-bug-report-message'
-                        name='input-bug-report-message'
-                        placeholder="Write your reasoning here..."
-                        className="input input-multiline"
-                        minLength={1}
-                        maxLength={500}   /* temporary -- can adjust as needed */
-                        onChange={(e) => {
-                        if (e.currentTarget.value.trim()) {
-                        bugReportText = e.currentTarget.value.trim();
-                        }
-                        else {bugReportText = "No message was provided."}
-                      }}></textarea>
+                      <div id='bug-report-field'>
+                      <div className="input-multiline-container" style={{ position: 'relative' }}>
+                        <span className={bugReportCountClass()}>
+                          {bugReportText.length} / {BUG_REPORT_MAX}
+                        </span>
+                        <textarea
+                          id='input-bug-report'
+                          name='input-bug-report'
+                          className="input input-multiline"
+                          placeholder="Write your reasoning here..."
+                          minLength={1}
+                          maxLength={BUG_REPORT_MAX}
+                          rows={5}
+                          value={bugReportText}
+                          onChange={(e) => {
+                            // Match the old Input behaviour: strip leading spaces and
+                            // collapse trailing runs of spaces to a single one.
+                            const trimmed = e.currentTarget.value
+                              .replace(/ +$/g, " ")
+                              .replace(/^ +/g, "");
+                            setBugReportText(trimmed);
+                          }}
+                        />
+                      </div>
+                    </div>
                       <div className="mod-options-btns">
                         <PopupButton
                           buttonId="mod-edit-btn"
@@ -103,7 +129,7 @@ export const BugPanel = ({currentUserId, reporterId, reportId }: BugPanelProps) 
                         </PopupButton>
                           <PopupButton
                             buttonId="mod-dismiss-btn"
-                            callback={() => handleUpdateReport(true)}>
+                            callback={() => {handleUpdateReport(true);}}>
                             Close Report
                           </PopupButton>
                       </div>
