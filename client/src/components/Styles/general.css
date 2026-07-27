@@ -1654,6 +1654,16 @@ Header style rules
     /* Narrower than the viewport so both edges always stay on screen. */
     width: min(340px, calc(100vw - 24px));
   }
+
+  /*when search bar is active, other header buttons disappear*/
+  #header-searchbar:has(input:focus)~#header-buttons {
+    display: none !important;
+  }
+
+  #header:has(#header-searchbar input:focus) {
+    display: block;
+    padding: 25px 0;
+  }
 }
 
 #profile-btn {
