@@ -3922,6 +3922,7 @@ Project Carousel style rules
 
     #project-info-buttons {
       margin-left: 0px;
+      flex-wrap: wrap;
     }
   }
 
