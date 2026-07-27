@@ -103,13 +103,14 @@
 
 #mod-options-btns {
     flex-wrap: wrap;
+    margin-top: 20px;
 
     #mod-approve-btn {
         border: none;
         border-radius: 30px;
         padding: 10px 20px;
         background-color: var(--approved-green, #b1fca9);
-        color: var(--main-text);
+        color: black;
         font-size: 2ch;
         width: max-content;
         margin: auto min(1vw, 10px);
@@ -121,7 +122,7 @@
         border-radius: 30px;
         padding: 10px 20px;
         background-color: var(--under-review-yellow, #ffe1a2);
-        color: var(--invert-text);
+        color: black;
         font-size: 2ch;
         width: max-content;
         margin: auto min(1vw, 10px);
@@ -150,6 +151,10 @@
     margin-top: 1vw;
     width: 100%;
     max-width: calc(100% - 40px);
+}
+
+#mod-user-options>p {
+    margin-top: 0;
 }
 
 #manage-perms-popup {
@@ -296,18 +301,20 @@
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: center;
+    min-width: 35%;
 }
 
 .reporter-header {
     font-size: large;
     font-weight: bold;
     color: var(--primary-color);
+    margin: 10px auto;
 }
 
 .reporter-profile:link,
 .reporter-profile:visited {
     display: flex;
-    align-self: flex-start;
+    align-self: center;
     flex-direction: column;
     text-decoration: none;
 }
@@ -332,6 +339,7 @@
     justify-content: center;
     align-items: center;
     gap: 5px;
+    margin: 10px 0;
 }
 
 .tooltip {

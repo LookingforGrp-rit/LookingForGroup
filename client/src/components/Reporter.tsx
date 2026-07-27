@@ -22,6 +22,9 @@ const Reporter = ({ reporterId, modUserId, reason }: ProjectPanelProps) => {
     // Open state
     const [messageBoxOpen, setMessageBoxOpen] = useState<boolean>(false);
 
+    // Success/Error message
+    const [systemMsg, setSystemMsg] = useState<string>();
+
     // Message holders
     const subject = useRef<HTMLInputElement>(null);
     const message = useRef<HTMLTextAreaElement>(null);
@@ -76,21 +79,28 @@ const Reporter = ({ reporterId, modUserId, reason }: ProjectPanelProps) => {
      * TODO: Probably a different feedback than refresh but this for now
      */
     const sendMessage = async () => {
+        if (!subject.current?.value || !message.current?.value) {
+            setSystemMsg("Please enter both a subject and a message.");
+            return;
+        }
+
         try {
             const res = await sendModeratorNotification({
                 modUserId: modUserId,
                 receiverId: reporterId,
-                subjectLine: subject.current?.value ?? '',
-                message: message.current?.value ?? '',
+                subjectLine: subject.current.value,
+                message: message.current.value,
                 type: "General",
             });
 
             if (res.status === 201) {
-                // refresh page
-                window.location.reload();
+                setSystemMsg("Message sent successfully.");
+            } else {
+                setSystemMsg("Failed to send the message. Please try again.");
             }
         } catch (e) {
             console.error('Error in sendMessage ', e);
+            setSystemMsg("Failed to send the message. Please try again.");
         }
     };
 
@@ -100,7 +110,7 @@ const Reporter = ({ reporterId, modUserId, reason }: ProjectPanelProps) => {
             <div className="reporter">
                 <div>
                     <div className="reporter-info">
-                        <p className="reporter-header">Reporter</p>
+                        <h4 className="reporter-header">Reporter</h4>
                         <a href={`${routes.PROFILE}?userID=${reporter.userId}`} className="reporter-profile">
                             <img
                                 src={imageSrc}
@@ -131,6 +141,7 @@ const Reporter = ({ reporterId, modUserId, reason }: ProjectPanelProps) => {
                     )}
                     {messageBoxOpen && (
                         <div className="message-area">
+                            {systemMsg && <p>{systemMsg}</p>}
                             <input
                                 placeholder="Subject"
                                 className="input"
@@ -142,7 +153,7 @@ const Reporter = ({ reporterId, modUserId, reason }: ProjectPanelProps) => {
                                 ref={message}
                             ></textarea>
                             <div className="message-actions">
-                                <button className="cancel-btn" onClick={() => setMessageBoxOpen(false)}>Cancel</button>
+                                <button className="cancel-btn" onClick={() => { setMessageBoxOpen(false); setSystemMsg(''); }}>Cancel</button>
                                 <button className="confirm-btn" onClick={() => sendMessage()}>Send</button>
                             </div>
                         </div>

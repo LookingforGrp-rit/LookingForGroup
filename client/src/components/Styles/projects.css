@@ -3787,7 +3787,7 @@ Project Carousel style rules
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: space-between;
-  min-width: fit-content;
+  min-width: min-content;
   max-width: 100%;
   gap: 10px;
   background-color: var(--header-color);
@@ -3803,7 +3803,7 @@ Project Carousel style rules
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary-color);
-    margin-bottom: 5px;
+    margin-bottom: 10px;
   }
 
   #mod-options-btns {
