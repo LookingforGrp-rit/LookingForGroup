@@ -254,7 +254,7 @@ async function main() {
       {
         projectId: 1,
         roleId: 1,
-        availability: 'Flexible',
+        availability: 'FullTime',
         jobStart: "1900-01-01",
         jobEnd: "1900-01-01",
         location: 'Remote',
@@ -265,7 +265,7 @@ async function main() {
       {
         projectId: 2,
         roleId: 1,
-        availability: 'Flexible',
+        availability: 'PartTime',
         jobStart: "1900-01-01",
         jobEnd: "1900-01-01",
         location: 'Remote',
@@ -276,7 +276,7 @@ async function main() {
       {
         projectId: 3,
         roleId: 1,
-        availability: 'Flexible',
+        availability: 'PtFt',
         jobStart: "1900-01-01",
         jobEnd: "1900-01-01",
         location: 'Remote',

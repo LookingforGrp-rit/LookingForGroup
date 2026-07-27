@@ -117,6 +117,7 @@ type TeamTabProps = {
 	message: string;
 	messages: string[];
 	setMessages: React.Dispatch<React.SetStateAction<string[]>>;
+	isSaving: boolean;
 };
 
 /**
@@ -154,7 +155,8 @@ export const TeamTab = ({
 	updateFailCheck,
 	message,
 	messages,
-	setMessages
+	setMessages,
+	isSaving
 }: TeamTabProps) => {
 	// --- Hooks ---
 	// State for storing all available roles from the API.
@@ -1195,7 +1197,8 @@ export const TeamTab = ({
 								Job Start:
 							</span>
 
-							{undefinedDateToString(currentJob?.jobStart)}
+							{//if no date was inserted, "none" appears
+								currentJob?.jobStart ? (currentJob?.jobStart.getFullYear() == 1900 ? " None" : undefinedDateToString(currentJob?.jobStart)) : "None"}
 						</div>
 
 						<div id="position-end">
@@ -1203,7 +1206,7 @@ export const TeamTab = ({
 								Job End:
 							</span>
 
-							{undefinedDateToString(currentJob?.jobEnd)}
+							{currentJob?.jobEnd ? (currentJob?.jobEnd.getFullYear() == 1900 ? " None" : undefinedDateToString(currentJob?.jobEnd)) : "None"}
 						</div>
 
 						<div id="position-compensation">
@@ -2134,32 +2137,42 @@ export const TeamTab = ({
 										<PopupButton
 											buttonId="team-edit-member-save-button"
 											callback={() => {
-												// TODO error messages
-												if (!currentMember) return;
-												if (
-													isNullOrUndefined(
-														currentMember.user
-													)
-												)
+												if (!currentMember) {
+													setErrorAddMember("No member selected");
 													return;
+												};
+												if (!currentMember.user || !currentMember.user.userId) {
+													setErrorAddMember("Member is missing user information");
+													return;
+												} // cant edit owner role
+												if (currentMember.user.userId === projectAfterTeamChanges.owner?.userId) {
+													setErrorAddMember("The project owners role cannot be changed");
+													return;
+												}
+												//if (isNullOrUndefined(currentMember.user)) return;
 
 												// update member in data manager
-												dataManager?.updateMember({
-													id: {
-														type:
-															"localId" in
-																currentMember
-																? "local"
-																: "canon",
-														value: currentMember
-															.user?.userId
-													},
-													data: {
-														roleId: currentMember
-															.role?.roleId
-													}
-												});
-
+												try {
+													dataManager?.updateMember({
+														id: {
+															type:
+																"localId" in
+																	currentMember
+																	? "local"
+																	: "canon",
+															value: currentMember
+																.user?.userId
+														},
+														data: {
+															roleId: currentMember
+																.role?.roleId
+														}
+													});
+												} catch (e) {
+													console.error(e);
+													setErrorAddMember("Failed to update member");
+													return;
+												}
 												// update team changes array
 												projectAfterTeamChanges.members =
 													projectAfterTeamChanges.members.map(
@@ -2217,48 +2230,55 @@ export const TeamTab = ({
 													<PopupButton
 														className="delete-button"
 														callback={() => {
-															if (
-																!currentMember
-															) {
-																// TODO: error message here
+															if (!currentMember) {
+																setErrorAddMember("no member selected");
 																return;
 															}
-															if (
-																isNullOrUndefined(
-																	currentMember.user
-																)
-															) {
-																// TODO: error message here
+															if (!currentMember.user || !currentMember.user.userId) {
+																setErrorAddMember("Member is missing user information")
+																return;
+															} //no deleting project owner
+															if (currentMember.user.userId === projectAfterTeamChanges.owner?.userId) {
+																setErrorAddMember("Owner cannot be removed");
 																return;
 															}
 
-															if (
-																"localId" in
-																currentMember
-															) {
-																dataManager?.deleteMember(
-																	{
-																		id: {
-																			type: "local",
-																			value: currentMember
-																				.user
-																				.userId
-																		},
-																		data: null
-																	}
-																);
+															if ("localId" in currentMember) {
+																try {
+																	dataManager?.deleteMember(
+																		{
+																			id: {
+																				type: "local",
+																				value: currentMember
+																					.user
+																					.userId
+																			},
+																			data: null
+																		}
+																	);
+																} catch (e) {
+																	console.error(e);
+																	setErrorAddMember("Failed to delete member");
+																	return;
+																}
 															} else {
-																dataManager?.deleteMember(
-																	{
-																		id: {
-																			type: "canon",
-																			value: currentMember
-																				.user
-																				.userId
-																		},
-																		data: null
-																	}
-																);
+																try {
+																	dataManager?.deleteMember(
+																		{
+																			id: {
+																				type: "canon",
+																				value: currentMember
+																					.user
+																					.userId
+																			},
+																			data: null
+																		}
+																	);
+																} catch (e) {
+																	console.error(e);
+																	setErrorAddMember("Failed to delete member");
+																	return;
+																}
 															}
 															projectAfterTeamChanges.members =
 																projectAfterTeamChanges.members.filter(
@@ -2606,16 +2626,25 @@ export const TeamTab = ({
 								<p>*{message}*</p>
 							</div>
 						)}
-						<PopupButton
-							buttonId="project-editor-save"
-							callback={() => {
-								// Incomplete form: still clickable so the save validation
-								// runs, shows the error, and auto-scrolls to the missing field.
-								if (!saveable) saveProject?.();
-								else setConfirm(true)
-							}}>
-							Save Changes
-						</PopupButton>
+						{isSaving ?
+							(
+								// Currently Saving
+								<div className='spinning-loader'></div>
+							) : (
+								// Save is complete or hasn't been pressed
+								<PopupButton
+									buttonId="project-editor-save"
+									callback={() => {
+										// Incomplete form: still clickable so the save validation
+										// runs, shows the error, and auto-scrolls to the missing field.
+										if (!saveable) saveProject?.();
+										else setConfirm(true)
+									}}>
+									Save Changes
+								</PopupButton>
+							)
+						}
+
 						{confirm ?
 							<PopupContent useClose={false} callback={() => setConfirm(false)}>
 								<div id="confirm-editor-save-text">
@@ -2632,12 +2661,22 @@ export const TeamTab = ({
 										Cancel
 									</PopupButton>
 								</div>
-							</PopupContent> : ""}
+							</PopupContent> : ""
+						}
 					</Popup>
-					<DeleteProjectButton
-						projectID={unmodifiedProject.projectId}
-						projectTitle={unmodifiedProject.title}
-					/>
+
+					{isSaving ?
+						(
+							// Just here for blank space and to prevent 
+							// accidental deletion while a project is saving
+							""
+						) : (
+							<DeleteProjectButton
+								projectID={unmodifiedProject.projectId}
+								projectTitle={unmodifiedProject.title}
+							/>
+						)
+					}
 				</div>
 			</div>
 		</div>

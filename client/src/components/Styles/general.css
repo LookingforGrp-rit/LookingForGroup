@@ -994,6 +994,11 @@ Page popup style rules
 
 }
 
+.popup:has(> #filters-popup) {
+  max-height: fit-content !important;
+  border-radius: 15px;
+}
+
 .popup:has(> .small-popup) {
   max-width: 800px;
   height: 40vh;
@@ -1246,6 +1251,7 @@ body.modal-open {
 
   #match-button {
     width: fit-content;
+    min-width: 136px;
     height: 40px;
     padding: 5px 16px;
     font-size: 1.25rem;
@@ -1359,11 +1365,11 @@ body.modal-open {
   text-align: center;
 }
 
-  .filter-tab:hover {
-  color: var(--primary-color);
-  font-weight: 700;
-  transform: none;
-}
+  .filter-tab:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
 
   .filter-tab.selected {
     font-weight: 700;
@@ -1969,8 +1975,8 @@ Dropdown style rules
   font-size: 1rem;
   color: var(--primary-color);
   border-bottom: 1px solid var(--bg-color);
-  display: flex; 
-  justify-content: space-between; 
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 

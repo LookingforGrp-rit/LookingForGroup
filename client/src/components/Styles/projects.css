@@ -657,6 +657,27 @@ Project Creator and Editor Popup style rules
   textarea:focus {
     outline: 0px;
   }
+
+  #btn-bug-report-submit {
+    border: none;
+    border-radius: 30px;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: var(--invert-text);
+    font-size: 2ch;
+    width: max-content;
+    margin: auto min(1vw, 10px);
+    font-weight: 700;
+  }
+
+  #input-bug-report{
+    margin-bottom: 0;
+  }
+
+  .required-asterisk{
+    margin-bottom: 0.5em;
+    margin-top: 0;
+  }
 }
 
 .share-response-popup {
@@ -2464,7 +2485,7 @@ button.edit-position-contact .project-member-image {
   width: 100%;
   text-align: center;
   height: 1100px;
-  margin: 0 20px;
+  margin: 20px 20px;
 
   #project-crop-header {
     display: block;
@@ -2511,6 +2532,7 @@ button.edit-position-contact .project-member-image {
 
   .project-crop-extra-info {
     margin-top: 20px;
+    font-size: 0.75rem;
     margin-bottom: 20px;
   }
 
@@ -4552,6 +4574,17 @@ button#positions-popup-list-item-active {
   width: 32px;
   border-radius: 50%;
 }
+
+#xTrans-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slider-text {
+  white-space: nowrap; /* prevents label from breaking */
+}
+
 
 /* Quick Apply lives inline in #position-contact next to the owner link.
    When expanded, the optional message textarea drops in just below. */

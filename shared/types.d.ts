@@ -54,7 +54,7 @@ export type ProjectStatus =
   | "Development"
   | "PostProduction"
   | "Complete";
-export type JobAvailability = "FullTime" | "PartTime" | "Flexible";
+export type JobAvailability = "FullTime" | "PartTime" | "PtFt";
 export type JobLocation = "OnSite" | "Remote" | "Hybrid" | "Flexible";
 export type JobCompensation = "Unpaid" | "Paid";
 export type MemberRequestStatus = "Accepted" | "Declined" | "Pending";
@@ -62,7 +62,7 @@ export type ProjectSortMethod = "Newest" | "A-Z" | "Popular";
 export type UserSortMethod = "Newest" | "A-Z";
 export type Visibility = "public" | "private";
 export type UserAccessLevel = "User" | "Moderator" | "Administrator";
-export type ModNotficationType = "Warning" | "General";
+export type ModNotificationType = "Warning" | "General" | "Announcement";
 //do we even need this visibility enum at all? it's stored as a 0/1 in the db anyway
 //a problem for another day, i really don't feel like fixing it right now
 
@@ -587,11 +587,6 @@ export interface UserPreview {
   lastName: string;
 
   /**
- * The user's preferred name
- */
-  preferredName: string;
-
-  /**
    * The users's username
    */
   username: string;
@@ -740,10 +735,6 @@ export interface MePreview {
    */
   lastName: string;
   /**
-* The logged-in user's preferred name
-*/
-  preferredName: string;
-  /**
    * The logged-in users's username
    */
   username: string;
@@ -877,6 +868,11 @@ export interface MePrivate extends MeDetail {
    * The logged-in user's UID
    */
   googleId: string;
+
+  /**
+   * The user's blacklisted tags
+   */
+  tagBlacklist: Tag[]
 
   /**
    * The date on which the logged-in user's account was created
@@ -1377,7 +1373,6 @@ export type UpdateUserInput = Partial<
     MePrivate,
     | "firstName"
     | "lastName"
-    | "preferredName"
     | "headline"
     | "pronouns"
     | "title"
@@ -1412,7 +1407,6 @@ export type CreateUserInput = Partial<
 > & {
   firstName: string;
   lastName: string;
-  preferredName: string;
   googleId?: string;
   username: string;
   ritEmail: string;
@@ -1421,7 +1415,6 @@ export type CreateUserInput = Partial<
 export type SessionUserData = Partial<{
   firstName: string;
   lastName: string;
-  preferredName: string;
   email: string;
   googleId: string;
   userExists: boolean;
@@ -1778,6 +1771,13 @@ export type CreateSkillInput = Pick<Skill, "label" | "type" | "category">;
 export type EditSkillInput = Partial<CreateSkillInput> & { skillId: number };
 
 /**
+ * Data required to update a user's tag blacklist
+ */
+export type UpdateTagBlacklistInput = {
+  tagBlacklist: Tag[]
+}
+
+/**
  * Data required to add a user report
  */
 export type AddUserReportInput = {
@@ -1834,7 +1834,7 @@ export type ModeratorNotificationInput = {
   /**
    * Type of moderator notification
    */
-  type: ModNotficationType;
+  type: ModNotificationType;
 }
 
 /**

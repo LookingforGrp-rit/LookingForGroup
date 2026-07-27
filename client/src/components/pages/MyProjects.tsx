@@ -18,11 +18,18 @@ import { MePrivate, ProjectDetail } from '@looking-for-group/shared';
 import { ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import { deleteProject, projectApprovalRequestExists } from '../../api/projects.ts';
 
+let isSaving = false;
+const setIsSaving = (value: boolean) => {
+  isSaving = value;
+}
+const getIsSaving = () => {
+  return isSaving;
+}
 /**
  * My Projects page. Creates a customizable page that showcases the user's projects.
  * @returns JSX Element
  */
-const MyProjects = (userProfile: any) => {
+const MyProjects = (/*userProfile: any*/) => {
 
   //const navigate = useNavigate();
 
@@ -76,6 +83,9 @@ const MyProjects = (userProfile: any) => {
   type ApprovalStatusKey = keyof typeof ApprovalStatus;
   const [approvalStatuses, setApprovalStatuses] = useState<Record<number, ApprovalStatusKey>>({});
 
+  // useEffect(() => {
+  //   console.log(isSaving);
+  // }, [isSaving]);
   // --------------------
   // Helper functions
   // --------------------
@@ -358,6 +368,11 @@ const MyProjects = (userProfile: any) => {
                 <MyProjectsDisplayGrid
                   projectData={project}
                   approvalStatus={approvalStatuses[project.projectId]}
+                  setApprovalStatus={(newStatus) => {
+                    let newStatuses = structuredClone(approvalStatuses);
+                    newStatuses[project.projectId] = newStatus;
+                    setApprovalStatuses(newStatuses);
+                  }}
                 />
               </LeaveDeleteContext.Provider>
             );
@@ -406,6 +421,11 @@ const MyProjects = (userProfile: any) => {
                   <MyProjectsDisplayList
                     projectData={project}
                     approvalStatus={approvalStatuses[project.projectId]}
+                    setApprovalStatus={(newStatus) => {
+                      let newStatuses = structuredClone(approvalStatuses);
+                      newStatuses[project.projectId] = newStatus;
+                      setApprovalStatuses(newStatuses);
+                    }}
                   />
                 </LeaveDeleteContext.Provider>
               );
@@ -521,6 +541,7 @@ const MyProjects = (userProfile: any) => {
         onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
         setCurrentUserId={setUserProjects}
         placeholderText='Search by Project'
+        searchBlocklist={["username", "createdat", "updatedat"]}
       />
 
       {/* Banner */}
@@ -659,7 +680,9 @@ const MyProjects = (userProfile: any) => {
 
       {/* Project Grid/List */}
       <main id="main">
-        {(!dataLoaded) ? (
+        {(!dataLoaded 
+        //|| isSaving
+        ) ? (
           <div
             className='placeholder-spacing'
             style={{ justifyContent: 'center' }}
@@ -683,3 +706,4 @@ const MyProjects = (userProfile: any) => {
 };
 
 export default MyProjects;
+export {setIsSaving, getIsSaving};
