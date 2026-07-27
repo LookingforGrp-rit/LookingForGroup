@@ -14,7 +14,6 @@ import { getUserAccessLevel } from '../api/mod-tools.ts';
 import { getCurrentAccount, getCurrentUsername, googleLogout } from '../api/users.ts';
 import { AddBugReportInput, MePrivate } from '@looking-for-group/shared';
 import { Popup, PopupButton, PopupContent, PopupContext } from './Popup.tsx';
-import { Input } from './Input.tsx';
 import { POST } from '../api/index.ts';
 
 //Header component to be used in pages
@@ -89,7 +88,19 @@ export const Header: React.FC<HeaderProps> = ({
 
   const navigate = useNavigate(); // Hook for navigation
 
-  let bugReportText: string = "";
+  // Bug report text, tracked in state so the character counter updates as the user types
+  const BUG_REPORT_MAX = 200;
+  const [bugReportText, setBugReportText] = useState('');
+
+  // Mirrors the old Input component: the count turns yellow/orange/red as it fills up
+  const bugReportCountClass = () => {
+    const percentLeft = (BUG_REPORT_MAX - bugReportText.length) / BUG_REPORT_MAX;
+    let className = 'character-count';
+    if (percentLeft <= 0.3) className += ' character-count-near';
+    if (percentLeft <= 0.2) className += ' character-count-close';
+    if (percentLeft <= 0.1) className += ' character-count-danger';
+    return className;
+  };
 
   /**
    * Checks mod permissions for the user on render (in useEffect)
@@ -372,17 +383,30 @@ export const Header: React.FC<HeaderProps> = ({
                     <p>Please explain what the bug is, and the steps leading up to it occuring.</p>
 
                     <div id='bug-report-field'>
-                      <Input
-                        id='input-bug-report'
-                        name='input-bug-report'
-                        type='multi'
-                        placeholder="Write your reasoning here..."
-                        required
-                        minLength={1}
-                        maxLength={200}
-                        onChange={(e) => {
-                          bugReportText = e.target.value;
-                        }} />
+                      <div className="input-multiline-container" style={{ position: 'relative' }}>
+                        <span className={bugReportCountClass()}>
+                          {bugReportText.length} / {BUG_REPORT_MAX}
+                        </span>
+                        <textarea
+                          id='input-bug-report'
+                          name='input-bug-report'
+                          className="input input-multiline"
+                          placeholder="Write your reasoning here..."
+                          required
+                          minLength={1}
+                          maxLength={BUG_REPORT_MAX}
+                          rows={5}
+                          value={bugReportText}
+                          onChange={(e) => {
+                            // Match the old Input behaviour: strip leading spaces and
+                            // collapse trailing runs of spaces to a single one.
+                            const trimmed = e.currentTarget.value
+                              .replace(/ +$/g, " ")
+                              .replace(/^ +/g, "");
+                            setBugReportText(trimmed);
+                          }}
+                        />
+                      </div>
                       <span className='required-asterisk' aria-hidden="true" title="Required">*</span>
                     </div>
 

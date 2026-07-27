@@ -660,7 +660,8 @@ Project Creator and Editor Popup style rules
     margin: 20px;
   }
 
-  /* The input fills the row; the asterisk takes only what it needs beside it. */
+  /* The textarea (in its counter container) fills the row; the asterisk takes
+     only what it needs beside it. */
   #bug-report-field .input-multiline-container {
     flex: 1;
     min-width: 0;
@@ -684,6 +685,7 @@ Project Creator and Editor Popup style rules
 
   #input-bug-report{
     margin-bottom: 0;
+    resize: vertical;
     /* Leave room for the character count in the bottom-right corner. */
     padding-bottom: 28px;
   }
