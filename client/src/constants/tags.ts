@@ -23,7 +23,7 @@ export const peopleTabs = {
 };
 
 export const tags = [
-  'New',
+  /*'New',*/
   'Video Game',
   'Analog Game',
   'Mobile Application',

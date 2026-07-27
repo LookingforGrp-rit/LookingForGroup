@@ -24,9 +24,9 @@ export const ProjectCarousel = ({ project, videos }: { project: ProjectDetail, v
 
     // Process the video elements into something displayable
     const videoElements = (videos || []).map((video, index) => {
-        const embedUrl = getYouTubeEmbedURL(video.videoUrl); 
+        const embedUrl = getYouTubeEmbedURL(video.videoUrl);
         if (!embedUrl) return null;
-        
+
         return (
             <iframe
                 key={`video-${index}`}
@@ -76,7 +76,6 @@ export const ProjectCarousel = ({ project, videos }: { project: ProjectDetail, v
     }
 
     return (
-        <>
         <Carousel dataList={carouselContents} paused={isPlaying}>
             <div className='project-carousel'>
                 <CarouselContent className='project-carousel-content' />

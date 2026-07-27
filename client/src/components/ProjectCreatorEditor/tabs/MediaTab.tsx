@@ -351,7 +351,7 @@ export const MediaTab = ({
   // Removes image from page
   const handleImageDelete = useCallback(
     async (projectImage: ProjectImage | PendingProjectImage) => {
-      if (!projectId) return;
+      
 
       let updateThumbnail = false;
 
