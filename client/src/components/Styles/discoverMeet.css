@@ -405,6 +405,21 @@ Image carousel style rules
   width: max(100%);
 }
 
+/*tags on discover/project info shouldn't have hover effects
+as it's misleading*/
+.project-tags .tag-button:hover,
+#project-tags .tag-button:hover,
+.project-panel .tag-button:hover {
+  transform: none;
+  transition: none;
+  opacity: 1;
+  cursor: default;
+}
+
+.project-panel .tag-button:hover {
+  cursor: pointer;
+}
+
 .carousel-tag p {
   color: var(--invert-text);
 }
@@ -1435,51 +1450,51 @@ Filters / Tags Style Rules
 
 #filter-tabs .filter-tab-blue {
 
-  border-color: var(--tag-blue-selected); 
+  border-color: var(--tag-blue-selected);
 }
 
 #filter-tabs .filter-tab-green {
 
-  border-color: var(--tag-green-selected); 
+  border-color: var(--tag-green-selected);
 }
 
 #filter-tabs .filter-tab-pink {
 
-  border-color: var(--tag-pink-selected); 
+  border-color: var(--tag-pink-selected);
 }
 
 #filter-tabs .filter-tab-grey {
 
-   border-color: var(--tag-grey-selected); 
+  border-color: var(--tag-grey-selected);
 }
 
 #filter-tabs .filter-tab-yellow {
 
-   border-color: var(--tag-yellow-selected); 
+  border-color: var(--tag-yellow-selected);
 }
 
 #filter-tabs .filter-tab-red {
 
-   border-color: var(--tag-red-selected); 
+  border-color: var(--tag-red-selected);
 }
 
 #filter-tabs .filter-tab-orange {
 
-  border-color: var(--tag-orange-selected); 
+  border-color: var(--tag-orange-selected);
 }
 
 #filter-tabs .filter-tab-purple {
-  border-color: var(--tag-purple-selected); 
+  border-color: var(--tag-purple-selected);
 }
 
 #filter-tabs .filter-tab-periwinkle {
 
-   border-color: var(--tag-periwinkle-selected); 
+  border-color: var(--tag-periwinkle-selected);
 }
 
 #filter-tabs .filter-tab-cyan {
 
-   border-color: var(--tag-cyan-selected); 
+  border-color: var(--tag-cyan-selected);
 }
 
 #filter-tabs .filter-tab-blue.selected {

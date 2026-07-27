@@ -661,8 +661,21 @@ Project Creator and Editor Popup style rules
     font-size: 1.125rem;
   }
 
-  textarea {
+  /* Row holding the input box and its required asterisk, so the asterisk sits
+     to the right of the box instead of wrapping underneath it. align-self keeps
+     the row full width in the centered flex column (stretch subtracts margins). */
+  #bug-report-field {
+    display: flex;
+    align-items: flex-start;
+    align-self: stretch;
     margin: 20px;
+  }
+
+  /* The textarea (in its counter container) fills the row; the asterisk takes
+     only what it needs beside it. */
+  #bug-report-field .input-multiline-container {
+    flex: 1;
+    min-width: 0;
   }
 
   textarea:focus {
@@ -683,11 +696,9 @@ Project Creator and Editor Popup style rules
 
   #input-bug-report{
     margin-bottom: 0;
-  }
-
-  .required-asterisk{
-    margin-bottom: 0.5em;
-    margin-top: 0;
+    resize: vertical;
+    /* Leave room for the character count in the bottom-right corner. */
+    padding-bottom: 28px;
   }
 }
 
