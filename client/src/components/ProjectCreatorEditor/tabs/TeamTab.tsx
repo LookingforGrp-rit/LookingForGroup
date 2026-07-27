@@ -1055,6 +1055,27 @@ export const TeamTab = ({
 		return " Date was undefined";
 	}
 
+	//make date safe to stop crashing
+	const safeDate = (value: Date | string | null | undefined) => {
+		if (!value) return "None";
+
+		//convert to real date
+		const dateObj = value instanceof Date ? value : new Date(value)
+
+		//validate
+		if (isNaN(dateObj.getTime())) return "None";
+
+		//convert to ISO string + remove time
+		const date = dateObj.toISOString().slice(0, 10);
+
+		//no date
+		if (date === "1900-01-01") return "None";
+
+		return `${date}`;
+	}
+
+
+
 	// --- Content variables ---
 	// JSX content for viewing position details.
 	const positionViewWindow =
@@ -1198,7 +1219,7 @@ export const TeamTab = ({
 							</span>
 
 							{//if no date was inserted, "none" appears
-								currentJob?.jobStart ? (currentJob?.jobStart.getFullYear() == 1900 ? " None" : undefinedDateToString(currentJob?.jobStart)) : "None"}
+								safeDate(currentJob?.jobStart)}
 						</div>
 
 						<div id="position-end">
@@ -1206,7 +1227,7 @@ export const TeamTab = ({
 								Job End:
 							</span>
 
-							{currentJob?.jobEnd ? (currentJob?.jobEnd.getFullYear() == 1900 ? " None" : undefinedDateToString(currentJob?.jobEnd)) : "None"}
+							{safeDate(currentJob?.jobEnd)}
 						</div>
 
 						<div id="position-compensation">
