@@ -9,6 +9,7 @@ import { addProjectFollowing } from '#controllers/me/followings/add-follow-proj.
 import { addUserFollowing } from '#controllers/me/followings/add-follow-user.ts';
 import { deleteProjectFollowing } from '#controllers/me/followings/delete-follow-proj.ts';
 import { deleteUserFollowing } from '#controllers/me/followings/delete-follow-user.ts';
+import addGalleryImageController from '#controllers/me/gallery/add-image.ts';
 import { getAccount } from '#controllers/me/get-acc.ts';
 import { getMyProjects } from '#controllers/me/get-my-proj.ts';
 import { getUsernameByGoogle } from '#controllers/me/get-username-google.ts';
@@ -183,6 +184,14 @@ router.delete(
   '/socials/:id',
   authenticated(userAttributeExistsAt('social', 'path', 'id')),
   authenticated(deleteSocial),
+);
+//#endregion
+
+//#region Gallery routes
+router.post(
+  '/gallery/:userId/images',
+  upload.single('file'),
+  authenticated(addGalleryImageController),
 );
 //#endregion
 
