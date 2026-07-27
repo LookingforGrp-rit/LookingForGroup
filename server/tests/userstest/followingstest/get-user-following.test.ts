@@ -62,7 +62,6 @@ describe('getProjectFollowingService', () => {
         username: 'testuser',
         firstName: 'Test',
         lastName: 'User',
-        preferredName: 'Test',
         profileImage: null,
         mentor: false,
         privacy: 'public' as Visibility,

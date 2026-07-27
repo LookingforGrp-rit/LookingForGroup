@@ -21,12 +21,12 @@ export class InviteRejectedNotificationBuilder implements NotificationBuilder {
             userId: true,
             title: true,
             users: {
-              select: { preferredName: true },
+              select: { firstName: true },
             },
           },
         },
         users: {
-          select: { preferredName: true },
+          select: { firstName: true },
         },
       },
     });
@@ -45,10 +45,10 @@ export class InviteRejectedNotificationBuilder implements NotificationBuilder {
     const inviteeData = data.users;
     // BUILDING THE NOTIFICATION //
     notification.receiverId = projectData.userId;
-    notification.subjectLine = `${inviteeData.preferredName} has turned down your invitation to join ${projectData.title}`;
+    notification.subjectLine = `${inviteeData.firstName} has turned down your invitation to join ${projectData.title}`;
 
-    notification.message = `Hello ${ownerData.preferredName},<br /><br />`;
-    notification.message += `<strong>${inviteeData.preferredName}</strong> has turned down your invitation to join <strong>${projectData.title}</strong> `;
+    notification.message = `Hello ${ownerData.firstName},<br /><br />`;
+    notification.message += `<strong>${inviteeData.firstName}</strong> has turned down your invitation to join <strong>${projectData.title}</strong> `;
     notification.message += `as a <strong>${roleData?.label as string}</strong>.<br /><br />`;
     notification.message += `We wish you the best with your project!<br />`;
     notification.message += `LFG Team`;

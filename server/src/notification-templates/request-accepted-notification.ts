@@ -23,7 +23,7 @@ export class RequestAcceptedNotificationBuilder implements NotificationBuilder {
         },
         users: {
           select: {
-            preferredName: true,
+            firstName: true,
             userId: true,
           },
         },
@@ -45,7 +45,7 @@ export class RequestAcceptedNotificationBuilder implements NotificationBuilder {
     notification.receiverId = inviteeData.userId;
     notification.subjectLine = `Your request to join ${projectData.title} has been accepted!`;
 
-    notification.message = `Hello ${inviteeData.preferredName},<br /><br />`;
+    notification.message = `Hello ${inviteeData.firstName},<br /><br />`;
     notification.message += `Your request to join <strong>${projectData.title}</strong> as a <strong>${roleData?.label as string}</strong> has been accepted. <br /><br />`;
     notification.message += `Happy building!<br />`;
     notification.message += `LFG Team`;

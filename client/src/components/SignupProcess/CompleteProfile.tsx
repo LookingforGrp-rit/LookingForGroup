@@ -396,7 +396,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 									label={"Personal Quote"}
 									labelInfo="Write a fun and catchy phrase that captures your unique personality!"
 									inputType={"multi"}
-									maxLength={20}
+									maxLength={100}
 									id="headline-input"
 									// placeholder={"Personal Quote"}
 									onChange={(e) => setHeadline(e.target.value)}
@@ -410,7 +410,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 									label={"Bio"}
 									labelInfo="Share a brief overview of who you are, your interests, and what drives you!"
 									inputType={"multi"}
-									maxLength={100}
+									maxLength={600}
 									id="bio-input"
 									// placeholder={"Bio"}
 									onChange={(e) => setBio(e.target.value)}

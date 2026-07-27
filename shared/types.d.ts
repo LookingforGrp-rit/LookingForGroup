@@ -587,11 +587,6 @@ export interface UserPreview {
   lastName: string;
 
   /**
- * The user's preferred name
- */
-  preferredName: string;
-
-  /**
    * The users's username
    */
   username: string;
@@ -739,10 +734,6 @@ export interface MePreview {
    * The logged-in user's last name
    */
   lastName: string;
-  /**
-* The logged-in user's preferred name
-*/
-  preferredName: string;
   /**
    * The logged-in users's username
    */
@@ -1382,7 +1373,6 @@ export type UpdateUserInput = Partial<
     MePrivate,
     | "firstName"
     | "lastName"
-    | "preferredName"
     | "headline"
     | "pronouns"
     | "title"
@@ -1417,7 +1407,6 @@ export type CreateUserInput = Partial<
 > & {
   firstName: string;
   lastName: string;
-  preferredName: string;
   googleId?: string;
   username: string;
   ritEmail: string;
@@ -1426,7 +1415,6 @@ export type CreateUserInput = Partial<
 export type SessionUserData = Partial<{
   firstName: string;
   lastName: string;
-  preferredName: string;
   email: string;
   googleId: string;
   userExists: boolean;

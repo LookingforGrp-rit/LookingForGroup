@@ -28,10 +28,6 @@ const getProjectFollowersService = async (
       (user1, user2) => user1.user.firstName.charCodeAt(0) - user2.user.firstName.charCodeAt(0),
     );
 
-    //For when the preferredName column is implemented in the database
-    // transformedFollowers.users = transformedFollowers.users.toSorted((user1, user2) =>
-    //   user1.user.preferredName.charCodeAt(0) - user2.user.preferredName.charCodeAt(0));
-
     return transformedFollowers;
   } catch (e) {
     console.error(`Error in getProjectsService: ${e as Error}`);
