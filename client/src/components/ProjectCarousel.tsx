@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { CarouselButton, CarouselTabs, CarouselContent, Carousel } from "./ImageCarousel";
 import placeholderThumbnail from '../images/project_temp.png'; // if this gets used, use preloader function in /functions/imageLoad.tsx
 import { ProjectDetail, ProjectVideo } from '@looking-for-group/shared';
 import { getYouTubeEmbedURL } from "../functions/parseYoutube";
+import { ImageLightbox } from "./ImageLightbox";
 
 /**
  * Displays a carousel of project assets (videos and images).
@@ -13,6 +15,9 @@ import { getYouTubeEmbedURL } from "../functions/parseYoutube";
  * @returns JSX element rendering a carousel for the project
  */
 export const ProjectCarousel = ({ project, videos }: { project: ProjectDetail, videos?: ProjectVideo[] }) => {
+    // Full-image viewer: holds the src of the image being viewed, or null when closed
+    const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+
     // Process the video elements into something displayable
     const videoElements = (videos || []).map((video, index) => {
         const embedUrl = getYouTubeEmbedURL(video.videoUrl); 
@@ -45,6 +50,9 @@ export const ProjectCarousel = ({ project, videos }: { project: ProjectDetail, v
             <img
                 key={`img-${index}`}
                 src={imageData.image}
+                // Click to view the image full-size in the lightbox
+                style={{ cursor: 'zoom-in' }}
+                onClick={(e) => setLightboxSrc((e.currentTarget as HTMLImageElement).src)}
                 onError={(e) => {
                     const projectImg = e.target as HTMLImageElement;
                     projectImg.src = placeholderThumbnail;
@@ -62,6 +70,7 @@ export const ProjectCarousel = ({ project, videos }: { project: ProjectDetail, v
     }
 
     return (
+        <>
         <Carousel dataList={carouselContents}>
             <div className='project-carousel'>
                 <CarouselContent className='project-carousel-content' />
@@ -83,5 +92,9 @@ export const ProjectCarousel = ({ project, videos }: { project: ProjectDetail, v
                 </div> */}
             </div>
         </Carousel>
+        {lightboxSrc && (
+            <ImageLightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />
+        )}
+        </>
     );
 };
