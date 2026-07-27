@@ -24,7 +24,7 @@ interface WarningEmailProps {
 const logoUrl = 'https://lookingforgrp.com/api/images/lfg-logo.png';
 
 const WarnEmail = ({ receiverName, warning }: WarningEmailProps) => {
-  const previewText = `You have been warned on Looking For Group`;
+  const previewText = `[DO NOT REPLY] You have been warned on Looking For Group`;
 
   return createElement(
     Html,
