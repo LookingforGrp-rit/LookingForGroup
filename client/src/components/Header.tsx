@@ -2,7 +2,7 @@ import { SearchBar, DataSet } from './SearchBar';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { NotificationsDropdown } from './NotificationsDropdown';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect, useContext, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
+import { useState, useEffect, useContext, ChangeEvent, FocusEvent, /*KeyboardEvent,*/ SetStateAction } from 'react';
 import * as paths from '../constants/routes';
 import { ThemeIcon } from './ThemeIcon';
 import { ThemeContext } from '../contexts/ThemeContext';
@@ -11,9 +11,9 @@ import profilePicture from '../images/lfrog.png';
 import { getUserAccessLevel } from '../api/mod-tools.ts';
 
 //user utils
-import { getCurrentAccount, getCurrentUsername, googleLogout } from '../api/users.ts';
+import { getCurrentAccount, /*getCurrentUsername,*/ googleLogout } from '../api/users.ts';
 import { AddBugReportInput, MePrivate } from '@looking-for-group/shared';
-import { Popup, PopupButton, PopupContent, PopupContext } from './Popup.tsx';
+import { Popup, PopupButton, PopupContent, /*PopupContext*/ } from './Popup.tsx';
 import { POST } from '../api/index.ts';
 
 //Header component to be used in pages
@@ -29,6 +29,7 @@ type HeaderProps = {
   dataSets: DataSet[];
   onSearch: (results: unknown[][]) => void;
   value?: string;
+  setSearch?: React.Dispatch<SetStateAction<string>>;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   hideSearchBar?: boolean;
   hideBackButton?: boolean;
@@ -37,6 +38,7 @@ type HeaderProps = {
   searchOnFocus?: (e: FocusEvent<HTMLInputElement>) => void;
   placeholderText: string;
   mobilePlaceholderText?: string;
+  searchBlocklist?: string[];
 };
 
 /**
@@ -58,6 +60,7 @@ export const Header: React.FC<HeaderProps> = ({
   dataSets,
   onSearch,
   value = "",
+  setSearch,
   onChange,
   hideSearchBar = false,
   hideBackButton = true,
@@ -65,7 +68,8 @@ export const Header: React.FC<HeaderProps> = ({
   setCurrentUserId,
   searchOnFocus,
   placeholderText = "",
-  mobilePlaceholderText }) => {
+  mobilePlaceholderText,
+  searchBlocklist = [] }) => {
   // User info state
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
@@ -88,7 +92,19 @@ export const Header: React.FC<HeaderProps> = ({
 
   const navigate = useNavigate(); // Hook for navigation
 
-  let bugReportText: string = "";
+  // Bug report text, tracked in state so the character counter updates as the user types
+  const BUG_REPORT_MAX = 200;
+  const [bugReportText, setBugReportText] = useState('');
+
+  // Mirrors the old Input component: the count turns yellow/orange/red as it fills up
+  const bugReportCountClass = () => {
+    const percentLeft = (BUG_REPORT_MAX - bugReportText.length) / BUG_REPORT_MAX;
+    let className = 'character-count';
+    if (percentLeft <= 0.3) className += ' character-count-near';
+    if (percentLeft <= 0.2) className += ' character-count-close';
+    if (percentLeft <= 0.1) className += ' character-count-danger';
+    return className;
+  };
 
   /**
    * Checks mod permissions for the user on render (in useEffect)
@@ -161,24 +177,25 @@ export const Header: React.FC<HeaderProps> = ({
   // },[]);
 
   // Navigate to a page and optionally update sidebar (if implemented)
-  const handlePageChange = (path: string) => {
-    //Have code to update sidebar display (unsure of how to do this yet)
-    //Navigate to desired page
-    navigate(path);
-  };
+  // const handlePageChange = (path: string) => {
+  //   //Have code to update sidebar display (unsure of how to do this yet)
+  //   //Navigate to desired page
+  //   navigate(path);
+  // };
 
-  // Navigate to the current user's profile
-  const handleProfileAccess = async () => {
-    // navigate to Profile, attach userID
-    const res = await getCurrentUsername();
-    const userId = res.data?.userId;
-    navigate(`${paths.routes.PROFILE}?userID=${userId}`);
+  // // Navigate to the current user's profile
+  // const handleProfileAccess = async () => {
+  //   // navigate to Profile, attach userID
+  //   const res = await getCurrentUsername();
+  //   const userId = res.data?.userId;
+  //   navigate(`${paths.routes.PROFILE}?userID=${userId}`);
 
-    // Collapse the dropwdown if coming from another user's page
-    if (window.location.href.includes("profile")) {
-      window.location.reload();
-    }
-  };
+  //   // Collapse the dropwdown if coming from another user's page
+  //   if (window.location.href.includes("profile")) {
+  //     window.location.reload();
+  //   }
+  // };
+
   const returnProfileAccess = () => {
     // navigate to Profile, attach userID
     if (userId) return (`${paths.routes.PROFILE}?userID=${userId}`);
@@ -214,11 +231,13 @@ export const Header: React.FC<HeaderProps> = ({
           <SearchBar
             dataSets={dataSets}
             onSearch={onSearch}
+            setValue={setSearch}
             value={value}
             onChange={onChange}
             onFocus={searchOnFocus}
             placeholderText={placeholderText}
             mobilePlaceholderText={mobilePlaceholderText}
+            searchBlocks={searchBlocklist}
           />
         </div>
       )}
@@ -370,17 +389,33 @@ export const Header: React.FC<HeaderProps> = ({
                     <h3>Report a Bug</h3>
                     <p>Please explain what the bug is, and the steps leading up to it occuring.</p>
 
-                    <textarea
-                      id='input-bug-report'
-                      name='input-bug-report'
-                      placeholder="Write your reasoning here..."
-                      className="input input-multiline"
-                      required
-                      minLength={1}
-                      maxLength={200}
-                      onChange={(e) => {
-                        bugReportText = e.currentTarget.value;
-                      }}></textarea> <span className='required-asterisk'>*</span>
+                    <div id='bug-report-field'>
+                      <div className="input-multiline-container" style={{ position: 'relative' }}>
+                        <span className={bugReportCountClass()}>
+                          {bugReportText.length} / {BUG_REPORT_MAX}
+                        </span>
+                        <textarea
+                          id='input-bug-report'
+                          name='input-bug-report'
+                          className="input input-multiline"
+                          placeholder="Write your reasoning here..."
+                          required
+                          minLength={1}
+                          maxLength={BUG_REPORT_MAX}
+                          rows={5}
+                          value={bugReportText}
+                          onChange={(e) => {
+                            // Match the old Input behaviour: strip leading spaces and
+                            // collapse trailing runs of spaces to a single one.
+                            const trimmed = e.currentTarget.value
+                              .replace(/ +$/g, " ")
+                              .replace(/^ +/g, "");
+                            setBugReportText(trimmed);
+                          }}
+                        />
+                      </div>
+                      <span className='required-asterisk' aria-hidden="true" title="Required">*</span>
+                    </div>
 
                     <button type='submit' id="btn-bug-report-submit"
                       onClick={() => {
