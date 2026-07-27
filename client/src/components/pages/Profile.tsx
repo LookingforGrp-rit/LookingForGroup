@@ -926,7 +926,7 @@ const Profile = (userProfile: any) => {
             {activeReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'active-reporter-' + r.reporterId} />)}
             {inactiveReportList.length !== 0 && <h5>Inactive Reports</h5>}
             {inactiveReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'inactive-reporter-' + r.reporterId} />)}
-            <div id="mod-options-btns">
+            <div className="mod-options-btns">
               <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')} >Dismiss Report</button>
               <Popup>
                 <PopupButton className="mod-edit-btn">Warn User</PopupButton>

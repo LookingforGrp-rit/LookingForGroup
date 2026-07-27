@@ -649,6 +649,7 @@ Project Creator and Editor Popup style rules
 }
 
 #report-popup {
+  text-align: center;
   h3 {
     font-size: 1.25rem;
     font-weight: 700;
@@ -694,7 +695,7 @@ Project Creator and Editor Popup style rules
     font-weight: 700;
   }
 
-  #input-bug-report{
+  #input-bug-report, #input-bug-report-message {
     margin-bottom: 0;
     resize: vertical;
     /* Leave room for the character count in the bottom-right corner. */
@@ -3828,7 +3829,7 @@ Project Carousel style rules
     margin-bottom: 5px;
   }
 
-  #mod-options-btns {
+  .mod-options-btns {
     display: flex;
     align-items: center;
     flex-direction: row;

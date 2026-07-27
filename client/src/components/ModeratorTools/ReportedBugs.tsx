@@ -29,7 +29,10 @@ const ReportedBugs = ({ currentUserId, currentTab }: ReportedBugsProps) => {
                     tempBugsArray.push(bug);
                 }
             }
-            setBugReports(tempBugsArray);
+
+            // Filter out already resolved bugs
+
+            setBugReports(tempBugsArray.filter(b => !b.isResolved));
             setLoaded(true);
         }
 

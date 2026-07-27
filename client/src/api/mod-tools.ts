@@ -269,3 +269,19 @@ export const getBugReportById = async (reportId: number): Promise<ApiResponse> =
     return response;
 };
 
+/**
+ * Gets the specified bug report by its id
+ * @param reportId reportId The id of the report to update
+ * @param modNotes Notes from the mod to the user about the report
+ * @param isResolved Is this bug resolved? (i.e. is this no longer a concern?)
+ * @returns ApiResponse from the API call to update bug report
+ */
+export const updateBugReport = async (reportId: number, modNotes: string, isResolved: boolean): Promise<ApiResponse> => {
+    const apiURL = `/mod/bug-report/${reportId}`;
+    const response = await PATCH(apiURL, {isResolved: isResolved,
+  modNotes: modNotes});
+
+    if (response.error) console.log(`Error in updateBugReport: ${response.error}`);
+    return response;
+};
+

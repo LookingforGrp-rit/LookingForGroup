@@ -6,7 +6,7 @@ import profilePicture from '../images/lfrog.png';
 //import shares types
 import { UserDetail, BugReport } from '@looking-for-group/shared';
 import { PopupButton, PopupContent } from './Popup.tsx';
-import { getBugReportById } from '../api/mod-tools.ts';
+import { getBugReportById, updateBugReport } from '../api/mod-tools.ts';
 
 interface BugPanelProps {
   currentUserId: number;
@@ -25,44 +25,40 @@ interface BugPanelProps {
  */
 export const BugPanel = ({currentUserId, reporterId, reportId }: BugPanelProps) => {
 
-  // Current user ID
-  const [userId, setUserId] = useState<number>(currentUserId);
-
   const [bugReport, setBugReport] = useState<BugReport>();
   const [reporter, setReporter] = useState<UserDetail>();
+  let bugReportText: string = "";
 
   // Fetch bug report
   useEffect(() => {
     const getBugReport = async () => {
-      if (!reportId && reportId !== -1) {
+      if (reportId !== -1) {
         const reportResp = await getBugReportById(reportId);
         if (reportResp.data) setBugReport(reportResp.data);
       }
     };
     getBugReport();
+    console.log(reportId);
+    console.log(bugReport);
   }, [reportId]);
 
-  // Fetch current user ID and reporter account
-  useEffect(() => {
-    const getUserData = async () => {
-        //get our current user for use later
-        if (!userId && userId !== -1) {
-          const userResp = await getCurrentAccount();
-          if (userResp.data) setUserId(userResp.data.userId);
-        }
-      };
-      getUserData();
-    }, [userId]);
 
-    useEffect(() => {
-      const getReporter = async () => {
-      if (bugReport) {
-        const userResp = await getUsersById(bugReport? bugReport.userId : -1);
-        if (userResp.data) setReporter(userResp.data);
-      }
-      };
-      getReporter();
-    }, [bugReport]);
+  useEffect(() => {
+    const getReporter = async () => {
+      console.log("bug report id" + bugReport?.userId ? bugReport?.userId : -1);
+      const userResp = await getUsersById(bugReport? bugReport.userId : -1);
+      if (userResp.data) setReporter(userResp.data);
+    };
+    getReporter();
+  }, [bugReport]);
+
+  /**
+   * Handles what happens when a bug report is updated
+   * @param isResolved Is this bug report closed? Was it solved?
+   */
+  const handleUpdateReport = async (isResolved: boolean) => {
+    const response = await updateBugReport(reportId, bugReportText, isResolved);
+  };
 
   return (
       <div className={'bug-panel'}>
@@ -73,26 +69,42 @@ export const BugPanel = ({currentUserId, reporterId, reportId }: BugPanelProps) 
                 alt={`Profile photo of ${reporter?.firstName} ${reporter?.lastName}`}
             />
             <div className="bug-reporter-info">
-                <h2 className="team-member-name">{reporter?.firstName} {reporter?.lastName}</h2>
-                <p className="report-info">Report info here!</p>
+                <h2 className="bug-reporter-name">Report From {reporter?.firstName ? reporter.firstName : "User"} {reporter?.lastName}</h2>
                 <Popup>
-                  <PopupButton>See Details</PopupButton>
+                  <PopupButton buttonId="see-details-btn">See Details</PopupButton>
                   <PopupContent>
                     <div className="small-popup" id="report-popup">
                       <h3>Bug Report from {reporter?.firstName ?? "User"} {reporter?.lastName ?? ""}</h3>
-                      <p>Here is the context behind {reporter?.firstName ?? "this user"}'s report:</p>
-                      <p>{bugReport?.reportText}</p>
-                      <div className="confirm-deny-btns">
+                      <p>{bugReport?.reportText ? "Here is the message that the user sent: " : "No message was provided from the user."}</p>
+                      <p>{bugReport?.reportText ? bugReport?.reportText : ""}</p>
+
+                      <p>You can send the user a message about their report, or close the report as resolved.</p>
+
+                      <textarea
+                        id='input-bug-report-message'
+                        name='input-bug-report-message'
+                        placeholder="Write your reasoning here..."
+                        className="input input-multiline"
+                        minLength={1}
+                        maxLength={500}   /* temporary -- can adjust as needed */
+                        onChange={(e) => {
+                        if (e.currentTarget.value.trim()) {
+                        bugReportText = e.currentTarget.value.trim();
+                        }
+                        else {bugReportText = "No message was provided."}
+                      }}></textarea>
+                      <div className="mod-options-btns">
                         <PopupButton
-                          buttonId="team-delete-member-cancel-button"
+                          buttonId="mod-edit-btn"
                           className="button-reset"
+                          callback={() => handleUpdateReport(false)}
                         >
-                          Cancel
+                          Send Update
                         </PopupButton>
                           <PopupButton
-                            className="delete-button"
-                            callback={() => true}>
-                            Report
+                            buttonId="mod-dismiss-btn"
+                            callback={() => handleUpdateReport(true)}>
+                            Close Report
                           </PopupButton>
                       </div>
                     </div>

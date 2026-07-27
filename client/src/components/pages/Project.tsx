@@ -978,7 +978,7 @@ const Project = () => {
             {isUserAdmin && approvalStatus == 'under-review' && userID !== displayedProject.owner.userId ? <div className="mod-project-options">
               <h4>Approve?</h4>
               <p>You can approve this project or request changes.</p>
-              <div id="mod-options-btns">
+              <div className="mod-options-btns">
                 <button id="mod-approve-btn" onClick={() => { if (displayedProject) { handleApproveRequest(); } }}>Approve</button>
                 <Popup>
                   <PopupButton className="delete-button">Decline</PopupButton>
@@ -1009,7 +1009,7 @@ const Project = () => {
                 <h4>Unapprove?</h4>
                 <p>You can ignore this report or request edits on this project.</p>
                 {reportList.map(r => <Reporter modUserId={userID} reporterId={r.userId} reason={r.reason} key={'reporter-' + r.userId} />)}
-                <div id="mod-options-btns">
+                <div className="mod-options-btns">
                   <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')}>Dismiss Report</button>
                   <Popup>
                     <PopupButton className="mod-edit-btn">Request Edits</PopupButton>
