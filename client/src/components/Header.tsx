@@ -420,11 +420,10 @@ export const Header: React.FC<HeaderProps> = ({
                     <button type='submit' id="btn-bug-report-submit"
                       onClick={() => {
                         if (bugReportText.trim().length !== 0) {
-                          const report: AddBugReportInput = {
-                            reportText: bugReportText
-                          };
 
-                          POST(`/me/report-bug`, report);
+                          POST(`/me/report-bug`, {
+                            reportText: bugReportText ? bugReportText : "No info provided."
+                          });
                           window.location.reload();
                         } else {
                           const errorReport = document.querySelector("#error-report");

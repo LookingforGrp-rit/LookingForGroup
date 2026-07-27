@@ -944,7 +944,7 @@ const Profile = (userProfile: any) => {
               <p>These reports have already been reviewed and are no longer active.</p>
             </>)}
             {inactiveReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'inactive-reporter-' + r.reporterId} />)}
-            <div id="mod-options-btns">
+            <div className="mod-options-btns">
               <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')} >Dismiss Report</button>
               <Popup>
                 <PopupButton className="mod-edit-btn">Warn User</PopupButton>
