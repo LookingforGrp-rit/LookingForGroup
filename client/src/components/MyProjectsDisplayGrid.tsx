@@ -120,7 +120,7 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, setApprovalStatus,
         <img
           className="grid-card-image"
           src={usePreloadedImage(
-            projectData.thumbnail?.image ?? placeholderThumbnail,
+            (projectData.thumbnail ? projectData.thumbnail.image : placeholderThumbnail),
             placeholderThumbnail
           )}
           alt={`${projectData.title}`}
