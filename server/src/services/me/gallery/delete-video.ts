@@ -4,8 +4,8 @@ import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service
 type DeleteVideoServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type DeleteVideoServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
-//DELETE api/projects/{id}/videos/{video_id}
-//deletes a video in a project
+//DELETE api/projects/{userId}/gallery/videos/{videoId}
+//deletes a video in the gallery
 const deleteVideoService = async (
   videoId: number,
 ): Promise<DeleteVideoServiceSuccess | DeleteVideoServiceError> => {
