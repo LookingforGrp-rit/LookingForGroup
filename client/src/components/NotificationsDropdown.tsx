@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Dropdown, DropdownButton, DropdownContent } from "./Dropdown";
-import { createPortal } from "react-dom";
 import { useNotifications } from "../hooks/useNotifications";
 import { getNotification } from "../api/notifications";
 import DOMPurify from 'dompurify';
@@ -205,19 +204,14 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
         </span>
       </DropdownButton>
       <DropdownContent rightAlign={true}>
-        {createPortal(
-          <div className="notifications-portal dropdown">
-            <NotificationsPanel
-              notifications={notifications}
-              loading={loading}
-              error={error}
-              refresh={refresh}
-              markRead={markRead}
-              remove={remove}
-            />
-          </div>,
-          document.body
-        )}
+        <NotificationsPanel
+          notifications={notifications}
+          loading={loading}
+          error={error}
+          refresh={refresh}
+          markRead={markRead}
+          remove={remove}
+        />
       </DropdownContent>
     </Dropdown>
   );
