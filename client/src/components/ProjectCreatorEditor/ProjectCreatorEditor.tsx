@@ -183,7 +183,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       else if (!isUniqueTitle) newMessage = "Project cannot have same title as existing project!";
       else if (updatedPendingProject.hook === "" || updatedPendingProject.hook === undefined) newMessage = "Project is missing a Short Description!";
       else if (updatedPendingProject.description === "" || updatedPendingProject.description === undefined) newMessage = "Project is missing a Project Overview!";
-      else if (updatedPendingProject.mediums.length == 0) newMessage = "Project is missing a medium!";
+      else if (updatedPendingProject.mediums.length == 0) newMessage = "Project is missing a project type!";
       else if (updatedPendingProject.tags.length == 0) newMessage = "Project is missing tags!";
     }
 
