@@ -227,7 +227,6 @@ model ReportProject {
   users      Users    @relation(fields: [userId], references: [userId], map: "FK_project_report_users")
   projects   Projects @relation(fields: [projectId], references: [projectId], map: "FK_project_report_projects")
 
-  @@unique([userId, projectId])
   @@index([userId], map: "FK_project_report_users")
   @@index([projectId], map: "FK_project_report_projects")
   @@map("report_project")
@@ -242,7 +241,6 @@ model ReportUser {
   reporter   Users   @relation("reporter_id", fields: [reporterId], references: [userId], map: "FK_user_report_reporter")
   reported   Users   @relation("reported_id", fields: [reportedId], references: [userId], map: "FK_user_report_reported")
 
-  @@unique([reporterId, reportedId])
   @@index([reporterId], map: "FK_user_report_reporter")
   @@index([reportedId], map: "FK_user_report_reported")
   @@map("report_user")
@@ -409,7 +407,7 @@ model GalleryImages {
   position       Int    @default(0)
 
   userId Int
-  user  Users @relation(fields: [userId], references: [userId])
+  user   Users @relation(fields: [userId], references: [userId])
 
   @@map("gallery_images")
 }
@@ -421,7 +419,7 @@ model GalleryVideos {
   position       Int    @default(0)
 
   userId Int
-  user  Users @relation(fields: [userId], references: [userId])
+  user   Users @relation(fields: [userId], references: [userId])
 
   @@map("gallery_videos")
 }
