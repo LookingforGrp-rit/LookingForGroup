@@ -11,7 +11,7 @@ import "../../components/Styles/projects.css";
 import { getCurrentAccount } from "../../api/users";
 import { getUserAccessLevel, sendModeratorNotification } from "../../api/mod-tools";
 import * as paths from '../../constants/routes';
-import AllModsAdmins from "../ModeratorTools/admin/AllModsAdmins";
+import AllModerators from "../ModeratorTools/admin/AllModerators";
 
 /**
  * The Moderator Page, only accessible by Moderators and Administrators
@@ -191,11 +191,11 @@ const ModeratorPage = () => {
                 );
             case 4:
                 return (
-                    <AllModsAdmins
+                    <AllModerators
                         currentUserId={userId}
                         currentTab={currentTab}
                         displayMode={displayMode}
-                    ></AllModsAdmins>
+                    ></AllModerators>
                 );
             default:
                 return (
@@ -308,7 +308,7 @@ const ModeratorPage = () => {
                                             style={{ opacity: String(.5) }}
                                             onClick={() => { setCurrentTab(4); }}
                                         >
-                                            Mods & Admins
+                                            All Moderators
                                         </button>
                                     )}
                                 </div>
