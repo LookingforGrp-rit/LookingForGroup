@@ -290,10 +290,12 @@ button {
 }
 
 button:focus-visible,
+[role="button"]:focus-visible,
 #back:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible,
+.project-panel:has(.project-link-overlay:focus-visible),
 textarea:focus-visible {
   transition: 0s;
   outline: 3px solid var(--primary-color);
@@ -314,7 +316,7 @@ input:focus {
 /*give sections of the page a drop shadow*/
 section {
   margin: 10px;
-  padding: 4px 16px 16px 16px;
+  padding: 16px;
   /* border-style: solid;
   border: 2px solid black;
   box-shadow: 10px 10px 5px lightblue; */
@@ -1351,19 +1353,19 @@ body.modal-open {
   }
 
   .filter-tab {
-  display: block;
-  font-size: 1rem;
-  font-weight: 400;
-  color: var(--neutral-gray);
-  cursor: pointer;
-  transition: color 0.2s ease;
-  padding: 1px 1px 5px 1px;
-  width: max-content;
-  white-space: nowrap;
-  flex-shrink: 0;
-  
-  text-align: center;
-}
+    display: block;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--neutral-gray);
+    cursor: pointer;
+    transition: color 0.2s ease;
+    padding: 1px 1px 5px 1px;
+    width: max-content;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    text-align: center;
+  }
 
   .filter-tab:focus-visible {
     outline: 2px solid var(--primary-color);

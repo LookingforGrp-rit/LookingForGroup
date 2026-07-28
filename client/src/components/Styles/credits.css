@@ -66,7 +66,6 @@ Credits style rules
   color: var(--primary-color);
   text-align: left;
   margin-left: clamp(20px, 5vw, 50px);
-  font-size: 1.5rem;
   font-weight: 600;
 }
 

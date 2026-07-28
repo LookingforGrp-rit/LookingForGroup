@@ -227,73 +227,86 @@ const AboutPage = () => {
                         </section>
                     </section>
 
-                    <section className="about-section">
-                        <h2 className="about-header-two">User Guidelines</h2>
-                        <p className="about-text">The following guidelines below help keep LFG a friendly, encouraging, and creative community for everyone to enjoy.
-                            If you see anyone or anything that violates these guidelines, please use our report feature to notify a moderator. </p>
+                    <section className="about-section" id="guidelines-section">
+                        <div>
+                            <h2 className="about-header-two">User Guidelines</h2>
+                            <p className="about-text">The following guidelines below help keep LFG a friendly, encouraging, and creative community for everyone to enjoy.
+                                If you see anyone or anything that violates these guidelines, please use our report feature to notify a moderator. </p>
+                        </div>
+                        <div>
+                            <h3 className="about-header-three">User Eligibility</h3>
 
-                        <h3 className="about-header-three">User Eligibility</h3>
+                            <ul className="guidelines-list">
+                                <li className="about-text">
+                                    Users must be either presently affiliated with RIT (Student or Staff) or formerly affiliated with RIT (Alumni). This is so we can focus on RIT students getting the help they need to get co-ops, internships, or future jobs
+                                </li>
+                            </ul>
+                        </div>
 
-                        <ul className="guidelines-list">
-                            <li className="about-text">
-                                Users must be either presently affiliated with RIT (Student or Staff) or formerly affiliated with RIT (Alumni). This is so we can focus on RIT students getting the help they need to get co-ops, internships, or future jobs
-                            </li>
-                        </ul>
+                        <div>
+                            <h3 className="about-header-three">Copyright</h3>
+                            <ul className="guidelines-list">
+                                <li className="about-text">
+                                    Users are responsible for following general U.S. copyright law (found <a href="https://www.copyright.gov/title17/">here</a>)
+                                </li>
+                                <li className="about-text">
+                                    <strong>Theft Is Not Tolerated. </strong>Projects found using stolen material will be taken down and should be reported.
+                                    <ul>
+                                        <li>If a project uses a work without permission the user will be asked to remove the stolen work or else the project will be deleted</li>
+                                    </ul>
+                                </li>
+                                <li className="about-text">
+                                    Projects falling under Fair Use Guidelines (<a href="https://www.copyright.gov/fair-use/">U.S. Copyright Office Fair Use Index</a>) will not be taken down, however, Fair Use is never guaranteed in every case.
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="about-header-three">Banned Content</h3>
+                            <ul className="guidelines-list">
+                                <li className="about-text">Content promoting/inciting hate, harassment, or discrimination are not tolerated on LFG. As well as selling the project/products on the site. Such content will be taken down and will result in bans.
+                                    <ul>
+                                        <li>
+                                            We do not carry any responsibilities involving payment for hiring if complications occur.
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li className="about-text">
+                                    Sensitive content such as Suicide, real or disturbing depictions of violence, content that exploits children in any way and sexually explicit content should not be displayed in promotional images/videos.
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="about-header-three">Ai Content</h3>
+                            <ul className="guidelines-list">
+                                <li className="about-text">Projects must disclose use of AI</li>
+                                <li className="about-text">AI used maliciously to violate copyright laws is strictly prohibited and will result in the project taken down and potential bans.</li>
+                                <li className="about-text">All other rules on this website applies to AI generated content.</li>
+                            </ul>
+                        </div>
 
-                        <h3 className="about-header-three">Copyright</h3>
-                        <ul className="guidelines-list">
-                            <li className="about-text">
-                                Users are responsible for following general U.S. copyright law (found <a href="https://www.copyright.gov/title17/">here</a>)
-                            </li>
-                            <li className="about-text">
-                                <strong>Theft Is Not Tolerated. </strong>Projects found using stolen material will be taken down and should be reported.
-                                <ul>
-                                    <li>If a project uses a work without permission the user will be asked to remove the stolen work or else the project will be deleted</li>
-                                </ul>
-                            </li>
-                            <li className="about-text">
-                                Projects falling under Fair Use Guidelines (<a href="https://www.copyright.gov/fair-use/">U.S. Copyright Office Fair Use Index</a>) will not be taken down, however, Fair Use is never guaranteed in every case.
-                            </li>
-                        </ul>
-                        <h3 className="about-header-three">Banned Content</h3>
-                        <ul className="guidelines-list">
-                            <li className="about-text">Content promoting/inciting hate, harassment, or discrimination are not tolerated on LFG. As well as selling the project/products on the site. Such content will be taken down and will result in bans.
-                                <ul>
-                                    <li>
-                                        We do not carry any responsibilities involving payment for hiring if complications occur.
-                                    </li>
-                                </ul>
-                            </li>
-                            <li className="about-text">
-                                Sensitive content such as Suicide, real or disturbing depictions of violence, content that exploits children in any way and sexually explicit content should not be displayed in promotional images/videos.
-                            </li>
-                        </ul>
-                        <h3 className="about-header-three">Ai Content</h3>
-                        <ul className="guidelines-list">
-                            <li className="about-text">Projects must disclose use of AI</li>
-                            <li className="about-text">AI used maliciously to violate copyright laws is strictly prohibited and will result in the project taken down and potential bans.</li>
-                            <li className="about-text">All other rules on this website applies to AI generated content.</li>
-                        </ul>
                     </section>
-                    <section className="about-section">
-                        <h2 className="about-header-two">Data Protection and Security</h2>
-                        <ul className="guidelines-list">
-                            <li className="about-text">We do not use cookies to store your data.</li>
-                            <li className="about-text">Any projects along with assets placed upon the site belong to the owner. LFG does not claim ownership.</li>
-                        </ul>
-
-                        <h3 className="about-header-three">Data Collection</h3>
-                        <p className="about-text">We store:</p>
-                        <ul className="guidelines-list">
-                            <li className="about-text">RIT Email</li>
-                            <li className="about-text">{"Full Name (first/preferred, last)"}</li>
-                            <li className="about-text">Major</li>
-                            <li className="about-text">Year</li>
-                            <li className="about-text">{"Phone Number (optional)"}</li>
-                        </ul>
+                    <section className="about-section" id="data-section">
+                        <div>
+                            <h2 className="about-header-two">Data Protection and Security</h2>
+                            <ul className="guidelines-list">
+                                <li className="about-text">We do not use cookies to store your data.</li>
+                                <li className="about-text">Any projects along with assets placed upon the site belong to the owner. LFG does not claim ownership.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="about-header-three">Data Collection</h3>
+                            <p className="about-text">We store:</p>
+                            <ul className="guidelines-list">
+                                <li className="about-text">RIT Email</li>
+                                <li className="about-text">{"Full Name (first/preferred, last)"}</li>
+                                <li className="about-text">Major</li>
+                                <li className="about-text">Year</li>
+                                <li className="about-text">{"Phone Number (optional)"}</li>
+                            </ul>
+                        </div>
                     </section>
                     <section id="credits" tabIndex={-1} aria-labelledby='credits-title'>
-                        <h1 id="credits-title">Meet The LFG Team</h1>
+                        <h1 className="about-header-two" id="credits-title">Meet The LFG Team</h1>
                         <div className="sr-only" aria-live="polite" aria-atomic="true">
                             {`Showing ${sortedMembersList.length} team ${sortedMembersList.length === 1 ? 'member' : 'members'}.`}
                         </div>

@@ -92,7 +92,19 @@ export const Header: React.FC<HeaderProps> = ({
 
   const navigate = useNavigate(); // Hook for navigation
 
-  let bugReportText: string = "";
+  // Bug report text, tracked in state so the character counter updates as the user types
+  const BUG_REPORT_MAX = 200;
+  const [bugReportText, setBugReportText] = useState('');
+
+  // Mirrors the old Input component: the count turns yellow/orange/red as it fills up
+  const bugReportCountClass = () => {
+    const percentLeft = (BUG_REPORT_MAX - bugReportText.length) / BUG_REPORT_MAX;
+    let className = 'character-count';
+    if (percentLeft <= 0.3) className += ' character-count-near';
+    if (percentLeft <= 0.2) className += ' character-count-close';
+    if (percentLeft <= 0.1) className += ' character-count-danger';
+    return className;
+  };
 
   /**
    * Checks mod permissions for the user on render (in useEffect)
@@ -377,26 +389,41 @@ export const Header: React.FC<HeaderProps> = ({
                     <h3>Report a Bug</h3>
                     <p>Please explain what the bug is, and the steps leading up to it occuring.</p>
 
-                    <textarea
-                      id='input-bug-report'
-                      name='input-bug-report'
-                      placeholder="Write your reasoning here..."
-                      className="input input-multiline"
-                      required
-                      minLength={1}
-                      maxLength={200}
-                      onChange={(e) => {
-                        bugReportText = e.currentTarget.value;
-                      }}></textarea> <span className='required-asterisk'>*</span>
+                    <div id='bug-report-field'>
+                      <div className="input-multiline-container" style={{ position: 'relative' }}>
+                        <span className={bugReportCountClass()}>
+                          {bugReportText.length} / {BUG_REPORT_MAX}
+                        </span>
+                        <textarea
+                          id='input-bug-report'
+                          name='input-bug-report'
+                          className="input input-multiline"
+                          placeholder="Write your reasoning here..."
+                          required
+                          minLength={1}
+                          maxLength={BUG_REPORT_MAX}
+                          rows={5}
+                          value={bugReportText}
+                          onChange={(e) => {
+                            // Match the old Input behaviour: strip leading spaces and
+                            // collapse trailing runs of spaces to a single one.
+                            const trimmed = e.currentTarget.value
+                              .replace(/ +$/g, " ")
+                              .replace(/^ +/g, "");
+                            setBugReportText(trimmed);
+                          }}
+                        />
+                      </div>
+                      <span className='required-asterisk' aria-hidden="true" title="Required">*</span>
+                    </div>
 
                     <button type='submit' id="btn-bug-report-submit"
                       onClick={() => {
                         if (bugReportText.trim().length !== 0) {
-                          const report: AddBugReportInput = {
-                            reportText: bugReportText
-                          };
 
-                          POST(`/me/report-bug`, report);
+                          POST(`/me/report-bug`, {
+                            reportText: bugReportText ? bugReportText : "No info provided."
+                          });
                           window.location.reload();
                         } else {
                           const errorReport = document.querySelector("#error-report");

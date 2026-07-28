@@ -86,12 +86,17 @@ const Profile = (userProfile: any) => {
 
   const [majorsArr, setMajorsArr] = useState<string[]>([]);
 
+  // If the user is banned
+  const [modActionComplete, setModActionComplete] = useState<boolean>(false);
+  const [banned, setBanned] = useState<boolean>(false);
+
   const reportMessage = useRef<HTMLTextAreaElement>(null);
   const warnMessage = useRef<HTMLTextAreaElement>(null);
   const banMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>('');
   const [promoteResponseText, setPromoteResponseText] = useState<string>('');
   const [demoteResponseText, setDemoteResponseText] = useState<string>('');
+  const [banReasonSystemMsg, setBanReasonSystemMsg] = useState<string>('');
 
   // ---- Invite-to-project popup state (only used when viewing someone else) ----
   // Projects the current logged-in user owns; populated lazily so we don't fetch
@@ -244,12 +249,12 @@ const Profile = (userProfile: any) => {
     if (reportedUsers !== null && reportedUsers !== undefined) {
       for (const report of reportedUsers) {
         if (report.reportedId === currentUser) {
-          if(report.active){
-            if(report.reporterId !== userID) tempActiveList.push(report)
+          if (report.active) {
+            if (report.reporterId !== userID) tempActiveList.push(report)
           }
           else {
             tempInactiveList.push(report);
-          } 
+          }
         }
       }
     }
@@ -588,7 +593,8 @@ const Profile = (userProfile: any) => {
       })));
 
       if (res?.every(r => r.status === 200) && notif.every(r => r.status === 201)) {
-        window.location.reload();
+        setModActionComplete(true);
+        navigate(paths.routes.MODERATION);
       };
 
     } else if (action === 'warn') {
@@ -619,13 +625,21 @@ const Profile = (userProfile: any) => {
       if (warnRes.status === 201
         && deactivateRes?.every(r => r.status === 200)
         && notif.every(r => r.status === 201)) {
-        // refresh page
-        window.location.reload();
+        setModActionComplete(true);
+        navigate(paths.routes.MODERATION);
       }
     } else if (action === 'ban') {
+      if (!banMessage?.current?.value) {
+        setBanReasonSystemMsg('Ban reason cannot be empty. Please provide a reason before banning this user.');
+        setModActionComplete(true);
+        return;
+      } else {
+        setBanReasonSystemMsg('');
+      }
+
       const banRes = await banUser(
         {
-          reason: banMessage?.current?.value ?? '',
+          reason: banMessage.current.value,
           userId: parseInt(profileID) ?? 0,
         }
       );
@@ -647,10 +661,10 @@ const Profile = (userProfile: any) => {
       })));
 
       if (banRes.status === 200 &&
-        deactivateRes.every(r => r.status === 201) &&
+        deactivateRes.every(r => r.status === 200) &&
         notif.every(r => r.status === 201)) {
-        // refresh page
-        window.location.reload();
+        setModActionComplete(true);
+        setBanned(true);
       }
     } else {
       console.error(`Unknown action: ${action}`);
@@ -920,13 +934,17 @@ const Profile = (userProfile: any) => {
 
           {/* Mod options when this is a reported user */}
           {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div id="mod-user-options">
-            <h4>Request Edits or Ban?</h4>
-            <p>You can dismiss this report, request edits, or ban them.</p>
-            <h5>Active Reports</h5>
+            <h2>Reports</h2>
+            <p>You can dismiss this report, warn the user and request edits from them, or ban the user.</p>
+            <h3>Active Reports</h3>
+            <p>These reports are currently under review and have not yet been resolved. Resolve them by dismissing the reports, warning the user, or banning the user. All active reports will be resolved using the same action.</p>
             {activeReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'active-reporter-' + r.reporterId} />)}
-            {inactiveReportList.length !== 0 && <h5>Inactive Reports</h5>}
+            {inactiveReportList.length !== 0 && (<>
+              <h3>Inactive Reports</h3>
+              <p>These reports have already been reviewed and are no longer active.</p>
+            </>)}
             {inactiveReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'inactive-reporter-' + r.reporterId} />)}
-            <div id="mod-options-btns">
+            <div className="mod-options-btns">
               <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')} >Dismiss Report</button>
               <Popup>
                 <PopupButton className="mod-edit-btn">Warn User</PopupButton>
@@ -936,32 +954,69 @@ const Profile = (userProfile: any) => {
                     <p>What should the user change about their profile?</p>
                     <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={warnMessage}></textarea>
                     <div className="confirm-deny-btns">
-                      <button
-                        id="cancel-button"
+                      <PopupButton
+                        buttonId="edits-cancel-button"
                         className="button-reset"
+                        callback={() => { setModActionComplete(false); }}
                       >
                         Cancel
-                      </button>
+                      </PopupButton>
                       <button className="confirm-btn" onClick={() => resolveReport('warn')}>Submit</button>
                     </div>
                   </div>
                 </PopupContent>
               </Popup>
               <Popup>
-                <PopupButton buttonId="mod-decline-btn" className="delete-button">Ban User</PopupButton>
+                <PopupButton
+                  buttonId="mod-decline-btn"
+                  className="delete-button"
+                  callback={() => {
+                    setModActionComplete(false);
+                    setBanned(false);
+                    setBanReasonSystemMsg('');
+                  }}
+                >
+                  Ban User
+                </PopupButton>
                 <PopupContent>
                   <div className="small-popup" id="report-popup">
                     <h3>Ban {displayedProfile?.firstName} {displayedProfile?.lastName} from LookingForGroup</h3>
                     <p>Why are you banning this user?</p>
                     <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={banMessage}></textarea>
                     <div className="confirm-deny-btns">
-                      <button
-                        id="cancel-button"
+                      <PopupButton
+                        buttonId="ban-cancel-button"
                         className="button-reset"
+                        callback={() => {
+                          setModActionComplete(false);
+                          setBanned(false);
+                          setBanReasonSystemMsg('');
+                        }}
                       >
                         Cancel
-                      </button>
-                      <button className="confirm-btn" onClick={() => resolveReport('ban')}>Submit</button>
+                      </PopupButton>
+                      <Popup>
+                        <PopupButton buttonId="mod-submit-ban-btn" className="confirm-btn" callback={() => resolveReport('ban')}>Submit</PopupButton>
+                        <PopupContent>
+                          <div className="small-popup">
+                            {modActionComplete
+                              ? (<>
+                                <p>{banned
+                                  ? "The user's account has been frozen and they can no longer log in to Looking For Group. The banned user has received an email explaining the ban and the reason provided. All reporters have received an update notification informing them that action has been taken."
+                                  : banReasonSystemMsg}
+                                </p>
+                                <PopupButton buttonId="continue-button" callback={() => { if (banned) navigate(paths.routes.MODERATION); }}>
+                                  {banned ? "Continue" : "Close"}
+                                </PopupButton>
+                              </>)
+                              : <div className='placeholder-spacing'>
+                                <div className='spinning-loader'></div>
+                              </div>
+                            }
+                          </div>
+                        </PopupContent>
+                      </Popup>
+                      {/* <button className="confirm-btn" onClick={() => resolveReport('ban')}>Submit</button> */}
                     </div>
                   </div>
                 </PopupContent>
