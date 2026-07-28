@@ -35,7 +35,6 @@ const prismaUser: Users = {
   pronouns: '',
   title: '',
   ritStatus: null,
-  mentor: false,
   createdAt: new Date(),
   updatedAt: new Date(),
   displayPhone: false,
@@ -44,6 +43,7 @@ const prismaUser: Users = {
   privacy: 'public',
   phoneNumber: null,
   accessLevel: 'User',
+  galleryEnabled: true,
 };
 
 describe('deleteBlacklistService', async () => {

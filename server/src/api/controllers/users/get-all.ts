@@ -42,9 +42,6 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
       filters.strictness = req.query.strictness;
     }
   }
-  if (req.query.mentor) {
-    filters.mentor = req.query.mentor === 'true';
-  }
   if (req.query.designer) {
     filters.designer = req.query.designer === 'true';
   }

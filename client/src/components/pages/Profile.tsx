@@ -891,12 +891,12 @@ const Profile = (userProfile: any) => {
                       {displayedProfile?.pronouns}
                     </div> : ""}
                   {/* Only show mentor status if user is a mentor */}
-                  {displayedProfile?.mentor &&
+                  {/* {displayedProfile?.mentor &&
                     <div className="profile-extra">
                       <ThemeIcon id={'mentor'} width={20} height={20} className={'mono-fill'} ariaLabel={'Mentorship Status'} />
                       Mentor
                     </div>
-                  }
+                  } */}
                 </div>
 
                 <div id="profile-description">{displayedProfile?.bio}</div>

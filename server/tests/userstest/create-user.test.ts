@@ -41,7 +41,6 @@ describe('createUserService', async () => {
       pronouns: '',
       title: '',
       ritStatus: null,
-      mentor: false,
       createdAt: new Date(),
       updatedAt: new Date(),
       location: '',
@@ -49,6 +48,7 @@ describe('createUserService', async () => {
       privacy: 'public',
       phoneNumber: null,
       accessLevel: 'User',
+      galleryEnabled: true,
     };
 
     const mePrivate: MePrivate = {
@@ -69,7 +69,6 @@ describe('createUserService', async () => {
       ritStatus: 'FirstYear',
       location: '',
       bio: '',
-      mentor: false,
       projects: [],
       skills: [],
       socials: [],

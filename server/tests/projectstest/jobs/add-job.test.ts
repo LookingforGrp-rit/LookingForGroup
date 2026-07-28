@@ -117,13 +117,13 @@ const prismaUser = {
   pronouns: '',
   title: '',
   ritStatus: null,
-  mentor: false,
   createdAt: new Date(),
   updatedAt: new Date(),
   location: '',
   bio: '',
   phoneNumber: null,
   accessLevel: 'User' as UserAccessLevel,
+  galleryEnabled: true,
 };
 
 vi.mock('#services/transformers/projects/parts/project-job.ts', () => ({

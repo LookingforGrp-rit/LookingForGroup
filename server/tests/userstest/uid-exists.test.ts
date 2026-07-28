@@ -34,7 +34,6 @@ describe('uidExists test service,', async () => {
       title: 'Student',
       displayPhone: false,
       ritStatus: null,
-      mentor: false,
       createdAt: new Date(),
       updatedAt: new Date(),
       googleId: '1',
@@ -43,6 +42,7 @@ describe('uidExists test service,', async () => {
       privacy: 'public',
       phoneNumber: null,
       accessLevel: 'User',
+      galleryEnabled: true,
     };
 
     const result = await uidExistsService(1);
