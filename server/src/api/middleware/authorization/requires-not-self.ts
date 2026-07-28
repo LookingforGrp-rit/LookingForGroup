@@ -20,10 +20,14 @@ export const requiresNotSelf = (subjectParamLocations: Map<ParameterLocation, st
 
     // Checking all results
     const meId = request.currentUser.userId;
+    let success = true;
 
     ids.forEach((subjectResult) => {
+      if (!success) return;
+
       if ('status' in subjectResult) {
         response.status(subjectResult.status).json(subjectResult);
+        success = false;
         return;
       }
 
@@ -36,10 +40,15 @@ export const requiresNotSelf = (subjectParamLocations: Map<ParameterLocation, st
             error: 'You cannot do this yourself.',
           };
           response.status(res.status).json(res);
+          success = false;
           return;
         }
       });
     });
+
+    // yeah i don't know why it does this. It should theoretically sometimes be true.
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (!success) return;
 
     next();
   };
