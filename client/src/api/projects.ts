@@ -165,6 +165,18 @@ export const getMemberRequestByProjectID = async (
   return response;
 };
 
+export const changeOwner = async (
+  projectId: number,
+  userId: number,
+): Promise<ApiResponse<unknown>> => {
+  const apiURL = `/projects/${projectId}/change-owner/${userId}`;
+  const response = await PATCH(apiURL, {});
+  
+  if (response.error)
+    console.log(`Error in changeOwner: ${response.error}`);
+  return response;
+}
+
 /**
  * Retrieves data of a project by its ID
  * @param projectID -  ID of project to retrieve
@@ -949,4 +961,5 @@ export default {
   deleteJobSkill,
   // getImageByFileName,
   projectApprovalRequestExists,
+  changeOwner,
 };

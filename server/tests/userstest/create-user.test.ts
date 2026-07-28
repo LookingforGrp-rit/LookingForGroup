@@ -49,6 +49,7 @@ describe('createUserService', async () => {
       privacy: 'public',
       phoneNumber: null,
       accessLevel: 'User',
+      galleryEnabled: false,
     };
 
     const mePrivate: MePrivate = {

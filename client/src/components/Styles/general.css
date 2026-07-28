@@ -290,10 +290,12 @@ button {
 }
 
 button:focus-visible,
+[role="button"]:focus-visible,
 #back:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible,
+.project-panel:has(.project-link-overlay:focus-visible),
 textarea:focus-visible {
   transition: 0s;
   outline: 3px solid var(--primary-color);
@@ -314,7 +316,7 @@ input:focus {
 /*give sections of the page a drop shadow*/
 section {
   margin: 10px;
-  padding: 4px 16px 16px 16px;
+  padding: 16px;
   /* border-style: solid;
   border: 2px solid black;
   box-shadow: 10px 10px 5px lightblue; */
@@ -1079,6 +1081,12 @@ body.modal-open {
     justify-content: baseline;
   }
 
+  .popup-container,
+.popup-cover,
+.popup {
+  z-index: 999 !important; 
+}
+
   .popup .popup-container {
     align-items: center;
     justify-content: center;
@@ -1351,19 +1359,19 @@ body.modal-open {
   }
 
   .filter-tab {
-  display: block;
-  font-size: 1rem;
-  font-weight: 400;
-  color: var(--neutral-gray);
-  cursor: pointer;
-  transition: color 0.2s ease;
-  padding: 1px 1px 5px 1px;
-  width: max-content;
-  white-space: nowrap;
-  flex-shrink: 0;
-  
-  text-align: center;
-}
+    display: block;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--neutral-gray);
+    cursor: pointer;
+    transition: color 0.2s ease;
+    padding: 1px 1px 5px 1px;
+    width: max-content;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    text-align: center;
+  }
 
   .filter-tab:focus-visible {
     outline: 2px solid var(--primary-color);
@@ -1541,12 +1549,26 @@ Header style rules
   height: 90px;
   position: sticky;
   top: 0;
-  z-index: 9;
+  z-index: 9 !important;
   box-sizing: border-box;
 }
 
 #header.active {
-  z-index: 15;
+  z-index: 15 !important;
+}
+
+.notifications-portal {
+  position: fixed !important;
+  top: 70px;
+  right: 48px;
+  z-index: 9999 !important;
+}
+
+/* 3. Keep it responsive on mobile */
+@media screen and (max-width: 800px) {
+  .notifications-portal {
+    right: 12px;
+  }
 }
 
 @media screen and (max-width: 800px) {
@@ -1927,7 +1949,7 @@ Dropdown style rules
   /* box-shadow: 1px 2px 2px var(--dark-lighttheme); */
   position: absolute;
   background: none;
-  z-index: 15;
+  z-index: 23;
 }
 
 /* Notifications bell badge + dropdown panel */

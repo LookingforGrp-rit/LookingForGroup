@@ -50,6 +50,7 @@ import {
   updateJobSkill,
   addJobSkill,
   deleteJobSkill,
+  changeOwner,
 } from "../projects";
 import {
   CRUDRequest,
@@ -116,6 +117,7 @@ export const projectDataManager = async (projectId: number) => {
         jobSkills: [],
         members: [],
         memberRequests: [],
+        ownerChanges: [],
       },
       delete: {
         tags: [],
@@ -342,6 +344,17 @@ export const projectDataManager = async (projectId: number) => {
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
+    }
+
+    // change owner requests
+    try {
+      await runAndCollectErrors<number>(
+        "Changing owner",
+        updates.ownerChanges,
+        ({data}) => changeOwner(projectId, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string}).message;
     }
 
     if (errorMessage != "") {
@@ -1282,6 +1295,10 @@ export const projectDataManager = async (projectId: number) => {
       changes.delete.mediums.push(medium);
     }
   };
+  
+  const swapOwner = (request: CRUDRequest<number>) => {
+    changes.update.ownerChanges.push(request);
+  };
 
   return {
     saveChanges,
@@ -1310,6 +1327,7 @@ export const projectDataManager = async (projectId: number) => {
     deleteJob,
     deleteMember,
     deleteMemberRequest,
+    swapOwner,
     deleteMedium,
     getSavedProject,
   };
