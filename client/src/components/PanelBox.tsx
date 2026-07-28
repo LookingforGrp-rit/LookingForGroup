@@ -11,12 +11,13 @@ interface MasonryContext {
   projectCache?: NumberDictionary<StructuredProjectInfo>;
   followedProjectIds?: Set<number>;
   userId: number;
+  onUnfollow?: (id: number) => void;
 }
 
 // This is the actual thing that will be rendered
 // It is defined outside the function so that it doesn't have to keep remounting
 const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryContext }) => {
-  const { category, projectCache, followedProjectIds, userId } = context;
+  const { category, projectCache, followedProjectIds, userId, onUnfollow } = context;
 
   if (category === 'projects') {
     const projectId = (item as ProjectWithFollowers).projectId;
@@ -29,6 +30,7 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
           project={project}
           initialIsFollowing={followedProjectIds?.has(projectId)}
           currentUserId={userId}
+          onUnfollow={onUnfollow}
         />
       </div>
     );
@@ -49,9 +51,10 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
   else {
     return (
       <div>
-        <ProfilePanel 
-          profileData={item as UserPreview} 
-          currentUserId={userId} 
+        <ProfilePanel
+          profileData={item as UserPreview}
+          currentUserId={userId}
+          onUnfollow={onUnfollow}
         />
       </div>
     );
@@ -67,8 +70,8 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
  * @param itemList - List of items (projects or profiles) to render.
  * @returns The rendered panel box containing the items.
  */
-export const PanelBox = ({ category, itemList, projectCache, followedProjectIds, userId}: 
-  { category: string, itemList: unknown[], projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number}) => {
+export const PanelBox = ({ category, itemList, projectCache, followedProjectIds, userId, onUnfollow}:
+  { category: string, itemList: unknown[], projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, onUnfollow?: (id: number) => void}) => {
   // Test these
   const isMobile = useMediaQuery('(max-width: 500px)');
   const isTablet = useMediaQuery('(max-width: 1000px)');
@@ -104,7 +107,8 @@ export const PanelBox = ({ category, itemList, projectCache, followedProjectIds,
     category,
     projectCache,
     followedProjectIds,
-    userId
+    userId,
+    onUnfollow
   };
 
   /* 

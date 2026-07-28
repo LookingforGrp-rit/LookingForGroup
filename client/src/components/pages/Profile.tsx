@@ -1370,6 +1370,14 @@ const Profile = (userProfile: any) => {
                           itemList={followedProjectsList}
                           userId={userID as number}
                           followedProjectIds={followedProjectsIds}
+                          onUnfollow={(id) => {
+                            setFollowedProjectsList((list) => list.filter((p) => p.projectId !== id));
+                            setFollowProjectsIds((ids) => {
+                              const next = new Set(ids);
+                              next.delete(id);
+                              return next;
+                            });
+                          }}
                         />
                         : <p className="no-saved-items">You have no saved projects!</p>)
                       :
@@ -1379,6 +1387,9 @@ const Profile = (userProfile: any) => {
                           category={"profiles"}
                           itemList={followedProfilesList}
                           userId={userID as number}
+                          onUnfollow={(id) => {
+                            setFollowedProfilesList((list) => list.filter((u) => u.userId !== id));
+                          }}
                         />
                         : <p className="no-saved-items">You have no saved users!</p>)
 
