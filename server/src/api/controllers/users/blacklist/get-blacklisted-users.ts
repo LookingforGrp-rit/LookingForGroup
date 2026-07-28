@@ -1,7 +1,7 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
-import { getBlacklistedUsersService } from '../../../services/users/blacklist/get-blacklist.ts';
+import { getBlacklistedUsersService } from '#services/users/blacklist/get-blacklisted-users.ts';
 
 type GetBlacklistServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type GetBlacklistServiceSuccess = ServiceSuccessSubset<'OK'>;

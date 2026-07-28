@@ -9,6 +9,7 @@ import {
     ModeratorNotificationInput,
     BanUserInput,
     UserDetail,
+    BanDetail,
 } from "@looking-for-group/shared";
 
 /**
@@ -105,6 +106,18 @@ export const getBannedUsers = async (): Promise<ApiResponse<UserDetail[]>> => {
     const response = await GET(apiURL);
 
     if (response.error) console.log(`Error in getBannedUsers: ${response.error}`);
+    return response; 
+}
+
+/**
+ * Gets the list of all banned users
+ * @returns List of all banned users or an error message if the request fails 
+ */
+export const getBanDetail = async (userId: number): Promise<ApiResponse<BanDetail>> => {
+    const apiURL = `/users/blacklist/${userId}`;
+    const response = await GET(apiURL);
+
+    if (response.error) console.log(`Error in getBanDetail: ${response.error}`);
     return response; 
 }
 

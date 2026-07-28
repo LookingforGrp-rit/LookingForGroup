@@ -1,5 +1,6 @@
 import type { AuthenticatedRequest } from '@looking-for-group/shared';
 import { Router, type Request, type Response, type NextFunction } from 'express';
+import { getBanDetail } from '#controllers/users/blacklist/get-ban-detail.ts';
 import { createUser } from '#controllers/users/create-user.ts';
 import { getProjectsFollowing } from '#controllers/users/followings/get-proj-following.ts';
 import { getUserFollowers } from '#controllers/users/followings/get-user-followers.ts';
@@ -12,7 +13,7 @@ import { getUserByUsername } from '#controllers/users/get-user/get-by-username.t
 import { getOtherUserProjects } from '#controllers/users/get-user-proj.ts';
 import requiresModerator from '#middleware/authorization/requires-mod.ts';
 import injectCurrentUser from '#middleware/inject-current-user.ts';
-import { getBlacklistedUsers } from '../controllers/users/get-blacklisted-users.ts';
+import { getBlacklistedUsers } from '../controllers/users/blacklist/get-blacklisted-users.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import { userExistsAt } from '../middleware/validators/user-exists-at.ts';
 
@@ -54,6 +55,15 @@ router.get(
   injectCurrentUser,
   authenticated(requiresModerator),
   getBlacklistedUsers,
+);
+
+//Gets
+router.get(
+  '/blacklist/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  getBanDetail,
 );
 //#endregion
 

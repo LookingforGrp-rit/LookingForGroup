@@ -610,6 +610,35 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/users/blacklist/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get details on why the user is banned
+      responses:
+        '200':
+          description: Details on why the user is banned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    allOf:
+                      - type: object
+                      - $ref: '#/components/schemas/BanDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   # ME
   /api/me:
     get:
@@ -5867,6 +5896,8 @@ components:
       $ref: 'schemas/users.yaml#/components/schemas/UserPreview'
     UserDetail:
       $ref: 'schemas/users.yaml#/components/schemas/UserDetail'
+    BanDetail:
+      $ref: 'schemas/users.yaml#/components/schemas/BanDetail'
     UserReport:
       $ref: 'schemas/users.yaml#/components/schemas/UserReport'
     BugReport:
