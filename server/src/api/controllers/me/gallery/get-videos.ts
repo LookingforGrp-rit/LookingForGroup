@@ -1,13 +1,14 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import deleteVideoService from '#services/projects/videos/delete-video.ts';
+import getGalleryVideosService from '#services/me/gallery/get-videos.ts';
 
-//DELETE api/projects/{id}/videos/{videoId}
-//deletes a video from the project
-const deleteVideoController = async (req: Request, res: Response) => {
-  const videoId = parseInt(req.params.videoId as string);
-  //add the video to the project
-  const result = await deleteVideoService(videoId);
+//GET api/me/gallery/{userId}/videos
+//adds a video to the project
+const getGalleryVideoController = async (req: Request, res: Response) => {
+  const userId = parseInt(req.params.userId as string);
+
+  //add the video to current users gallery
+  const result = await getGalleryVideosService(userId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -22,7 +23,7 @@ const deleteVideoController = async (req: Request, res: Response) => {
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Video Not Found',
+      error: 'User Not Found',
       data: null,
     };
     res.status(404).json(resBody);
@@ -32,9 +33,9 @@ const deleteVideoController = async (req: Request, res: Response) => {
   const resBody: ApiResponse = {
     status: 200,
     error: null,
-    data: null,
+    data: result,
   };
   res.status(200).json(resBody);
 };
 
-export default deleteVideoController;
+export default getGalleryVideoController;

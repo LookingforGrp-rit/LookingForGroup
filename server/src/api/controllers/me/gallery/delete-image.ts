@@ -2,7 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { deleteGalleryImageService } from '#services/me/gallery/delete-image.ts';
 
-//DELETE api/projects/{userId}/gallery/images/{imageId}
+//DELETE api/me/{userId}/gallery/images/{imageId}
 //removes an image from a gallery
 const removeGalleryImageController = async (req: Request, res: Response) => {
   const userId = parseInt(req.params.userId as string);
