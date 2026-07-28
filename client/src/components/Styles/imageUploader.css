@@ -78,6 +78,6 @@
 /* hide when on touchscreen */
 @media (hover: hover) and (pointer: fine) {
   #hide-range-rows {
-    display: none;
+    
   }
 }

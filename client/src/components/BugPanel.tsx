@@ -62,13 +62,12 @@ export const BugPanel = ({currentUserId, reporterId, reportId }: BugPanelProps) 
     const response = await updateBugReport(reportId, bugReportText, isResolved);
   };
 
-  // Mirrors the old Input component: the count turns yellow/orange/red as it fills up
+  // Mirrors the old Input component: the count turns orange/red as it fills up
   const bugReportCountClass = () => {
     const percentLeft = (BUG_REPORT_MAX - bugReportText.length) / BUG_REPORT_MAX;
     let className = 'character-count';
-    if (percentLeft <= 0.3) className += ' character-count-near';
-    if (percentLeft <= 0.2) className += ' character-count-close';
-    if (percentLeft <= 0.1) className += ' character-count-danger';
+    if (percentLeft <= .25) className += ' character-count-close';
+    if (percentLeft <= .1) className += ' character-count-danger';
     return className;
   };
 

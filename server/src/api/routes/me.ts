@@ -45,7 +45,7 @@ import { updateProjectProfileVisibilityController } from '#controllers/me/update
 import { isUserBlocked } from '#middleware/validators/is-user-blocked.ts';
 import { MeParameterLocation } from '#middleware/validators/parameter-location/me-param-location.ts';
 import { PathParameterLocation } from '#middleware/validators/parameter-location/path-param-location.ts';
-import { ProjectInPathParameterLocation } from '#middleware/validators/parameter-location/project-in-path-param-location.ts';
+import { ProjectOwnerInPathParameterLocation } from '#middleware/validators/parameter-location/project-owner-in-path-param-location.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
@@ -76,7 +76,7 @@ router.use(requiresLogin, injectCurrentUser);
 router.post(
   '/followings/projects/:id',
   projectExistsAt('path', 'id'),
-  isUserBlocked(new ProjectInPathParameterLocation(), '', new MeParameterLocation(), ''),
+  isUserBlocked(new ProjectOwnerInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
   authenticated(addProjectFollowing),
 );
 

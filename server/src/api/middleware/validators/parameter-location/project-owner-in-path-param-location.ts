@@ -1,23 +1,23 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request } from 'express';
-import getUserReportByIdService from '#services/mod/get-user-report-by-id.ts';
+import getProjectByIdService from '#services/projects/get-proj-id.ts';
 import type { ParameterLocation } from './parameter-location.ts';
 
 /**
- * Looks in a report for the reporter's id.
+ * Looks in a project for the owner's id.
  */
-export class ReporterInPathParameterLocation implements ParameterLocation {
+export class ProjectOwnerInPathParameterLocation implements ParameterLocation {
   async getId(key: string, request: Request): Promise<number[] | ApiResponse> {
     const res: ApiResponse = { status: 0 };
-    const reportId = parseInt(request.params[key] as string);
+    const projectId = parseInt(request.params[key] as string);
 
-    if (isNaN(reportId)) {
+    if (isNaN(projectId)) {
       res.status = 400;
       res.error = 'Invalid project id.';
       return res;
     }
 
-    const result = await getUserReportByIdService(reportId);
+    const result = await getProjectByIdService(projectId);
 
     if (result === 'INTERNAL_ERROR') {
       res.status = 500;
@@ -25,10 +25,10 @@ export class ReporterInPathParameterLocation implements ParameterLocation {
       return res;
     } else if (result === 'NOT_FOUND') {
       res.status = 404;
-      res.error = 'Report not found.';
+      res.error = 'Project not found.';
       return res;
     }
 
-    return [result.reporterId];
+    return [result.owner.userId];
   }
 }

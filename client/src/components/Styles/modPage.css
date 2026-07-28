@@ -29,6 +29,10 @@
             text-align: center;
             margin: 0;
         }
+
+        textarea{
+            outline: none;
+        }
     }
 }
 
@@ -121,7 +125,7 @@
         border: none;
         border-radius: 30px;
         padding: 10px 20px;
-        background-color: var(--under-review-yellow, #ffe1a2);
+        background-color: var(--error-delete-color);
         color: black;
         font-size: 2ch;
         width: max-content;

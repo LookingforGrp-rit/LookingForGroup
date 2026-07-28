@@ -73,7 +73,7 @@ export class InviteReceivedNotificationBuilder implements NotificationBuilder {
     notification.message += `as a <strong>${roleData?.label as string}</strong>.<br /><br />`;
     if (message) {
       notification.message += `${projectOwnerName} included a message for you:<br /> `;
-      notification.message += `"${message}"<br /><br />`;
+      notification.message += `${message}<br /><br />`;
     }
     notification.message += `You can view <a href="${profileLink}">${projectOwnerName}'s profile</a> `;
     notification.message += `and the <a href="${projectLink}">project page</a>.<br /><br />`;
