@@ -587,7 +587,7 @@ input:checked+.slider:before {
       box-shadow: 0px 0px 10px 3px var(--shadow-color);
     }
 
-    .deny-btn {
+    .deny-btn, #cancel-button {
       background: none;
       border: none;
       outline: none;
