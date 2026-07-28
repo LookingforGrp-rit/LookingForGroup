@@ -5199,8 +5199,8 @@ My projects page style rules
   padding: 10px;
   border-radius: 10px;
   border: none;
-  color: var(--neutral-gray);
-  background-color: var(--main-text);
+  color: var(--main-text);
+  background-color: var(--invert-text);
 }
 
 .add-video {
