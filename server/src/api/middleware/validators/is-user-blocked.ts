@@ -20,26 +20,34 @@ export const isUserBlocked = (
     // GRABBING USER IDs //
     // Target Id
     const targetResult = await targetParamLocation.getId(targetKey, request);
-    if (typeof targetResult !== 'number') {
+    if ('status' in targetResult) {
       response.status(targetResult.status).json(targetResult);
       return;
     }
 
     const initiatorResult = await initiatorParamLocation.getId(initiatorKey, request);
-    if (typeof initiatorResult !== 'number') {
+    if ('status' in initiatorResult) {
       response.status(initiatorResult.status).json(initiatorResult);
       return;
     }
 
     // CHECKING IF THE INITATOR USER IS BLOCKED BY THE TARGET USER //
-    const result = await userIsOnBlocklistService(initiatorResult, targetResult);
+    const resultPromises: Promise<boolean | 'INTERNAL_ERROR'>[] = [];
 
-    if (result === 'INTERNAL_ERROR') {
+    initiatorResult.forEach((initiatorId) => {
+      targetResult.forEach((targetId) => {
+        resultPromises.push(userIsOnBlocklistService(initiatorId, targetId));
+      });
+    });
+
+    const results = await Promise.all(resultPromises);
+
+    if (results.includes('INTERNAL_ERROR')) {
       res.status = 500;
       res.error = 'There was an internal error';
       response.status(res.status).json(res);
       return;
-    } else if (result) {
+    } else if (results.includes(true)) {
       res.status = 403;
       res.error = 'You are blocked by the target user.';
       response.status(res.status).json(res);
