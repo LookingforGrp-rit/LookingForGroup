@@ -932,7 +932,7 @@ Project Creator and Editor Popup style rules
 }
 
 .character-count-close {
-  color: rgb(255, 166, 0);
+  color: rgb(220, 143, 0);
 }
 
 .character-count-danger {
@@ -5200,8 +5200,8 @@ My projects page style rules
   padding: 10px;
   border-radius: 10px;
   border: none;
-  color: var(--neutral-gray);
-  background-color: var(--main-text);
+  color: var(--main-text);
+  background-color: var(--invert-text);
 }
 
 .add-video {
