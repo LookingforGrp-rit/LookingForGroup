@@ -49,14 +49,26 @@ router.get('/project-report/', authenticated(getProjectReports));
 router.get('/user-report/', authenticated(getUserReports));
 router.get(
   '/project-report/:id',
-  authenticated(requiresNotSelf(new ProjectReporterInPathParameterLocation(), '')),
-  authenticated(requiresNotSelf(new ProjectReportedInPathParameterLocation(), '')),
+  authenticated(
+    requiresNotSelf(
+      new Map([
+        [new ProjectReporterInPathParameterLocation(), 'id'],
+        [new ProjectReportedInPathParameterLocation(), 'id'],
+      ]),
+    ),
+  ),
   authenticated(getProjectReportById),
 );
 router.get(
   '/user-report/:id',
-  authenticated(requiresNotSelf(new ReporterInPathParameterLocation(), '')),
-  authenticated(requiresNotSelf(new ReportedInPathParameterLocation(), '')),
+  authenticated(
+    requiresNotSelf(
+      new Map([
+        [new ReporterInPathParameterLocation(), 'id'],
+        [new ReportedInPathParameterLocation(), 'id'],
+      ]),
+    ),
+  ),
   authenticated(getUserReportById),
 );
 router.get('/bug-report/', authenticated(getBugReports));
@@ -68,8 +80,14 @@ router.patch('/clear-profile/:id/', authenticated(clearProfile));
 router.patch(
   '/user-report/:id/deactivate',
   userReportExistsAt('path', 'id'),
-  authenticated(requiresNotSelf(new ReporterInPathParameterLocation(), '')),
-  authenticated(requiresNotSelf(new ReportedInPathParameterLocation(), '')),
+  authenticated(
+    requiresNotSelf(
+      new Map([
+        [new ReporterInPathParameterLocation(), 'id'],
+        [new ReportedInPathParameterLocation(), 'id'],
+      ]),
+    ),
+  ),
   authenticated(deactivateUserReport),
 );
 
@@ -77,7 +95,7 @@ router.post('/notification', authenticated(sendNotification));
 router.post(
   '/ban-user/:id',
   userExistsAt('path', 'id'),
-  authenticated(requiresNotSelf(new PathParameterLocation(), 'id')),
+  authenticated(requiresNotSelf(new Map([[new PathParameterLocation(), 'id']]))),
   authenticated(banUser),
 );
 
@@ -85,14 +103,26 @@ router.delete('/delete-project/:id/', authenticated(deleteProject));
 router.delete('/unban-user/:id/', authenticated(unbanUser));
 router.delete(
   '/project-report/:id',
-  authenticated(requiresNotSelf(new ProjectReporterInPathParameterLocation(), '')),
-  authenticated(requiresNotSelf(new ProjectReportedInPathParameterLocation(), '')),
+  authenticated(
+    requiresNotSelf(
+      new Map([
+        [new ProjectReporterInPathParameterLocation(), 'id'],
+        [new ProjectReportedInPathParameterLocation(), 'id'],
+      ]),
+    ),
+  ),
   authenticated(deleteProjectReport),
 );
 router.delete(
   '/user-report/:id',
-  authenticated(requiresNotSelf(new ReporterInPathParameterLocation(), '')),
-  authenticated(requiresNotSelf(new ReportedInPathParameterLocation(), '')),
+  authenticated(
+    requiresNotSelf(
+      new Map([
+        [new ReporterInPathParameterLocation(), 'id'],
+        [new ReportedInPathParameterLocation(), 'id'],
+      ]),
+    ),
+  ),
   authenticated(deleteUserReport),
 );
 

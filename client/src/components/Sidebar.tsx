@@ -103,20 +103,6 @@ const SideBar = () => {
       for (const i of sidebarBtns) {
         i.classList.remove("active");
       }
-      if (startingPage === "Discover")
-        document
-          .querySelector("#discover-sidebar-btn")
-          ?.classList.add("active");
-      else if (startingPage === "Meet")
-        document.querySelector("#meet-sidebar-btn")?.classList.add("active");
-      else if (startingPage === "My Projects")
-        document
-          .querySelector("#my-projects-sidebar-btn")
-          ?.classList.add("active");
-      else if (startingPage === "My Profile")
-        document
-          .querySelector("#my-profile-sidebar-btn")
-          ?.classList.add("active");
   }
 
   const [activePage, setActivePage] = useState<string>(startingPage); // State to manage the active page [Discover, Meet, My Projects, Messages, Profile, Settings]

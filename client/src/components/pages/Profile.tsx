@@ -1023,7 +1023,9 @@ const Profile = (userProfile: any) => {
             <h2>Reports</h2>
             <p>You can dismiss this report, warn the user and request edits from them, or ban the user.</p>
             <h3>Active Reports</h3>
-            <p>These reports are currently under review and have not yet been resolved. Resolve them by dismissing the reports, warning the user, or banning the user. All active reports will be resolved using the same action.</p>
+            <p>These reports are currently under review and have not yet been resolved. 
+              Resolve them by dismissing the reports, warning the user, or banning the user. 
+              All active reports will be resolved using the same action.</p>
             {activeReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'active-reporter-' + r.reporterId} />)}
             {inactiveReportList.length !== 0 && (<>
               <h3>Inactive Reports</h3>
@@ -1455,6 +1457,14 @@ const Profile = (userProfile: any) => {
                           itemList={followedProjectsList}
                           userId={userID as number}
                           followedProjectIds={followedProjectsIds}
+                          onUnfollow={(id) => {
+                            setFollowedProjectsList((list) => list.filter((p) => p.projectId !== id));
+                            setFollowProjectsIds((ids) => {
+                              const next = new Set(ids);
+                              next.delete(id);
+                              return next;
+                            });
+                          }}
                         />
                         : <p className="no-saved-items">You have no saved projects!</p>)
                       :
@@ -1464,6 +1474,9 @@ const Profile = (userProfile: any) => {
                           category={"profiles"}
                           itemList={followedProfilesList}
                           userId={userID as number}
+                          onUnfollow={(id) => {
+                            setFollowedProfilesList((list) => list.filter((u) => u.userId !== id));
+                          }}
                         />
                         : <p className="no-saved-items">You have no saved users!</p>)
 
