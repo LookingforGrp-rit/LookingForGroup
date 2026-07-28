@@ -728,7 +728,7 @@ Project Creator and Editor Popup style rules
 .save-error-msg p,
 .save-error-msg-general p,
 #invalid-input-error p {
-  margin: -20px 0 10px 0;
+  margin: 0px 0 10px 0;
   text-align: center;
   font-size: 1.125rem;
   color: red;
