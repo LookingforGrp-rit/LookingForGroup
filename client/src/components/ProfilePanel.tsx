@@ -90,6 +90,7 @@ export const ProfilePanel = ({ profileData, currentUserId, onUnfollow }: Profile
 
   return (
     <div
+      tabIndex={0}
       className={'profile-panel'}
       onClick={() => navigate(profileURL)}
     >
