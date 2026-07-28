@@ -27,7 +27,7 @@ const sendInviteService = async (
         prospectiveMemberId: data.prospectiveMemberId,
       },
     });
-    if (req) return 'CONFLICT';
+    if (req?.requestStatus === 'Pending') return 'CONFLICT';
 
     const roles = await getRolesService();
 
@@ -65,16 +65,31 @@ const sendInviteService = async (
       return project;
     }
 
+    let result;
+
     //update db
-    const result = await prisma.memberRequests.create({
-      data: {
-        roleId: data.roleId,
-        prospectiveMemberId: data.prospectiveMemberId,
-        sentFromProject: true,
-        requestStatus: 'Pending',
-        projectId,
-      },
-    });
+    if (req) {
+      // updating if the invite already exists.
+      result = await prisma.memberRequests.update({
+        where: {
+          requestId: req.requestId,
+        },
+        data: {
+          roleId: data.roleId,
+          requestStatus: 'Pending',
+        },
+      });
+    } else {
+      result = await prisma.memberRequests.create({
+        data: {
+          roleId: data.roleId,
+          prospectiveMemberId: data.prospectiveMemberId,
+          sentFromProject: true,
+          requestStatus: 'Pending',
+          projectId,
+        },
+      });
+    }
 
     const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:5173';
 
