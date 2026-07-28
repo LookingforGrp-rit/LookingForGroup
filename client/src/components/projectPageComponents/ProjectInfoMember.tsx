@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useState } from 'react';
+import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useState } from 'react';
 import * as projectPageHelper from './ProjectPageHelper';
 import { GeneralSettings } from './GeneralSettings';
 import { MemberSettings } from './MemberSettings';
@@ -95,7 +95,7 @@ export const ProjectInfoMember = (props: { projectData: { name: string | number 
         }
         break;
       case 1:
-        editingMember.admin ? (editingMember.admin = false) : (editingMember.admin = true);
+        editingMember.admin = !editingMember.admin;
         console.log('admin status updated');
         break;
       case 2:
@@ -105,18 +105,21 @@ export const ProjectInfoMember = (props: { projectData: { name: string | number 
       case 3:
         //Get the array index of the member being deleted
         //References defaultSettings instead of tempSettings due to potential index changes caused by other member removals
-        const deletedItem = defaultSettings.projectMembers.find(
+        { const deletedItem = defaultSettings.projectMembers.find(
           (member) => member.userID === memberId
         );
         let deletedItemIndex;
-        deletedItem
-          ? (deletedItemIndex = defaultSettings.projectMembers.indexOf(deletedItem))
-          : console.log('error getting item index');
-        //Add index of deleted member to deletedMemberIndexList
-        deletedMemberIndexList.push(deletedItemIndex);
+        if(deletedItem) {
+          deletedItemIndex = defaultSettings.projectMembers.indexOf(deletedItem);
+          //Add index of deleted member to deletedMemberIndexList
+          deletedMemberIndexList.push(deletedItemIndex);
+        }
+        else{
+          console.log('error getting item index');
+        }
         //Remove the relevant member from tempSettings
         tempSettings.projectMembers.splice(tempSettings.projectMembers.indexOf(editingMember), 1);
-        break;
+        break; }
       case 4:
         //Get the original array index of the member being restored
         //Gets data on the member using memberId, then finds the index of that data in defaultSettings
