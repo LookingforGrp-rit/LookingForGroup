@@ -20,6 +20,9 @@ interface ProjectPanelProps {
   project: ProjectWithFollowers;
   initialIsFollowing?: boolean;
   currentUserId: number;
+  // Called after the user unfollows, so a parent (e.g. the profile "likes"
+  // list) can drop this card immediately instead of waiting for a refresh.
+  onUnfollow?: (projectId: number) => void;
 }
 
 /**
@@ -30,7 +33,7 @@ interface ProjectPanelProps {
  * @param project - ProjectWithFollowers object containing project info, thumbnail, tags, and follower data
  * @returns JSX element rendering a clickable project preview panel with follow functionality
  */
-export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: ProjectPanelProps) => {
+export const ProjectPanel = ({ project, initialIsFollowing, currentUserId, onUnfollow }: ProjectPanelProps) => {
   const navigate = useNavigate();
   const projectURL = `${paths.routes.PROJECT}?projectID=${project.projectId}`;
 
@@ -139,58 +142,61 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
       await deleteProjectFollowing(project.projectId);
       setFollowing(false);
       setFollowCount(followCount - 1);
+      onUnfollow?.(project.projectId);
     }
   };
 
   return (
-    <Link to={projectURL} className='project-link'>
-      <div className={'project-panel'}>
-        <div className="project-image-container">
-          <img
-            src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
-            alt={'project image'}
-          />
-          <div className={'project-panel-hover'}>
-            <div id="quote">{project.hook}</div>
-          </div>
-        </div>
+    <div className={'project-panel'}>
+      <Link to={projectURL} className='project-link-overlay' aria-label={`View project: ${project.title}`}>
+        {/* Empty, used to prevent infinite tabbing */}
+      </Link>
 
-        <div className='project-title-likes-tabs'>
-          <h2>{project.title}</h2>
-          <div className='project-likes'>
-            <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
-              {formatFollowCount(followCount)}
-            </p>
-            
-            {isFollowing ? (
-              <ThemeIcon
-                width={28}
-                height={25}
-                id={"heart-filled"}
-                ariaLabel="following"
-                onClick={(e) => {e.stopPropagation(); e.preventDefault(); handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>);}}
-                role='button'
-              />
-            ) : (
-              <ThemeIcon
-                width={28}
-                height={25}
-                id={"heart-empty"}
-                ariaLabel="following"
-                onClick={(e) => {e.stopPropagation(); e.preventDefault(); handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>);}}
-                role='button'
-              />
-            )}
-            
-          </div>
-          <ProjectPanelJob project={project}/>
-          <div>
-            <hr/>
-            <ProjectPanelMeta project={project}/>
-          </div>
+      <div className="project-image-container">
+        <img
+          src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
+          alt={`${project.title} banner`}
+        />
+        <div className={'project-panel-hover'}>
+          <div id="quote">{project.hook}</div>
         </div>
       </div>
-    </Link>
+
+      <div className='project-title-likes-tabs'>
+        <h2>{project.title}</h2>
+        <div className='project-likes'>
+          <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
+            {formatFollowCount(followCount)}
+          </p>
+          
+          {isFollowing ? (
+            <ThemeIcon
+              width={28}
+              height={25}
+              id={"heart-filled"}
+              ariaLabel="following"
+              onClick={(e) => {e.stopPropagation(); e.preventDefault(); handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>);}}
+              role='button'
+            />
+          ) : (
+            <ThemeIcon
+              width={28}
+              height={25}
+              id={"heart-empty"}
+              ariaLabel="following"
+              onClick={(e) => {e.stopPropagation(); e.preventDefault(); handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>);}}
+              role='button'
+            />
+          )}
+          
+        </div>
+        <ProjectPanelJob project={project}/>
+        <div>
+          <hr/>
+          <ProjectPanelMeta project={project}/>
+        </div>
+      </div>
+    </div>
   );
 };
 

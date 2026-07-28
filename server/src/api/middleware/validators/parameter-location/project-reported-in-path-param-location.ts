@@ -8,9 +8,9 @@ import type { ParameterLocation } from './parameter-location.ts';
  * Looks in a project report for the reported's id.
  */
 export class ProjectReportedInPathParameterLocation implements ParameterLocation {
-  async getId(_key: string, request: Request): Promise<number | ApiResponse> {
+  async getId(key: string, request: Request): Promise<number[] | ApiResponse> {
     const res: ApiResponse = { status: 0 };
-    const reportId = parseInt(request.params.id as string);
+    const reportId = parseInt(request.params[key] as string);
 
     if (isNaN(reportId)) {
       res.status = 400;
@@ -42,6 +42,6 @@ export class ProjectReportedInPathParameterLocation implements ParameterLocation
       return res;
     }
 
-    return projectResult.owner.userId;
+    return [projectResult.owner.userId];
   }
 }

@@ -29,6 +29,10 @@
             text-align: center;
             margin: 0;
         }
+
+        textarea{
+            outline: none;
+        }
     }
 }
 
@@ -49,7 +53,7 @@
         display: flex;
         gap: 15px;
         height: 40px;
-        padding-top:10px;
+        padding-top: 10px;
         align-items: flex-end;
         overflow-x: auto;
         scrollbar-color: var(--primary-color) var(--liked-section-bg);
@@ -101,15 +105,16 @@
     }
 }
 
-#mod-options-btns {
+.mod-options-btns {
     flex-wrap: wrap;
+    margin-top: 20px;
 
     #mod-approve-btn {
         border: none;
         border-radius: 30px;
         padding: 10px 20px;
         background-color: var(--approved-green, #b1fca9);
-        color: var(--main-text);
+        color: black;
         font-size: 2ch;
         width: max-content;
         margin: auto min(1vw, 10px);
@@ -120,8 +125,8 @@
         border: none;
         border-radius: 30px;
         padding: 10px 20px;
-        background-color: var(--under-review-yellow, #ffe1a2);
-        color: var(--invert-text);
+        background-color: var(--error-delete-color);
+        color: black;
         font-size: 2ch;
         width: max-content;
         margin: auto min(1vw, 10px);
@@ -150,6 +155,10 @@
     margin-top: 1vw;
     width: 100%;
     max-width: calc(100% - 40px);
+}
+
+#mod-user-options>p {
+    margin-top: 0;
 }
 
 #manage-perms-popup {
@@ -276,6 +285,212 @@
     padding: 10px;
 }
 
+/* Bug Panel */
+
+.bug-panel {
+  width: 100%;
+  height: auto;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--header-color);
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  max-width: none;
+  overflow: hidden;
+  text-decoration: none;
+  margin: 10px 0;
+
+  .bug-reporter-profile {
+    width: clamp(45px, 15vw, 75px);
+  height: clamp(45px, 15vw, 75px);
+  border-radius: 50%;
+  border: 2px solid white;
+  object-fit: cover;
+  margin-right: 10px;
+  }
+
+  .bug-reporter {
+    width: 95%;
+    margin: 10px auto;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .bug-reporter-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .bug-reporter-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Name */
+  h2 {
+    margin: 8px 15px 0 15px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    line-height: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  #see-details-btn {
+    border: none;
+    border-radius: 30px;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: var(--invert-text);
+    font-size: 2ch;
+    width: max-content;
+    margin: auto min(1vw, 10px);
+    font-weight: 700;
+  }
+  .popup:has(#report-popup) {
+    overflow-x: hidden;
+  }
+  #report-popup {
+    height: fit-content;
+  }
+}
+
+#bug-reporter-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--primary-color);
+}
+/* Reporter Component */
+.reporter {
+    box-sizing: border-box;
+    max-width: 500px;
+    background-color: var(--bg-color);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.reporter>div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.reporter .reporter-info {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    min-width: 35%;
+}
+
+.reporter-header {
+    font-size: large;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin: 10px auto;
+}
+
+.reporter-profile:link,
+.reporter-profile:visited {
+    display: flex;
+    align-self: center;
+    flex-direction: column;
+    text-decoration: none;
+}
+
+.reporter-profile:hover {
+    text-decoration: underline;
+}
+
+.reporter-profile img {
+    width: clamp(45px, 15vw, 75px);
+    height: clamp(45px, 15vw, 75px);
+    border-radius: 50%;
+    border: 2px solid white;
+    object-fit: cover;
+    margin: auto;
+}
+
+.reporter-profile p {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.tooltip {
+    position: relative;
+}
+
+.tooltip-text {
+    position: absolute;
+    left: 0;
+    top: 30px;
+    z-index: 1;
+
+    width: 15ch;
+    padding: 5px;
+    background-color: var(--liked-section-bg);
+    color: var(--main-text);
+    text-align: center;
+    border-radius: 6px;
+
+    visibility: hidden;
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+}
+
+.reporter .open-btn {
+    /* height: 40px; */
+    padding: 5px 16px;
+    font-size: 1.25rem;
+    border: none;
+    border-radius: 40px;
+    background-color: var(--primary-color);
+    color: var(--invert-text);
+    font-weight: 700;
+    margin: auto;
+}
+
+.reporter .message-area {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.reporter .message-area textarea,
+.reporter .message-area input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.reporter .message-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.reporter .cancel-btn {
+    color: var(--main--text);
+    font-weight: normal;
+    background-color: transparent;
+}
+
+.reporter .reason {
+    width: 100%;
+}
+
 /* Mobile */
 @media only screen and (max-width: 1200px) {
     .list-card-status {
@@ -312,6 +527,16 @@
     }
 }
 
+@media only screen and (max-width: 800px) {
+    .reporter>div {
+        flex-direction: column;
+    }
+
+    .reporter .message-area {
+        width: 100%;
+    }
+}
+
 @media only screen and (min-width:601px) and (max-width:950px) {
     .mod-tool .responsive-table tr td {
         font-size: 0.8em;
@@ -325,8 +550,8 @@
             height: fit-content;
         }
 
-        #mod-content-container{
-                 border-top-right-radius: 0px;
+        #mod-content-container {
+            border-top-right-radius: 0px;
         }
 
         #mod-actions-tabs {
@@ -402,6 +627,14 @@
         font-weight: bold;
         color: var(--main-text);
         text-align: left;
+    }
+    #report-popup {
+        .mod-options-btns {
+            width: 150%;
+            #mod-dismiss-btn {
+                font-size: 1em;
+            }
+        }
     }
 }
 

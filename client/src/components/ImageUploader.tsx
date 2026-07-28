@@ -326,7 +326,7 @@ useEffect(() => {
         ></canvas>
 
         {/* <img ref={tempImage} id="refImage" src={cropImg} alt={cropImg} /> */}
-        {/* <div id="aspect-row">
+        <div id="aspect-row">
           <Select>
           <SelectButton
             placeholder={"Select an aspect Ratio"}
@@ -359,7 +359,10 @@ useEffect(() => {
             )}
           />
           </Select>
-        </div> */}
+        </div>
+        <div className="project-crop-mouse-instructions">
+          <p>You can also drag the image around the view using the mouse, and zoom in and out with the scroll wheel.</p>
+        </div>
         <div id="hide-range-rows">  
           <div id="zoom-row">
             <input

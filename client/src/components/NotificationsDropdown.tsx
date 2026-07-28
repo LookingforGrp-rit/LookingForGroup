@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Dropdown, DropdownButton, DropdownContent } from "./Dropdown";
-import { createPortal } from "react-dom";
 import { useNotifications } from "../hooks/useNotifications";
 import { getNotification } from "../api/notifications";
 import DOMPurify from 'dompurify';

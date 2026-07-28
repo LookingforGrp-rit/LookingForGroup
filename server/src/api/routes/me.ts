@@ -9,6 +9,7 @@ import { addProjectFollowing } from '#controllers/me/followings/add-follow-proj.
 import { addUserFollowing } from '#controllers/me/followings/add-follow-user.ts';
 import { deleteProjectFollowing } from '#controllers/me/followings/delete-follow-proj.ts';
 import { deleteUserFollowing } from '#controllers/me/followings/delete-follow-user.ts';
+import addGalleryImageController from '#controllers/me/gallery/add-image.ts';
 import { getAccount } from '#controllers/me/get-acc.ts';
 import { getMyProjects } from '#controllers/me/get-my-proj.ts';
 import { getUsernameByGoogle } from '#controllers/me/get-username-google.ts';
@@ -39,7 +40,7 @@ import { updateProjectProfileVisibilityController } from '#controllers/me/update
 import { isUserBlocked } from '#middleware/validators/is-user-blocked.ts';
 import { MeParameterLocation } from '#middleware/validators/parameter-location/me-param-location.ts';
 import { PathParameterLocation } from '#middleware/validators/parameter-location/path-param-location.ts';
-import { ProjectInPathParameterLocation } from '#middleware/validators/parameter-location/project-in-path-param-location.ts';
+import { ProjectOwnerInPathParameterLocation } from '#middleware/validators/parameter-location/project-owner-in-path-param-location.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
@@ -70,7 +71,7 @@ router.use(requiresLogin, injectCurrentUser);
 router.post(
   '/followings/projects/:id',
   projectExistsAt('path', 'id'),
-  isUserBlocked(new ProjectInPathParameterLocation(), '', new MeParameterLocation(), ''),
+  isUserBlocked(new ProjectOwnerInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
   authenticated(addProjectFollowing),
 );
 
@@ -183,6 +184,14 @@ router.delete(
   '/socials/:id',
   authenticated(userAttributeExistsAt('social', 'path', 'id')),
   authenticated(deleteSocial),
+);
+//#endregion
+
+//#region Gallery routes
+router.post(
+  '/gallery/:userId/images',
+  upload.single('file'),
+  authenticated(addGalleryImageController),
 );
 //#endregion
 
