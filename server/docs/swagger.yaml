@@ -4577,7 +4577,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/mod/unban-user/{googleId}:
+  /api/mod/unban-user/{id}:
     delete:
       summary: Unbans a user by removing them from a blacklist
       tags:
@@ -4585,10 +4585,10 @@ paths:
       security:
         - shibbolethAuth: []
       parameters:
-        - name: googleId
+        - name: id
           in: path
           required: true
-          description: Google ID of the user to be unbanned
+          description: User ID of the user to be unbanned
           schema:
             type: string
         - in: query

@@ -1,23 +1,25 @@
 /* Styles for deleting a user/account from the settings page */
 
-.delete-user-title, #delete-success-title {
-    padding: 2rem 2rem 0;
-    color: var(--primary-color);
-    background-color: transparent;
-    font-size: 2ch;
-    font-weight: 700;
-    border: none;
-    text-align: center;
+.delete-user-title,
+#delete-success-title {
+  padding: 2rem 2rem 0;
+  color: var(--primary-color);
+  background-color: transparent;
+  font-size: 2ch;
+  font-weight: 700;
+  border: none;
+  text-align: center;
 }
 
-.delete-user-extra-info, #delete-success-extra-info {
-    padding: 1rem;
-    margin: 0 1rem;
-    text-align: center;
-    /* font-size: 1.6ch; */
-    font-style: italic;
-    font-size: 1.4ch;
-    color: var(--neutral-gray);
+.delete-user-extra-info,
+#delete-success-extra-info {
+  padding: 1rem;
+  margin: 0 1rem;
+  text-align: center;
+  /* font-size: 1.6ch; */
+  font-style: italic;
+  font-size: 1.4ch;
+  color: var(--neutral-gray);
 }
 
 .delete-user-confirm-info {
@@ -43,11 +45,11 @@
 }
 
 .delete-user-button-pair {
-    padding: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
 #continue-button {

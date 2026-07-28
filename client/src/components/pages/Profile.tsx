@@ -26,11 +26,11 @@ import profilePicture from "../../images/lfrog.png";
 import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles } from "../../api/users";
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
-import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel, UserReport } from '@looking-for-group/shared';
+import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel, UserReport, BanDetail } from '@looking-for-group/shared';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
-import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification, deactivateUserReport } from "../../api/mod-tools";
+import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification, deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi } from "../../api/mod-tools";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -87,6 +87,8 @@ const Profile = (userProfile: any) => {
   // If the user is banned
   const [modActionComplete, setModActionComplete] = useState<boolean>(false);
   const [banned, setBanned] = useState<boolean>(false);
+  const [unbanned, setUnbanned] = useState<boolean>(false);
+  const [banDetail, setBanDetail] = useState<BanDetail>();
 
   const reportMessage = useRef<HTMLTextAreaElement>(null);
   const warnMessage = useRef<HTMLTextAreaElement>(null);
@@ -234,7 +236,7 @@ const Profile = (userProfile: any) => {
   };
 
   /**
-   * Checks if the user has been reported and updates the useState
+   * Checks if the displayed user has been reported and updates the useState
    */
   const isUserReported = async () => {
     const tempActiveList: UserReport[] = [];
@@ -255,6 +257,25 @@ const Profile = (userProfile: any) => {
     }
     setActiveReportList(tempActiveList);
     setInactiveReportList(tempInactiveList);
+  };
+
+  /**
+   * Checks if the displayed user is a banned user 
+   * If so, get more details on it
+   */
+  const isUserBanned = async () => {
+    const displayedUser = parseInt(profileID);
+    const bannedUsers = (await getBannedUsers()).data;
+    if (bannedUsers) {
+      for (const u of bannedUsers) {
+        if (u.userId === displayedUser) {
+          setBanned(true);
+          const res = await getBanDetail(displayedUser);
+          if (res.data)
+            setBanDetail(res.data);
+        }
+      }
+    }
   };
 
   /**
@@ -438,6 +459,9 @@ const Profile = (userProfile: any) => {
 
     // is the displayed profile a reported user
     isUserReported();
+
+    // is the displayed profile a banned user
+    isUserBanned();
 
     return () => {
       cancelled = true;
@@ -663,6 +687,19 @@ const Profile = (userProfile: any) => {
     } else {
       console.error(`Unknown action: ${action}`);
     }
+  };
+
+  /**
+   * Unbans a banned user
+   * @param userId User Id of banned user
+   */
+  const unbanUser = async (userId: number) => {
+    const res = await unbanUserApi(userId);
+
+    if (res.status === 200) {
+      setUnbanned(true);
+    }
+    setModActionComplete(true);
   };
 
   // --------------------
@@ -927,9 +964,57 @@ const Profile = (userProfile: any) => {
           </div>
 
           {/* Mod options for unbanning a banned user */}
-          {(!isUsersProfile) && isUserMod && banned && (<>
+          {(!isUsersProfile) && isUserMod && banned && banDetail && displayedProfile && (<>
             <div className="mod-user-options">
               <h2>Unban this User</h2>
+              <p>Unbanning this user will unfreeze their account, allowing them to log in to Looking For Group again.
+                Any regular user permissions will be restored.</p>
+              <p>Ban Reason: {banDetail.banReason}</p>
+              <div className="mod-options-btns">
+                <Popup>
+                  <PopupButton className="mod-unban-btn">Unban</PopupButton>
+                  <PopupContent>
+                    <div className="small-popup" id="report-popup">
+                      <h3>Unban {displayedProfile.firstName} {displayedProfile.lastName}</h3>
+                      <p>Are you sure you want to unban this user?
+                        After this user is unbanned, their account will be unfrozen and they will be able to log in to Looking For Group again.
+                        Their regular user permissions will also be restored.</p>
+                      <div className="confirm-deny-btns">
+                        <PopupButton
+                          buttonId="unban-cancel-button"
+                          className="button-reset"
+                          callback={() => {
+                            setModActionComplete(false);
+                          }}
+                        >
+                          Cancel
+                        </PopupButton>
+                        <Popup>
+                          <PopupButton buttonId="mod-unban-btn" className="delete-button" callback={() => unbanUser(displayedProfile.userId)}>Unban</PopupButton>
+                          <PopupContent>
+                            <div className="small-popup">
+                              {modActionComplete
+                                ? (<>
+                                  <p>{unbanned
+                                    ? "This user has been unbanned and has received an email notification. Their account has been unfrozen, they can now log in to Looking For Group again, and all regular user permissions have been restored."
+                                    : "Uh-oh! Something went wrong while unbanning this user. Please try again later."}
+                                  </p>
+                                  <PopupButton buttonId="continue-button" callback={() => { if (unbanned) navigate(paths.routes.MODERATION); }}>
+                                    {unbanned ? "Continue" : "Close"}
+                                  </PopupButton>
+                                </>)
+                                : <div className='placeholder-spacing'>
+                                  <div className='spinning-loader'></div>
+                                </div>
+                              }
+                            </div>
+                          </PopupContent>
+                        </Popup>
+                      </div>
+                    </div>
+                  </PopupContent>
+                </Popup>
+              </div>
             </div>
           </>)}
 
@@ -1017,7 +1102,6 @@ const Profile = (userProfile: any) => {
                           </div>
                         </PopupContent>
                       </Popup>
-                      {/* <button className="confirm-btn" onClick={() => resolveReport('ban')}>Submit</button> */}
                     </div>
                   </div>
                 </PopupContent>

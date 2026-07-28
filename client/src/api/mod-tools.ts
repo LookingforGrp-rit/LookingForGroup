@@ -278,6 +278,14 @@ export const deleteUserReport = async (reportId: number,): Promise<ApiResponse> 
     return response;
 };
 
+export const unbanUser = async (userId: number): Promise<ApiResponse> => {
+    const apiURL = `/mod/unban-user/${userId}`;
+    const response = await DELETE(apiURL, {});
+
+    if (response.error) console.log(`Error in unbanUser: ${response.error}`);
+    return response;
+};
+
 /**
  * Gets all bug reports
  * @returns ApiResponse from the API call to get bug reports

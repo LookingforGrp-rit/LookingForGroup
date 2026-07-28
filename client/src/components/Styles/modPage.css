@@ -117,7 +117,7 @@
         font-weight: 700;
     }
 
-    .mod-edit-btn {
+    .mod-edit-btn, .mod-unban-btn {
         border: none;
         border-radius: 30px;
         padding: 10px 20px;
@@ -128,7 +128,7 @@
         margin: auto min(1vw, 10px);
         font-weight: 700;
     }
-
+    
     #mod-dismiss-btn {
         border: none;
         border-radius: 30px;
