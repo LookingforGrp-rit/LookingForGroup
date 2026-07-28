@@ -2573,6 +2573,17 @@ button.edit-position-contact .project-member-image {
     margin-bottom: 20px;
   }
 
+  .project-crop-mouse-instructions {
+    margin-top: 20px;
+    font-size: 0.75rem;
+    margin-bottom: 20px;
+
+    p{
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+  }
+
   .confirm-project-crop {
     display: flex;
     flex-direction: row;
