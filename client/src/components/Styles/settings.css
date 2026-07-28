@@ -342,6 +342,7 @@ input:checked+.slider:before {
     font-size: 3rem;
     font-weight: 600;
     color: var(--primary-color);
+    margin-top: 0;
     margin-bottom: 5px;
     align-self: center;
   }
