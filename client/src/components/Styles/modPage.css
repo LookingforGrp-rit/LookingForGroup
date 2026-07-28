@@ -147,13 +147,13 @@
     }
 }
 
-#mod-user-options {
+.mod-user-options {
     margin-top: 1vw;
     width: 100%;
     max-width: calc(100% - 40px);
 }
 
-#mod-user-options>p {
+.mod-user-options>p {
     margin-top: 0;
 }
 
@@ -556,7 +556,7 @@
         }
     }
 
-    #mod-user-options {
+    .mod-user-options {
         margin: 20px 0;
     }
 

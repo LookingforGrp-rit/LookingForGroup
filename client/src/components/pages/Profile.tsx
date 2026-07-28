@@ -16,7 +16,7 @@ import { Header, loggedIn } from "../Header";
 import { PanelBox } from "../PanelBox";
 import { ProfileEditPopup } from "../Profile/ProfileEditPopup";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
-import { Popup, PopupButton, PopupContent } from "../Popup";
+import { Popup, PopupButton, PopupContent, PopupContext } from "../Popup";
 import { Select, SelectButton, SelectOptions } from "../Select";
 import { ThemeIcon } from "../ThemeIcon";
 import { ShareButton } from "../ShareButton";
@@ -26,13 +26,11 @@ import profilePicture from "../../images/lfrog.png";
 import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles } from "../../api/users";
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
-import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel } from '@looking-for-group/shared';
+import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel, UserReport } from '@looking-for-group/shared';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
 import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification, deactivateUserReport } from "../../api/mod-tools";
-import { PopupContext } from "../Popup";
-import { UserReport } from "@looking-for-group/shared";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -163,8 +161,6 @@ const Profile = (userProfile: any) => {
     loadFollow();
   }, [userID, profileID]);
 
-
-
   // --------------------
   // Helper functions
   // --------------------
@@ -191,8 +187,8 @@ const Profile = (userProfile: any) => {
   }, [profileID, userID])
 
   /**
-     * Checks mod permissions for the user on render (in useEffect). The CURRENT user
-     */
+   * Checks mod permissions for the user on render (in useEffect). The CURRENT user
+   */
   const getUserPermissions = async () => {
     /* Ensures the user is logged in */
     const userAccount = await getCurrentAccount();
@@ -237,7 +233,6 @@ const Profile = (userProfile: any) => {
     }
   };
 
-
   /**
    * Checks if the user has been reported and updates the useState
    */
@@ -266,7 +261,6 @@ const Profile = (userProfile: any) => {
    * Toggles following the user.
    */
   const followUser = async () => {
-
     if (!loggedIn) {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search } }); // Redirect if logged out
     } else {
@@ -932,8 +926,15 @@ const Profile = (userProfile: any) => {
             </div>
           </div>
 
+          {/* Mod options for unbanning a banned user */}
+          {(!isUsersProfile) && isUserMod && banned && (<>
+            <div className="mod-user-options">
+              <h2>Unban this User</h2>
+            </div>
+          </>)}
+
           {/* Mod options when this is a reported user */}
-          {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div id="mod-user-options">
+          {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div className="mod-user-options">
             <h2>Reports</h2>
             <p>You can dismiss this report, warn the user and request edits from them, or ban the user.</p>
             <h3>Active Reports</h3>
