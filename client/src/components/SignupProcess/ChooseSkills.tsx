@@ -6,6 +6,7 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "../ProjectCreatorEditor/tabs/SortableItem";
 import TagDisplay, { skillToTagOrSkill } from "../TagDisplay";
+import { ThemeIcon } from "../ThemeIcon";
 
 const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
 
@@ -228,19 +229,31 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 									</div>
 								</SortableContext>
 							</DndContext>
-							<button
-								type="button"
-								hidden={selectedSkills.length === 0}
-								className="delete-tags-btn"
-								onClick={() => {
-									setSelectedSkills([]);
+
+
+						<div id="clear-all-button-align">
+								<button
+								  type="button"
+								  className="delete-position-button-alt button-reset"
+								  onClick={() => {
+										setSelectedSkills([]);
 									setSelectedSkillIds([]);
-								}}
-								title="Remove all selected tags"
-							>
-								<i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
-							</button>
-						</div>
+								  }}
+
+								  title="Remove all selected tags"
+								>
+								  <div id="clear-all-trash-row">
+								  <p id="clear-all-trash-text">Clear All</p>
+								 <ThemeIcon
+									id="trash"
+									width={18}
+									height={18}
+									ariaLabel="Delete position"
+									 />
+								  </div>
+								</button>
+								</div>
+							  </div>
 						<div id="project-editor-tag-search">
 							<SearchBar
 								key={currentSkillsTab}

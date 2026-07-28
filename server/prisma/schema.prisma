@@ -377,8 +377,8 @@ model Users {
   galleryEnabled    Boolean             @default(false)
   blocklistBlocked  Blocklist[]         @relation("UserToBlocked")
   blocklistBlocker  Blocklist[]         @relation("UserToBlocker")
-  gallery_images    GalleryImages[]
-  gallery_videos    gallery_videos[]
+  galleryImages    GalleryImages[]      @relation("gallery_images")
+  galleryVideos    GalleryVideos[]      @relation("gallery_videos")
   memberRequest     MemberRequests[]
   members           Members[]
   receiver          Notifications[]     @relation("FK_receiver_to_notification")
@@ -399,6 +399,30 @@ model Users {
   @@map("users")
 }
 
+model GalleryImages {
+  galleryImageId Int    @id @default(autoincrement())
+  image          String
+  altText        String
+  position       Int    @default(0)
+
+  userId Int
+  user  Users @relation("gallery_images", fields: [userId], references: [userId])
+
+  @@map("gallery_images")
+}
+
+model GalleryVideos {
+  galleryVideoId Int    @id @default(autoincrement())
+  videoUrl       String
+  title          String
+  position       Int    @default(0)
+
+  userId Int
+  user  Users @relation("gallery_videos",fields: [userId], references: [userId])
+
+  @@map("gallery_videos")
+}
+
 model JobSkills {
   skillId     Int              @map("skill_id")
   jobId       Int              @map("job_id")
@@ -410,29 +434,6 @@ model JobSkills {
   @@id([jobId, skillId])
   @@index([skillId], map: "FK_job_skills_skills")
   @@map("job_skills")
-}
-
-model GalleryImages {
-  galleryImageId Int     @id @default(autoincrement())
-  image          String? @db.VarChar(500)
-  altText        String? @db.VarChar(200)
-  position       Int     @default(0)
-  userId         Int
-  users          Users   @relation(fields: [userId], references: [userId])
-
-  @@index([userId], map: "gallery_images_userId_fkey")
-  @@map("gallery_images")
-}
-
-model gallery_videos {
-  galleryVideoId Int     @id @default(autoincrement())
-  videoUrl       String? @db.VarChar(500)
-  title          String? @db.VarChar(200)
-  position       Int     @default(0)
-  userId         Int
-  users          Users   @relation(fields: [userId], references: [userId])
-
-  @@index([userId], map: "gallery_videos_userId_fkey")
 }
 
 enum JobsAvailability {

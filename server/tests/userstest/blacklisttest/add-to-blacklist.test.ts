@@ -44,7 +44,7 @@ const prismaUser: Users = {
   privacy: 'public',
   phoneNumber: null,
   accessLevel: 'User',
-  galleryEnabled: true,
+  galleryEnabled: false,
 };
 
 describe('addBlacklistService', async () => {

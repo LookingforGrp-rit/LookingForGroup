@@ -140,6 +140,11 @@ Project Panel component style rules
     }
   }
 
+  .project-link-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
 
   hr {
     /* color: var(--header-color); */
@@ -227,6 +232,8 @@ Project Panel component style rules
       }
 
       svg {
+        position: relative;
+        z-index: 2;
         cursor: pointer;
         transform: scale(1.2);
       }
@@ -288,6 +295,10 @@ Project Panel component style rules
     visibility: visible;
     opacity: 1;
     cursor: pointer;
+  }
+
+  h2 {
+    text-decoration: underline;
   }
 }
 
@@ -638,6 +649,7 @@ Project Creator and Editor Popup style rules
 }
 
 #report-popup {
+  text-align: center;
   h3 {
     font-size: 1.25rem;
     font-weight: 700;
@@ -650,8 +662,21 @@ Project Creator and Editor Popup style rules
     font-size: 1.125rem;
   }
 
-  textarea {
+  /* Row holding the input box and its required asterisk, so the asterisk sits
+     to the right of the box instead of wrapping underneath it. align-self keeps
+     the row full width in the centered flex column (stretch subtracts margins). */
+  #bug-report-field {
+    display: flex;
+    align-items: flex-start;
+    align-self: stretch;
     margin: 20px;
+  }
+
+  /* The textarea (in its counter container) fills the row; the asterisk takes
+     only what it needs beside it. */
+  #bug-report-field .input-multiline-container {
+    flex: 1;
+    min-width: 0;
   }
 
   textarea:focus {
@@ -670,13 +695,11 @@ Project Creator and Editor Popup style rules
     font-weight: 700;
   }
 
-  #input-bug-report{
+  #input-bug-report, #input-bug-report-message {
     margin-bottom: 0;
-  }
-
-  .required-asterisk{
-    margin-bottom: 0.5em;
-    margin-top: 0;
+    resize: vertical;
+    /* Leave room for the character count in the bottom-right corner. */
+    padding-bottom: 28px;
   }
 }
 
@@ -1985,11 +2008,25 @@ Project Creator and Editor Popup style rules
 
 #project-team-add-member-name,
 #project-team-add-member-role,
+#project-team-change-owner,
 #project-team-add-member-permissions {
   display: flex;
   align-items: center;
   align-self: stretch;
   gap: 8px;
+}
+
+#project-team-change-owner {
+  margin-top: 20px;
+  flex-direction: column;
+
+  label {
+    text-align: center;
+  }
+
+  #user-search-results {
+    background-color: var(--dropdown-color);
+  }
 }
 
 #project-team-add-member-name label {
@@ -3755,6 +3792,51 @@ Project Carousel style rules
   }
 }
 
+/* Full-image viewer opened by clicking a carousel image.
+   Sits above the popup cover (z-index 20) so it works even over a popup. */
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5vh 5vw;
+  background-color: rgba(0, 0, 0, 0.8);
+  cursor: zoom-out;
+}
+
+/* The image renders at its natural size, only scaling DOWN to fit the viewport.
+   This is what makes the viewer's size track the image's size. */
+.image-lightbox-img {
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.6);
+  cursor: default;
+}
+
+.image-lightbox-close {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.image-lightbox-close img {
+  width: 100%;
+  height: 100%;
+  filter: invert(1);
+}
+
 #project-info-panel {
   grid-area: info;
   display: flex;
@@ -3787,7 +3869,7 @@ Project Carousel style rules
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: space-between;
-  min-width: fit-content;
+  min-width: min-content;
   max-width: 100%;
   gap: 10px;
   background-color: var(--header-color);
@@ -3803,10 +3885,10 @@ Project Carousel style rules
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary-color);
-    margin-bottom: 5px;
+    margin-bottom: 10px;
   }
 
-  #mod-options-btns {
+  .mod-options-btns {
     display: flex;
     align-items: center;
     flex-direction: row;
@@ -3855,6 +3937,7 @@ Project Carousel style rules
 
     #project-info-buttons {
       margin-left: 0px;
+      flex-wrap: wrap;
     }
   }
 
@@ -3875,7 +3958,7 @@ Project Carousel style rules
 
 #project-info-buttons {
   display: flex;
-  margin-left: auto;
+  margin-left: 10px;
   align-items: center;
   /* For alignment with Project Title */
   gap: 7px;
@@ -4064,83 +4147,11 @@ Project Carousel style rules
   }
 }
 
-#reporter {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 600px;
-  background-color: var(--bg-color);
-  padding: 20px;
-  border-radius: 10px;
-}
-
-#reporter > div {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.reporter-header {
-  font-size: large;
-  font-weight: bold;
-  color: var(--primary-color);
-}
-
-.reporter-profile:link, .reporter-profile:visited {
-  display: flex;
-  align-self: flex-start;
-  flex-direction: column;
-  text-decoration: none;
-}
-
-.reporter-profile:hover {
-  text-decoration: underline;
-}
-
-#reporter .reporter-profile img {
-  margin: auto;
-}
-
-#reporter .open-btn {
-  height: 40px;
-  padding: 5px 16px;
-  font-size: 1.25rem;
-  border: none;
-  border-radius: 40px;
-  background-color: var(--primary-color);
-  color: var(--invert-text);
-  font-weight: 700;
-}
-
-#reporter .message-area {
-  display: flex;
-  flex: 1;
-  min-width: 0;
-  flex-direction: column;
-  gap: 10px;
-}
-
-#reporter .message-area textarea, 
-#reporter .message-area input {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-#reporter .message-actions {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-#reporter .cancel-btn {
-  color: var(--main--text);
-  font-weight: normal;
-  background-color: transparent;
-}
-
 #project-info-edit,
 #project-open-positions-button,
 .project-people-tab,
-#project-open-positions-header {
+#project-open-positions-header,
+#project-info-request {
   border: none;
   border-radius: 40px;
   background-color: var(--primary-color);
@@ -4365,10 +4376,6 @@ button#positions-popup-list-item-active {
 }
 
 @media only screen and (max-width: 800px) {
-  #reporter > div {
-    display: block;
-  }
-
   #edit-position-details-left,
   #edit-position-details-right {
     flex-wrap: nowrap;
@@ -4782,8 +4789,7 @@ button#positions-popup-list-item-active {
   text-decoration: none;
 }
 
-.project-contributor-profile, 
-.reporter-profile img {
+.project-contributor-profile {
   width: clamp(45px, 15vw, 75px);
   height: clamp(45px, 15vw, 75px);
   border-radius: 50%;

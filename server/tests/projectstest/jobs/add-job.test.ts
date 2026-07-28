@@ -123,7 +123,7 @@ const prismaUser = {
   bio: '',
   phoneNumber: null,
   accessLevel: 'User' as UserAccessLevel,
-  galleryEnabled: true,
+  galleryEnabled: false,
 };
 
 vi.mock('#services/transformers/projects/parts/project-job.ts', () => ({

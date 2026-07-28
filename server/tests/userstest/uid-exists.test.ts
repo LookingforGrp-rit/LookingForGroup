@@ -42,7 +42,7 @@ describe('uidExists test service,', async () => {
       privacy: 'public',
       phoneNumber: null,
       accessLevel: 'User',
-      galleryEnabled: true,
+      galleryEnabled: false,
     };
 
     const result = await uidExistsService(1);

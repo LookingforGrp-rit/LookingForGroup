@@ -47,7 +47,7 @@ const prismaUser: Users = {
   privacy: 'public',
   phoneNumber: null,
   accessLevel: 'User',
-  galleryEnabled: true,
+  galleryEnabled: false,
 };
 
 const notificationData: ModeratorNotificationInput = {
