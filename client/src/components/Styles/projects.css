@@ -2068,7 +2068,7 @@ Project Creator and Editor Popup style rules
 }
 
 .delete-button,
-.save-button {
+.save-button{
   border: none;
   border-radius: 30px;
   padding: 10px 20px;
@@ -2080,12 +2080,12 @@ Project Creator and Editor Popup style rules
   font-weight: 700;
 }
 
-.save-button {
+.save-button{
   background-color: var(--primary-color) !important;
 }
 
 /* .delete-button:hover, save-button:hover { */
-.deny-btn {
+.deny-btn, #cancel-button {
   background: none;
   border: none;
   outline: none;
