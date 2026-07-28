@@ -157,7 +157,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const updateMessage = async () => {
     let newMessage = "";
     if (modifiedProject?.title === "" || modifiedProject?.title === undefined) newMessage = "Project is missing a title!";
-    else if (modifiedProject?.mediums.length == 0) newMessage = "Project is missing a medium!";
+    else if (modifiedProject?.mediums.length == 0) newMessage = "Project is missing a project type!";
     else if (modifiedProject?.tags.length == 0) newMessage = "Project is missing tags!";
     else if (modifiedProject?.hook === "" || modifiedProject?.hook === undefined) newMessage = "Project is missing a short description!";
     else if (modifiedProject?.description === "" || modifiedProject?.description === undefined) newMessage = "Project is missing a description!";

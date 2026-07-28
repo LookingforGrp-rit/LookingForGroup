@@ -11,6 +11,16 @@ import { clampDragWithinContainer } from "./dragModifiers";
 
 const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
 
+// Category color for each skill tab, matching the tag/filter-tab colors.
+const skillTabColors: Record<string, string> = {
+  Developer: "yellow",
+  Designer: "red",
+  Design: "red",
+  Soft: "purple",
+  Audio: "periwinkle",
+  Engineer: "cyan",
+};
+
 interface JobSkillPopupProps {
   job: ProjectJob | Fillable<Pending<ProjectJob>>,
   updateJob: React.Dispatch<React.SetStateAction<ProjectJob | Fillable<Pending<ProjectJob>> | undefined>>,
@@ -429,7 +439,7 @@ export const JobSkillPopup = ({
           key={skill}
           type="button"
           onClick={() => setCurrentSkillsTab(i)}
-          className={`button-reset project-editor-tag-search-tab ${currentSkillsTab === i ? "tag-search-tab-active" : ""}`}
+          className={`button-reset project-editor-tag-search-tab filter-tab-${skillTabColors[skill] ?? "grey"} ${currentSkillsTab === i ? "tag-search-tab-active" : ""}`}
         >
           {skill}
         </button>
