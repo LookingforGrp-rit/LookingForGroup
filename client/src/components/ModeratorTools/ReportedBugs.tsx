@@ -19,7 +19,7 @@ const ReportedBugs = ({ currentUserId, currentTab }: ReportedBugsProps) => {
 
     // Helper Methods =========================================================
     useEffect(() => {
-        //get reported projects to display
+        //get reported bugs to display
         const displayReportedBugs = async () => {
             const reportedBugs = (await getBugReports());
             const tempBugsArray = [];
