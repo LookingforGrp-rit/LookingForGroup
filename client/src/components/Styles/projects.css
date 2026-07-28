@@ -3874,7 +3874,7 @@ Project Carousel style rules
 }
 
 .mod-project-options,
-#mod-user-options {
+.mod-user-options {
   grid-area: mod;
   display: flex;
   flex-direction: column;
@@ -3918,7 +3918,7 @@ Project Carousel style rules
   }
 
   .mod-project-options,
-  #mod-user-options {
+  .mod-user-options {
     max-width: calc(100vw - 80px);
   }
 }

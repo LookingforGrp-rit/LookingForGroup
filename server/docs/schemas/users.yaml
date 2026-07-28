@@ -249,6 +249,15 @@ components:
           apiUrl: /api/users/1/followers
         apiUrl: /api/users/1
 
+    BanDetail:
+      allOf:
+        - type: object
+          properties:
+            banReason:
+              type: string
+      example:
+        banReason: Repeated harassment
+
     UserReport:
       type: object
       properties:

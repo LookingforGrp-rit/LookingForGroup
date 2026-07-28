@@ -327,7 +327,7 @@ export const Header: React.FC<HeaderProps> = ({
                   }
                   className="header-login-btn"
                 >
-                  <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in or sign up'} />
+                  <ThemeIcon id={'login'} width={25} height={25} className={'mono-stroke'} ariaLabel={'log in or sign up'} />
                   Log In / Sign Up
                 </button>
               </div>

@@ -100,7 +100,7 @@ router.post(
 );
 
 router.delete('/delete-project/:id/', authenticated(deleteProject));
-router.delete('/unban-user/:googleId/', authenticated(unbanUser));
+router.delete('/unban-user/:id/', authenticated(unbanUser));
 router.delete(
   '/project-report/:id',
   authenticated(
