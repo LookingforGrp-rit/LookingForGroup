@@ -1,6 +1,15 @@
 import { GET, DELETE, POST, PATCH } from "./index";
-import { ApiResponse, UserAccessLevel, UnapproveProjectInput } from "@looking-for-group/shared";
-import { ProjectDetail, ProjectReport, UserReport, ModeratorNotificationInput, BanUserInput } from "@looking-for-group/shared";
+import {
+    ApiResponse,
+    UserAccessLevel,
+    UnapproveProjectInput,
+    ProjectDetail,
+    ProjectReport,
+    UserReport,
+    ModeratorNotificationInput,
+    BanUserInput,
+    UserDetail,
+} from "@looking-for-group/shared";
 
 /**
  * Gets the list of all pending projects
@@ -86,6 +95,18 @@ export const getReportedUsers = async (): Promise<ApiResponse<UserReport[]>> => 
     if (response.error) console.log(`Error in getReportedUsers: ${response.error}`);
     return response;
 };
+
+/**
+ * Gets the list of all banned users
+ * @returns List of all banned users or an error message if the request fails 
+ */
+export const getBannedUsers = async (): Promise<ApiResponse<UserDetail[]>> => {
+    const apiURL = `/users/blacklist`;
+    const response = await GET(apiURL);
+
+    if (response.error) console.log(`Error in getBannedUsers: ${response.error}`);
+    return response; 
+}
 
 /**
  * Gets the access level of the current user
@@ -278,8 +299,10 @@ export const getBugReportById = async (reportId: number): Promise<ApiResponse> =
  */
 export const updateBugReport = async (reportId: number, modNotes: string, isResolved: boolean): Promise<ApiResponse> => {
     const apiURL = `/mod/bug-report/${reportId}`;
-    const response = await PATCH(apiURL, {isResolved: isResolved,
-  modNotes: modNotes});
+    const response = await PATCH(apiURL, {
+        isResolved: isResolved,
+        modNotes: modNotes
+    });
 
     if (response.error) console.log(`Error in updateBugReport: ${response.error}`);
     return response;

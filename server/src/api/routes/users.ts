@@ -1,4 +1,5 @@
-import { Router } from 'express';
+import type { AuthenticatedRequest } from '@looking-for-group/shared';
+import { Router, type Request, type Response, type NextFunction } from 'express';
 import { createUser } from '#controllers/users/create-user.ts';
 import { getProjectsFollowing } from '#controllers/users/followings/get-proj-following.ts';
 import { getUserFollowers } from '#controllers/users/followings/get-user-followers.ts';
@@ -9,11 +10,26 @@ import { getUserByGoogleId } from '#controllers/users/get-user/get-by-google-id.
 import { getUserById } from '#controllers/users/get-user/get-by-id.ts';
 import { getUserByUsername } from '#controllers/users/get-user/get-by-username.ts';
 import { getOtherUserProjects } from '#controllers/users/get-user-proj.ts';
+import requiresModerator from '#middleware/authorization/requires-mod.ts';
+import injectCurrentUser from '#middleware/inject-current-user.ts';
 import { getBlacklistedUsers } from '../controllers/users/get-blacklisted-users.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import { userExistsAt } from '../middleware/validators/user-exists-at.ts';
 
 const router = Router();
+
+export const authenticated = (
+  controller: (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ) => void | Promise<void>,
+) =>
+  controller as unknown as (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => void | Promise<void>;
 
 //Gets users
 router.get('/all/:method', getAllUsers);
@@ -32,7 +48,13 @@ router.get('/search-google/:id', getUserByGoogleId);
 
 //#region Blacklist routes
 //Gets users on the blacklist
-router.get('/blacklist', requiresLogin, getBlacklistedUsers);
+router.get(
+  '/blacklist',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  getBlacklistedUsers,
+);
 //#endregion
 
 //#region id routes
