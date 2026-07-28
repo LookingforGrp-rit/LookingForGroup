@@ -20,6 +20,9 @@ interface ProjectPanelProps {
   project: ProjectWithFollowers;
   initialIsFollowing?: boolean;
   currentUserId: number;
+  // Called after the user unfollows, so a parent (e.g. the profile "likes"
+  // list) can drop this card immediately instead of waiting for a refresh.
+  onUnfollow?: (projectId: number) => void;
 }
 
 /**
@@ -30,7 +33,7 @@ interface ProjectPanelProps {
  * @param project - ProjectWithFollowers object containing project info, thumbnail, tags, and follower data
  * @returns JSX element rendering a clickable project preview panel with follow functionality
  */
-export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: ProjectPanelProps) => {
+export const ProjectPanel = ({ project, initialIsFollowing, currentUserId, onUnfollow }: ProjectPanelProps) => {
   const navigate = useNavigate();
   const projectURL = `${paths.routes.PROJECT}?projectID=${project.projectId}`;
 
@@ -139,6 +142,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
       await deleteProjectFollowing(project.projectId);
       setFollowing(false);
       setFollowCount(followCount - 1);
+      onUnfollow?.(project.projectId);
     }
   };
 
