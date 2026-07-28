@@ -29,6 +29,10 @@
             text-align: center;
             margin: 0;
         }
+
+        textarea{
+            outline: none;
+        }
     }
 }
 
@@ -117,18 +121,18 @@
         font-weight: 700;
     }
 
-    .mod-edit-btn {
+    .mod-edit-btn, .mod-unban-btn {
         border: none;
         border-radius: 30px;
         padding: 10px 20px;
-        background-color: var(--under-review-yellow, #ffe1a2);
+        background-color: var(--error-delete-color);
         color: black;
         font-size: 2ch;
         width: max-content;
         margin: auto min(1vw, 10px);
         font-weight: 700;
     }
-
+    
     #mod-dismiss-btn {
         border: none;
         border-radius: 30px;
@@ -147,13 +151,13 @@
     }
 }
 
-#mod-user-options {
+.mod-user-options {
     margin-top: 1vw;
     width: 100%;
     max-width: calc(100% - 40px);
 }
 
-#mod-user-options>p {
+.mod-user-options>p {
     margin-top: 0;
 }
 
@@ -556,7 +560,7 @@
         }
     }
 
-    #mod-user-options {
+    .mod-user-options {
         margin: 20px 0;
     }
 

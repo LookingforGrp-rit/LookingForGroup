@@ -704,6 +704,13 @@ export interface UserDetail extends UserPreview {
   followers: UserFollowsList;
 }
 
+export interface BanDetail {
+  /**
+   * Ban reason
+   */
+  banReason: string;
+}
+
 export interface UserEmail extends Pick<UserPreview, 'userId' | 'firstName' | 'lastName'> {
   /**
    * The user's rit email

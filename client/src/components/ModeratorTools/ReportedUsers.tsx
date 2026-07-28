@@ -22,7 +22,7 @@ const ReportedUsers = ({ currentUserId, currentTab, displayMode }: ReportedUsers
 
     // Helper Methods =========================================================
     useEffect(() => {
-        //get reported projects to display
+        //get reported users to display
         const displayReportedUsers = async () => {
             const reportedUsers = ((await getReportedUsers()).data);
             const tempPendingUserArray = [];
