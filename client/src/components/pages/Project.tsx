@@ -980,48 +980,54 @@ const Project = () => {
             </div>
 
             {/* Mod options to approveor reject a project request (request edits in order to approve) */}
-            {isUserAdmin && approvalStatus == 'under-review' && userID !== displayedProject.owner.userId ? <div className="mod-project-options">
-              <h4>Project Review Request</h4>
-              <p>You can approve this project and it will show up in the public view from now on or request changes by declining the request.</p>
-              <div id="mod-options-btns">
-                <button id="mod-approve-btn" onClick={() => { if (displayedProject) { handleApproveRequest(); } }}>Approve</button>
-                <Popup>
-                  <PopupButton className="delete-button">Decline</PopupButton>
-                  <PopupContent>
-                    <div className="small-popup" id="report-popup">
-                      <h3>Decline Approval Request</h3>
-                      <p>What changes should be made to <strong>{displayedProject?.title}</strong> in order to receive approval?</p>
-                      <textarea placeholder="Write the requested changes here..." className="input input-multiline" ref={declineMessage}></textarea>
-                      <div className="confirm-deny-btns">
-                        <PopupButton
-                          buttonId="request-decline-button"
-                          className="button-reset"
-                        >
-                          Cancel
-                        </PopupButton>
-                        <button className="confirm-btn" onClick={() => { handleDeleteProjectRequest(declineMessage?.current ? declineMessage.current.value : "No message provided."); }}>Submit</button>
+            {isUserAdmin && approvalStatus == 'under-review' && userID !== displayedProject.owner.userId
+              ? <div className="mod-project-options">
+                <h4>Project Review Request</h4>
+                <p>You can approve this project to make it publicly visible, or decline the request.
+                  When declining, you may include an optional message explaining the changes needed before the project can be approved.</p>
+                <div className="mod-options-btns">
+                  <button id="mod-approve-btn" onClick={() => { if (displayedProject) { handleApproveRequest(); } }}>Approve</button>
+                  <Popup>
+                    <PopupButton className="delete-button">Decline</PopupButton>
+                    <PopupContent>
+                      <div className="small-popup" id="report-popup">
+                        <h3>Decline Approval Request</h3>
+                        <p>You may include an optional message explaining what changes should be made to <strong>{displayedProject?.title}</strong> before it can be approved.</p>
+                        <textarea placeholder="Write the requested changes here..." className="input input-multiline" ref={declineMessage}></textarea>
+                        <div className="confirm-deny-btns">
+                          <PopupButton
+                            buttonId="request-decline-button"
+                            className="button-reset"
+                          >
+                            Cancel
+                          </PopupButton>
+                          <button className="confirm-btn" onClick={() => { handleDeleteProjectRequest(declineMessage?.current ? declineMessage.current.value : "No message provided."); }}>Submit</button>
+                        </div>
                       </div>
-                    </div>
-                  </PopupContent>
-                </Popup>
+                    </PopupContent>
+                  </Popup>
+                </div>
               </div>
-            </div>
               : ""}
 
             {/* Mod options to accept, decline, or request changes to a reported project // are we doing edits on reported projects?  */}
             {isUserAdmin && reportList.length !== 0 && userID !== displayedProject.owner.userId ? (
               <div className="mod-project-options">
                 <h4>Reports</h4>
-                <p>You can dismiss this report or request edits. Requesting edits will remove the project from public view until the requested changes have been made and approved.</p>
+                <p>You can dismiss this report or take down the project.
+                  Taking down the project will remove it from public view.
+                  You may also include an optional message explaining why the project was taken down or
+                  what changes are needed before it can be approved again.</p>
                 {reportList.map(r => <Reporter modUserId={userID} reporterId={r.userId} reason={r.reason} key={'reporter-' + r.userId} />)}
                 <div className="mod-options-btns">
                   <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')}>Dismiss Report</button>
                   <Popup>
-                    <PopupButton className="mod-edit-btn">Request Edits</PopupButton>
+                    <PopupButton className="mod-edit-btn">Take Down</PopupButton>
                     <PopupContent>
                       <div className="small-popup" id="report-popup">
-                        <h3>Request Edits</h3>
-                        <p>Explain what the user should change about their project. Their project will be taken down from public view until the requested changes have been made and approved.</p>
+                        <h3>Take Down {displayedProject.title}</h3>
+                        <p>You may include an optional message explaining what the user should change about their project.
+                          The project will be taken down from public view until appropriate changes have been made and it has been approved again.</p>
                         <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={takeDownMessage}></textarea>
                         <div className="confirm-deny-btns">
                           <PopupButton
