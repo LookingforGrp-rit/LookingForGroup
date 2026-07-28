@@ -5,7 +5,7 @@ import { getUserAccessLevel } from "../../../api/mod-tools";
 import { PanelBox } from "../../PanelBox";
 import { getUsers, getUsersById } from "../../../api/users";
 
-type AllModeratorsProps = {
+type AllModsAdminsProps = {
     currentUserId: number,
     currentTab: number,
     displayMode: 'grid' | 'list',
@@ -16,34 +16,34 @@ type AllModeratorsProps = {
  * @param PendingProjectsProps user ID of current user, moderation page tab currently in use
  * @returns 
  */
-const AllModerators = ({ currentUserId, currentTab, displayMode }: AllModeratorsProps) => {
+const AllModsAdmins = ({ currentUserId, currentTab, displayMode }: AllModsAdminsProps) => {
     // Variables ==============================================================
     const [loaded, setLoaded] = useState<boolean>(false);
-    const [allModerators, setAllModerators] = useState<UserDetail[]>([]);
+    const [allModsAdmins, setAllModsAdmins] = useState<UserDetail[]>([]);
 
     // Helper Methods =========================================================
     useEffect(() => {
 
         //get reported projects to display
-        const displayAllModerators = async () => {
+        const displayAllModsAdmins = async () => {
             const allUsers = (await getUsers()).data;
             const tempModsArray: UserDetail[] = [];
             if (allUsers !== null && allUsers !== undefined) {
                 for (const user of allUsers) {
                     const accessLevel = await getUserAccessLevel(user.userId);
-                    if (accessLevel.data?.toString() == 'Moderator') {
+                    if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator') {
                         const userDetail = await getUsersById(user.userId);
 
                         if (userDetail.data)
                             tempModsArray.push(userDetail.data);
                     }
                 }
-                setAllModerators(tempModsArray);
+                setAllModsAdmins(tempModsArray);
             }
             setLoaded(true);
         }
 
-        displayAllModerators();
+        displayAllModsAdmins();
     }, [currentTab]);
 
     // The final component ====================================================
@@ -51,15 +51,15 @@ const AllModerators = ({ currentUserId, currentTab, displayMode }: AllModerators
         return (
             <div className="mod-tool">
                 <div className="pending-projects">
-                    {allModerators.length > 0 ?
+                    {allModsAdmins.length > 0 ?
                         displayMode === 'grid' ?
                             // Grid view
                             <PanelBox
                                 category={"profiles"}
-                                itemList={allModerators ? allModerators : []}
+                                itemList={allModsAdmins ? allModsAdmins : []}
                                 userId={currentUserId}
                             ></PanelBox>
-                            : <UserListView users={allModerators} />
+                            : <UserListView users={allModsAdmins} modsAdmins={true} />
                         : "No moderators!"}
                 </div>
             </div>
@@ -72,4 +72,4 @@ const AllModerators = ({ currentUserId, currentTab, displayMode }: AllModerators
         );
     }
 };
-export default AllModerators;
+export default AllModsAdmins;
