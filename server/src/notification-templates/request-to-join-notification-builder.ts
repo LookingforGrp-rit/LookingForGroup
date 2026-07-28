@@ -75,7 +75,7 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
     notification.message += `has requested to join your project <strong>${projectTitle}</strong> as a <strong>${roleName as string}</strong>.<br /><br />  `;
     if (body.message) {
       notification.message += `${requesterName} has provided a message:<br />`;
-      notification.message += `"${body.message}"<br /><br />`;
+      notification.message += `${body.message}<br /><br />`;
     }
     notification.message += `You may view the `;
     notification.message += `<a href="${requesterProfileLink}">requester's profile</a>.<br /><br />`;

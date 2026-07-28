@@ -937,7 +937,9 @@ const Profile = (userProfile: any) => {
             <h2>Reports</h2>
             <p>You can dismiss this report, warn the user and request edits from them, or ban the user.</p>
             <h3>Active Reports</h3>
-            <p>These reports are currently under review and have not yet been resolved. Resolve them by dismissing the reports, warning the user, or banning the user. All active reports will be resolved using the same action.</p>
+            <p>These reports are currently under review and have not yet been resolved. 
+              Resolve them by dismissing the reports, warning the user, or banning the user. 
+              All active reports will be resolved using the same action.</p>
             {activeReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'active-reporter-' + r.reporterId} />)}
             {inactiveReportList.length !== 0 && (<>
               <h3>Inactive Reports</h3>

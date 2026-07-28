@@ -37,7 +37,7 @@ export class WarningNotificationBuilder implements NotificationBuilder {
     notification.message = `Hello ${receiver?.firstName as string},<br /><br />`;
     notification.message += `A moderator has issued you a warning. `;
     notification.message += `Here is the warning provided:<br /><br />`;
-    notification.message += `"${warning}"<br /><br />`;
+    notification.message += `${warning}<br /><br />`;
     notification.message += `Refusing to comply may lead to further consequences, including an account ban. `;
     notification.message += `You can review our <a href="${process.env.CLIENT_URL ?? 'http://localhost:5173'}/about">Terms of Service</a>, `;
     notification.message += `or reach out to us at lookingforgrp@gmail.com<br /><br />`;
