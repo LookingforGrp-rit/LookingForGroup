@@ -263,6 +263,7 @@ const ModeratorPage = () => {
         }
     }
 
+    // Loaders ================================================================
     // Runs on initial render
     useEffect(() => {
         getAccount();
