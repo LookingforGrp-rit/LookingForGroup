@@ -312,6 +312,16 @@ Login and Signup page style rules
   }
 }
 
+@media screen and (max-width:500px) and (max-height:900px) {
+  .login-signup-container {
+    margin-bottom: 200px;
+  }
+
+  .signup-form {
+    padding: 0 25px;
+  }
+}
+
 /* #endregion*/
 
 /*
@@ -1106,8 +1116,12 @@ Signup process modal style rules
 
   .ChooseSkills,
   .CompleteProfile,
-  .GetStarted {
-    height: 80vh;
+  .GetStarted,
+  .TermsOfService {
+    height: 100%;
+    width: 98vw;
+    padding: 0;
+    margin: 0;
   }
 
   .CompleteProfile {
@@ -1115,8 +1129,9 @@ Signup process modal style rules
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 100%;
+      width: 95%;
       overflow-y: scroll;
+      padding-left: 5px;
 
       .required-asterisk {
         width: fit-content;
@@ -1182,17 +1197,17 @@ Signup process modal style rules
     /* prevents x scrollbar */
 
     #project-editor-tag-search {
-        height: 80%;
-        overflow-y: scroll;
-        max-width: auto;
-        gap: 10px;
-        padding: 15px;
+      height: 80%;
+      overflow-y: scroll;
+      max-width: auto;
+      gap: 10px;
+      padding: 15px;
     }
   }
 
   #getStarted-select {
     gap: 2%;
-    width: 95%;
+    width: 90%;
     margin: 0;
   }
 
@@ -1211,7 +1226,7 @@ Signup process modal style rules
   .ChooseSkills #project-editor-selected-tags {
     width: calc(100% - 62px - 1.818px);
     overflow-y: scroll;
-    
+
     #project-editor-selected-tags-container {
       height: 135px;
     }

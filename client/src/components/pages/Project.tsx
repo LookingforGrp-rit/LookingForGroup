@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
@@ -13,19 +13,22 @@ import { ThemeIcon } from "../ThemeIcon";
 import { getByID, getVideos, projectApprovalRequestExists, deleteProject, requestProjectReview } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
 import Reporter from "../Reporter";
+import { LeaveDeleteContext } from "../../contexts/LeaveDeleteContext";
 import {
   deleteProjectFollowing,
   addProjectFollowing,
   getProjectFollowing,
   leaveProject as leaveProjectApi,
 } from "../../api/users";
-import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
+import { leaveProject } from "../../api/users";
 import { MePrivate, ProjectPreview, ProjectVideo, ProjectWithFollowers, ProjectReport, UnapproveProjectInput } from "@looking-for-group/shared";
 import { ProjectContext, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 //import { router } from "../../../../server/src/api/routes/me.ts"
 import { reportProject } from "../../api/projects";
 import { getCurrentAccount } from "../../api/users";
 import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport, takeDownProject, sendModeratorNotification, unapproveProject } from "../../api/mod-tools";
+import { PagePopup } from "../PagePopup";
+import { ApiResponse } from "@looking-for-group/shared";
 
 //Main component for the project page
 /**
@@ -39,6 +42,18 @@ const Project = () => {
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
   const projectID: number = Number(urlParams.get("projectID"));
+
+  // State variable for displaying output of API request, whether success or failure
+  const [showResult, setShowResult] = useState(false);
+
+  // Context providing project ID, ownership status, and reload function
+  const { projId, isOwner, reloadProjects, removeProject } = useContext(LeaveDeleteContext);
+  const [requestType, setRequestType] = useState<"delete" | "leave">("delete");
+  const [resultObj, setResultObj] = useState<ApiResponse>({
+    status: 400,
+    data: null,
+    error: "Not initialized",
+  });
 
   //state variable used to check whether or not data was successfully obtained from database
   // State variable used to determine permissions level, and if user should have edit access
@@ -331,11 +346,15 @@ const Project = () => {
    */
   const handleLeaveProject = async () => {
     const res = await leaveProjectApi(projectID);
+    setRequestType("leave");
+    setResultObj(res);
     if (res.status === 200) {
-      navigate(paths.routes.MYPROJECTS);
-    } else {
+      setTimeout(() => removeProject(projectID), 1500);
+    }
+    else {
       console.error("Error leaving project:", res.error);
     }
+    setShowResult(true);
   };
 
   /**
@@ -481,7 +500,7 @@ const Project = () => {
                     <div className="confirm-deny-btns">
                       <PopupButton
                         className="confirm-btn"
-                        callback={handleLeaveProject}
+                        callback={() => {handleLeaveProject();}}
                       >
                         Leave
                       </PopupButton>
@@ -594,9 +613,9 @@ const Project = () => {
                         <div className="confirm-deny-btns">
                           <PopupButton
                             className="confirm-btn"
-                            callback={leaveProject}
+                            callback={() => {handleLeaveProject()}}
                           >
-                            Confirm
+                            Leave
                           </PopupButton>
                           <PopupButton className="deny-btn">Cancel</PopupButton>
                         </div>
@@ -1064,6 +1083,34 @@ const Project = () => {
           </div>
         </main>
       )}
+      {/* Leave result popup */}
+      <PagePopup
+        width={"fit-content"}
+        height={"fit-content"}
+        popupId={"result"}
+        zIndex={16} //keep at 16 so success msg appears over all popups, including dropdown
+        show={showResult}
+        setShow={setShowResult}
+        onClose={() => {if (resultObj.status === 200) {navigate(paths.routes.MYPROJECTS);} reloadProjects()}}
+      >
+        <div className="small-popup">
+          {resultObj.status === 200 ? (
+            <p>
+              <span className="success-msg">Success:</span>
+              &nbsp;
+              {requestType === "delete"
+                ? "The project has been deleted."
+                : "You have left the project."}
+            </p>
+          ) : (
+            <p>
+              <span className="error-msg">Error:</span>
+              &nbsp;
+              {resultObj.error}
+            </p>
+          )}
+        </div>
+      </PagePopup>
     </div>
   );
 };
