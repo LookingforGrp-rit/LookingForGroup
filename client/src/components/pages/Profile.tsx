@@ -887,13 +887,21 @@ const Profile = (userProfile: any) => {
                               <PopupButton buttonId="continue-button">
                                 Continue
                               </PopupButton>
-                            </div>
-                          </PopupContent>
-                        </Popup>
-                      </div>
-                    </div>
-                  </PopupContent>
-                </Popup>
+                              <PopupContent>
+                                <div className="small-popup">
+                                  <p>{reportResponseText}</p>
+                                  <PopupButton buttonId="continue-button">
+                                    Continue
+                                  </PopupButton>
+                                </div>
+                              </PopupContent>
+                            </Popup>
+                          </div>
+                        </div>
+                      </PopupContent>
+                    </Popup>
+                  </>
+                )}
               </div>
             </DropdownContent>
           </Dropdown>
