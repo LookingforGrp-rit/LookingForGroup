@@ -20,7 +20,7 @@ import {
   getProjectFollowing,
   leaveProject as leaveProjectApi,
 } from "../../api/users";
-import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
+import { leaveProject } from "../../api/users";
 import { MePrivate, ProjectPreview, ProjectVideo, ProjectWithFollowers, ProjectReport, UnapproveProjectInput } from "@looking-for-group/shared";
 import { ProjectContext, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 //import { router } from "../../../../server/src/api/routes/me.ts"
@@ -348,14 +348,13 @@ const Project = () => {
     const res = await leaveProjectApi(projectID);
     setRequestType("leave");
     setResultObj(res);
-    setShowResult(true);
     if (res.status === 200) {
       setTimeout(() => removeProject(projectID), 1500);
-      navigate(paths.routes.MYPROJECTS);
-    } 
+    }
     else {
       console.error("Error leaving project:", res.error);
     }
+    setShowResult(true);
   };
 
   /**
@@ -501,7 +500,7 @@ const Project = () => {
                     <div className="confirm-deny-btns">
                       <PopupButton
                         className="confirm-btn"
-                        callback={handleLeaveProject}
+                        callback={() => {handleLeaveProject();}}
                       >
                         Leave
                       </PopupButton>
@@ -614,9 +613,9 @@ const Project = () => {
                         <div className="confirm-deny-btns">
                           <PopupButton
                             className="confirm-btn"
-                            callback={leaveProject}
+                            callback={() => {handleLeaveProject()}}
                           >
-                            Confirm
+                            Leave
                           </PopupButton>
                           <PopupButton className="deny-btn">Cancel</PopupButton>
                         </div>
@@ -1084,7 +1083,7 @@ const Project = () => {
           </div>
         </main>
       )}
-      {/* Leave/Delete result popup */}
+      {/* Leave result popup */}
       <PagePopup
         width={"fit-content"}
         height={"fit-content"}
@@ -1092,7 +1091,7 @@ const Project = () => {
         zIndex={16} //keep at 16 so success msg appears over all popups, including dropdown
         show={showResult}
         setShow={setShowResult}
-        onClose={reloadProjects}
+        onClose={() => {if (resultObj.status === 200) {navigate(paths.routes.MYPROJECTS);} reloadProjects()}}
       >
         <div className="small-popup">
           {resultObj.status === 200 ? (
