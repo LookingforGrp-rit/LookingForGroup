@@ -460,6 +460,12 @@ Project Creator and Editor Popup style rules
   margin-bottom: 10px;
 }
 
+@media screen and (max-width: 530px){
+  #project-editor-tabs{
+   max-width: 30rem;
+  }
+
+}
 .project-editor-tab {
   border: none;
   border-radius: 30px;
