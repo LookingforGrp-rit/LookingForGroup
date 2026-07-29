@@ -121,10 +121,19 @@ export const LinksTab: React.FC<LinksTabProps> = ({
       }))
 
       //update url in profile
-      socials[index] = {
-        ...socials[index],
-        url: baseUrl + value,
-      };
+      //supports adding the transfer protocol into the text box
+      if(field === "url" && (value.includes("https://") || value.includes("http://"))){
+        socials[index] = {
+          ...socials[index],
+          url: value,
+        };
+      }
+      else{
+        socials[index] = {
+          ...socials[index],
+          url: baseUrl + value,
+        };
+      }
     } else {
       socials[index] = {
         ...socials[index],
@@ -296,8 +305,8 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                     opacity: !social.label ? 0.4 : 1,
                     cursor: !social.label ? "not-allowed" : "text",
                   }}
-                  placeholder={(url as string) === "" || !social.label ? "URL" : 'Username'}
-                  value={usernames[index] ?? ''} //stop curser jumping
+                  placeholder={(url as string) === "" || (url as string) === "https://" ? "URL" : 'Username'}
+                  value={usernames[index] ?? ''} //stop cursor jumping
                   onChange={(e) => {
                     handleSocialChange(index, "url", e.target.value, url);
                   }}
