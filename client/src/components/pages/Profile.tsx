@@ -9,7 +9,7 @@ import "../Styles/projects.css";
 import "../Styles/settings.css";
 import "../Styles/pages.css";
 
-import { useState, useCallback, useEffect, useRef, useContext } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo, /*useContext*/ } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../../constants/routes";
 import { Header, loggedIn } from "../Header";
@@ -23,16 +23,18 @@ import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import Reporter from "../Reporter";
 import profilePicture from "../../images/lfrog.png";
-import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles } from "../../api/users";
+import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles, getGalleryImages, getGalleryVideos } from "../../api/users";
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
-import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel } from '@looking-for-group/shared';
+import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel, GalleryImage, GalleryVideo } from '@looking-for-group/shared';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
 import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification, deactivateUserReport } from "../../api/mod-tools";
-import { PopupContext } from "../Popup";
+// import { PopupContext } from "../Popup";
 import { UserReport } from "@looking-for-group/shared";
+import { Carousel, CarouselButton, CarouselContent, CarouselTabs } from "../ImageCarousel";
+import { getYouTubeEmbedID, getYouTubeEmbedURL } from "../../functions/parseYoutube";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -45,7 +47,7 @@ type Project = ProjectPreview;
  * Profile page with user information collected from profileID.
  * @returns JSX Element
  */
-const Profile = (userProfile: any) => {
+const Profile = (/*userProfile: any*/) => {
   // --------------------
   // Global variables
   // --------------------
@@ -71,6 +73,10 @@ const Profile = (userProfile: any) => {
   const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
   const [activeReportList, setActiveReportList] = useState<UserReport[]>([]);
   const [inactiveReportList, setInactiveReportList] = useState<UserReport[]>([]);
+  
+  const [showGallery, setShowGallery] = useState(false);
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
+  const [galleryVideos, setGalleryVideos] = useState<GalleryVideo[]>([]);
 
   // stores all followed users to display on personal user profile
   const [followedProfilesList, setFollowedProfilesList] = useState<UserPreview[]>([]);
@@ -163,6 +169,80 @@ const Profile = (userProfile: any) => {
     loadFollow();
   }, [userID, profileID]);
 
+  useEffect(() => {
+    if (userID === undefined || userID === -1) return;
+
+    const loadGallery = async () => {
+      const imageResponse = await getGalleryImages(userID);
+      const videoResponse = await getGalleryVideos(userID);
+
+      if (imageResponse.data)
+        setGalleryImages(imageResponse.data);
+      //set placeholder until getting works
+      else
+        setGalleryImages([{
+          galleryImageId: 0,
+          image: "/src/images/lfrog.png",
+          altText: "image 1",
+          position: 0,
+          userId: userID,
+        },{
+          galleryImageId: 1,
+          image: "/src/images/lfrog.png",
+          altText: "image 2",
+          position: 1,
+          userId: userID,
+        },{
+          galleryImageId: 2,
+          image: "/src/images/lfrog.png",
+          altText: "image 3",
+          position: 2,
+          userId: userID,
+        },{
+          galleryImageId: 3,
+          image: "/src/images/lfrog.png",
+          altText: "image 4",
+          position: 3,
+          userId: userID,
+        },{
+          galleryImageId: 4,
+          image: "/src/images/lfrog.png",
+          altText: "image 5",
+          position: 4,
+          userId: userID,
+        },
+      ]);
+
+      if (videoResponse.data)
+        setGalleryVideos(videoResponse.data);
+      //set placeholder until getting works
+      else
+        setGalleryVideos([{
+          galleryVideoId: 0, 
+          videoUrl: "https://youtu.be/dQw4w9WgXcQ?si=caowhzEmsuRDRQsm",
+          title: "video 1",
+          position: 0,
+          userId: userID
+        },{
+          galleryVideoId: 1, 
+          videoUrl: "https://youtu.be/dQw4w9WgXcQ?si=caowhzEmsuRDRQsm",
+          title: "video 2",
+          position: 1,
+          userId: userID
+        }
+      ]);
+    }
+
+    loadGallery();
+  }, [userID]);
+
+  useEffect(() => {
+    //TODO: check if user wants gallery shown
+    const response = {data: true};
+
+    if (response.data)
+      setShowGallery(response.data);
+  })
 
 
   // --------------------
@@ -836,6 +916,96 @@ const Profile = (userProfile: any) => {
     </>
   );
 
+  const fullGallery = useMemo(() => {
+    return [
+      ...galleryVideos.map(v => {
+        const embedUrl = getYouTubeEmbedURL(v.videoUrl); 
+        if (!embedUrl) return null;
+        
+        return (
+          <iframe
+            key={`video-${v.position}`}
+            src={embedUrl}
+            title={v.title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            style={{ width: 'auto', height: '100%', aspectRatio: '16/9', border: 'none', objectFit: 'cover' }}
+          ></iframe>
+        );
+    }).filter(item => item !== null),
+    ...galleryImages.map(i => (
+      <img
+        key={`img-${i.position}`}
+        src={i.image}
+        alt={i.altText}
+        // Click to view the image full-size in the lightbox
+        // style={{ cursor: 'zoom-in' }}
+        // onClick={(e) => setLightboxSrc((e.currentTarget as HTMLImageElement).src)}
+        // onError={(e) => {
+        //   const projectImg = e.target as HTMLImageElement;
+        //   projectImg.src = placeholderThumbnail;
+        // }}
+      />
+    )),
+    ];
+  }, [galleryImages, galleryVideos]);
+
+  const galleryPreviews = useMemo(() => {
+    return [
+      ...galleryVideos.map(v => {
+        const embedID = getYouTubeEmbedID(v.videoUrl);
+
+        return <img
+          key={`img-${v.position}`}
+          src={`http://img.youtube.com/vi/${embedID}/default.jpg`}
+          alt={v.title}
+        />
+      }),
+      ...galleryImages.map(i => (
+        <img
+          key={`img-${i.position}`}
+          src={i.image}
+          alt={i.altText}
+        />
+      )),
+    ];
+  }, [galleryImages, galleryVideos]);
+
+  const UserGallery = (
+    <div id="user-gallery">
+      <h1 id="title">Gallery</h1>
+      <Popup>
+        <PopupButton buttonId="edit-gallery">Edit Gallery</PopupButton>
+        <PopupContent>
+          asd
+        </PopupContent>
+      </Popup>
+      <Carousel
+        dataList={fullGallery}
+      >
+        <div className='gallery-carousel'>
+          <CarouselContent className='gallery-carousel-content' />
+          {fullGallery.length > 1 ?
+          <div className='carousel-row'>
+            <CarouselButton
+              direction='left'
+              className='gallery-carousel-btn'
+              size='small'
+            />
+            <CarouselTabs className='gallery-carousel-tabs'>{galleryPreviews}</CarouselTabs>
+            <CarouselButton 
+              direction='right'
+              className='gallery-carousel-btn'
+              size='small'
+            />
+          </div> : ""}
+          {/* <div className='carousel-row'>
+          </div> */}
+        </div>
+      </Carousel>
+    </div>
+  );
+
   //console.log(followedProjectsIds);
   // --------------------
   // Final component
@@ -1023,6 +1193,8 @@ const Profile = (userProfile: any) => {
               </Popup>
             </div>
           </div> : ""}
+
+          {showGallery ? UserGallery : ""}
 
           <div id="profile-extra">
             <div id="contact-and-skills">

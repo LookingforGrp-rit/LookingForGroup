@@ -31,6 +31,8 @@ import type {
   SessionUserData,
   CreateUserInput,
   UpdateTagBlacklistInput,
+  GalleryImage,
+  GalleryVideo,
 } from "@looking-for-group/shared";
 
 //#region USER CRUD/LOGIN
@@ -133,6 +135,32 @@ export const getCurrentAccount = async (): Promise<ApiResponse<MePrivate>> => {
   //console.log(response);
   return response;
 };
+
+/**
+ * gets the images uploaded to a user's gallery
+ * @param userId the ID of the user with the gallery
+ * @returns an array of all the images from a user gallery
+ */
+export const getGalleryImages = async (userId: number): Promise<ApiResponse<GalleryImage[]>> => {
+  const apyURL = `/me/gallery/${userId}/images`;
+  const response = await GET(apyURL);
+
+  console.log(response);
+  return response;
+}
+
+/**
+ * gets the videos uploaded to a user's gallery
+ * @param userId the ID of the user with the gallery
+ * @returns an array of all the videos from a user gallery
+ */
+export const getGalleryVideos = async (userId: number): Promise<ApiResponse<GalleryVideo[]>> => {
+  const apyURL = `/me/gallery/${userId}/videos`;
+  const response = await GET(apyURL);
+
+  console.log(response);
+  return response;
+}
 
 /**
  * Edit information for one user, specified by URL.
@@ -679,4 +707,6 @@ export default {
   getTags,
   getSocials,
   getCurrentAccount,
+  getGalleryImages,
+  getGalleryVideos,
 };
