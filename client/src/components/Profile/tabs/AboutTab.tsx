@@ -3,7 +3,7 @@ import { ProfileImageUploader } from "../../ImageUploader";
 import usePreloadedImage from "../../../functions/imageLoad";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import LabelInputBox from "../../LabelInputBox";
-import { PendingUserProfile } from "../../../../types/types";
+import { PendingMajor, PendingUserProfile } from "../../../../types/types";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
 import { RitStatus as RitStatusLabel } from "@looking-for-group/shared/enums";
 import { RitStatus } from "@looking-for-group/shared/types";
@@ -310,7 +310,7 @@ export const AboutTab = ({
 
 										profileAfterAboutChanges = {
 											...profileAfterAboutChanges,
-											majors: newMajor
+											majors: [newMajor as PendingMajor]
 										};
 
 										updatePendingProfile(
@@ -435,8 +435,8 @@ export const AboutTab = ({
 							});
 						}}
 					/>
-
-					<LabelInputBox
+					{/*no more mentor stuff*/}
+					{/* <LabelInputBox
 						label={"Mentorship Status"}
 						labelId="mentorship-label"
 						inputType={"none"}
@@ -490,7 +490,7 @@ export const AboutTab = ({
 								]}
 							/>
 						</Select>
-					</LabelInputBox>
+					</LabelInputBox> */}
 				</div>
 			</div>
 

@@ -13,9 +13,6 @@ export const getAllUsersService = async (
   try {
     const parsedFilters = [] as object[];
 
-    if (filters.mentor !== undefined) {
-      parsedFilters.push({ mentor: filters.mentor });
-    }
     if (filters.designer !== undefined) {
       parsedFilters.push({
         userSkills: {

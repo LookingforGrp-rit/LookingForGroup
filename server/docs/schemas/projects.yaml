@@ -93,7 +93,6 @@ components:
           lastName: Robinson
           username: mhr2964
           profileImage: null
-          mentor: false
           designer: false
           developer: true
           apiUrl: /api/users/1
@@ -201,7 +200,6 @@ components:
           lastName: Robinson
           username: mhr2964
           profileImage: null
-          mentor: false
           designer: false
           developer: true
           apiUrl: /api/users/1
@@ -299,7 +297,6 @@ components:
           lastName: Robinson
           username: mhr2964
           profileImage: null
-          mentor: false
           designer: false
           developer: true
           apiUrl: /api/users/1
@@ -332,7 +329,6 @@ components:
               lastName: Robinson
               username: mhr2964
               profileImage: null
-              mentor: false
               designer: false
               developer: true
               apiUrl: /api/users/1

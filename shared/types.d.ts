@@ -598,11 +598,6 @@ export interface UserPreview {
   profileImage: string | null;
 
   /**
-   * If the user has self-identified as a mentor
-   */
-  mentor: boolean;
-
-  /**
    * If the user has selected any designer skills
    */
   designer: boolean;
@@ -751,10 +746,6 @@ export interface MePreview {
    */
   profileImage: string | null;
   /**
-   * If the logged-in user has self-identified as a mentor
-   */
-  mentor: boolean;
-  /**
    * If the logged-in user has selected any designer skills
    */
   designer: boolean;
@@ -806,11 +797,6 @@ export interface MeDetail extends MePreview {
    * The logged-in user's bio
    */
   bio: string;
-
-  /**
-   * If the logged-in user has self-identified as a mentor
-   */
-  mentor: boolean;
 
   /**
    * Projects the logged-in user is a member of and has chosen to show on their profile
@@ -1414,7 +1400,6 @@ export type UpdateUserInput = Partial<
     | 'displayPhone'
   > & {
     profileImage?: File;
-    mentor?: "true" | "false";
   }
 >;
 export type CreateUserInput = Partial<
@@ -1432,7 +1417,6 @@ export type CreateUserInput = Partial<
     | 'displayPhone'
   > & {
     profileImage?: string;
-    mentor?: true | false;
   }
 > & {
   firstName: string;
@@ -1770,7 +1754,6 @@ export type DeleteJobSkillInput = {
  * Data required to filter request
  */
 export type FilterRequest = {
-  mentor?: boolean;
   designer?: boolean;
   developer?: boolean;
   skills?: number[];

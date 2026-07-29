@@ -30,7 +30,6 @@ const mockUsers = [
     pronouns: '',
     title: '',
     ritStatus: null,
-    mentor: false,
     developer: false,
     designer: false,
     createdAt: new Date(),
@@ -48,7 +47,6 @@ const mockUsers = [
     pronouns: '',
     title: '',
     ritStatus: null,
-    mentor: false,
     developer: false,
     designer: false,
     createdAt: new Date(),
@@ -81,29 +79,6 @@ describe('test getAllUsersService', () => {
     //console.log(result);
     expect(vi.mocked(prisma.users.findMany)).toHaveBeenCalled();
     expect(result).toEqual(mockPreviews);
-  });
-
-  it('applies mentor filter', async () => {
-    (prisma.users.findMany as Mock).mockResolvedValue(mockUsers);
-
-    await getAllUsersService(
-      {
-        mentor: true,
-        strictness: 'all',
-      },
-      'A-Z',
-    );
-
-    // console.log(result);
-    const findMany = prisma.users.findMany;
-    expect(findMany).toHaveBeenCalled();
-    expect(findMany).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: {
-          AND: [{ mentor: true }],
-        },
-      }),
-    );
   });
 
   it('applies designer filter', async () => {
@@ -215,7 +190,6 @@ describe('test getAllUsersService', () => {
 
     await getAllUsersService(
       {
-        mentor: true,
         developer: true,
         strictness: 'any',
       },
@@ -227,7 +201,6 @@ describe('test getAllUsersService', () => {
       expect.objectContaining({
         where: {
           OR: [
-            { mentor: true },
             {
               userSkills: {
                 some: {

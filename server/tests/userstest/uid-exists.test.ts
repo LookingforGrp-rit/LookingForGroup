@@ -34,7 +34,6 @@ describe('uidExists test service,', async () => {
       title: 'Student',
       displayPhone: false,
       ritStatus: null,
-      mentor: false,
       createdAt: new Date(),
       updatedAt: new Date(),
       googleId: '1',

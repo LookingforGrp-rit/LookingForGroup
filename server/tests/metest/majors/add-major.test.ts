@@ -37,7 +37,6 @@ const prismaUpdatedUser = {
   location: '',
   bio: '',
   privacy: 'public',
-  mentor: false,
   createdAt: new Date(),
   updatedAt: new Date(),
   phoneNumber: null,

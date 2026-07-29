@@ -190,11 +190,6 @@ paths:
             type: string
           description: The strictness with which to apply the filters (return if they match either any of the filters or all of them)
         - in: query
-          name: mentor
-          required: false
-          schema:
-            type: boolean
-        - in: query
           name: designer
           required: false
           schema:
