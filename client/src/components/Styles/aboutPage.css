@@ -297,7 +297,7 @@
     display: grid;
     grid-template-areas:
       "text image";
-    width: 100%;
+    width: auto;
   }
 
   .about-text {
