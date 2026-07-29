@@ -128,16 +128,20 @@ FIXME: make all viewboxes the same ratio (where icons are in similar places, inc
   </symbol>
 
   <!-- Folder (My Projects tab): Mono stroke -->
-  <symbol id="folder" viewBox="0 0 26 25" fill="none">
+
+    <symbol id="folder" viewBox="0 0 25 25" fill="none">
     <g clip-path="#folder-clip">
-      <path d="M1.39282 21.8748V3.12486C1.39282 2.65125 1.58096 2.19705 1.91585 1.86216C2.25073 1.52727 2.70493 1.33914 3.17854 1.33914H9.76782C10.1757 1.32725 10.5754 1.45545 10.9003 1.70238C11.2252 1.9493 11.4558 2.30007 11.5535 2.69629L12.1071 4.91057H22.8214C23.295 4.91057 23.7493 5.0987 24.0841 5.43359C24.4189 5.76848 24.6071 6.22268 24.6071 6.69629V21.8748C24.6071 22.3485 24.4189 22.8026 24.0841 23.1375C23.7493 23.4725 23.295 23.6605 22.8214 23.6605H3.17854C2.70493 23.6605 2.25073 23.4725 1.91585 23.1375C1.58096 22.8026 1.39282 22.3485 1.39282 21.8748Z" stroke="inherit" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </g>
+      <path d="M5.5 17.96V7.04041C5.5 6.76459 5.61346 6.50008 5.81542 6.30504C6.01739 6.11001 6.2913 6.00044 6.57692 6.00044H10.5508C10.7968 5.99352 11.0378 6.06818 11.2338 6.21199C11.4297 6.35579 11.5687 6.56007 11.6277 6.79082L11.9615 8.08038H18.4231C18.7087 8.08038 18.9826 8.18994 19.1846 8.38498C19.3865 8.58001 19.5 8.84453 19.5 9.12035V17.96C19.5 18.2359 19.3865 18.5004 19.1846 18.6954C18.9826 18.8905 18.7087 19 18.4231 19H6.57692C6.2913 19 6.01739 18.8905 5.81542 18.6954C5.61346 18.5004 5.5 18.2359 5.5 17.96Z" stroke="inherit" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12.5 24C6.14873 24 1 18.8514 1 12.5C1 6.14873 6.14873 1 12.5 1C18.8514 1 24 6.14873 24 12.5C24 18.8514 18.8514 24 12.5 24Z" stroke="inherit" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
     <defs>
-      <clipPath id="folder-clip">
-        <rect width="25" height="25" fill="inherit" transform="translate(0.5)"/>
-      </clipPath>
-    </defs>
+     <clipPath id="folder-clip">
+      <rect width="25" height="25" fill="inherit" transform="translate(0.5)"/>
+     </clipPath>
+  </defs>
   </symbol>
+
+
 
   <!-- Funfact (Lightbulb): Mono stroke -->
   <symbol id="funfact" viewBox="0 0 24 24" fill="inherit">
