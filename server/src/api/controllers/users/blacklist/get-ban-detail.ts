@@ -1,13 +1,13 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import deleteVideoService from '#services/projects/videos/delete-video.ts';
+import { getBanDetailService } from '#services/users/blacklist/get-ban-detail.ts';
 
-//DELETE api/projects/{id}/videos/{videoId}
-//deletes a video from the project
-const deleteVideoController = async (req: Request, res: Response) => {
-  const videoId = parseInt(req.params.videoId as string);
-  //add the video to the project
-  const result = await deleteVideoService(videoId);
+//GET api/users/blacklist/{id}
+//Gets ban detail
+export const getBanDetail = async (req: Request, res: Response): Promise<void> => {
+  const userId = parseInt(req.params.id as string);
+
+  const result = await getBanDetailService(userId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -15,6 +15,7 @@ const deleteVideoController = async (req: Request, res: Response) => {
       error: 'Internal Server Error',
       data: null,
     };
+
     res.status(500).json(resBody);
     return;
   }
@@ -22,19 +23,20 @@ const deleteVideoController = async (req: Request, res: Response) => {
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Video Not Found',
+      error: 'User not found or user is not banned',
       data: null,
     };
+
     res.status(404).json(resBody);
     return;
   }
 
-  const resBody: ApiResponse = {
+  const resBody: ApiResponse<typeof result> = {
     status: 200,
     error: null,
-    data: null,
+    data: result,
   };
-  res.status(200).json(resBody);
-};
 
-export default deleteVideoController;
+  res.status(200).json(resBody);
+  return;
+};

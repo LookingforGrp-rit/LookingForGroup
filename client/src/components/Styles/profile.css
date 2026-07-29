@@ -2072,10 +2072,10 @@ New Profile page style rules
    box's own background behind it). . */
 #profile-invite-project .select-options,
 #profile-invite-role .select-options {
-  position: static;
+  position: absolute;
   display: block;
   width: 100%;
-  max-height: 200px;
+  max-height: 150px;
   box-shadow: none;
 }
 

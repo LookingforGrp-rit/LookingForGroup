@@ -4,22 +4,31 @@ import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service
 type DeleteVideoServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type DeleteVideoServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
-//DELETE api/projects/{id}/videos/{video_id}
-//deletes a video in a project
-const deleteVideoService = async (
+//DELETE api/projects/{userId}/gallery/videos/{videoId}
+//deletes a video in the gallery
+const deleteGalleryVideoService = async (
+  userId: number,
   videoId: number,
 ): Promise<DeleteVideoServiceSuccess | DeleteVideoServiceError> => {
   try {
+    const video = await prisma.galleryVideos.findFirst({
+      where: { galleryVideoId: videoId, userId },
+    });
+
+    if (!video) {
+      return 'NOT_FOUND';
+    }
+
     //delete video
-    await prisma.projectVideos.delete({
+    await prisma.galleryVideos.delete({
       where: {
-        videoId,
+        galleryVideoId: videoId,
       },
     });
 
     return 'NO_CONTENT';
   } catch (e) {
-    console.error('Error in deleteVideoService:', e);
+    console.error('Error in deletegalleryVideoService:', e);
     if (e instanceof Object && 'code' in e) {
       if (e.code === 'P2025') {
         return 'NOT_FOUND';
@@ -29,4 +38,4 @@ const deleteVideoService = async (
   }
 };
 
-export default deleteVideoService;
+export default deleteGalleryVideoService;

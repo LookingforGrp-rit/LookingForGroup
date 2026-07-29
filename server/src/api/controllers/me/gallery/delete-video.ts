@@ -1,13 +1,15 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import deleteVideoService from '#services/projects/videos/delete-video.ts';
+import deleteGalleryVideoService from '#services/me/gallery/delete-video.ts';
 
-//DELETE api/projects/{id}/videos/{videoId}
-//deletes a video from the project
-const deleteVideoController = async (req: Request, res: Response) => {
+//DELETE api/me/{UserId}/gallery/videos/{videoId}
+//deletes a video from gallery
+const deleteGalleryVideoController = async (req: Request, res: Response) => {
+  const userId = Number(req.params.userId);
   const videoId = parseInt(req.params.videoId as string);
-  //add the video to the project
-  const result = await deleteVideoService(videoId);
+
+  //delete the video from the gallery
+  const result = await deleteGalleryVideoService(userId, videoId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -37,4 +39,4 @@ const deleteVideoController = async (req: Request, res: Response) => {
   res.status(200).json(resBody);
 };
 
-export default deleteVideoController;
+export default deleteGalleryVideoController;
