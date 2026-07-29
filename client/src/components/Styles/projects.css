@@ -1908,6 +1908,10 @@ Project Creator and Editor Popup style rules
 
 #project-team-add-member-info>.select-container {
   grid-area: role-select;
+
+  .select-options {
+    max-height: 300px;
+  }
 }
 
 #project-team-add-member-message-label {
