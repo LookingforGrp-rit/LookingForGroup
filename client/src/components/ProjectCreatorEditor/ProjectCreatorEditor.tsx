@@ -20,7 +20,7 @@ import { ProjectContext as ProjectContextEnums, ProjectStatus as ProjectStatusEn
 import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
-import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectContext, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, MemberRequests, } from '@looking-for-group/shared';
+import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectContext, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, MemberRequests, ApiResponse, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 import { setIsSaving, getIsSaving } from "../pages/MyProjects";
 
@@ -143,7 +143,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       dataManager = await projectDataManager(projectID);
 
       const data = dataManager.getSavedProject();
-
+      
       setProjectData(data);
       setModifiedProject(data);
     } catch (err) {
@@ -294,27 +294,18 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       const currentSocialsResponse = await getProjectSocials(projectID);
       const currentSocials = currentSocialsResponse.data || [];
 
-      // Process each social in the modified project
-      for (const social of modifiedProject?.projectSocials || []) {
-        if (!social.url || !social.websiteId || !social.alias || social.websiteId === 0) continue;
+      const tempSocial: ProjectSocial = {
+        id: -1,
+        url: '',
+        alias: '',
+        apiUrl: '',
+        websiteId: 0,
+        label: '',
+      }
+      const modifiedSocials = modifiedProject?.projectSocials || [tempSocial];
 
-        // If there is an existing social ID, update it; otherwise, add a new social
-        if (social.id) {
-          await updateProjectSocial(projectID, social.id, {
-            url: social.url,
-            alias: social.alias,
-            websiteId: social.websiteId,
-          });
-        } else {
-          await addProjectSocial(projectID, {
-            websiteId: social.websiteId,
-            alias: social.alias,
-            url: social.url,
-          });
-        }
-
-        // Delete socials that were removed
-        const modifiedSocialIds = (modifiedProject?.projectSocials || [])
+      for (let i = 0; i < (modifiedSocials.length || 1); i++) {
+        const modifiedSocialIds = (modifiedProject?.projectSocials || [tempSocial])
           .filter(s => s.url && s.websiteId && s.websiteId !== 0)
           .map(s => s.id);
 
@@ -322,6 +313,23 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           if (!modifiedSocialIds.includes(currentSocial.id)) {
             await deleteProjectSocial(projectID, currentSocial.id);
           }
+        }
+
+        if (!modifiedSocials[i].url || !modifiedSocials[i].websiteId || !modifiedSocials[i].alias || modifiedSocials[i].websiteId === 0) continue;
+
+        // If there is an existing social ID, update it; otherwise, add a new social
+        if (modifiedSocials[i].id) {
+          await updateProjectSocial(projectID, modifiedSocials[i].id, {
+            url: modifiedSocials[i].url,
+            alias: modifiedSocials[i].alias,
+            websiteId: modifiedSocials[i].websiteId,
+          });
+        } else {
+          await addProjectSocial(projectID, {
+            websiteId: modifiedSocials[i].websiteId,
+            alias: modifiedSocials[i].alias,
+            url: modifiedSocials[i].url,
+          });
         }
       }
     } catch (error) {

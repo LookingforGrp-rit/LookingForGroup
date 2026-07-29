@@ -848,57 +848,61 @@ const Profile = (/*userProfile: any*/) => {
                       </PopupContent> : "")}
                   </Popup> : ""}
                 <ShareButton />
-                <button
-                  className="profile-menu-dropdown-button"
-                  id="profile-menu-block"
-                >
-                  <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
-                  Block
-                </button>
-                <Popup>
-                  <PopupButton
-                    className="project-info-dropdown-option"
-                  >
-                    <ThemeIcon
-                      id={"warning"}
-                      width={27}
-                      height={27}
-                      ariaLabel={"Report"}
-                    />
-                    Report
-                  </PopupButton>
-                  <PopupContent>
-                    <div className="small-popup" id="report-popup">
-                      <h3>Report {displayedProfile?.firstName ?? "User"} {displayedProfile?.lastName ?? ""}</h3>
-                      <p>You are about to report {displayedProfile?.firstName ?? "User"}. Please provide your reasoning below.</p>
-                      <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></textarea>
-                      <div className="confirm-deny-btns">
-                        <PopupButton
-                          buttonId="team-delete-member-cancel-button"
-                          className="button-reset"
-                        >
-                          Cancel
-                        </PopupButton>
-                        {/* The Report Button */}
-                        <Popup>
-                          <PopupButton
-                            className="delete-button"
-                            callback={reportUserPressed}>
-                            Report
-                          </PopupButton>
-                          <PopupContent>
-                            <div className="small-popup">
-                              <p>{reportResponseText}</p>
-                              <PopupButton buttonId="continue-button">
-                                Continue
+                {userID > 0 && (
+                  <>
+                    <button
+                      className="profile-menu-dropdown-button"
+                      id="profile-menu-block"
+                    >
+                      <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
+                      Block
+                    </button>
+                    <Popup>
+                      <PopupButton
+                        className="project-info-dropdown-option"
+                      >
+                        <ThemeIcon
+                          id={"warning"}
+                          width={27}
+                          height={27}
+                          ariaLabel={"Report"}
+                        />
+                        Report
+                      </PopupButton>
+                      <PopupContent>
+                        <div className="small-popup" id="report-popup">
+                          <h3>Report {displayedProfile?.firstName ?? "User"} {displayedProfile?.lastName ?? ""}</h3>
+                          <p>You are about to report {displayedProfile?.firstName ?? "User"}. Please provide your reasoning below.</p>
+                          <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></textarea>
+                          <div className="confirm-deny-btns">
+                            <PopupButton
+                              buttonId="team-delete-member-cancel-button"
+                              className="button-reset"
+                            >
+                              Cancel
+                            </PopupButton>
+                            {/* The Report Button */}
+                            <Popup>
+                              <PopupButton
+                                className="delete-button"
+                                callback={reportUserPressed}>
+                                Report
                               </PopupButton>
-                            </div>
-                          </PopupContent>
-                        </Popup>
-                      </div>
-                    </div>
-                  </PopupContent>
-                </Popup>
+                              <PopupContent>
+                                <div className="small-popup">
+                                  <p>{reportResponseText}</p>
+                                  <PopupButton buttonId="continue-button">
+                                    Continue
+                                  </PopupButton>
+                                </div>
+                              </PopupContent>
+                            </Popup>
+                          </div>
+                        </div>
+                      </PopupContent>
+                    </Popup>
+                  </>
+                )}
               </div>
             </DropdownContent>
           </Dropdown>
@@ -1095,12 +1099,12 @@ const Profile = (/*userProfile: any*/) => {
                       {displayedProfile?.pronouns}
                     </div> : ""}
                   {/* Only show mentor status if user is a mentor */}
-                  {displayedProfile?.mentor &&
+                  {/* {displayedProfile?.mentor &&
                     <div className="profile-extra">
                       <ThemeIcon id={'mentor'} width={20} height={20} className={'mono-fill'} ariaLabel={'Mentorship Status'} />
                       Mentor
                     </div>
-                  }
+                  } */}
                 </div>
 
                 <div id="profile-description">{displayedProfile?.bio}</div>
@@ -1182,8 +1186,8 @@ const Profile = (/*userProfile: any*/) => {
             <h2>Reports</h2>
             <p>You can dismiss this report, warn the user and request edits from them, or ban the user.</p>
             <h3>Active Reports</h3>
-            <p>These reports are currently under review and have not yet been resolved. 
-              Resolve them by dismissing the reports, warning the user, or banning the user. 
+            <p>These reports are currently under review and have not yet been resolved.
+              Resolve them by dismissing the reports, warning the user, or banning the user.
               All active reports will be resolved using the same action.</p>
             {activeReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'active-reporter-' + r.reporterId} />)}
             {inactiveReportList.length !== 0 && (<>
@@ -1495,114 +1499,6 @@ const Profile = (/*userProfile: any*/) => {
                           </>
                         )}
                       </div>
-                      {myOwnedProjects.length === 0 ? (
-                        <div id="profile-invite-empty">
-                          You don't own any projects yet. Create one to start
-                          inviting people.
-                        </div>
-                      ) : inviteSuccess ? (
-                        <div id="profile-invite-success">
-                          Invite sent! {displayedProfile?.firstName} will get an
-                          email to accept or decline.
-                        </div>
-                      ) : (
-                        <>
-                          <div id="profile-invite-form">
-                            <label
-                              className="profile-invite-label"
-                              htmlFor="profile-invite-project"
-                            >
-                              Project
-                            </label>
-                            <div id="profile-invite-project">
-                              <Select>
-                                <SelectButton
-                                  placeholder="Select a project"
-                                  searchable={true}
-                                  type="input"
-                                />
-                                <SelectOptions
-                                  callback={(e) => {
-                                    const value = (e.target as HTMLButtonElement)
-                                      .value;
-                                    const proj = myOwnedProjects.find(
-                                      (p) => p.title === value
-                                    );
-                                    setInviteProjectId(proj?.projectId ?? null);
-                                  }}
-                                  options={myOwnedProjects.map((proj) => ({
-                                    markup: <>{proj.title}</>,
-                                    value: proj.title,
-                                    disabled: false,
-                                  }))}
-                                />
-                              </Select>
-                            </div>
-
-                            <label
-                              className="profile-invite-label"
-                              htmlFor="profile-invite-role"
-                            >
-                              Role
-                            </label>
-                            <div id="profile-invite-role">
-                              <Select>
-                                <SelectButton
-                                  placeholder="Select a role"
-                                  searchable={true}
-                                  type="input"
-                                />
-                                <SelectOptions
-                                  callback={(e) => {
-                                    const value = (e.target as HTMLButtonElement)
-                                      .value;
-                                    const role = allRoles.find(
-                                      (r) => r.label === value
-                                    );
-                                    setInviteRoleId(role?.roleId ?? null);
-                                  }}
-                                  options={allRoles.map((role) => ({
-                                    markup: <>{role.label}</>,
-                                    value: role.label,
-                                    disabled: false,
-                                  }))}
-                                />
-                              </Select>
-                            </div>
-
-                            <label
-                              className="profile-invite-label"
-                              htmlFor="profile-invite-message"
-                            >
-                              Message
-                            </label>
-                            <textarea
-                              id="profile-invite-message"
-                              placeholder={`Optional note to ${displayedProfile?.firstName ?? "them"}...`}
-                              value={inviteMessage}
-                              onChange={(e) => setInviteMessage(e.target.value)}
-                              maxLength={500}
-                            />
-                          </div>
-
-                          {inviteError && (
-                            <div className="error" id="profile-invite-error">
-                              {inviteError}
-                            </div>
-                          )}
-
-                          <div className="project-editor-button-pair">
-                            <PopupButton
-                              buttonId="profile-invite-send"
-                              callback={handleSendInvite}
-                              doNotClose={() => !inviteSuccess}
-                              disabled={inviteSending}
-                            >
-                              {inviteSending ? "Sending..." : "Send Invite"}
-                            </PopupButton>
-                          </div>
-                        </>
-                      )}
                     </PopupContent>
                   </Popup>
                 )}

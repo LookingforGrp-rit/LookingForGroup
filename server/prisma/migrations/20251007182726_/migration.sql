@@ -176,7 +176,6 @@ CREATE TABLE `users` (
     `fun_fact` VARCHAR(100) NOT NULL DEFAULT '',
     `bio` VARCHAR(600) NOT NULL DEFAULT '',
     `visibility` TINYINT NOT NULL DEFAULT 1,
-    `mentor` BOOLEAN NOT NULL DEFAULT false,
     `created_at` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
     `updated_at` TIMESTAMP(0) NOT NULL,
     `phone_number` VARCHAR(20) NULL,

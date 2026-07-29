@@ -48,7 +48,6 @@ const transformedUserPreview: UserPreview = {
       majorId: 1,
     },
   ],
-  mentor: false,
   profileImage: null,
   pronouns: '',
   title: '',

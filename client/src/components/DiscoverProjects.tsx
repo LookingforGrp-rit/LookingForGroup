@@ -540,14 +540,17 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                         callback={() => {
                                             // Reset tag filters before adding results in
                                             setActiveTagFilters([]);
+                                            // Exclusion tags were being left behind — clear them too
+                                            setActiveExclusionFilters([]);
                                             const discoverFilters = document.getElementsByClassName('discover-tag-filter');
 
-                                            // Remove any/all other clicked discover tags
+                                            // Remove any/all clicked (included) and excluded discover tags
                                             for (let i = 0; i < discoverFilters.length; i++) {
                                                 discoverFilters[i].classList.remove('discover-tag-filter-selected');
+                                                discoverFilters[i].classList.remove('discover-tag-filter-excluded');
                                             }
 
-                                            // Sets active filters displayed to "none" 
+                                            // Sets active filters displayed to "none"
                                             setAppliedFiltersDisplay([]);
                                         }}
                                     >

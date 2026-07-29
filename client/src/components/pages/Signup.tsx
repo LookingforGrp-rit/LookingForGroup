@@ -86,7 +86,6 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
     title: title,
     location: location,
     // funFact: funFact,
-    mentor: false,
   } as CreateUserInput;
 
   // Redirect the user to the homepage if they are currently logged in

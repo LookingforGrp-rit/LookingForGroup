@@ -29,7 +29,6 @@ it('DEBUG: returns required preview fields, if we change user fields change this
     'pronouns',
     'location',
     'title',
-    'mentor',
     'developer',
     'designer',
   ];

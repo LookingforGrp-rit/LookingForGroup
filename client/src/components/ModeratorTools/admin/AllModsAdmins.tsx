@@ -21,7 +21,7 @@ const AllModsAdmins = ({ currentUserId, currentTab, displayMode }: AllModsAdmins
     const [loaded, setLoaded] = useState<boolean>(false);
     const [allModsAdmins, setAllModsAdmins] = useState<UserDetail[]>([]);
 
-    // Helper Methods =========================================================
+    // Loaders ================================================================
     useEffect(() => {
         //get moderators and adminstrators to display
         const displayAllModsAdmins = async () => {

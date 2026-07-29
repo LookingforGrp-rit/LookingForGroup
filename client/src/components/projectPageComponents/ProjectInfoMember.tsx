@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useState } from 'react';
 import * as projectPageHelper from './ProjectPageHelper';
 import { GeneralSettings } from './GeneralSettings';
 import { MemberSettings } from './MemberSettings';
@@ -29,7 +29,7 @@ import { ThemeIcon } from '../ThemeIcon';
 // Utilizes the 'PagePopup' component for project settings, and 'GeneralSettings' as the first rendered tab within it
 // projectData and a callback for resetProjectData are passed in through props
 // projectData is a reference to the current project's info
-export const ProjectInfoMember = (props) => {
+export const ProjectInfoMember = (props: { projectData: { name: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; neededRoles: any[]; members: any[]; _id: number; description: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }; callback: () => void; }) => {
   const navigate = useNavigate(); // Hook for navigation
 
   // key - Counter used to generate unique React keys for role listings in the main component
@@ -59,7 +59,7 @@ export const ProjectInfoMember = (props) => {
   // tempSettings - Temporary storage for project settings being edited
   // tempRoleSettings - Temporary storage for role settings being edited
   // If settings window is closed, this should be reset using defaultSettings
-  let tempSettings;
+  let tempSettings: unknown;
   let tempRoleSettings;
 
   // currentTab - Tracks which settings tab is currently active
@@ -69,7 +69,7 @@ export const ProjectInfoMember = (props) => {
   defaultSettings.projectName = props.projectData.name;
   defaultSettings.projectMembers = [];
   defaultRoleSettings = props.projectData.neededRoles;
-  props.projectData.members.forEach((member) => {
+  props.projectData.members.forEach((member: { userID: number; admin: boolean; owner: boolean; role: string; }) => {
     defaultSettings.projectMembers.push(member);
   });
   tempSettings = JSON.parse(JSON.stringify(defaultSettings));
@@ -81,9 +81,9 @@ export const ProjectInfoMember = (props) => {
   // 0 - member role; 1 - toggle admin; 2 - toggle mentor(?); 3 - remove member; 4 - undo remove member;
   //'memberId' indicates which member to change via their id
   //'roleName': optional parameter used when setting = 0 to specify the new role
-  const updateMemberSettings = (setting, memberId, roleName = undefined) => {
+  const updateMemberSettings = (setting: number, memberId: number, roleName = undefined) => {
     const editingMember: { userID: number; admin: boolean; owner: boolean; role: string } =
-      tempSettings.projectMembers.find((member) => member.userID === Number(memberId));
+      tempSettings.projectMembers.find((member: { userID: number; }) => member.userID === Number(memberId));
     if (editingMember === undefined && setting !== 4) {
       console.log('member not found');
       return;
@@ -95,7 +95,7 @@ export const ProjectInfoMember = (props) => {
         }
         break;
       case 1:
-        editingMember.admin ? (editingMember.admin = false) : (editingMember.admin = true);
+        editingMember.admin = !editingMember.admin;
         console.log('admin status updated');
         break;
       case 2:
@@ -105,18 +105,21 @@ export const ProjectInfoMember = (props) => {
       case 3:
         //Get the array index of the member being deleted
         //References defaultSettings instead of tempSettings due to potential index changes caused by other member removals
-        const deletedItem = defaultSettings.projectMembers.find(
+        { const deletedItem = defaultSettings.projectMembers.find(
           (member) => member.userID === memberId
         );
         let deletedItemIndex;
-        deletedItem
-          ? (deletedItemIndex = defaultSettings.projectMembers.indexOf(deletedItem))
-          : console.log('error getting item index');
-        //Add index of deleted member to deletedMemberIndexList
-        deletedMemberIndexList.push(deletedItemIndex);
+        if(deletedItem) {
+          deletedItemIndex = defaultSettings.projectMembers.indexOf(deletedItem);
+          //Add index of deleted member to deletedMemberIndexList
+          deletedMemberIndexList.push(deletedItemIndex);
+        }
+        else{
+          console.log('error getting item index');
+        }
         //Remove the relevant member from tempSettings
         tempSettings.projectMembers.splice(tempSettings.projectMembers.indexOf(editingMember), 1);
-        break;
+        break; }
       case 4:
         //Get the original array index of the member being restored
         //Gets data on the member using memberId, then finds the index of that data in defaultSettings
@@ -235,7 +238,7 @@ export const ProjectInfoMember = (props) => {
   // Updates currentTab and tabContent based on the selected tab
   // Applies CSS classes to visually indicate the active tab
   // Calls updateSettings to save any changes before switching tabs
-  const changeTabs = (tab) => {
+  const changeTabs = (tab: string) => {
     //Depending on tab selected, switches settings content to that tab, while also applying styling rules to
     //the relevant tabs themselves
 
@@ -291,19 +294,19 @@ export const ProjectInfoMember = (props) => {
 
   // Marks a role for deletion by adding its index to deletedRoleIndexList
   // Does not immediately remove the role, only marks it for removal when saving
-  const removeRole = (roleIndex) => {
+  const removeRole = (roleIndex: number) => {
     deletedRoleIndexList.push(roleIndex);
   };
 
   //Undoes a role deletion & removes its index from deletedRoleIndexList
-  const undoRemoveRole = (roleIndex) => {
+  const undoRemoveRole = (roleIndex: number) => {
     deletedRoleIndexList.splice(deletedRoleIndexList.indexOf(roleIndex), 1);
   };
 
   //Called when user is done editing a role's details
   //roleIndex passes in a number to use as an index reference for the role
   //note: since there is no id number for roles, need to manipulate deleted index numbers to update correct role
-  const updateRoleSettings = (roleIndex, roleObject) => {
+  const updateRoleSettings = (roleIndex: string | number, roleObject: any) => {
     tempRoleSettings[roleIndex] = roleObject;
   };
 
@@ -401,7 +404,7 @@ export const ProjectInfoMember = (props) => {
       <div id="project-listings">
         <h3>Looking for</h3>
         <hr />
-        {props.projectData.neededRoles.map((role) => {
+        {props.projectData.neededRoles.map((role: { Role: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; amount: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; } | null | undefined) => {
           if (role === undefined || role === null) {
             console.log('could not find role');
             return;
@@ -493,7 +496,7 @@ export const ProjectInfoMember = (props) => {
               Add role
             </button>
             <div id="roles-list">
-              {currentlyNeededRoles.map((currentRole) => {
+              {currentlyNeededRoles.map((currentRole: any) => {
                 return (
                   <RoleListing
                     role={currentRole}

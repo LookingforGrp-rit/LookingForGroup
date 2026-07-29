@@ -62,6 +62,10 @@ const ImageUploader = ({
   const [cropFile, setCropFile] = useState<File>();
   const [cropImg, setCropImg] = useState<string>();
 
+  // Files selected together but not yet cropped. They're cropped one at a time
+  // through the popup so every image in a multi-select gets added, not just one.
+  const pendingFiles = useRef<File[]>([]);
+
   const tempImage = useRef<HTMLImageElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const inputX = useRef<HTMLInputElement>(null);
@@ -195,63 +199,93 @@ const ImageUploader = ({
     
   }, [tempImage, dX, dY, zoom, canvas]);
 
+  // Reads one file, draws it on the crop canvas, and opens the crop popup.
+  // Shared by the initial selection and each queued file.
+  const loadFileIntoCrop = useCallback((file: File) => {
+    setCropFile(file);
+    setDX(0);
+    setDY(0);
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      setCropImg(result);
+
+      const img = new Image();
+      img.onload = () => {
+        tempImage.current = img;
+
+        const c = canvas.current;
+        if (!c) return;
+
+        // Compute minZoom (same as handlewheel)
+        const minZoom = Math.max(
+          (c.width / img.width) * 100,
+          (c.height / img.height) * 100
+        );
+
+        setZoom(minZoom);
+
+        //request animation frame to ensure canvas is updated after image is loaded
+        requestAnimationFrame(() => {
+          updateCanvas();
+        });
+      };
+
+      img.src = result;
+    };
+    reader.onerror = () => setCropImg(placeholder);
+    reader.readAsDataURL(file);
+  }, [updateCanvas]);
+
   const handleImgChange = useCallback(async () => {
 
     const input = inputRef.current;
     if(!input) return;
 
-    const file = inputRef.current?.files?.[0];
-    if (!file) return;
+    const files = input.files;
+    if (!files || files.length === 0) return;
+
+    // Split the selection into supported images and anything we can't use, so a
+    // multi-select of several photos all get queued instead of dropping all but one.
+    const supported: File[] = [];
+    let hadUnsupported = false;
+    for (const file of Array.from(files)) {
+      if (keepImage && (file.type === "image/png" || file.type === "image/jpeg")) {
+        supported.push(file);
+      } else {
+        hadUnsupported = true;
+      }
+    }
 
     //so can open same file and load popup again, otherwise it won't trigger change event if same file is selected
     input.value = "";
 
-    if (keepImage && (file.type === "image/png" || file.type === "image/jpeg")) {
-      setCropFile(file);
-      fileReader.onload = () => {
-        const result = fileReader.result as string;
-        setCropImg(result);
-
-        const img = new Image();
-        img.onload = () => {
-          tempImage.current = img;
-
-          const c = canvas.current;
-          if (!c) return;
-
-          // Compute minZoom (same as handlewheel)
-          const minZoom = Math.max(
-            (c.width / img.width) * 100,
-            (c.height / img.height) * 100
-          );
-
-          // setDX(0);
-          // setDY(0);
-          setZoom(minZoom);
-
-          //request animation frame to ensure canvas is updated after image is loaded
-          requestAnimationFrame(() => {
-            updateCanvas();
-          });
-        };
-
-        img.src = result;
-      };
-
-
-    fileReader.readAsDataURL(file);
-    } else {
+    if (hadUnsupported) {
       alert("File type not supported: Please use .PNG or .JPG");
     }
-  }, [keepImage, setCropFile, fileReader, inputRef]);
+    if (supported.length === 0) return;
+
+    // Crop the first image now; the rest wait in the queue and are loaded one at
+    // a time as each crop is confirmed (see sendImg).
+    pendingFiles.current = supported.slice(1);
+    loadFileIntoCrop(supported[0]);
+  }, [keepImage, loadFileIntoCrop]);
 
   const sendImg = useCallback(
     () => canvas.current?.toBlob(async(blob) => {
       const newFile = new File([blob as Blob], cropFile?.name as string, {type:cropFile?.type});
       onFileSelected(newFile);
       if (inputRef.current) inputRef.current.value = "";
-      setCropImg(undefined);
-  }, cropFile?.type), [onFileSelected, setCropImg, cropFile, canvas]);
+
+      // Move on to the next queued image, or close the popup when the batch is done.
+      const next = pendingFiles.current.shift();
+      if (next) {
+        loadFileIntoCrop(next);
+      } else {
+        setCropImg(undefined);
+      }
+  }, cropFile?.type), [onFileSelected, setCropImg, cropFile, canvas, loadFileIntoCrop]);
 
   
   // Effect for cleanup if needed; currently just removes event listeners
@@ -298,7 +332,7 @@ const ImageUploader = ({
   const cropPopup = useMemo(
   () => cropImg !== undefined ?
     <Popup startOpen={true}>
-      <PopupContent confirmation={true} callback={() => setCropImg(undefined)}>
+      <PopupContent confirmation={true} callback={() => { pendingFiles.current = []; setCropImg(undefined); }}>
         <div className="project-crop">
         <label id="project-crop-header">Crop image for thumbnail usage</label>
         <canvas ref={canvas} id="canvas"
@@ -417,7 +451,7 @@ const ImageUploader = ({
         <div className="confirm-project-crop">
           <PopupButton buttonId="project-crop-save" callback={sendImg} doNotClose={() => true}>Crop Image</PopupButton>
           {/* If the action is canceled, no picture is uploaded */}
-          <PopupButton buttonId="project-crop-cancel" callback={() => setCropImg(undefined)} className="project-info-buttons" doNotClose={() => true}>Cancel</PopupButton>
+          <PopupButton buttonId="project-crop-cancel" callback={() => { pendingFiles.current = []; setCropImg(undefined); }} className="project-info-buttons" doNotClose={() => true}>Cancel</PopupButton>
         </div>
         </div>
       </PopupContent>

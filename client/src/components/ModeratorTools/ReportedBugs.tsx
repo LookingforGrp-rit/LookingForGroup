@@ -17,7 +17,7 @@ const ReportedBugs = ({ currentUserId, currentTab }: ReportedBugsProps) => {
     const [loaded, setLoaded] = useState<boolean>(false);
     const [bugReports, setBugReports] = useState<BugReport[]>([]);
 
-    // Helper Methods =========================================================
+    // Loaders ================================================================
     useEffect(() => {
         //get reported bugs to display
         const displayReportedBugs = async () => {

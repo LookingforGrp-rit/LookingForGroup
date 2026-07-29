@@ -10,9 +10,8 @@ type UpdateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>
 //PATCH api/me
 // updatable fields only
 type UpdateUserServiceParameters = Partial<
-  Omit<UpdateUserInput, 'profileImage' | 'mentor'> & {
+  Omit<UpdateUserInput, 'profileImage'> & {
     profileImage: string;
-    mentor: boolean;
   }
 >;
 

@@ -30,13 +30,14 @@
             margin: 0;
         }
 
-        textarea{
+        textarea {
             outline: none;
         }
     }
 }
 
 #mod-actions-block {
+    /* position: relative; */
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -52,7 +53,7 @@
     #mod-actions-tabs {
         display: flex;
         gap: 15px;
-        height: 40px;
+        height: 8vh;
         padding-top: 10px;
         align-items: flex-end;
         overflow-x: auto;
@@ -80,16 +81,18 @@
     }
 
     #mod-content-container {
-        width: calc(100% - 30px);
+        box-sizing: border-box;
+        width: 100%;
         min-height: 100px;
         background-color: var(--liked-section-bg);
         border-radius: 10px;
         border-top-left-radius: 0px;
         border-color: var(--liked-section-bg);
         border-style: solid;
-        padding: 10px;
+        /* Need big padding in the bottom to fit the tooltip */
+        padding: 10px 10px 30px;
         max-height: 500px;
-        overflow-y: scroll;
+        overflow-y: auto;
         overflow-x: hidden;
     }
 }
@@ -121,18 +124,23 @@
         font-weight: 700;
     }
 
-    .mod-edit-btn, .mod-unban-btn {
+    .mod-edit-btn,
+    .mod-unban-btn {
         border: none;
         border-radius: 30px;
         padding: 10px 20px;
-        background-color: var(--error-delete-color);
-        color: black;
+        background-color: var(--warning-color, #FF6B4A);
+        color: var(--invert-text);
         font-size: 2ch;
         width: max-content;
         margin: auto min(1vw, 10px);
         font-weight: 700;
     }
-    
+
+    .mod-unban-btn {
+        background-color: var(--error-delete-color);
+    }
+
     #mod-dismiss-btn {
         border: none;
         border-radius: 30px;
@@ -147,7 +155,7 @@
 
     /* decline btn styled by delete-button */
     #mod-decline-btn {
-        color: var(--main-text);
+        color: var(--invert-text);
     }
 }
 
@@ -183,7 +191,7 @@
     border-radius: 100px;
     padding: 2px;
     margin: 0 auto;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     cursor: pointer;
 
     display: flex;
@@ -286,84 +294,88 @@
 }
 
 /* Bug Panel */
-
 .bug-panel {
-  width: 100%;
-  height: auto;
-  border: none;
-  border-radius: 10px;
-  background-color: var(--header-color);
-  display: flex;
-  flex-direction: row;
-  position: relative;
-  max-width: none;
-  overflow: hidden;
-  text-decoration: none;
-  margin: 10px 0;
-
-  .bug-reporter-profile {
-    width: clamp(45px, 15vw, 75px);
-  height: clamp(45px, 15vw, 75px);
-  border-radius: 50%;
-  border: 2px solid white;
-  object-fit: cover;
-  margin-right: 10px;
-  }
-
-  .bug-reporter {
-    width: 95%;
-    margin: 10px auto;
+    width: 100%;
+    height: auto;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--header-color);
     display: flex;
     flex-direction: row;
-    gap: 10px;
-  }
+    position: relative;
+    max-width: none;
+    overflow: hidden;
+    text-decoration: none;
+    margin: 10px 0;
 
-  .bug-reporter-profile {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  .bug-reporter-info {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+    .bug-reporter-profile {
+        width: clamp(45px, 15vw, 75px);
+        height: clamp(45px, 15vw, 75px);
+        border-radius: 50%;
+        border: 2px solid white;
+        object-fit: cover;
+        margin-right: 10px;
+    }
 
-  /* Name */
-  h2 {
-    margin: 8px 15px 0 15px;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    line-height: normal;
-    overflow-wrap: break-word;
-    word-break: break-word;
-  }
-  #see-details-btn {
-    border: none;
-    border-radius: 30px;
-    padding: 10px 20px;
-    background-color: var(--primary-color);
-    color: var(--invert-text);
-    font-size: 2ch;
-    width: max-content;
-    margin: auto min(1vw, 10px);
-    font-weight: 700;
-  }
-  .popup:has(#report-popup) {
-    overflow-x: hidden;
-  }
-  #report-popup {
-    height: fit-content;
-  }
+    .bug-reporter {
+        width: 95%;
+        margin: 10px auto;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .bug-reporter-profile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bug-reporter-info {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Name */
+    h2 {
+        margin: 8px 15px 0 15px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        line-height: normal;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+
+    #see-details-btn {
+        border: none;
+        border-radius: 30px;
+        padding: 10px 20px;
+        background-color: var(--primary-color);
+        color: var(--invert-text);
+        font-size: 2ch;
+        width: max-content;
+        margin: auto min(1vw, 10px);
+        font-weight: 700;
+    }
+
+    .popup:has(#report-popup) {
+        overflow-x: hidden;
+    }
+
+    #report-popup {
+        height: fit-content;
+    }
 }
 
 #bug-reporter-name {
-  font-weight: 700;
-  font-size: 1rem;
-  color: var(--primary-color);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--primary-color);
 }
+
 /* Reporter Component */
 .reporter {
     box-sizing: border-box;
@@ -426,27 +438,42 @@
 }
 
 .tooltip {
+    display: inline-block;
     position: relative;
+    cursor: help;
 }
 
 .tooltip-text {
     position: absolute;
-    left: 0;
-    top: 30px;
+    top: 0;
+    left: 100%;
     z-index: 1;
 
-    width: 15ch;
+    border: 1px solid var(--main-text);
+
+    width: 150px;
     padding: 5px;
     background-color: var(--liked-section-bg);
     color: var(--main-text);
+    font-size: 0.8em;
+    line-height: 1.5em;
     text-align: center;
     border-radius: 6px;
+    white-space: normal;
 
     visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.reporter .tooltip-text {
+    top: 100%;
+    left: 0;
 }
 
 .tooltip:hover .tooltip-text {
     visibility: visible;
+    opacity: 1;
 }
 
 .reporter .open-btn {
@@ -552,6 +579,12 @@
 
         #mod-content-container {
             border-top-right-radius: 0px;
+            padding: 10px;
+        }
+
+        .tooltip-text {
+            top: 100%;
+            left: 0;
         }
 
         #mod-actions-tabs {
@@ -628,9 +661,11 @@
         color: var(--main-text);
         text-align: left;
     }
+
     #report-popup {
         .mod-options-btns {
             width: 150%;
+
             #mod-dismiss-btn {
                 font-size: 1em;
             }

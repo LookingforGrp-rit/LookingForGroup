@@ -57,7 +57,6 @@ components:
           lastName: Robinson
           username: mhr2964
           profileImage: null
-          mentor: false
           designer: false
           developer: true
           apiUrl: /api/users/1
@@ -131,8 +130,6 @@ components:
         profileImage:
           type: string
           nullable: true
-        mentor:
-          type: boolean
         designer:
           type: boolean
         developer:
@@ -145,7 +142,6 @@ components:
         lastName: Robinson
         username: mhr2964
         profileImage: null
-        mentor: false
         designer: false
         developer: false
         apiUrl: /api/me
@@ -173,8 +169,6 @@ components:
               type: string
             bio:
               type: string
-            mentor:
-              type: boolean
             projects:
               type: array
               items:
@@ -204,7 +198,6 @@ components:
         lastName: Robinson
         username: mhr2964
         profileImage: null
-        mentor: false
         designer: false
         developer: true
         headline: Hello world
@@ -258,7 +251,6 @@ components:
         lastName: Robinson
         username: mhr2964
         profileImage: null
-        mentor: false
         designer: false
         developer: true
         headline: Hello world

@@ -23,7 +23,6 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     'bio',
     'privacy',
     'phoneNumber',
-    'mentor',
     'displayPhone',
   ];
 
@@ -42,7 +41,6 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
 
   const updates: Parameters<typeof updateUserInfoService>[1] = {
     ...body,
-    mentor: undefined,
     privacy: undefined,
   };
 
@@ -75,10 +73,6 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     }
 
     updates.profileImage = dbImage.location;
-  }
-
-  if (body.mentor !== undefined) {
-    updates.mentor = body.mentor === 'true';
   }
 
   if (body.privacy !== undefined) {
