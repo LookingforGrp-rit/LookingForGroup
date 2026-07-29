@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GalleryImage, GalleryVideo, ProjectImage, ProjectVideo } from "@looking-for-group/shared";
+import { GalleryImage, GalleryVideo, PendingGalleryImage, ProjectImage, ProjectVideo } from "@looking-for-group/shared";
 import { PendingProjectImage } from "../../types/types";
 import placeholder from "../../src/images/lfrog.png";
 import { FileImage } from "./FileImage";
@@ -32,7 +32,7 @@ interface ImageVideoDisplayProps<Image, Video> {
 }
 
 
-const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | GalleryImage, Video extends ProjectVideo | GalleryVideo>({
+const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | (GalleryImage | PendingGalleryImage), Video extends ProjectVideo | GalleryVideo>({
   thumbnail,
   images,
   videos,
@@ -62,10 +62,10 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
 
   return (
     <div id="project-editor-media">
-      <label>Project Images</label>
+      <label>{thumbnail ? "Project" : "Gallery"} Images</label>
       <div className="project-editor-extra-info">
-        Upload images that showcase your project. Star an image for it to be used as
-        this project's thumbnail on the Discover and My Projects pages.
+        Upload images for showcasing. {thumbnail ? `Star an image for it to be used as
+        this project's thumbnail on the Discover and My Projects pages.` : ""}
       </div>
 
       {/* Display warning upon duplicate image */}
@@ -80,15 +80,15 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
           <div
             className="project-editor-image-container"
             key={
-              (projectImage as ProjectImage).imageId ??
-              "pending-" + (projectImage as PendingProjectImage).localId
+              (projectImage as ProjectImage).imageId ?? (projectImage as GalleryImage).galleryImageId ??
+              "pending-" + (projectImage as PendingProjectImage | PendingGalleryImage).localId
             }
           >
             {/* Present image from database or local storage */}
-            {(projectImage as ProjectImage).imageId ? (
+            {(projectImage as ProjectImage).imageId || (projectImage as GalleryImage).galleryImageId ? (
               <img
-                src={(projectImage as ProjectImage).image}
-                alt={(projectImage as ProjectImage).altText}
+                src={projectImage.image as string}
+                alt={projectImage.altText}
                 onError={(e) => {
                   const profileImg = e.target as HTMLImageElement;
                   profileImg.src = placeholder;
@@ -96,9 +96,9 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
               />
             ) : (
               <FileImage
-                file={(projectImage as PendingProjectImage).image!}
+                file={projectImage.image as File}
                 alt={
-                  (projectImage as PendingProjectImage).altText ??
+                  projectImage.altText ??
                   ""
                 }
               />
@@ -118,25 +118,26 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
 
             {/* Hover element */}
             <div className="project-image-hover">
-              {thumbnail === projectImage ||
-                ("imageId" in projectImage && (thumbnail as ProjectImage).imageId === projectImage.imageId) ||
-                ("localId" in projectImage && (thumbnail as ProjectImage).imageId === projectImage.localId) ?
-                <ThemeIcon
-                  id="star"
-                  className="star filled-star"
-                  width={26}
-                  height={26}
-                  ariaLabel="thumbnail"
-                /> :
-                <ThemeIcon
-                  id="star"
-                  className="star empty-star"
-                  width={26}
-                  height={26}
-                  ariaLabel="change thumbnail"
-                  onClick={() => handleThumbnailChange?.(projectImage as ProjectImage | PendingProjectImage)}
-                />
-              }
+              {thumbnail ?
+                thumbnail === projectImage ||
+                  ("imageId" in projectImage && (thumbnail as ProjectImage).imageId === projectImage.imageId) ||
+                  ("localId" in projectImage && (thumbnail as ProjectImage).imageId === projectImage.localId) ?
+                  <ThemeIcon
+                    id="star"
+                    className="star filled-star"
+                    width={26}
+                    height={26}
+                    ariaLabel="thumbnail"
+                  /> :
+                  <ThemeIcon
+                    id="star"
+                    className="star empty-star"
+                    width={26}
+                    height={26}
+                    ariaLabel="change thumbnail"
+                    onClick={() => handleThumbnailChange?.(projectImage as ProjectImage | PendingProjectImage)}
+                  />
+              : "" }
 
               {/* Delete icon */}
               <ThemeIcon
@@ -157,9 +158,9 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
         </div>
       </div>
 
-      <label>Project Videos</label>
+      <label>{thumbnail ? "Project" : "Gallery"} Videos</label>
       <div className="project-editor-extra-info">
-        Link YouTube videos to be embedded on your project page.
+        Link YouTube videos to be embedded.
       </div>
 
       <div id="project-editor-image-ui">

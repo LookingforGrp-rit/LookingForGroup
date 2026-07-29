@@ -220,7 +220,12 @@ Meet page hero style rules
     margin-bottom: 5px;
   }
 
-  #title {
+  #edit-gallery.active {
+    z-index: 10;
+  }
+
+  #title,
+  label {
     color: var(--primary-color);
     font-size: clamp(1rem, 8vw, 2rem);
     font-weight: bold;
@@ -229,6 +234,22 @@ Meet page hero style rules
     margin: 0;
     width: fit-content;
     text-wrap: wrap;
+  }
+
+  label {
+    font-size: 1rem;
+  }
+
+  #project-editor-media {
+    margin-top: 20px;
+    width: 90%;
+  }
+
+  #emtpy-carousel {
+    color: var(--main-text);
+    text-align: center;
+    margin-bottom: 10px;
+    line-height: 22px;
   }
 
   .gallery-carousel {

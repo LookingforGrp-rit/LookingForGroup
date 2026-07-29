@@ -904,6 +904,12 @@ export interface GalleryImage {
   userId: number;
 }
 
+export interface PendingGalleryImage {
+  localId: number;
+  image: File;
+  altText: string;
+}
+
 /**
  * Data for viseos added to user gallery
  */
@@ -1605,6 +1611,10 @@ export type CreateProjectVideoInput = {
 export type CreateProjectImageInput = Pick<ProjectImage, "altText"> & {
   image: File;
 };
+
+export type CreateGalleryImageInput = Pick<GalleryImage, "altText"> & {
+  file: File;
+}
 
 /**
  * Data required to edit the image or alt text on a project
