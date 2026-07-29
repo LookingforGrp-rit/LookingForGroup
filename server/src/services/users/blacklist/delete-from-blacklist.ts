@@ -12,19 +12,19 @@ type DeleteBlacklistServiceSuccess = ServiceSuccessSubset<'OK'>;
 //DELETE api/mod/unban-user/{id}
 //unbans a user
 const deleteBlacklistService = async (
-  googleId: string,
+  id: number,
 ): Promise<DeleteBlacklistServiceSuccess | DeleteBlacklistServiceError> => {
   try {
     const user = await prisma.users.findUnique({
       where: {
-        googleId: googleId,
+        userId: id,
       },
     });
     if (user === null) return 'NOT_FOUND';
 
     await prisma.userBlacklist.delete({
       where: {
-        googleId: googleId,
+        googleId: user.googleId,
       },
     });
 

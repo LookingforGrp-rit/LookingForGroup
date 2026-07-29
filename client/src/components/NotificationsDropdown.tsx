@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Dropdown, DropdownButton, DropdownContent } from "./Dropdown";
+import { createPortal } from "react-dom";
 import { useNotifications } from "../hooks/useNotifications";
 import { getNotification } from "../api/notifications";
 import DOMPurify from 'dompurify';
@@ -204,14 +205,25 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
         </span>
       </DropdownButton>
       <DropdownContent rightAlign={true}>
-        <NotificationsPanel
-          notifications={notifications}
-          loading={loading}
-          error={error}
-          refresh={refresh}
-          markRead={markRead}
-          remove={remove}
-        />
+        {createPortal(
+          <div 
+            className="notifications-portal dropdown"
+            data-theme={theme}
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.nativeEvent.stopImmediatePropagation()}
+            onTouchStart={(e) => e.nativeEvent.stopImmediatePropagation()}
+          >
+            <NotificationsPanel
+              notifications={notifications}
+              loading={loading}
+              error={error}
+              refresh={refresh}
+              markRead={markRead}
+              remove={remove}
+            />
+          </div>,
+          document.body
+        )}
       </DropdownContent>
     </Dropdown>
   );

@@ -603,8 +603,37 @@ paths:
                     example: null
                   data:
                     type: array
+                    items:
+                      $ref: '#/components/schemas/UserDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/blacklist/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get details on why the user is banned
+      responses:
+        '200':
+          description: Details on why the user is banned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
                     nullable: true
-                    example: []
+                    example: null
+                  data:
+                    allOf:
+                      - type: object
+                      - $ref: '#/components/schemas/BanDetail'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -4548,7 +4577,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/mod/unban-user/{googleId}:
+  /api/mod/unban-user/{id}:
     delete:
       summary: Unbans a user by removing them from a blacklist
       tags:
@@ -4556,10 +4585,10 @@ paths:
       security:
         - shibbolethAuth: []
       parameters:
-        - name: googleId
+        - name: id
           in: path
           required: true
-          description: Google ID of the user to be unbanned
+          description: User ID of the user to be unbanned
           schema:
             type: string
         - in: query
@@ -6125,6 +6154,8 @@ components:
       $ref: 'schemas/users.yaml#/components/schemas/UserPreview'
     UserDetail:
       $ref: 'schemas/users.yaml#/components/schemas/UserDetail'
+    BanDetail:
+      $ref: 'schemas/users.yaml#/components/schemas/BanDetail'
     UserReport:
       $ref: 'schemas/users.yaml#/components/schemas/UserReport'
     BugReport:

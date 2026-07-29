@@ -1549,7 +1549,20 @@ Header style rules
 }
 
 #header.active {
-  z-index: 15;
+  z-index: 15 !important;
+}
+
+.notifications-portal {
+  position: fixed !important;
+  top: 70px;
+  right: 48px;
+  z-index: 9999 !important;
+}
+
+@media screen and (max-width: 800px) {
+  .notifications-portal {
+    right: 12px;
+  }
 }
 
 @media screen and (max-width: 800px) {

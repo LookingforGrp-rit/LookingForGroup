@@ -205,7 +205,8 @@ export const ProfileMeetPage = () => {
       for (let tag of activeExclusionFilters) {
         if ((item.title === tag.label && tag.type === "Role") ||
           item.majors.some(major => major.label === tag.label && major.majorId === tag.skillId) ||
-          item.skills.some(skill => skill.type === tag.type)) //.type used instead of .skillId to accomodate for people tab filters, which reference general types and not specific skillIds
+          item.skills.some(skill => skill.type === tag.type && tag.category ==="Other") || //.type used instead of .skillId to accomodate for people tab filters, which reference general types and not specific skillIds
+          item.skills.some(skill => skill.skillId === tag.skillId)) 
           return false;
       }
       if (activeSkillFilters.length === 0) return true;
@@ -215,8 +216,10 @@ export const ProfileMeetPage = () => {
       for (const tag of activeSkillFilters) {
         // Check for broad filter label Developer
         if (tag.label === 'Developer') {
-          matchesAll = item.developer;
-          matchesAny = item.developer;
+          if (item.developer)
+            matchesAny = true;
+          else
+            matchesAll = false;
         }
         else if (tag.label === 'Designer') {
           if (item.designer)
@@ -285,7 +288,7 @@ export const ProfileMeetPage = () => {
 
     // If no tags are currently selected, render all projects
     // !! Needs to be skipped if searchbar has any input !!
-    if (tagFilteredList.length === 0 && activeSkillFilters.length === 0) {
+    if (activeExclusionFilters.length === 0 && activeSkillFilters.length === 0) {
       tagFilteredList = JSON.parse(JSON.stringify(fullUserList));
 
       setFilteredUserList(fullUserList);
