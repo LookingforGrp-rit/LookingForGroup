@@ -4,13 +4,15 @@ import { useNavigate } from "react-router-dom";
 import PendingProjects from "../ModeratorTools/PendingProjects";
 import ReportedProjects from "../ModeratorTools/ReportedProjects";
 import ReportedUsers from "../ModeratorTools/ReportedUsers";
+import ReportedBugs from "../ModeratorTools/ReportedBugs";
+import BannedUsers from "../ModeratorTools/BannedUsers";
 import { Header } from "../Header";
 import "../../components/Styles/modPage.css";
 import "../../components/Styles/projects.css";
 import { getCurrentAccount } from "../../api/users";
 import { getUserAccessLevel, sendModeratorNotification } from "../../api/mod-tools";
 import * as paths from '../../constants/routes';
-import AllModerators from "../ModeratorTools/admin/AllModerators";
+import AllModsAdmins from "../ModeratorTools/admin/AllModsAdmins";
 
 /**
  * The Moderator Page, only accessible by Moderators and Administrators
@@ -59,6 +61,8 @@ const ModeratorPage = () => {
         const pendingProjectsTab = document.querySelector("#mod-pending-tab") as HTMLButtonElement;
         const reportedUsersTab = document.querySelector("#mod-users-tab") as HTMLButtonElement;
         const reportedProjectsTab = document.querySelector("#mod-projects-tab") as HTMLButtonElement;
+        const reportedBugsTab = document.querySelector('#mod-bugs-tab') as HTMLButtonElement;
+        const bannedUsersTab = document.querySelector('#mod-banned-tab') as HTMLButtonElement;
         const allModeratorsTab = document.querySelector("#admin-mods-tab") ? document.querySelector("#admin-mods-tab") as HTMLButtonElement : null;
 
         if (reportedUsersTab != null && reportedProjectsTab != null && pendingProjectsTab != null) {
@@ -67,6 +71,8 @@ const ModeratorPage = () => {
                     reportedUsersTab.style.opacity = String(.5);
                     reportedProjectsTab.style.opacity = String(.5);
                     pendingProjectsTab.style.opacity = String(1);
+                    reportedBugsTab.style.opacity = String(.5);
+                    bannedUsersTab.style.opacity = String(.5);
                     if (userIsAdmin && allModeratorsTab != null) {
                         allModeratorsTab.style.opacity = String(.5);
                     }
@@ -75,6 +81,8 @@ const ModeratorPage = () => {
                     reportedUsersTab.style.opacity = String(1);
                     reportedProjectsTab.style.opacity = String(.5);
                     pendingProjectsTab.style.opacity = String(.5);
+                    reportedBugsTab.style.opacity = String(.5);
+                    bannedUsersTab.style.opacity = String(.5);
                     if (userIsAdmin && allModeratorsTab != null) {
                         allModeratorsTab.style.opacity = String(.5);
                     }
@@ -83,15 +91,39 @@ const ModeratorPage = () => {
                     reportedUsersTab.style.opacity = String(.5);
                     reportedProjectsTab.style.opacity = String(1);
                     pendingProjectsTab.style.opacity = String(.5);
+                    reportedBugsTab.style.opacity = String(.5);
+                    bannedUsersTab.style.opacity = String(.5);
                     if (userIsAdmin && allModeratorsTab != null) {
                         allModeratorsTab.style.opacity = String(.5);
                     }
                     break;
                 case 3:
+                        reportedUsersTab.style.opacity = String(.5);
+                        reportedProjectsTab.style.opacity = String(.5);
+                        pendingProjectsTab.style.opacity = String(.5);
+                        reportedBugsTab.style.opacity = String(1);
+                        bannedUsersTab.style.opacity = String(.5);
+                        if (userIsAdmin && allModeratorsTab != null) {
+                        allModeratorsTab.style.opacity = String(.5);
+                        }
+                    break;
+                case 4:
+                        reportedUsersTab.style.opacity = String(.5);
+                        reportedProjectsTab.style.opacity = String(.5);
+                        pendingProjectsTab.style.opacity = String(.5);
+                        reportedBugsTab.style.opacity = String(.5);
+                        bannedUsersTab.style.opacity = String(1);
+                        if (userIsAdmin && allModeratorsTab != null) {
+                        allModeratorsTab.style.opacity = String(.5);
+                        }
+                    break;
+                case 5:
                     if (userIsAdmin && allModeratorsTab != null) {
                         reportedUsersTab.style.opacity = String(.5);
                         reportedProjectsTab.style.opacity = String(.5);
                         pendingProjectsTab.style.opacity = String(.5);
+                        reportedBugsTab.style.opacity = String(.5);
+                        bannedUsersTab.style.opacity = String(.5);
                         allModeratorsTab.style.opacity = String(1);
                     }
                     break;
@@ -99,6 +131,8 @@ const ModeratorPage = () => {
                     reportedUsersTab.style.opacity = String(.5);
                     reportedProjectsTab.style.opacity = String(.5);
                     pendingProjectsTab.style.opacity = String(1);
+                    reportedBugsTab.style.opacity = String(.5);
+                    bannedUsersTab.style.opacity = String(.5);
                     if (userIsAdmin && allModeratorsTab != null) {
                         allModeratorsTab.style.opacity = String(.5);
                     }
@@ -167,12 +201,27 @@ const ModeratorPage = () => {
                     ></ReportedProjects>
                 );
             case 3:
+                return (    /* needs to hide list view option? */
+                    <ReportedBugs
+                        currentUserId={userId}
+                        currentTab={currentTab}
+                    ></ReportedBugs>
+                );
+            case 4:
                 return (
-                    <AllModerators
+                    <BannedUsers
                         currentUserId={userId}
                         currentTab={currentTab}
                         displayMode={displayMode}
-                    ></AllModerators>
+                    ></BannedUsers>
+                );
+            case 5:
+                return (
+                    <AllModsAdmins
+                        currentUserId={userId}
+                        currentTab={currentTab}
+                        displayMode={displayMode}
+                    ></AllModsAdmins>
                 );
             default:
                 return (
@@ -272,13 +321,27 @@ const ModeratorPage = () => {
                                     >
                                         Reported Projects
                                     </button>
+                                    <button
+                                        id="mod-bugs-tab"
+                                        style={{ opacity: String(.5) }}
+                                        onClick={() => { setCurrentTab(3); }}
+                                    >
+                                        Reported Bugs
+                                    </button>
+                                    <button
+                                        id="mod-banned-tab"
+                                        style={{ opacity: String(.5) }}
+                                        onClick={() => { setCurrentTab(4); }}
+                                    >
+                                        Banned Users
+                                    </button>
                                     {userIsAdmin && (
                                         <button
                                             id="admin-mods-tab"
                                             style={{ opacity: String(.5) }}
-                                            onClick={() => { setCurrentTab(3); }}
+                                            onClick={() => { setCurrentTab(5); }}
                                         >
-                                            All Moderators
+                                            Mods & Admins
                                         </button>
                                     )}
                                 </div>

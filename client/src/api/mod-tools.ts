@@ -1,6 +1,16 @@
 import { GET, DELETE, POST, PATCH } from "./index";
-import { ApiResponse, UserAccessLevel, UnapproveProjectInput } from "@looking-for-group/shared";
-import { ProjectDetail, ProjectReport, UserReport, ModeratorNotificationInput, BanUserInput } from "@looking-for-group/shared";
+import {
+    ApiResponse,
+    UserAccessLevel,
+    UnapproveProjectInput,
+    ProjectDetail,
+    ProjectReport,
+    UserReport,
+    ModeratorNotificationInput,
+    BanUserInput,
+    UserDetail,
+    BanDetail,
+} from "@looking-for-group/shared";
 
 /**
  * Gets the list of all pending projects
@@ -86,6 +96,30 @@ export const getReportedUsers = async (): Promise<ApiResponse<UserReport[]>> => 
     if (response.error) console.log(`Error in getReportedUsers: ${response.error}`);
     return response;
 };
+
+/**
+ * Gets the list of all banned users
+ * @returns List of all banned users or an error message if the request fails 
+ */
+export const getBannedUsers = async (): Promise<ApiResponse<UserDetail[]>> => {
+    const apiURL = `/users/blacklist`;
+    const response = await GET(apiURL);
+
+    if (response.error) console.log(`Error in getBannedUsers: ${response.error}`);
+    return response; 
+}
+
+/**
+ * Gets the list of all banned users
+ * @returns List of all banned users or an error message if the request fails 
+ */
+export const getBanDetail = async (userId: number): Promise<ApiResponse<BanDetail>> => {
+    const apiURL = `/users/blacklist/${userId}`;
+    const response = await GET(apiURL);
+
+    if (response.error) console.log(`Error in getBanDetail: ${response.error}`);
+    return response; 
+}
 
 /**
  * Gets the access level of the current user
@@ -243,3 +277,55 @@ export const deleteUserReport = async (reportId: number,): Promise<ApiResponse> 
     if (response.error) console.log(`Error in deleteUserReport: ${response.error}`);
     return response;
 };
+
+export const unbanUser = async (userId: number): Promise<ApiResponse> => {
+    const apiURL = `/mod/unban-user/${userId}`;
+    const response = await DELETE(apiURL, {});
+
+    if (response.error) console.log(`Error in unbanUser: ${response.error}`);
+    return response;
+};
+
+/**
+ * Gets all bug reports
+ * @returns ApiResponse from the API call to get bug reports
+ */
+export const getBugReports = async (): Promise<ApiResponse> => {
+    const apiURL = `/mod/bug-report/`;
+    const response = await GET(apiURL);
+
+    if (response.error) console.log(`Error in getBugReports: ${response.error}`);
+    return response;
+};
+
+/**
+ * Gets the specified bug report by its id
+ * @param reportId reportId The id of the report to get
+ * @returns ApiResponse from the API call to get the specified bug report
+ */
+export const getBugReportById = async (reportId: number): Promise<ApiResponse> => {
+    const apiURL = `/mod/bug-report/${reportId}`;
+    const response = await GET(apiURL);
+
+    if (response.error) console.log(`Error in getBugReportById: ${response.error}`);
+    return response;
+};
+
+/**
+ * Gets the specified bug report by its id
+ * @param reportId reportId The id of the report to update
+ * @param modNotes Notes from the mod to the user about the report
+ * @param isResolved Is this bug resolved? (i.e. is this no longer a concern?)
+ * @returns ApiResponse from the API call to update bug report
+ */
+export const updateBugReport = async (reportId: number, modNotes: string, isResolved: boolean): Promise<ApiResponse> => {
+    const apiURL = `/mod/bug-report/${reportId}`;
+    const response = await PATCH(apiURL, {
+        isResolved: isResolved,
+        modNotes: modNotes
+    });
+
+    if (response.error) console.log(`Error in updateBugReport: ${response.error}`);
+    return response;
+};
+

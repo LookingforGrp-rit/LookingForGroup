@@ -414,8 +414,8 @@ export const TagsTab = ({
           )}
         </div>
         <div className="project-editor-extra-info">
-          Drag and drop to reorder. The first 2 tags will be displayed on your
-          project's discover card.
+          Drag and drop to reorder. The first 3 tags will be displayed on your
+          project's panel on the Projects page.
         </div>
         {projectAfterTagsChanges.tags.length === 0 && (
           <div className="error">*At least 1 tag is required</div>
@@ -435,7 +435,7 @@ export const TagsTab = ({
               {projectAfterTagsChanges.tags.map((t, index) => (
                 <Fragment key={t.tagId}>
                   {/* Divider marks the cutoff: the first two tags appear on the discover card */}
-                  {index === 2 && <hr id="selected-tag-divider" />}
+                  {index === 3 && <hr id="selected-tag-divider" />}
                   <SortableTag
                     id={t.tagId} tag={{
                       skillId: t.tagId,

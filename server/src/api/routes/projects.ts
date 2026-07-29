@@ -5,7 +5,8 @@ import PROJECT from '#controllers/projects/index.ts';
 import { requiresNotSelf } from '#middleware/authorization/requires-not-self.ts';
 import { isUserBlocked } from '#middleware/validators/is-user-blocked.ts';
 import { BodyParameterLocation } from '#middleware/validators/parameter-location/body-param-location.ts';
-import { ProjectInPathParameterLocation } from '#middleware/validators/parameter-location/project-in-path-param-location.ts';
+import { ProjectMemberInPathParameterLocation } from '#middleware/validators/parameter-location/project-member-in-path-parameter.ts';
+import { ProjectOwnerInPathParameterLocation } from '#middleware/validators/parameter-location/project-owner-in-path-param-location.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresModerator from '../middleware/authorization/requires-mod.ts';
 import requiresProjectOwner from '../middleware/authorization/requires-project-owner.ts';
@@ -109,7 +110,7 @@ router.delete(
   injectCurrentUser,
   authenticated(requiresModerator),
   projectExistsAt('path', 'id'),
-  authenticated(requiresNotSelf(new ProjectInPathParameterLocation(), 'id')),
+  authenticated(requiresNotSelf(new Map([[new ProjectOwnerInPathParameterLocation(), 'id']]))),
   authenticated(PROJECT.rejectProject),
 );
 //#endregion
@@ -126,7 +127,14 @@ router.patch(
   injectCurrentUser,
   authenticated(requiresModerator),
   projectExistsAt('path', 'id'),
-  authenticated(requiresNotSelf(new ProjectInPathParameterLocation(), 'id')),
+  authenticated(
+    requiresNotSelf(
+      new Map([
+        [new ProjectOwnerInPathParameterLocation(), 'id'],
+        [new ProjectMemberInPathParameterLocation(), 'id'],
+      ]),
+    ),
+  ),
   authenticated(PROJECT.approveProject),
 );
 
@@ -137,7 +145,7 @@ router.patch(
   injectCurrentUser,
   authenticated(requiresModerator),
   projectExistsAt('path', 'id'),
-  authenticated(requiresNotSelf(new ProjectInPathParameterLocation(), 'id')),
+  authenticated(requiresNotSelf(new Map([[new ProjectOwnerInPathParameterLocation(), 'id']]))),
   authenticated(PROJECT.unapproveProject),
 );
 
@@ -295,6 +303,14 @@ router.delete(
 //#endregion
 
 //#region Members routes
+// Get member requests
+router.get(
+  '/:id/members/requests',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(PROJECT.getMemberRequests),
+);
+
 // Get all applications to a project (Must precede /:id/members/:userId)
 router.get(
   '/:id/members/applications',

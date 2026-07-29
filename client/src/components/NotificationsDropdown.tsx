@@ -206,7 +206,13 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
       </DropdownButton>
       <DropdownContent rightAlign={true}>
         {createPortal(
-          <div className="notifications-portal dropdown">
+          <div 
+            className="notifications-portal dropdown"
+            data-theme={theme}
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.nativeEvent.stopImmediatePropagation()}
+            onTouchStart={(e) => e.nativeEvent.stopImmediatePropagation()}
+          >
             <NotificationsPanel
               notifications={notifications}
               loading={loading}

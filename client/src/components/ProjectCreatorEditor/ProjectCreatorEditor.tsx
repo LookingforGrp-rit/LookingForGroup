@@ -157,7 +157,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const updateMessage = async () => {
     let newMessage = "";
     if (modifiedProject?.title === "" || modifiedProject?.title === undefined) newMessage = "Project is missing a title!";
-    else if (modifiedProject?.mediums.length == 0) newMessage = "Project is missing a medium!";
+    else if (modifiedProject?.mediums.length == 0) newMessage = "Project is missing a project type!";
     else if (modifiedProject?.tags.length == 0) newMessage = "Project is missing tags!";
     else if (modifiedProject?.hook === "" || modifiedProject?.hook === undefined) newMessage = "Project is missing a short description!";
     else if (modifiedProject?.description === "" || modifiedProject?.description === undefined) newMessage = "Project is missing a description!";
@@ -183,7 +183,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       else if (!isUniqueTitle) newMessage = "Project cannot have same title as existing project!";
       else if (updatedPendingProject.hook === "" || updatedPendingProject.hook === undefined) newMessage = "Project is missing a Short Description!";
       else if (updatedPendingProject.description === "" || updatedPendingProject.description === undefined) newMessage = "Project is missing a Project Overview!";
-      else if (updatedPendingProject.mediums.length == 0) newMessage = "Project is missing a medium!";
+      else if (updatedPendingProject.mediums.length == 0) newMessage = "Project is missing a project type!";
       else if (updatedPendingProject.tags.length == 0) newMessage = "Project is missing tags!";
     }
 
@@ -237,7 +237,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           user: currentUser ?? (await getCurrentAccount()).data,
           role: {
             roleId: 77,
-            label: "owner"
+            label: "Owner"
           },
           memberSince: new Date(Date.now()),
           apiUrl: "api/user/" + currentUser?.userId
@@ -248,6 +248,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         tags: [] as Tag[],
         mediums: [] as Medium[],
         approved: false,
+        owner: {...currentUser ?? (await getCurrentAccount()).data}
       } as ProjectWithFollowers;
 
       setProjectData(newData);

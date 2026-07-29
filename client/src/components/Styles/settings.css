@@ -342,6 +342,7 @@ input:checked+.slider:before {
     font-size: 3rem;
     font-weight: 600;
     color: var(--primary-color);
+    margin-top: 0;
     margin-bottom: 5px;
     align-self: center;
   }
@@ -587,7 +588,7 @@ input:checked+.slider:before {
       box-shadow: 0px 0px 10px 3px var(--shadow-color);
     }
 
-    .deny-btn {
+    .deny-btn, #cancel-button {
       background: none;
       border: none;
       outline: none;

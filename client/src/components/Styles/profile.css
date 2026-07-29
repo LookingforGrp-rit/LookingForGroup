@@ -2072,10 +2072,10 @@ New Profile page style rules
    box's own background behind it). . */
 #profile-invite-project .select-options,
 #profile-invite-role .select-options {
-  position: static;
+  position: absolute;
   display: block;
   width: 100%;
-  max-height: 200px;
+  max-height: 150px;
   box-shadow: none;
 }
 
@@ -2393,6 +2393,44 @@ New Profile page style rules
       color: var(--primary-color);
     }
   }
+}
+
+/* Delete-account confirmation popup in the profile editor. The shared
+   .delete-user-* styling lives inside a Settings-only selector, so it never
+   reaches this popup — style it here (scoped to profile-delete-* classes so
+   Settings is unaffected). */
+.profile-delete-confirm-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px 0;
+}
+
+.profile-delete-confirm {
+  text-align: center;
+  width: 6rem;
+  padding: 4px 6px;
+  border: 1px solid var(--neutral-gray);
+  border-radius: 5px;
+  background-color: var(--bg-color);
+  color: var(--main-text);
+}
+
+.profile-delete-confirm::placeholder {
+  color: var(--neutral-gray);
+}
+
+.profile-delete-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.profile-delete-error {
+  margin: 0 0 12px 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--error-delete-color);
 }
 
 /* #endregion */

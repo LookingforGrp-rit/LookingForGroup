@@ -25,7 +25,8 @@ import {
 	getCurrentAccount
 } from "../../../api/users";
 import {
-	getMemberRequestByProjectID
+	getMemberRequestByProjectID,
+	changeOwner,
 } from "../../../api/projects"
 import {
 	ProjectJob,
@@ -222,6 +223,9 @@ export const TeamTab = ({
 	const [messageText, setMessageText] = useState("");
 
 	const [confirm, setConfirm] = useState(false);
+
+	const [newOwner, setNewOwner] = useState<UserPreview | null>(null);
+	const [ownerChange, setOwnerChange] = useState("");
 	/**
 	 * Handles invitation request in local and data manager
 	 */
@@ -256,6 +260,7 @@ export const TeamTab = ({
 
 	const { setOpen: closeOuterPopup } = useContext(PopupContext);
 	const { setOpen } = useContext(PopupContext);
+	
 	// Check if the Pending Requests tab is unsaved
 	const isPendingRequestsUnsaved = useMemo(() => {
 		const currentInvitations = pendingInvitations || [];
@@ -333,6 +338,7 @@ export const TeamTab = ({
 	useEffect(() => {
 		setErrorMember(errorAddMember);
 	}, [errorAddMember, setErrorMember]);
+
 	useEffect(() => {
 		setErrorPosition(errorAddPosition);
 	}, [errorAddPosition, setErrorPosition]);
@@ -449,7 +455,6 @@ export const TeamTab = ({
 		projectAfterTeamChanges.jobs
 	]);
 
-
 	// Load correct contact name in open positions
 	useEffect(() => {
 		const loadName = async () => {
@@ -477,10 +482,11 @@ export const TeamTab = ({
 		},
 		[projectAfterTeamChanges.jobs]
 	);
+
 	/**
-   * Helper function that retrieves all pending requests associated to the project
-   * @returns Pending requests (using useState)
-   */
+	 * Helper function that retrieves all pending requests associated to the project
+	 * @returns Pending requests (using useState)
+	 */
 	const getPendingRequests = async () => {
 		if (!projectData.projectId) return;
 
@@ -503,6 +509,7 @@ export const TeamTab = ({
 			setPendingRequestsLoaded(true);
 		}
 	};
+
 	// Load pending member requests once per project when no saved local state exists
 	useEffect(() => {
 		if (!pendingRequestsLoaded && projectData.projectId) {
@@ -1055,6 +1062,25 @@ export const TeamTab = ({
 		return " Date was undefined";
 	}
 
+	//make date safe to stop crashing
+	const safeDate = (value: Date | string | null | undefined) => {
+		if (!value) return "None";
+
+		//convert to real date
+		const dateObj = value instanceof Date ? value : new Date(value)
+
+		//validate
+		if (isNaN(dateObj.getTime())) return "None";
+
+		//convert to ISO string + remove time
+		const date = dateObj.toISOString().slice(0, 10);
+
+		//no date
+		if (date === "1900-01-01") return "None";
+
+		return `${date}`;
+	}
+
 	// --- Content variables ---
 	// JSX content for viewing position details.
 	const positionViewWindow =
@@ -1198,7 +1224,7 @@ export const TeamTab = ({
 							</span>
 
 							{//if no date was inserted, "none" appears
-								currentJob?.jobStart ? (currentJob?.jobStart.getFullYear() == 1900 ? " None" : undefinedDateToString(currentJob?.jobStart)) : "None"}
+								safeDate(currentJob?.jobStart)}
 						</div>
 
 						<div id="position-end">
@@ -1206,7 +1232,7 @@ export const TeamTab = ({
 								Job End:
 							</span>
 
-							{currentJob?.jobEnd ? (currentJob?.jobEnd.getFullYear() == 1900 ? " None" : undefinedDateToString(currentJob?.jobEnd)) : "None"}
+							{safeDate(currentJob?.jobEnd)}
 						</div>
 
 						<div id="position-compensation">
@@ -1766,7 +1792,8 @@ export const TeamTab = ({
 	// Check if team tab is in edit mode
 	const positionWindow =
 		editMode === true ? positionEditWindow : positionViewWindow;
-	// Renders the current member requests interface with member cards and edit functionality.
+	
+		// Renders the current member requests interface with member cards and edit functionality.
 	const currentRequestsContent: JSX.Element = useMemo(
 		() => (
 			<div id="project-editor-project-requests">
@@ -2131,26 +2158,135 @@ export const TeamTab = ({
 											/>
 										</Select>
 									</div>
+									{projectAfterTeamChanges.owner.userId === currentMember?.user?.userId
+										&& currentMember.role?.label.toLowerCase() !== "owner" ?
+										<div id="project-team-change-owner">
+											<label>Choose a member to take ownership of the project</label>
+											<div id="user-search-container">
+												<Dropdown>
+													<DropdownButton buttonId="user-search-dropdown-button">
+														<SearchBar
+															key={searchBarKey}
+															value={ownerChange}
+															onChange={(e) =>
+																setOwnerChange(e.target.value)
+															}
+															dataSets={[
+																{ data: projectAfterTeamChanges.members }
+															]}
+															onSearch={(results) => {
+																handleSearch(
+																	results as UserPreview[][]
+																);
+															}}
+															placeholderText='Search Members'>
+														</SearchBar>
+													</DropdownButton>
+													<DropdownContent>
+														<div id="user-search-results">
+															{projectAfterTeamChanges.members.map(
+																(user, index) => (
+																	<DropdownButton
+																		key={user.user?.userId}
+																		className={`user-search-item
+																		${index === 0 ? "top" : ""}
+																		${index === searchResults.length - 1 ? "bottom" : ""}`}
+																		callback={() => {
+																			setNewOwner(user.user);
+																			setOwnerChange(`${user.user?.firstName} ${user.user?.lastName} (${user.user?.username})`)
+																			if (errorAddMember === "To relinquish ownership, you must select a new owner.")
+																				setErrorAddMember("");
+																		}
+																		}
+																	>
+																		<p className="user-search-name">
+																			{user.user?.firstName}{" "}
+																			{user.user?.lastName}
+																		</p>
+																		<p className="user-search-username">
+																			{user.user?.username}
+																		</p>
+																	</DropdownButton>
+																)
+															)}
+														</div>
+													</DropdownContent>
+												</Dropdown>
+											</div>
+										</div> :
+										""
+									}
+									{errorAddMember !== "" ?
+										<div>
+											{errorAddMember}
+										</div>
+										: ""}
 									{/* Action buttons */}
 									<div className="project-editor-button-pair">
 										{/* Save Button */}
 										<PopupButton
 											buttonId="team-edit-member-save-button"
+											doNotClose={() =>
+												!currentMember ||
+												!currentMember.user ||
+												!currentMember.user.userId ||
+												(currentMember.user.userId === projectAfterTeamChanges.owner?.userId && !newOwner)
+											}
 											callback={() => {
 												if (!currentMember) {
-													setErrorAddMember("No member selected");
+													setErrorAddMember("No member selected.");
 													return;
 												};
 												if (!currentMember.user || !currentMember.user.userId) {
-													setErrorAddMember("Member is missing user information");
+													setErrorAddMember("Member is missing user information.");
 													return;
 												} // cant edit owner role
-												if (currentMember.user.userId === projectAfterTeamChanges.owner?.userId) {
-													setErrorAddMember("The project owners role cannot be changed");
+												if (currentMember.user.userId === projectAfterTeamChanges.owner?.userId && !newOwner) {
+													setErrorAddMember("To relinquish ownership, you must select a new owner.");
 													return;
 												}
 												//if (isNullOrUndefined(currentMember.user)) return;
 
+												if (newOwner) {
+													dataManager?.swapOwner({
+														id: {
+															type: "canon",
+															value: newOwner.userId,
+														},
+														data: newOwner.userId,
+													});
+													dataManager?.updateMember({
+														id: {
+															type: "canon",
+															value: newOwner.userId,
+														},
+														data: {
+															roleId: 77,
+															profileVisibility: "public"
+														}
+													})
+													let newMembers = structuredClone(projectAfterTeamChanges.members).map(
+														(member) => {
+															// if this member matches the updated member
+															if (
+																newOwner
+																	.userId ===
+																member.user
+																	?.userId
+															) {
+																// update role
+																return {
+																	...member,
+																	role: { label: "Owner", roleId: 77 }
+																} as PendingProjectMember;
+															} else {
+																// if it doesn't match, do nothing to the member
+																return member;
+															}
+														}
+													);
+													projectAfterTeamChanges.members = newMembers;
+												}
 												// update member in data manager
 												try {
 													dataManager?.updateMember({

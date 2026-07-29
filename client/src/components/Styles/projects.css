@@ -649,6 +649,7 @@ Project Creator and Editor Popup style rules
 }
 
 #report-popup {
+  text-align: center;
   h3 {
     font-size: 1.25rem;
     font-weight: 700;
@@ -694,7 +695,7 @@ Project Creator and Editor Popup style rules
     font-weight: 700;
   }
 
-  #input-bug-report{
+  #input-bug-report, #input-bug-report-message {
     margin-bottom: 0;
     resize: vertical;
     /* Leave room for the character count in the bottom-right corner. */
@@ -727,7 +728,7 @@ Project Creator and Editor Popup style rules
 .save-error-msg p,
 .save-error-msg-general p,
 #invalid-input-error p {
-  margin: -20px 0 10px 0;
+  margin: 0px 0 10px 0;
   text-align: center;
   font-size: 1.125rem;
   color: red;
@@ -931,7 +932,7 @@ Project Creator and Editor Popup style rules
 }
 
 .character-count-close {
-  color: rgb(255, 166, 0);
+  color: rgb(220, 143, 0);
 }
 
 .character-count-danger {
@@ -1013,6 +1014,7 @@ Project Creator and Editor Popup style rules
   /*For scrolling*/
   height: 370px;
   overflow-y: auto;
+  scrollbar-color: lightgray var(--bg-color);
 
   #tag-category-header {
     width: 100%;
@@ -1034,6 +1036,8 @@ Project Creator and Editor Popup style rules
   gap: 0px;
   overflow-x: auto;
   overflow-y: hidden;
+  
+  scrollbar-color: lightgray var(--bg-color);
 }
 
 #tag-search-divider,
@@ -1288,7 +1292,7 @@ Project Creator and Editor Popup style rules
   width: 1px;
   border-style: solid;
   border-width: 3px;
-  color: var(--header-color);
+  color: lightgray;
   margin: 0;
   margin-left: -2.5%;
   margin-right: 2.5%;
@@ -1907,6 +1911,10 @@ Project Creator and Editor Popup style rules
 
 #project-team-add-member-info>.select-container {
   grid-area: role-select;
+
+  .select-options {
+    max-height: 300px;
+  }
 }
 
 #project-team-add-member-message-label {
@@ -2007,11 +2015,25 @@ Project Creator and Editor Popup style rules
 
 #project-team-add-member-name,
 #project-team-add-member-role,
+#project-team-change-owner,
 #project-team-add-member-permissions {
   display: flex;
   align-items: center;
   align-self: stretch;
   gap: 8px;
+}
+
+#project-team-change-owner {
+  margin-top: 20px;
+  flex-direction: column;
+
+  label {
+    text-align: center;
+  }
+
+  #user-search-results {
+    background-color: var(--dropdown-color);
+  }
 }
 
 #project-team-add-member-name label {
@@ -2053,7 +2075,7 @@ Project Creator and Editor Popup style rules
 }
 
 .delete-button,
-.save-button {
+.save-button{
   border: none;
   border-radius: 30px;
   padding: 10px 20px;
@@ -2065,12 +2087,12 @@ Project Creator and Editor Popup style rules
   font-weight: 700;
 }
 
-.save-button {
+.save-button{
   background-color: var(--primary-color) !important;
 }
 
 /* .delete-button:hover, save-button:hover { */
-.deny-btn {
+.deny-btn, #cancel-button {
   background: none;
   border: none;
   outline: none;
@@ -2556,6 +2578,17 @@ button.edit-position-contact .project-member-image {
     margin-top: 20px;
     font-size: 0.75rem;
     margin-bottom: 20px;
+  }
+
+  .project-crop-mouse-instructions {
+    margin-top: 20px;
+    font-size: 0.75rem;
+    margin-bottom: 20px;
+
+    p{
+      margin-top: 0;
+      margin-bottom: 0;
+    }
   }
 
   .confirm-project-crop {
@@ -3848,7 +3881,7 @@ Project Carousel style rules
 }
 
 .mod-project-options,
-#mod-user-options {
+.mod-user-options {
   grid-area: mod;
   display: flex;
   flex-direction: column;
@@ -3873,7 +3906,7 @@ Project Carousel style rules
     margin-bottom: 10px;
   }
 
-  #mod-options-btns {
+  .mod-options-btns {
     display: flex;
     align-items: center;
     flex-direction: row;
@@ -3892,7 +3925,7 @@ Project Carousel style rules
   }
 
   .mod-project-options,
-  #mod-user-options {
+  .mod-user-options {
     max-width: calc(100vw - 80px);
   }
 }
@@ -3922,6 +3955,7 @@ Project Carousel style rules
 
     #project-info-buttons {
       margin-left: 0px;
+      flex-wrap: wrap;
     }
   }
 
@@ -3942,7 +3976,7 @@ Project Carousel style rules
 
 #project-info-buttons {
   display: flex;
-  margin-left: auto;
+  margin-left: 10px;
   align-items: center;
   /* For alignment with Project Title */
   gap: 7px;
@@ -4134,7 +4168,8 @@ Project Carousel style rules
 #project-info-edit,
 #project-open-positions-button,
 .project-people-tab,
-#project-open-positions-header {
+#project-open-positions-header,
+#project-info-request {
   border: none;
   border-radius: 40px;
   background-color: var(--primary-color);
@@ -5182,8 +5217,8 @@ My projects page style rules
   padding: 10px;
   border-radius: 10px;
   border: none;
-  color: var(--neutral-gray);
-  background-color: var(--main-text);
+  color: var(--main-text);
+  background-color: var(--invert-text);
 }
 
 .add-video {

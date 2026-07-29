@@ -117,7 +117,6 @@ const prismaUser = {
   pronouns: '',
   title: '',
   ritStatus: null,
-  mentor: false,
   createdAt: new Date(),
   updatedAt: new Date(),
   location: '',

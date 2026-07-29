@@ -16,7 +16,7 @@ import { Header, loggedIn } from "../Header";
 import { PanelBox } from "../PanelBox";
 import { ProfileEditPopup } from "../Profile/ProfileEditPopup";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
-import { Popup, PopupButton, PopupContent } from "../Popup";
+import { Popup, PopupButton, PopupContent, PopupContext } from "../Popup";
 import { Select, SelectButton, SelectOptions } from "../Select";
 import { ThemeIcon } from "../ThemeIcon";
 import { ShareButton } from "../ShareButton";
@@ -26,13 +26,11 @@ import profilePicture from "../../images/lfrog.png";
 import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles } from "../../api/users";
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
-import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel } from '@looking-for-group/shared';
+import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel, UserReport, BanDetail } from '@looking-for-group/shared';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
-import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification, deactivateUserReport } from "../../api/mod-tools";
-import { PopupContext } from "../Popup";
-import { UserReport } from "@looking-for-group/shared";
+import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification, deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi } from "../../api/mod-tools";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -86,12 +84,19 @@ const Profile = (userProfile: any) => {
 
   const [majorsArr, setMajorsArr] = useState<string[]>([]);
 
+  // If the user is banned
+  const [modActionComplete, setModActionComplete] = useState<boolean>(false);
+  const [banned, setBanned] = useState<boolean>(false);
+  const [unbanned, setUnbanned] = useState<boolean>(false);
+  const [banDetail, setBanDetail] = useState<BanDetail>();
+
   const reportMessage = useRef<HTMLTextAreaElement>(null);
   const warnMessage = useRef<HTMLTextAreaElement>(null);
   const banMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>('');
   const [promoteResponseText, setPromoteResponseText] = useState<string>('');
   const [demoteResponseText, setDemoteResponseText] = useState<string>('');
+  const [banReasonSystemMsg, setBanReasonSystemMsg] = useState<string>('');
 
   // ---- Invite-to-project popup state (only used when viewing someone else) ----
   // Projects the current logged-in user owns; populated lazily so we don't fetch
@@ -158,8 +163,6 @@ const Profile = (userProfile: any) => {
     loadFollow();
   }, [userID, profileID]);
 
-
-
   // --------------------
   // Helper functions
   // --------------------
@@ -186,8 +189,8 @@ const Profile = (userProfile: any) => {
   }, [profileID, userID])
 
   /**
-     * Checks mod permissions for the user on render (in useEffect). The CURRENT user
-     */
+   * Checks mod permissions for the user on render (in useEffect). The CURRENT user
+   */
   const getUserPermissions = async () => {
     /* Ensures the user is logged in */
     const userAccount = await getCurrentAccount();
@@ -232,9 +235,8 @@ const Profile = (userProfile: any) => {
     }
   };
 
-
   /**
-   * Checks if the user has been reported and updates the useState
+   * Checks if the displayed user has been reported and updates the useState
    */
   const isUserReported = async () => {
     const tempActiveList: UserReport[] = [];
@@ -258,10 +260,28 @@ const Profile = (userProfile: any) => {
   };
 
   /**
+   * Checks if the displayed user is a banned user 
+   * If so, get more details on it
+   */
+  const isUserBanned = async () => {
+    const displayedUser = parseInt(profileID);
+    const bannedUsers = (await getBannedUsers()).data;
+    if (bannedUsers) {
+      for (const u of bannedUsers) {
+        if (u.userId === displayedUser) {
+          setBanned(true);
+          const res = await getBanDetail(displayedUser);
+          if (res.data)
+            setBanDetail(res.data);
+        }
+      }
+    }
+  };
+
+  /**
    * Toggles following the user.
    */
   const followUser = async () => {
-
     if (!loggedIn) {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search } }); // Redirect if logged out
     } else {
@@ -440,6 +460,9 @@ const Profile = (userProfile: any) => {
     // is the displayed profile a reported user
     isUserReported();
 
+    // is the displayed profile a banned user
+    isUserBanned();
+
     return () => {
       cancelled = true;
     };
@@ -588,6 +611,7 @@ const Profile = (userProfile: any) => {
       })));
 
       if (res?.every(r => r.status === 200) && notif.every(r => r.status === 201)) {
+        setModActionComplete(true);
         navigate(paths.routes.MODERATION);
       };
 
@@ -619,12 +643,21 @@ const Profile = (userProfile: any) => {
       if (warnRes.status === 201
         && deactivateRes?.every(r => r.status === 200)
         && notif.every(r => r.status === 201)) {
+        setModActionComplete(true);
         navigate(paths.routes.MODERATION);
       }
     } else if (action === 'ban') {
+      if (!banMessage?.current?.value) {
+        setBanReasonSystemMsg('Ban reason cannot be empty. Please provide a reason before banning this user.');
+        setModActionComplete(true);
+        return;
+      } else {
+        setBanReasonSystemMsg('');
+      }
+
       const banRes = await banUser(
         {
-          reason: banMessage?.current?.value ?? '',
+          reason: banMessage.current.value,
           userId: parseInt(profileID) ?? 0,
         }
       );
@@ -646,13 +679,27 @@ const Profile = (userProfile: any) => {
       })));
 
       if (banRes.status === 200 &&
-        deactivateRes.every(r => r.status === 201) &&
+        deactivateRes.every(r => r.status === 200) &&
         notif.every(r => r.status === 201)) {
-        navigate(paths.routes.MODERATION);
+        setModActionComplete(true);
+        setBanned(true);
       }
     } else {
       console.error(`Unknown action: ${action}`);
     }
+  };
+
+  /**
+   * Unbans a banned user
+   * @param userId User Id of banned user
+   */
+  const unbanUser = async (userId: number) => {
+    const res = await unbanUserApi(userId);
+
+    if (res.status === 200) {
+      setUnbanned(true);
+    }
+    setModActionComplete(true);
   };
 
   // --------------------
@@ -889,12 +936,12 @@ const Profile = (userProfile: any) => {
                       {displayedProfile?.pronouns}
                     </div> : ""}
                   {/* Only show mentor status if user is a mentor */}
-                  {displayedProfile?.mentor &&
+                  {/* {displayedProfile?.mentor &&
                     <div className="profile-extra">
                       <ThemeIcon id={'mentor'} width={20} height={20} className={'mono-fill'} ariaLabel={'Mentorship Status'} />
                       Mentor
                     </div>
-                  }
+                  } */}
                 </div>
 
                 <div id="profile-description">{displayedProfile?.bio}</div>
@@ -916,19 +963,76 @@ const Profile = (userProfile: any) => {
             </div>
           </div>
 
+          {/* Mod options for unbanning a banned user */}
+          {(!isUsersProfile) && isUserMod && banned && banDetail && displayedProfile && (<>
+            <div className="mod-user-options">
+              <h2>Unban this User</h2>
+              <p>Unbanning this user will unfreeze their account, allowing them to log in to Looking For Group again.
+                Any regular user permissions will be restored.</p>
+              <p>Ban Reason: {banDetail.banReason}</p>
+              <div className="mod-options-btns">
+                <Popup>
+                  <PopupButton className="mod-unban-btn">Unban</PopupButton>
+                  <PopupContent>
+                    <div className="small-popup" id="report-popup">
+                      <h3>Unban {displayedProfile.firstName} {displayedProfile.lastName}</h3>
+                      <p>Are you sure you want to unban this user?
+                        After this user is unbanned, their account will be unfrozen and they will be able to log in to Looking For Group again.
+                        Their regular user permissions will also be restored.</p>
+                      <div className="confirm-deny-btns">
+                        <PopupButton
+                          buttonId="unban-cancel-button"
+                          className="button-reset"
+                          callback={() => {
+                            setModActionComplete(false);
+                          }}
+                        >
+                          Cancel
+                        </PopupButton>
+                        <Popup>
+                          <PopupButton buttonId="mod-unban-btn" className="delete-button" callback={() => unbanUser(displayedProfile.userId)}>Unban</PopupButton>
+                          <PopupContent>
+                            <div className="small-popup">
+                              {modActionComplete
+                                ? (<>
+                                  <p>{unbanned
+                                    ? "This user has been unbanned and has received an email notification. Their account has been unfrozen, they can now log in to Looking For Group again, and all regular user permissions have been restored."
+                                    : "Uh-oh! Something went wrong while unbanning this user. Please try again later."}
+                                  </p>
+                                  <PopupButton buttonId="continue-button" callback={() => { if (unbanned) navigate(paths.routes.MODERATION); }}>
+                                    {unbanned ? "Continue" : "Close"}
+                                  </PopupButton>
+                                </>)
+                                : <div className='placeholder-spacing'>
+                                  <div className='spinning-loader'></div>
+                                </div>
+                              }
+                            </div>
+                          </PopupContent>
+                        </Popup>
+                      </div>
+                    </div>
+                  </PopupContent>
+                </Popup>
+              </div>
+            </div>
+          </>)}
+
           {/* Mod options when this is a reported user */}
-          {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div id="mod-user-options">
+          {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div className="mod-user-options">
             <h2>Reports</h2>
             <p>You can dismiss this report, warn the user and request edits from them, or ban the user.</p>
             <h3>Active Reports</h3>
-            <p>These reports are currently under review and have not yet been resolved. Resolve them by dismissing the reports, warning the user, or banning the user. All active reports will be resolved using the same action.</p>
+            <p>These reports are currently under review and have not yet been resolved. 
+              Resolve them by dismissing the reports, warning the user, or banning the user. 
+              All active reports will be resolved using the same action.</p>
             {activeReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'active-reporter-' + r.reporterId} />)}
             {inactiveReportList.length !== 0 && (<>
               <h3>Inactive Reports</h3>
               <p>These reports have already been reviewed and are no longer active.</p>
             </>)}
             {inactiveReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'inactive-reporter-' + r.reporterId} />)}
-            <div id="mod-options-btns">
+            <div className="mod-options-btns">
               <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')} >Dismiss Report</button>
               <Popup>
                 <PopupButton className="mod-edit-btn">Warn User</PopupButton>
@@ -941,6 +1045,7 @@ const Profile = (userProfile: any) => {
                       <PopupButton
                         buttonId="edits-cancel-button"
                         className="button-reset"
+                        callback={() => { setModActionComplete(false); }}
                       >
                         Cancel
                       </PopupButton>
@@ -950,7 +1055,17 @@ const Profile = (userProfile: any) => {
                 </PopupContent>
               </Popup>
               <Popup>
-                <PopupButton buttonId="mod-decline-btn" className="delete-button">Ban User</PopupButton>
+                <PopupButton
+                  buttonId="mod-decline-btn"
+                  className="delete-button"
+                  callback={() => {
+                    setModActionComplete(false);
+                    setBanned(false);
+                    setBanReasonSystemMsg('');
+                  }}
+                >
+                  Ban User
+                </PopupButton>
                 <PopupContent>
                   <div className="small-popup" id="report-popup">
                     <h3>Ban {displayedProfile?.firstName} {displayedProfile?.lastName} from LookingForGroup</h3>
@@ -960,10 +1075,35 @@ const Profile = (userProfile: any) => {
                       <PopupButton
                         buttonId="ban-cancel-button"
                         className="button-reset"
+                        callback={() => {
+                          setModActionComplete(false);
+                          setBanned(false);
+                          setBanReasonSystemMsg('');
+                        }}
                       >
                         Cancel
                       </PopupButton>
-                      <button className="confirm-btn" onClick={() => resolveReport('ban')}>Submit</button>
+                      <Popup>
+                        <PopupButton buttonId="mod-submit-ban-btn" className="confirm-btn" callback={() => resolveReport('ban')}>Submit</PopupButton>
+                        <PopupContent>
+                          <div className="small-popup">
+                            {modActionComplete
+                              ? (<>
+                                <p>{banned
+                                  ? "The user's account has been frozen and they can no longer log in to Looking For Group. The banned user has received an email explaining the ban and the reason provided. All reporters have received an update notification informing them that action has been taken."
+                                  : banReasonSystemMsg}
+                                </p>
+                                <PopupButton buttonId="continue-button" callback={() => { if (banned) navigate(paths.routes.MODERATION); }}>
+                                  {banned ? "Continue" : "Close"}
+                                </PopupButton>
+                              </>)
+                              : <div className='placeholder-spacing'>
+                                <div className='spinning-loader'></div>
+                              </div>
+                            }
+                          </div>
+                        </PopupContent>
+                      </Popup>
                     </div>
                   </div>
                 </PopupContent>
@@ -1143,114 +1283,6 @@ const Profile = (userProfile: any) => {
                           </>
                         )}
                       </div>
-                      {myOwnedProjects.length === 0 ? (
-                        <div id="profile-invite-empty">
-                          You don't own any projects yet. Create one to start
-                          inviting people.
-                        </div>
-                      ) : inviteSuccess ? (
-                        <div id="profile-invite-success">
-                          Invite sent! {displayedProfile?.firstName} will get an
-                          email to accept or decline.
-                        </div>
-                      ) : (
-                        <>
-                          <div id="profile-invite-form">
-                            <label
-                              className="profile-invite-label"
-                              htmlFor="profile-invite-project"
-                            >
-                              Project
-                            </label>
-                            <div id="profile-invite-project">
-                              <Select>
-                                <SelectButton
-                                  placeholder="Select a project"
-                                  searchable={true}
-                                  type="input"
-                                />
-                                <SelectOptions
-                                  callback={(e) => {
-                                    const value = (e.target as HTMLButtonElement)
-                                      .value;
-                                    const proj = myOwnedProjects.find(
-                                      (p) => p.title === value
-                                    );
-                                    setInviteProjectId(proj?.projectId ?? null);
-                                  }}
-                                  options={myOwnedProjects.map((proj) => ({
-                                    markup: <>{proj.title}</>,
-                                    value: proj.title,
-                                    disabled: false,
-                                  }))}
-                                />
-                              </Select>
-                            </div>
-
-                            <label
-                              className="profile-invite-label"
-                              htmlFor="profile-invite-role"
-                            >
-                              Role
-                            </label>
-                            <div id="profile-invite-role">
-                              <Select>
-                                <SelectButton
-                                  placeholder="Select a role"
-                                  searchable={true}
-                                  type="input"
-                                />
-                                <SelectOptions
-                                  callback={(e) => {
-                                    const value = (e.target as HTMLButtonElement)
-                                      .value;
-                                    const role = allRoles.find(
-                                      (r) => r.label === value
-                                    );
-                                    setInviteRoleId(role?.roleId ?? null);
-                                  }}
-                                  options={allRoles.map((role) => ({
-                                    markup: <>{role.label}</>,
-                                    value: role.label,
-                                    disabled: false,
-                                  }))}
-                                />
-                              </Select>
-                            </div>
-
-                            <label
-                              className="profile-invite-label"
-                              htmlFor="profile-invite-message"
-                            >
-                              Message
-                            </label>
-                            <textarea
-                              id="profile-invite-message"
-                              placeholder={`Optional note to ${displayedProfile?.firstName ?? "them"}...`}
-                              value={inviteMessage}
-                              onChange={(e) => setInviteMessage(e.target.value)}
-                              maxLength={500}
-                            />
-                          </div>
-
-                          {inviteError && (
-                            <div className="error" id="profile-invite-error">
-                              {inviteError}
-                            </div>
-                          )}
-
-                          <div className="project-editor-button-pair">
-                            <PopupButton
-                              buttonId="profile-invite-send"
-                              callback={handleSendInvite}
-                              doNotClose={() => !inviteSuccess}
-                              disabled={inviteSending}
-                            >
-                              {inviteSending ? "Sending..." : "Send Invite"}
-                            </PopupButton>
-                          </div>
-                        </>
-                      )}
                     </PopupContent>
                   </Popup>
                 )}
@@ -1317,6 +1349,14 @@ const Profile = (userProfile: any) => {
                           itemList={followedProjectsList}
                           userId={userID as number}
                           followedProjectIds={followedProjectsIds}
+                          onUnfollow={(id) => {
+                            setFollowedProjectsList((list) => list.filter((p) => p.projectId !== id));
+                            setFollowProjectsIds((ids) => {
+                              const next = new Set(ids);
+                              next.delete(id);
+                              return next;
+                            });
+                          }}
                         />
                         : <p className="no-saved-items">You have no saved projects!</p>)
                       :
@@ -1326,6 +1366,9 @@ const Profile = (userProfile: any) => {
                           category={"profiles"}
                           itemList={followedProfilesList}
                           userId={userID as number}
+                          onUnfollow={(id) => {
+                            setFollowedProfilesList((list) => list.filter((u) => u.userId !== id));
+                          }}
                         />
                         : <p className="no-saved-items">You have no saved users!</p>)
 

@@ -35,7 +35,6 @@ const prismaUser: Users = {
   pronouns: '',
   title: '',
   ritStatus: null,
-  mentor: false,
   createdAt: new Date(),
   updatedAt: new Date(),
   displayPhone: false,
@@ -54,7 +53,7 @@ describe('deleteBlacklistService', async () => {
   it('returns OK if successful', async () => {
     vi.mocked(prisma.users.findUnique).mockResolvedValue(prismaUser);
     vi.mocked(sendEmail).mockResolvedValue('NO_CONTENT');
-    const result = await deleteBlacklistService('1');
+    const result = await deleteBlacklistService(1);
 
     expect(prisma.userBlacklist.delete).toHaveBeenCalled();
     expect(prisma.userBlacklist.delete).toHaveBeenCalledWith({
@@ -69,7 +68,7 @@ describe('deleteBlacklistService', async () => {
     vi.mocked(prisma.users.findUnique).mockResolvedValue(prismaUser);
     vi.mocked(sendEmail).mockResolvedValue('NO_CONTENT');
     vi.mocked(prisma.userBlacklist.delete).mockRejectedValue({ code: 'P2025' });
-    const result = await deleteBlacklistService('1');
+    const result = await deleteBlacklistService(1);
 
     expect(result).toBe('NOT_FOUND');
   });
@@ -78,7 +77,7 @@ describe('deleteBlacklistService', async () => {
     vi.mocked(prisma.users.findUnique).mockResolvedValue(prismaUser);
     vi.mocked(sendEmail).mockResolvedValue('NO_CONTENT');
     vi.mocked(prisma.userBlacklist.delete).mockRejectedValue(new Error('womp womp'));
-    const result = await deleteBlacklistService('1');
+    const result = await deleteBlacklistService(1);
 
     expect(result).toBe('INTERNAL_ERROR');
   });

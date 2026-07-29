@@ -5,7 +5,7 @@ type DeleteVideoServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'
 type DeleteVideoServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
 //DELETE api/projects/{id}/videos/{video_id}
-//gets all the videos for a project
+//deletes a video in a project
 const deleteVideoService = async (
   videoId: number,
 ): Promise<DeleteVideoServiceSuccess | DeleteVideoServiceError> => {

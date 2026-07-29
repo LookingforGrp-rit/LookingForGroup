@@ -34,7 +34,6 @@ const prismaUser = {
   location: '',
   bio: '',
   privacy: 'public' as Visibility,
-  mentor: false,
   createdAt: new Date(),
   updatedAt: new Date(),
   phoneNumber: null,
