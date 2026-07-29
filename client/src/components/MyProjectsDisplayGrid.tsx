@@ -120,7 +120,7 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, setApprovalStatus,
         <img
           className="grid-card-image"
           src={usePreloadedImage(
-            projectData.thumbnail?.image ?? placeholderThumbnail,
+            (projectData.thumbnail ? projectData.thumbnail.image : placeholderThumbnail),
             placeholderThumbnail
           )}
           alt={`${projectData.title}`}
@@ -156,7 +156,7 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, setApprovalStatus,
                 />
                 Edit Project
               </button>
-              {approvalStatus === 'not-approved' ?
+              {isOwner && approvalStatus === 'not-approved' ?
                 <Popup>
                   <PopupButton className='card-leave-button'>
                     <ThemeIcon

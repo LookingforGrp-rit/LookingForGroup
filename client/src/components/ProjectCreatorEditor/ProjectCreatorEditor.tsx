@@ -143,7 +143,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       dataManager = await projectDataManager(projectID);
 
       const data = dataManager.getSavedProject();
-
+      
       setProjectData(data);
       setModifiedProject(data);
     } catch (err) {

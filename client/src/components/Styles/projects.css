@@ -1014,6 +1014,7 @@ Project Creator and Editor Popup style rules
   /*For scrolling*/
   height: 370px;
   overflow-y: auto;
+  scrollbar-color: lightgray var(--bg-color);
 
   #tag-category-header {
     width: 100%;
@@ -1035,6 +1036,8 @@ Project Creator and Editor Popup style rules
   gap: 0px;
   overflow-x: auto;
   overflow-y: hidden;
+  
+  scrollbar-color: lightgray var(--bg-color);
 }
 
 #tag-search-divider,
@@ -1289,7 +1292,7 @@ Project Creator and Editor Popup style rules
   width: 1px;
   border-style: solid;
   border-width: 3px;
-  color: var(--header-color);
+  color: lightgray;
   margin: 0;
   margin-left: -2.5%;
   margin-right: 2.5%;
