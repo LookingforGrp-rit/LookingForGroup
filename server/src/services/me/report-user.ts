@@ -14,11 +14,11 @@ export const reportUserService = async (
     //Check if report already exists
     const report = await prisma.reportUser.findFirst({
       where: {
-        reporterId,
         reportedId,
+        reporterId,
       },
     });
-    if (report) return 'CONFLICT';
+    if (report && report.active) return 'CONFLICT';
 
     //Create report
     await prisma.reportUser.create({

@@ -228,7 +228,6 @@ model ReportProject {
   projects   Projects @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_report_projects")
   users      Users    @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "FK_project_report_users")
 
-  @@unique([userId, projectId])
   @@index([userId], map: "FK_project_report_users")
   @@index([projectId], map: "FK_project_report_projects")
   @@map("report_project")
@@ -243,7 +242,6 @@ model ReportUser {
   reported   Users   @relation("reported_id", fields: [reportedId], references: [userId], onDelete: Cascade, map: "FK_user_report_reported")
   reporter   Users   @relation("reporter_id", fields: [reporterId], references: [userId], onDelete: Cascade, map: "FK_user_report_reporter")
 
-  @@unique([reporterId, reportedId])
   @@index([reporterId], map: "FK_user_report_reporter")
   @@index([reportedId], map: "FK_user_report_reported")
   @@map("report_user")
