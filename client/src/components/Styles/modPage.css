@@ -30,7 +30,7 @@
             margin: 0;
         }
 
-        textarea{
+        textarea {
             outline: none;
         }
     }
@@ -90,7 +90,7 @@
         border-color: var(--liked-section-bg);
         border-style: solid;
         /* Need big padding in the bottom to fit the tooltip */
-        padding: 10px 10px 50px;
+        padding: 10px 10px 30px;
         max-height: 500px;
         overflow-y: auto;
         overflow-x: hidden;
@@ -124,18 +124,23 @@
         font-weight: 700;
     }
 
-    .mod-edit-btn, .mod-unban-btn {
+    .mod-edit-btn,
+    .mod-unban-btn {
         border: none;
         border-radius: 30px;
         padding: 10px 20px;
-        background-color: var(--error-delete-color);
-        color: black;
+        background-color: var(--warning-color, #FF6B4A);
+        color: var(--invert-text);
         font-size: 2ch;
         width: max-content;
         margin: auto min(1vw, 10px);
         font-weight: 700;
     }
-    
+
+    .mod-unban-btn {
+        background-color: var(--error-delete-color);
+    }
+
     #mod-dismiss-btn {
         border: none;
         border-radius: 30px;
@@ -150,7 +155,7 @@
 
     /* decline btn styled by delete-button */
     #mod-decline-btn {
-        color: var(--main-text);
+        color: var(--invert-text);
     }
 }
 
@@ -290,81 +295,85 @@
 
 /* Bug Panel */
 .bug-panel {
-  width: 100%;
-  height: auto;
-  border: none;
-  border-radius: 10px;
-  background-color: var(--header-color);
-  display: flex;
-  flex-direction: row;
-  position: relative;
-  max-width: none;
-  overflow: hidden;
-  text-decoration: none;
-  margin: 10px 0;
-
-  .bug-reporter-profile {
-    width: clamp(45px, 15vw, 75px);
-  height: clamp(45px, 15vw, 75px);
-  border-radius: 50%;
-  border: 2px solid white;
-  object-fit: cover;
-  margin-right: 10px;
-  }
-
-  .bug-reporter {
-    width: 95%;
-    margin: 10px auto;
+    width: 100%;
+    height: auto;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--header-color);
     display: flex;
     flex-direction: row;
-    gap: 10px;
-  }
+    position: relative;
+    max-width: none;
+    overflow: hidden;
+    text-decoration: none;
+    margin: 10px 0;
 
-  .bug-reporter-profile {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  .bug-reporter-info {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+    .bug-reporter-profile {
+        width: clamp(45px, 15vw, 75px);
+        height: clamp(45px, 15vw, 75px);
+        border-radius: 50%;
+        border: 2px solid white;
+        object-fit: cover;
+        margin-right: 10px;
+    }
 
-  /* Name */
-  h2 {
-    margin: 8px 15px 0 15px;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    line-height: normal;
-    overflow-wrap: break-word;
-    word-break: break-word;
-  }
-  #see-details-btn {
-    border: none;
-    border-radius: 30px;
-    padding: 10px 20px;
-    background-color: var(--primary-color);
-    color: var(--invert-text);
-    font-size: 2ch;
-    width: max-content;
-    margin: auto min(1vw, 10px);
-    font-weight: 700;
-  }
-  .popup:has(#report-popup) {
-    overflow-x: hidden;
-  }
-  #report-popup {
-    height: fit-content;
-  }
+    .bug-reporter {
+        width: 95%;
+        margin: 10px auto;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .bug-reporter-profile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bug-reporter-info {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Name */
+    h2 {
+        margin: 8px 15px 0 15px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        line-height: normal;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+
+    #see-details-btn {
+        border: none;
+        border-radius: 30px;
+        padding: 10px 20px;
+        background-color: var(--primary-color);
+        color: var(--invert-text);
+        font-size: 2ch;
+        width: max-content;
+        margin: auto min(1vw, 10px);
+        font-weight: 700;
+    }
+
+    .popup:has(#report-popup) {
+        overflow-x: hidden;
+    }
+
+    #report-popup {
+        height: fit-content;
+    }
 }
 
 #bug-reporter-name {
-  font-weight: 700;
-  font-size: 1rem;
-  color: var(--primary-color);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--primary-color);
 }
 
 /* Reporter Component */
@@ -436,8 +445,8 @@
 
 .tooltip-text {
     position: absolute;
-    top: 100%;
-    left: 0;
+    top: 0;
+    left: 100%;
     z-index: 1;
 
     border: 1px solid var(--main-text);
@@ -455,6 +464,11 @@
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.2s ease-in-out;
+}
+
+.reporter .tooltip-text {
+    top: 100%;
+    left: 0;
 }
 
 .tooltip:hover .tooltip-text {
@@ -642,9 +656,11 @@
         color: var(--main-text);
         text-align: left;
     }
+
     #report-popup {
         .mod-options-btns {
             width: 150%;
+
             #mod-dismiss-btn {
                 font-size: 1em;
             }

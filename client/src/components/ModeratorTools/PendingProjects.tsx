@@ -18,7 +18,6 @@ const PendingProjects = ({ currentUserId, currentTab, displayMode }: PendingProj
     // Variables ==============================================================
     const [loaded, setLoaded] = useState<boolean>(false);
     const [pendingProjects, setPendingProjects] = useState<ProjectDetail[]>([]);
-    const [pendingProjectsIds, setPendingProjectsIds] = useState<Set<number>>(new Set);
     const [association, setAssociation] = useState<Record<number, boolean>>({});
 
     // Helper Methods =========================================================
@@ -56,7 +55,6 @@ const PendingProjects = ({ currentUserId, currentTab, displayMode }: PendingProj
                 }
 
                 setAssociation(Object.fromEntries(entries));
-                setPendingProjectsIds(tempIds);
             }
             setPendingProjects(tempPendingProjectArray);
             setLoaded(true);

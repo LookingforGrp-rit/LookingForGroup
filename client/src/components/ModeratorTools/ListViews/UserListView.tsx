@@ -8,33 +8,13 @@ import { RitStatus } from "@looking-for-group/shared/enums";
 type UserListViewProps = {
     users: UserDetail[],
     modsAdmins?: boolean,
+    association?: Record<number, boolean>
 };
 
-const UserListView = ({ users, modsAdmins = false }: UserListViewProps) => {
+const UserListView = ({ users, modsAdmins = false, association = {} }: UserListViewProps) => {
     // Variables ==============================================================
     const [accessLevels, setAccessLevels] = useState<Record<number, UserAccessLevel>>({});
 
-    // Loaders ================================================================
-    /**
-     * Loads access levels if this if for mods and admins
-     */
-    useEffect(() => {
-        if (!modsAdmins) return;
-
-        const loadAccessLevels = async () => {
-            const entries = await Promise.all(
-                users.map(async user => [
-                    user.userId,
-                    (await getAccessLevel(user.userId)) ?? "User",
-                ] as const)
-            );
-
-            setAccessLevels(Object.fromEntries(entries));
-        };
-
-        void loadAccessLevels();
-    }, [users, modsAdmins]);
-    
     // Helper Methods =========================================================
     /**
      * Used for navigation to other pages
@@ -65,7 +45,18 @@ const UserListView = ({ users, modsAdmins = false }: UserListViewProps) => {
                 className="list-card"
                 onClick={() => navigate(`${routes.PROFILE}?userID=${user.userId}`)}
             >
-                <td className="list-card-title">{user.firstName} {user.lastName}</td>
+                <td className="list-card-title">
+                    {association[user.userId] &&
+                        <span className="tooltip">
+                            <i className="fa-solid fa-triangle-exclamation" style={{
+                                color: "#F59E0B",
+                                fontSize: "1.1rem",
+                            }}></i>&nbsp;&nbsp;
+                            <span className="tooltip-text">You're associated with this user/report and can't resolve it</span>
+                        </span>
+                    }
+                    {user.firstName} {user.lastName}
+                </td>
                 {modsAdmins && <td className="list-card-access-level" data-label="Access Level">{accessLevels[user.userId]}</td>}
                 <td className="list-card-pronouns" data-label="Pronouns">{user.pronouns.length > 0 ? user.pronouns : 'Not Provided'}</td>
                 <td className="list-card-location" data-label="Location">{user.location.length > 0 ? user.location : 'Not Provided'}</td>
@@ -74,6 +65,27 @@ const UserListView = ({ users, modsAdmins = false }: UserListViewProps) => {
             </tr>
         </>;
     };
+
+    // Loaders ================================================================
+    /**
+     * Loads access levels if this if for mods and admins
+     */
+    useEffect(() => {
+        if (!modsAdmins) return;
+
+        const loadAccessLevels = async () => {
+            const entries = await Promise.all(
+                users.map(async user => [
+                    user.userId,
+                    (await getAccessLevel(user.userId)) ?? "User",
+                ] as const)
+            );
+
+            setAccessLevels(Object.fromEntries(entries));
+        };
+
+        void loadAccessLevels();
+    }, [users, modsAdmins]);
 
     // The final component ====================================================
     return (

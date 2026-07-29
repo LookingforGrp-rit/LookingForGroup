@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { routes } from '../../../constants/routes';
 import { ProjectDetail } from "@looking-for-group/shared";
@@ -10,9 +9,6 @@ type ProjectListViewProps = {
 };
 
 const ProjectListView = ({ projects, association = {} }: ProjectListViewProps) => {
-    // Variables ==============================================================
-    const [associated, setAssociated] = useState<Record<number, boolean>>(association);
-
     // Helper Methods =========================================================
     /**
      * Used for navigation to other pages
@@ -44,7 +40,7 @@ const ProjectListView = ({ projects, association = {} }: ProjectListViewProps) =
                 onClick={() => navigate(`${routes.PROJECT}?projectID=${project.projectId}`)}
             >
                 <td className="list-card-title">
-                    {associated[project.projectId] &&
+                    {association[project.projectId] &&
                         <span className="tooltip">
                             <i className="fa-solid fa-triangle-exclamation" style={{
                                 color: "#F59E0B",
@@ -62,10 +58,6 @@ const ProjectListView = ({ projects, association = {} }: ProjectListViewProps) =
             </tr>
         </>;
     };
-
-    useEffect(() => {
-        console.log(associated);
-    }, [association]);
 
     // The final component ====================================================
     return (
