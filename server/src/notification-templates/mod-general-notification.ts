@@ -37,7 +37,7 @@ export class ModGeneralNotificationBuilder implements NotificationBuilder {
     notification.message = `Hello ${receiver?.firstName as string},<br /><br />`;
     notification.message += `A moderator has sent you a notification. `;
     notification.message += `Here is the message provided:<br /><br />`;
-    notification.message += `"${message}"<br /><br />`;
+    notification.message += `${message}<br /><br />`;
     notification.message += `If you have any questions or would like to respond to this notification, reply to <strong>lookingforgrp@gmail.com</strong>.<br /><br />`;
     notification.message += `We wish you a good day.<br />`;
     notification.message += `LFG Team`;

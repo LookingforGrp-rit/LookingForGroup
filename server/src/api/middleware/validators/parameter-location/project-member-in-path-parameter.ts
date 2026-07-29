@@ -6,10 +6,10 @@ import type { ParameterLocation } from './parameter-location.ts';
 /**
  * Looks in a project for the owner's id.
  */
-export class ProjectInPathParameterLocation implements ParameterLocation {
-  async getId(_key: string, request: Request): Promise<number | ApiResponse> {
+export class ProjectMemberInPathParameterLocation implements ParameterLocation {
+  async getId(key: string, request: Request): Promise<number[] | ApiResponse> {
     const res: ApiResponse = { status: 0 };
-    const projectId = parseInt(request.params.id as string);
+    const projectId = parseInt(request.params[key] as string);
 
     if (isNaN(projectId)) {
       res.status = 400;
@@ -29,6 +29,8 @@ export class ProjectInPathParameterLocation implements ParameterLocation {
       return res;
     }
 
-    return result.owner.userId;
+    return result.members.map((member) => {
+      return member.user.userId;
+    });
   }
 }

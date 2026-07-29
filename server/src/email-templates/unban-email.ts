@@ -70,7 +70,6 @@ const UnbanEmail = ({ receiverName }: UnbanEmailProps) => {
             { className: 'text-[14px] text-black leading-[24px]' },
             'You have been unbanned from LFG. ',
             'Your account has been unfrozen, and you will be able to join or create projects again.',
-            '.',
           ),
           createElement(
             Text,

@@ -16,7 +16,7 @@ import { Header, loggedIn } from "../Header";
 import { PanelBox } from "../PanelBox";
 import { ProfileEditPopup } from "../Profile/ProfileEditPopup";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
-import { Popup, PopupButton, PopupContent } from "../Popup";
+import { Popup, PopupButton, PopupContent, PopupContext } from "../Popup";
 import { Select, SelectButton, SelectOptions } from "../Select";
 import { ThemeIcon } from "../ThemeIcon";
 import { ShareButton } from "../ShareButton";
@@ -26,10 +26,11 @@ import profilePicture from "../../images/lfrog.png";
 import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles, getGalleryImages, getGalleryVideos } from "../../api/users";
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
-import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel, GalleryImage, GalleryVideo } from '@looking-for-group/shared';
+import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel, UserReport, BanDetail, GalleryImage, GalleryVideo } from '@looking-for-group/shared';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
+import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification, deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi } from "../../api/mod-tools";
 import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification, deactivateUserReport } from "../../api/mod-tools";
 // import { PopupContext } from "../Popup";
 import { UserReport } from "@looking-for-group/shared";
@@ -95,6 +96,8 @@ const Profile = (/*userProfile: any*/) => {
   // If the user is banned
   const [modActionComplete, setModActionComplete] = useState<boolean>(false);
   const [banned, setBanned] = useState<boolean>(false);
+  const [unbanned, setUnbanned] = useState<boolean>(false);
+  const [banDetail, setBanDetail] = useState<BanDetail>();
 
   const reportMessage = useRef<HTMLTextAreaElement>(null);
   const warnMessage = useRef<HTMLTextAreaElement>(null);
@@ -271,8 +274,8 @@ const Profile = (/*userProfile: any*/) => {
   }, [profileID, userID])
 
   /**
-     * Checks mod permissions for the user on render (in useEffect). The CURRENT user
-     */
+   * Checks mod permissions for the user on render (in useEffect). The CURRENT user
+   */
   const getUserPermissions = async () => {
     /* Ensures the user is logged in */
     const userAccount = await getCurrentAccount();
@@ -317,9 +320,8 @@ const Profile = (/*userProfile: any*/) => {
     }
   };
 
-
   /**
-   * Checks if the user has been reported and updates the useState
+   * Checks if the displayed user has been reported and updates the useState
    */
   const isUserReported = async () => {
     const tempActiveList: UserReport[] = [];
@@ -343,10 +345,28 @@ const Profile = (/*userProfile: any*/) => {
   };
 
   /**
+   * Checks if the displayed user is a banned user 
+   * If so, get more details on it
+   */
+  const isUserBanned = async () => {
+    const displayedUser = parseInt(profileID);
+    const bannedUsers = (await getBannedUsers()).data;
+    if (bannedUsers) {
+      for (const u of bannedUsers) {
+        if (u.userId === displayedUser) {
+          setBanned(true);
+          const res = await getBanDetail(displayedUser);
+          if (res.data)
+            setBanDetail(res.data);
+        }
+      }
+    }
+  };
+
+  /**
    * Toggles following the user.
    */
   const followUser = async () => {
-
     if (!loggedIn) {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search } }); // Redirect if logged out
     } else {
@@ -524,6 +544,9 @@ const Profile = (/*userProfile: any*/) => {
 
     // is the displayed profile a reported user
     isUserReported();
+
+    // is the displayed profile a banned user
+    isUserBanned();
 
     return () => {
       cancelled = true;
@@ -749,6 +772,19 @@ const Profile = (/*userProfile: any*/) => {
     } else {
       console.error(`Unknown action: ${action}`);
     }
+  };
+
+  /**
+   * Unbans a banned user
+   * @param userId User Id of banned user
+   */
+  const unbanUser = async (userId: number) => {
+    const res = await unbanUserApi(userId);
+
+    if (res.status === 200) {
+      setUnbanned(true);
+    }
+    setModActionComplete(true);
   };
 
   // --------------------
@@ -1102,12 +1138,69 @@ const Profile = (/*userProfile: any*/) => {
             </div>
           </div>
 
+          {/* Mod options for unbanning a banned user */}
+          {(!isUsersProfile) && isUserMod && banned && banDetail && displayedProfile && (<>
+            <div className="mod-user-options">
+              <h2>Unban this User</h2>
+              <p>Unbanning this user will unfreeze their account, allowing them to log in to Looking For Group again.
+                Any regular user permissions will be restored.</p>
+              <p>Ban Reason: {banDetail.banReason}</p>
+              <div className="mod-options-btns">
+                <Popup>
+                  <PopupButton className="mod-unban-btn">Unban</PopupButton>
+                  <PopupContent>
+                    <div className="small-popup" id="report-popup">
+                      <h3>Unban {displayedProfile.firstName} {displayedProfile.lastName}</h3>
+                      <p>Are you sure you want to unban this user?
+                        After this user is unbanned, their account will be unfrozen and they will be able to log in to Looking For Group again.
+                        Their regular user permissions will also be restored.</p>
+                      <div className="confirm-deny-btns">
+                        <PopupButton
+                          buttonId="unban-cancel-button"
+                          className="button-reset"
+                          callback={() => {
+                            setModActionComplete(false);
+                          }}
+                        >
+                          Cancel
+                        </PopupButton>
+                        <Popup>
+                          <PopupButton buttonId="mod-unban-btn" className="delete-button" callback={() => unbanUser(displayedProfile.userId)}>Unban</PopupButton>
+                          <PopupContent>
+                            <div className="small-popup">
+                              {modActionComplete
+                                ? (<>
+                                  <p>{unbanned
+                                    ? "This user has been unbanned and has received an email notification. Their account has been unfrozen, they can now log in to Looking For Group again, and all regular user permissions have been restored."
+                                    : "Uh-oh! Something went wrong while unbanning this user. Please try again later."}
+                                  </p>
+                                  <PopupButton buttonId="continue-button" callback={() => { if (unbanned) navigate(paths.routes.MODERATION); }}>
+                                    {unbanned ? "Continue" : "Close"}
+                                  </PopupButton>
+                                </>)
+                                : <div className='placeholder-spacing'>
+                                  <div className='spinning-loader'></div>
+                                </div>
+                              }
+                            </div>
+                          </PopupContent>
+                        </Popup>
+                      </div>
+                    </div>
+                  </PopupContent>
+                </Popup>
+              </div>
+            </div>
+          </>)}
+
           {/* Mod options when this is a reported user */}
-          {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div id="mod-user-options">
+          {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div className="mod-user-options">
             <h2>Reports</h2>
             <p>You can dismiss this report, warn the user and request edits from them, or ban the user.</p>
             <h3>Active Reports</h3>
-            <p>These reports are currently under review and have not yet been resolved. Resolve them by dismissing the reports, warning the user, or banning the user. All active reports will be resolved using the same action.</p>
+            <p>These reports are currently under review and have not yet been resolved. 
+              Resolve them by dismissing the reports, warning the user, or banning the user. 
+              All active reports will be resolved using the same action.</p>
             {activeReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'active-reporter-' + r.reporterId} />)}
             {inactiveReportList.length !== 0 && (<>
               <h3>Inactive Reports</h3>
@@ -1186,7 +1279,6 @@ const Profile = (/*userProfile: any*/) => {
                           </div>
                         </PopupContent>
                       </Popup>
-                      {/* <button className="confirm-btn" onClick={() => resolveReport('ban')}>Submit</button> */}
                     </div>
                   </div>
                 </PopupContent>
@@ -1542,6 +1634,14 @@ const Profile = (/*userProfile: any*/) => {
                           itemList={followedProjectsList}
                           userId={userID as number}
                           followedProjectIds={followedProjectsIds}
+                          onUnfollow={(id) => {
+                            setFollowedProjectsList((list) => list.filter((p) => p.projectId !== id));
+                            setFollowProjectsIds((ids) => {
+                              const next = new Set(ids);
+                              next.delete(id);
+                              return next;
+                            });
+                          }}
                         />
                         : <p className="no-saved-items">You have no saved projects!</p>)
                       :
@@ -1551,6 +1651,9 @@ const Profile = (/*userProfile: any*/) => {
                           category={"profiles"}
                           itemList={followedProfilesList}
                           userId={userID as number}
+                          onUnfollow={(id) => {
+                            setFollowedProfilesList((list) => list.filter((u) => u.userId !== id));
+                          }}
                         />
                         : <p className="no-saved-items">You have no saved users!</p>)
 

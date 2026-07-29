@@ -293,6 +293,7 @@ button:focus-visible,
 [role="button"]:focus-visible,
 #back:focus-visible,
 a:focus-visible,
+div:focus-visible,
 input:focus-visible,
 select:focus-visible,
 .project-panel:has(.project-link-overlay:focus-visible),
@@ -1081,12 +1082,6 @@ body.modal-open {
     justify-content: baseline;
   }
 
-  .popup-container,
-.popup-cover,
-.popup {
-  z-index: 999 !important; 
-}
-
   .popup .popup-container {
     align-items: center;
     justify-content: center;
@@ -1549,7 +1544,7 @@ Header style rules
   height: 90px;
   position: sticky;
   top: 0;
-  z-index: 9 !important;
+  z-index: 9;
   box-sizing: border-box;
 }
 
@@ -1564,7 +1559,6 @@ Header style rules
   z-index: 9999 !important;
 }
 
-/* 3. Keep it responsive on mobile */
 @media screen and (max-width: 800px) {
   .notifications-portal {
     right: 12px;
@@ -1949,7 +1943,7 @@ Dropdown style rules
   /* box-shadow: 1px 2px 2px var(--dark-lighttheme); */
   position: absolute;
   background: none;
-  z-index: 23;
+  z-index: 15;
 }
 
 /* Notifications bell badge + dropdown panel */

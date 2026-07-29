@@ -7,7 +7,7 @@ import type { ParameterLocation } from './parameter-location.ts';
  */
 export class PathParameterLocation implements ParameterLocation {
   // eslint-disable-next-line @typescript-eslint/require-await
-  async getId(key: string, request: Request): Promise<number | ApiResponse> {
+  async getId(key: string, request: Request): Promise<number[] | ApiResponse> {
     const res: ApiResponse = { status: 0 };
 
     const rawTargetId = request.params[key] as string;
@@ -19,6 +19,6 @@ export class PathParameterLocation implements ParameterLocation {
       return res;
     }
 
-    return targetId;
+    return [targetId];
   }
 }

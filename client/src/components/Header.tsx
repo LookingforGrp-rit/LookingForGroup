@@ -96,13 +96,12 @@ export const Header: React.FC<HeaderProps> = ({
   const BUG_REPORT_MAX = 200;
   const [bugReportText, setBugReportText] = useState('');
 
-  // Mirrors the old Input component: the count turns yellow/orange/red as it fills up
+  // Mirrors the old Input component: the count turns orange/red as it fills up
   const bugReportCountClass = () => {
     const percentLeft = (BUG_REPORT_MAX - bugReportText.length) / BUG_REPORT_MAX;
     let className = 'character-count';
-    if (percentLeft <= 0.3) className += ' character-count-near';
-    if (percentLeft <= 0.2) className += ' character-count-close';
-    if (percentLeft <= 0.1) className += ' character-count-danger';
+    if (percentLeft <= .25) className += ' character-count-close';
+    if (percentLeft <= .1) className += ' character-count-danger';
     return className;
   };
 
@@ -328,7 +327,7 @@ export const Header: React.FC<HeaderProps> = ({
                   }
                   className="header-login-btn"
                 >
-                  <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in or sign up'} />
+                  <ThemeIcon id={'login'} width={25} height={25} className={'mono-stroke'} ariaLabel={'log in or sign up'} />
                   Log In / Sign Up
                 </button>
               </div>

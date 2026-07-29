@@ -259,7 +259,8 @@ export const GeneralTab = ({
 
       <LabelInputBox
         label={"Short Description"}
-        labelInfo="Share a brief summary of your project. This will be displayed in your project's discover card."
+        labelInfo="Give a brief overview of your project. This will be displayed on the Projects page,
+        and give important information to applicants."
         inputType={"multi"}
         id={"project-editor-description-input"}
         maxLength={300}
