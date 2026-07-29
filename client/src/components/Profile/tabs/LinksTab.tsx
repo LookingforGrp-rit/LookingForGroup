@@ -122,7 +122,7 @@ export const LinksTab: React.FC<LinksTabProps> = ({
 
       //update url in profile
       //supports adding the transfer protocol into the text box
-      if(field === "url" && (value.includes("https://") || value.includes("http://"))){
+      if(value.includes("https://") || value.includes("http://")){
         socials[index] = {
           ...socials[index],
           url: value,
