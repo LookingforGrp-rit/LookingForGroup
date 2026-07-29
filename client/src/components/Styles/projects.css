@@ -1272,6 +1272,8 @@ Project Creator and Editor Popup style rules
   justify-content: center;
   margin: 20px 0;
   max-width: 100%;
+  text-wrap: nowrap;
+  min-height: fit-content;
 }
 
 #project-editor-tag-search-tabs {
@@ -1301,6 +1303,11 @@ Project Creator and Editor Popup style rules
 @media only screen and (max-width: 799px) {
   #project-editor-tag-search-tabs {
     flex-direction: row;
+  }
+  #project-editor-team-tabs
+  {
+    height: fit-content;
+    overflow-x: auto;
   }
 }
 
@@ -1743,7 +1750,6 @@ Project Creator and Editor Popup style rules
 #merge-project-team {
   display: flex;
   justify-content: center;
-  margin: 14px 0 4px;
 }
 
 #project-editor-merge-team {
@@ -1875,10 +1881,6 @@ Project Creator and Editor Popup style rules
 
   #user-search-container>.dropdown-container {
     margin-left: 0px;
-  }
-
-  #project-editor-team-content {
-    flex-direction: column;
   }
 
   #project-editor-project-members {
@@ -3706,6 +3708,33 @@ New Project Page style rules
 @media screen and (max-width: 700px) {
   #project-page-content {
     margin: 0 20px;
+  }
+  #project-editor-team-content {
+    flex-direction: column;
+  }
+  #project-editor-team-tabs
+  {
+    justify-content: flex-start;
+    gap: 4%;
+  }
+  #project-editor-project-members
+  {
+    justify-content: center;
+  }
+  #project-editor-merge-team {
+    display: flex;
+    padding: 12px 15px;
+    margin-top: 14px;
+    max-width: 234px;
+    height: 74px;
+    width: 100%;
+    gap: 10px;
+    flex-direction: row;
+    border: none;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-color) !important;
   }
 }
 
