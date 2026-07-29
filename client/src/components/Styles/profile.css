@@ -2408,6 +2408,7 @@ New Profile page style rules
   align-items: center;
   gap: 8px;
   margin: 0 0 12px 0;
+  font-size: 1rem;
 }
 
 .profile-delete-confirm {

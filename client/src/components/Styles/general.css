@@ -589,6 +589,16 @@ orange-button class makes the button orange, white-button class makes the button
   }
 }
 
+@media screen and (max-width: 550px) {
+  .project-back-btn {
+    margin: 0px;
+  }
+
+  #main {
+    margin: 0 auto 100px;
+  }
+}
+
 
 
 /* #endregion*/
@@ -1416,11 +1426,6 @@ body.modal-open {
   }
 }
 
-@media screen and (max-width: 700px) {
-  #filter-tabs {
-    column-gap: min(6vw, 45px);
-  }
-}
 
 /* Styles for required fields */
 .requiredAsterisk {
@@ -1450,13 +1455,19 @@ body.modal-open {
       width: 100%;
       display: flex;
       flex-wrap: nowrap;
-      overflow-x: scroll;
+      overflow-x: scroll !important;
       scroll-behavior: smooth;
       scrollbar-width: none;
       justify-content: flex-start !important;
       ;
       column-gap: 5vw;
     }
+  }
+}
+
+@media screen and (max-width: 700px) {
+  #filter-tabs {
+    column-gap: min(6vw, 45px);
   }
 }
 
@@ -1480,12 +1491,12 @@ body.modal-open {
 
   .popup #filters-popup {
     h2 {
-      margin-top: 3.76vh;
+      margin-top: 20px;
       margin-bottom: 3.32vh;
     }
 
     .popup-section {
-      margin: 1.44vh 8.47vw;
+      margin: 0vh 8.47vw;
     }
 
     #filters {
@@ -1500,6 +1511,25 @@ body.modal-open {
     #selected-section {
       height: 19.7vh;
       padding: 1.77vh 2.52vw;
+    }
+
+    #match-button,
+    .delete-button,
+    #primary-btn {
+      min-width: 100px;
+      font-size: 1rem;
+    }
+
+    #primary-btn {
+      min-width: 80px;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+    }
+
+    h4 {
+      font-size: .675rem;
     }
   }
 }
@@ -1639,6 +1669,39 @@ Header style rules
   }
 }
 
+@media screen and (max-width: 550px) {
+  #header {
+    height: 75px;
+    align-items: start;
+    padding-top: 20px;
+  }
+
+  #discover-filters-parent {
+    top: 65px;
+  }
+
+  #header-buttons #about-btn {
+    width: 36px;
+    height: 36px;
+
+    svg {
+      width: 25px;
+      height: 25px;
+    }
+  }
+
+  #notif-btn,
+  #profile-btn {
+    width: 36px;
+    height: 36px !important;
+
+    img {
+      width: 25px !important;
+      height: 25px !important;
+    }
+  }
+}
+
 @media screen and (max-width: 500px) {
   #header-buttons .dropdown {
     position: absolute;
@@ -1681,7 +1744,7 @@ Header style rules
 
   #header:has(#header-searchbar input:focus) {
     display: block;
-    padding: 25px 0;
+    padding: 20px 0;
   }
 }
 
@@ -2395,7 +2458,7 @@ Input style rules
 }
 
 @media only screen and (max-width: 700px) {
-  .label-input-box {
+  .CompleteProfile .label-input-box {
     width: calc(100vw - 60px);
   }
 }
@@ -2408,6 +2471,11 @@ Input style rules
   .input {
     min-height: 40px;
     font-size: .875rem;
+  }
+
+  .select {
+    font-size: .875rem;
+    height: 40px;
   }
 }
 
