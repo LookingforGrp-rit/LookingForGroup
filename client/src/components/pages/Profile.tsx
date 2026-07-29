@@ -808,57 +808,61 @@ const Profile = (userProfile: any) => {
                       </PopupContent> : "")}
                   </Popup> : ""}
                 <ShareButton />
-                <button
-                  className="profile-menu-dropdown-button"
-                  id="profile-menu-block"
-                >
-                  <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
-                  Block
-                </button>
-                <Popup>
-                  <PopupButton
-                    className="project-info-dropdown-option"
-                  >
-                    <ThemeIcon
-                      id={"warning"}
-                      width={27}
-                      height={27}
-                      ariaLabel={"Report"}
-                    />
-                    Report
-                  </PopupButton>
-                  <PopupContent>
-                    <div className="small-popup" id="report-popup">
-                      <h3>Report {displayedProfile?.firstName ?? "User"} {displayedProfile?.lastName ?? ""}</h3>
-                      <p>You are about to report {displayedProfile?.firstName ?? "User"}. Please provide your reasoning below.</p>
-                      <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></textarea>
-                      <div className="confirm-deny-btns">
-                        <PopupButton
-                          buttonId="team-delete-member-cancel-button"
-                          className="button-reset"
-                        >
-                          Cancel
-                        </PopupButton>
-                        {/* The Report Button */}
-                        <Popup>
-                          <PopupButton
-                            className="delete-button"
-                            callback={reportUserPressed}>
-                            Report
-                          </PopupButton>
-                          <PopupContent>
-                            <div className="small-popup">
-                              <p>{reportResponseText}</p>
-                              <PopupButton buttonId="continue-button">
-                                Continue
+                {userID > 0 && (
+                  <>
+                    <button
+                      className="profile-menu-dropdown-button"
+                      id="profile-menu-block"
+                    >
+                      <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
+                      Block
+                    </button>
+                    <Popup>
+                      <PopupButton
+                        className="project-info-dropdown-option"
+                      >
+                        <ThemeIcon
+                          id={"warning"}
+                          width={27}
+                          height={27}
+                          ariaLabel={"Report"}
+                        />
+                        Report
+                      </PopupButton>
+                      <PopupContent>
+                        <div className="small-popup" id="report-popup">
+                          <h3>Report {displayedProfile?.firstName ?? "User"} {displayedProfile?.lastName ?? ""}</h3>
+                          <p>You are about to report {displayedProfile?.firstName ?? "User"}. Please provide your reasoning below.</p>
+                          <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></textarea>
+                          <div className="confirm-deny-btns">
+                            <PopupButton
+                              buttonId="team-delete-member-cancel-button"
+                              className="button-reset"
+                            >
+                              Cancel
+                            </PopupButton>
+                            {/* The Report Button */}
+                            <Popup>
+                              <PopupButton
+                                className="delete-button"
+                                callback={reportUserPressed}>
+                                Report
                               </PopupButton>
-                            </div>
-                          </PopupContent>
-                        </Popup>
-                      </div>
-                    </div>
-                  </PopupContent>
-                </Popup>
+                              <PopupContent>
+                                <div className="small-popup">
+                                  <p>{reportResponseText}</p>
+                                  <PopupButton buttonId="continue-button">
+                                    Continue
+                                  </PopupButton>
+                                </div>
+                              </PopupContent>
+                            </Popup>
+                          </div>
+                        </div>
+                      </PopupContent>
+                    </Popup>
+                  </>
+                )}
               </div>
             </DropdownContent>
           </Dropdown>
@@ -1023,8 +1027,8 @@ const Profile = (userProfile: any) => {
             <h2>Reports</h2>
             <p>You can dismiss this report, warn the user and request edits from them, or ban the user.</p>
             <h3>Active Reports</h3>
-            <p>These reports are currently under review and have not yet been resolved. 
-              Resolve them by dismissing the reports, warning the user, or banning the user. 
+            <p>These reports are currently under review and have not yet been resolved.
+              Resolve them by dismissing the reports, warning the user, or banning the user.
               All active reports will be resolved using the same action.</p>
             {activeReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'active-reporter-' + r.reporterId} />)}
             {inactiveReportList.length !== 0 && (<>
