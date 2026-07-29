@@ -1106,8 +1106,12 @@ Signup process modal style rules
 
   .ChooseSkills,
   .CompleteProfile,
-  .GetStarted {
-    height: 80vh;
+  .GetStarted,
+  .TermsOfService {
+    height: 100%;
+    width: 98vw;
+    padding: 0;
+    margin: 0;
   }
 
   .CompleteProfile {
@@ -1115,8 +1119,9 @@ Signup process modal style rules
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 100%;
+      width: 95%;
       overflow-y: scroll;
+      padding-left: 5px;
 
       .required-asterisk {
         width: fit-content;
@@ -1192,7 +1197,7 @@ Signup process modal style rules
 
   #getStarted-select {
     gap: 2%;
-    width: 95%;
+    width: 90%;
     margin: 0;
   }
 
