@@ -1975,7 +1975,6 @@ Dropdown style rules
   position: relative;
   width: min(340px, 90vw);
   max-height: 70vh;
-  overflow-y: auto;
   background-color: var(--dropdown-color);
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
@@ -2033,6 +2032,8 @@ Dropdown style rules
 
 #notifications-panel .notifications-list {
   list-style: none;
+  overflow-y: auto;
+  max-height: 65vh;
   margin: 0;
   padding: 0;
 }
