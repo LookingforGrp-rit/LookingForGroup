@@ -303,6 +303,14 @@ router.delete(
 //#endregion
 
 //#region Members routes
+// Get member requests
+router.get(
+  '/:id/members/requests',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(PROJECT.getMemberRequests),
+);
+
 // Get all applications to a project (Must precede /:id/members/:userId)
 router.get(
   '/:id/members/applications',
