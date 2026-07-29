@@ -582,6 +582,11 @@
             padding: 10px;
         }
 
+        .tooltip-text {
+            top: 100%;
+            left: 0;
+        }
+
         #mod-actions-tabs {
             height: 60px;
             padding-right: 5px;
