@@ -31,7 +31,7 @@ const createProjectService = async (
       select: ProjectDetailSelector,
     });
 
-    await addMemberService(project.projectId, { userId, roleId: 77 });
+    await addMemberService(project.projectId, { userId, roleId: 73 });
 
     return transformProjectToDetail(project);
   } catch (e) {
