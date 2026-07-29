@@ -17,6 +17,7 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
 
     const req: AuthenticatedRequest = request as AuthenticatedRequest;
     const body: RequestToJoinInput = req.body as RequestToJoinInput;
+    const roleId: number = body.roleId;
     const projectId = parseInt(req.params.id as string);
     const prospectiveMemberId = body.prospectiveMemberId;
 
@@ -25,6 +26,8 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
       where: {
         projectId,
         prospectiveMemberId,
+        roleId,
+        requestStatus: 'Pending',
       },
       select: {
         requestId: true,
