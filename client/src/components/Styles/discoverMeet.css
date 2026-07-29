@@ -1314,6 +1314,19 @@ Filters / Tags Style Rules
   transition: 0.2s;
 }
 
+@media screen and (max-width:550px) {
+  .tag-button {
+    font-size: small;
+    gap: 5px;
+    padding: 0 10px;
+    min-height: 22px !important;
+
+    i {
+      padding-top: 2px;
+    }
+  }
+}
+
 /*#endregion tag styles*/
 
 /*Fixing Filter Popup*/
