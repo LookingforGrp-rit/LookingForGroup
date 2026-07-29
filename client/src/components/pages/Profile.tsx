@@ -31,6 +31,7 @@ import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
 import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification, deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi } from "../../api/mod-tools";
+import { DELETE, GET, POST } from "../../api";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -117,6 +118,8 @@ const Profile = (userProfile: any) => {
       return { name: project.title, description: project.hook };
     }
   );
+
+  let blockButton;
 
   // --------------------
   // Page redirect
@@ -275,6 +278,44 @@ const Profile = (userProfile: any) => {
             setBanDetail(res.data);
         }
       }
+    }
+  };
+
+  /**
+   * Checks if the displayed user is blocked
+   * If so, change the block button to unblock
+   */
+  const isUserBlocked = async () => {
+    const blocklistrequest = await GET(`/me/blocklist`);
+    const blocklist: UserPreview[] = blocklistrequest.data;
+    const blocklistUserIds: number[] = blocklist.map((userPreview) => userPreview.userId);
+
+    if (displayedProfile?.userId && blocklistUserIds.includes(displayedProfile?.userId)) {
+      return <button
+        className="profile-menu-dropdown-button"
+        id="profile-menu-block"
+        onClick={() => {
+          //THE PARAMETER IS THE PERSON TO BLOCK
+          DELETE(`/me/blocklist`, { userId: displayedProfile.userId });
+          window.location.reload();
+        }}
+      >
+        <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
+        Unblock
+      </button>;
+    } else {
+      return <button
+        className="profile-menu-dropdown-button"
+        id="profile-menu-block"
+        onClick={() => {
+          //THE PARAMETER IS THE PERSON TO BLOCK
+          POST(`/me/blocklist`, { userId: displayedProfile?.userId });
+          window.location.reload();
+        }}
+      >
+        <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
+        Block
+      </button>;
     }
   };
 
@@ -808,13 +849,7 @@ const Profile = (userProfile: any) => {
                       </PopupContent> : "")}
                   </Popup> : ""}
                 <ShareButton />
-                <button
-                  className="profile-menu-dropdown-button"
-                  id="profile-menu-block"
-                >
-                  <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
-                  Block
-                </button>
+                {isUserBlocked()}
                 <Popup>
                   <PopupButton
                     className="project-info-dropdown-option"
@@ -1023,8 +1058,8 @@ const Profile = (userProfile: any) => {
             <h2>Reports</h2>
             <p>You can dismiss this report, warn the user and request edits from them, or ban the user.</p>
             <h3>Active Reports</h3>
-            <p>These reports are currently under review and have not yet been resolved. 
-              Resolve them by dismissing the reports, warning the user, or banning the user. 
+            <p>These reports are currently under review and have not yet been resolved.
+              Resolve them by dismissing the reports, warning the user, or banning the user.
               All active reports will be resolved using the same action.</p>
             {activeReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'active-reporter-' + r.reporterId} />)}
             {inactiveReportList.length !== 0 && (<>
