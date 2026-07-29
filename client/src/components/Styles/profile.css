@@ -1474,7 +1474,7 @@ New Profile page style rules
     border-color: var(--liked-section-bg);
     border-style: solid;
     padding: 10px 0px;
-    max-height: 500px;
+    max-height: 75vh;
     overflow-y: scroll;
     overflow-x: hidden;
 
@@ -2101,6 +2101,9 @@ New Profile page style rules
     grid-template-columns: max-content 1fr;
     column-gap: 10px;
     row-gap: 10px;
+  }
+  #likes-container {
+    height: 70vh;
   }
 
   /* Trim the wide horizontal padding so the role select/dropdown has room on
