@@ -156,7 +156,7 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, setApprovalStatus,
                 />
                 Edit Project
               </button>
-              {approvalStatus === 'not-approved' ?
+              {isOwner && approvalStatus === 'not-approved' ?
                 <Popup>
                   <PopupButton className='card-leave-button'>
                     <ThemeIcon
