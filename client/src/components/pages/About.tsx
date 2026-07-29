@@ -77,7 +77,8 @@ const AboutPage = () => {
                     <section className="about-section" id="about-purpose">
                         <h2 className="about-header-two">Our Purpose</h2>
                         <p className="about-text about-text-purpose">
-                            Looking For Group (LFG) is a platform designed to help connect developers and designers. Whether you are trying to bring a passion project to life or looking for a team to join, LFG provides the tools you need to connect and collaborate together.
+                            Looking For Group (LFG) is a platform designed to help connect developers and designers. Whether you are trying to bring a passion project to life or looking for a team to join, LFG provides the tools you need to connect and collaborate together. 
+                            Examples include likes to save users/projects, quick applys, and more!
                         </p>
                     </section>
 
@@ -227,7 +228,7 @@ const AboutPage = () => {
                         </section>
                     </section>
 
-                    <section className="about-section" id="guidelines-section">
+                    <section className="about-section" id="TermsOfService">
                         <div>
                             <h2 className="about-header-two">User Guidelines</h2>
                             <p className="about-text">The following guidelines below help keep LFG a friendly, encouraging, and creative community for everyone to enjoy.
@@ -236,7 +237,7 @@ const AboutPage = () => {
                         <div>
                             <h3 className="about-header-three">User Eligibility</h3>
 
-                            <ul className="guidelines-list">
+                            <ul>
                                 <li className="about-text">
                                     Users must be either presently affiliated with RIT (Student or Staff) or formerly affiliated with RIT (Alumni). This is so we can focus on RIT students getting the help they need to get co-ops, internships, or future jobs
                                 </li>
@@ -245,7 +246,7 @@ const AboutPage = () => {
 
                         <div>
                             <h3 className="about-header-three">Copyright</h3>
-                            <ul className="guidelines-list">
+                            <ul>
                                 <li className="about-text">
                                     Users are responsible for following general U.S. copyright law (found <a href="https://www.copyright.gov/title17/">here</a>)
                                 </li>
@@ -262,7 +263,7 @@ const AboutPage = () => {
                         </div>
                         <div>
                             <h3 className="about-header-three">Banned Content</h3>
-                            <ul className="guidelines-list">
+                            <ul>
                                 <li className="about-text">Content promoting/inciting hate, harassment, or discrimination are not tolerated on LFG. As well as selling the project/products on the site. Such content will be taken down and will result in bans.
                                     <ul>
                                         <li>
@@ -271,13 +272,13 @@ const AboutPage = () => {
                                     </ul>
                                 </li>
                                 <li className="about-text">
-                                    Sensitive content such as Suicide, real or disturbing depictions of violence, content that exploits children in any way and sexually explicit content should not be displayed in promotional images/videos.
+                                    Sensitive content such as Suicide, real or disturbing depictions of violence, content that exploits children in any way and sexually explicit content should not be displayed in promotional images/videos.  Projects with these themes should be tagged appropriately.
                                 </li>
                             </ul>
                         </div>
                         <div>
                             <h3 className="about-header-three">Ai Content</h3>
-                            <ul className="guidelines-list">
+                            <ul>
                                 <li className="about-text">Projects must disclose use of AI</li>
                                 <li className="about-text">AI used maliciously to violate copyright laws is strictly prohibited and will result in the project taken down and potential bans.</li>
                                 <li className="about-text">All other rules on this website applies to AI generated content.</li>
@@ -288,7 +289,7 @@ const AboutPage = () => {
                     <section className="about-section" id="data-section">
                         <div>
                             <h2 className="about-header-two">Data Protection and Security</h2>
-                            <ul className="guidelines-list">
+                            <ul>
                                 <li className="about-text">We do not use cookies to store your data.</li>
                                 <li className="about-text">Any projects along with assets placed upon the site belong to the owner. LFG does not claim ownership.</li>
                             </ul>
@@ -296,7 +297,7 @@ const AboutPage = () => {
                         <div>
                             <h3 className="about-header-three">Data Collection</h3>
                             <p className="about-text">We store:</p>
-                            <ul className="guidelines-list">
+                            <ul>
                                 <li className="about-text">RIT Email</li>
                                 <li className="about-text">{"Full Name (first/preferred, last)"}</li>
                                 <li className="about-text">Major</li>
