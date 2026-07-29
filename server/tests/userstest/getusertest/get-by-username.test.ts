@@ -39,7 +39,6 @@ describe('getUserByUsernameService', () => {
       firstName: '',
       lastName: '',
       profileImage: null,
-      mentor: false,
       privacy: 'public',
       designer: false,
       developer: false,

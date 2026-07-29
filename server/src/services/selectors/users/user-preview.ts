@@ -5,7 +5,6 @@ export const UserPreviewSelector = Object.freeze({
   username: true,
   profileImage: true,
   privacy: true,
-  mentor: true,
   displayPhone: true,
   phoneNumber: true,
   userSkills: {

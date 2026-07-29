@@ -108,7 +108,6 @@ describe('getUserByIdService', () => {
         users: [],
       },
       profileImage: null,
-      mentor: false,
       designer: false,
       developer: false,
       headline: '',

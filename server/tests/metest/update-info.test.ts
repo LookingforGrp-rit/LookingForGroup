@@ -99,7 +99,6 @@ const transformed: MePrivate = {
   lastName: '',
   location: '',
   majors: [] as MyMajor[],
-  mentor: false,
   phoneNumber: '',
   profileImage: 'new.png',
   projects: [] as MyMember[],
