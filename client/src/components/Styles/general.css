@@ -1874,7 +1874,7 @@ Search style rules
   flex-direction: row;
   gap: 10px;
   /* float: right; */
-  /* align-content: center; */
+  align-items: center;
   /* margin: auto; */
 }
 
@@ -1919,6 +1919,22 @@ Search style rules
   .search-bar {
     font-size: 1rem;
     /* width: 200px; */
+  }
+}
+
+@media only screen and (max-width:550px) {
+  .search-bar {
+    font-size: .875rem;
+    height: 20px;
+
+  }
+
+  .search-input {
+    padding: 5px;
+  }
+
+  .fa-search {
+    font-size: 1rem;
   }
 }
 
@@ -2380,6 +2396,17 @@ Input style rules
 @media only screen and (max-width: 700px) {
   .label-input-box {
     width: calc(100vw - 60px);
+  }
+}
+
+@media only screen and (max-width: 550px) {
+  .input-combo-label {
+    font-size: 1.1rem;
+  }
+
+  .input {
+    min-height: 40px;
+    font-size: .875rem;
   }
 }
 

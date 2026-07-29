@@ -650,6 +650,7 @@ Project Creator and Editor Popup style rules
 
 #report-popup {
   text-align: center;
+
   h3 {
     font-size: 1.25rem;
     font-weight: 700;
@@ -695,7 +696,8 @@ Project Creator and Editor Popup style rules
     font-weight: 700;
   }
 
-  #input-bug-report, #input-bug-report-message {
+  #input-bug-report,
+  #input-bug-report-message {
     margin-bottom: 0;
     resize: vertical;
     /* Leave room for the character count in the bottom-right corner. */
@@ -1030,13 +1032,19 @@ Project Creator and Editor Popup style rules
   }
 }
 
+@media screen and (max-width:550px) {
+  #tag-category-header p {
+    font-size: .875rem !important;
+  }
+}
+
 #project-editor-tag-wrapper {
   display: flex;
   flex-direction: column;
   gap: 0px;
   overflow-x: auto;
   overflow-y: hidden;
-  
+
   scrollbar-color: lightgray var(--bg-color);
 }
 
@@ -1865,6 +1873,12 @@ Project Creator and Editor Popup style rules
   row-gap: 15px;
 }
 
+@media only screen and (max-width: 550px) {
+  .project-editor-tag-search-tab {
+    font-size: .875rem;
+  }
+}
+
 @media only screen and (max-width: 400px) {
   #project-team-add-member-info {
     display: flex;
@@ -2075,7 +2089,7 @@ Project Creator and Editor Popup style rules
 }
 
 .delete-button,
-.save-button{
+.save-button {
   border: none;
   border-radius: 30px;
   padding: 10px 20px;
@@ -2087,12 +2101,13 @@ Project Creator and Editor Popup style rules
   font-weight: 700;
 }
 
-.save-button{
+.save-button {
   background-color: var(--primary-color) !important;
 }
 
 /* .delete-button:hover, save-button:hover { */
-.deny-btn, #cancel-button {
+.deny-btn,
+#cancel-button {
   background: none;
   border: none;
   outline: none;
@@ -2386,7 +2401,7 @@ Project Creator and Editor Popup style rules
 }
 
 #input-job-start,
-#input-job-end{
+#input-job-end {
   min-height: 45px;
   font-size: 0.9375rem;
   padding-left: 10px;
@@ -2410,6 +2425,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-style: solid;
   border-color: gray;
   border-width: 3px;
+}
+
+@media only screen and (max-width: 550px) {
+  .delete-position-button-alt {
+    margin-top: 0em;
+    padding-right: 0;
+  }
 }
 
 @media only screen and (max-width: 520px) {
@@ -2585,7 +2607,7 @@ button.edit-position-contact .project-member-image {
     font-size: 0.75rem;
     margin-bottom: 20px;
 
-    p{
+    p {
       margin-top: 0;
       margin-bottom: 0;
     }
@@ -4394,6 +4416,7 @@ button#positions-popup-list-item-active {
 }
 
 @media only screen and (max-width: 800px) {
+
   #edit-position-details-left,
   #edit-position-details-right {
     flex-wrap: nowrap;
@@ -4607,7 +4630,8 @@ button#positions-popup-list-item-active {
 }
 
 .slider-text {
-  white-space: nowrap; /* prevents label from breaking */
+  white-space: nowrap;
+  /* prevents label from breaking */
 }
 
 
