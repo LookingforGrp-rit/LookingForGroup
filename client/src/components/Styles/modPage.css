@@ -53,7 +53,7 @@
     #mod-actions-tabs {
         display: flex;
         gap: 15px;
-        height: 40px;
+        height: 8vh;
         padding-top: 10px;
         align-items: flex-end;
         overflow-x: auto;
@@ -191,7 +191,7 @@
     border-radius: 100px;
     padding: 2px;
     margin: 0 auto;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     cursor: pointer;
 
     display: flex;
