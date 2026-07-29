@@ -28,6 +28,8 @@ export class InviteReceivedNotificationBuilder implements NotificationBuilder {
       where: {
         prospectiveMemberId: receiverId,
         projectId,
+        roleId,
+        requestStatus: 'Pending',
       },
       select: {
         requestId: true,
