@@ -312,12 +312,6 @@ Login and Signup page style rules
   }
 }
 
-@media screen and (max-width:550px) {
-  .signup-form h2 {
-    margin: 10px auto;
-  }
-}
-
 @media screen and (max-width:500px) and (max-height:900px) {
   .login-signup-container {
     margin-bottom: 200px;
@@ -327,7 +321,6 @@ Login and Signup page style rules
     padding: 0 25px;
   }
 }
-
 
 /* #endregion*/
 
@@ -392,13 +385,11 @@ Signup process modal style rules
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  align-content: center;
-  align-self: center;
   height: fit-content;
   max-height: 85vh;
   width: min(calc(90vw - 20px), 1000px);
   border-radius: 4px;
-  padding: 0px;
+  padding: 20px;
   box-shadow: 0px 0px 10px 0px var(--border-color);
   z-index: 1;
   overflow-y: scroll;
@@ -995,12 +986,6 @@ Signup process modal style rules
   }
 }
 
-@media only screen and (max-width:550px) {
-  .dropdown-label {
-    font-size: 1.1rem;
-  }
-}
-
 /* === Terms of Service === */
 
 #terms-of-service-text {
@@ -1049,21 +1034,6 @@ Signup process modal style rules
   width: fit-content;
 }
 
-@media only screen and (max-width:550px) {
-  #terms-of-service-text {
-    padding: 20px 25px;
-    gap: 10px;
-
-    p,
-    ul {
-      margin-top: 0;
-    }
-
-    ul {
-      padding-left: 20px;
-    }
-  }
-}
 
 /* ======================== */
 
@@ -1235,24 +1205,6 @@ Signup process modal style rules
     }
   }
 
-  @media only screen and (max-width:550px) {
-
-    #ritStatus-input,
-    #major-input,
-    #jobTitle-input {
-      height: 30px;
-
-      .select-container {
-        min-height: 40px !important;
-
-        .select {
-          height: 40px !important;
-          font-size: .875rem;
-        }
-      }
-    }
-  }
-
   #getStarted-select {
     gap: 2%;
     width: 90%;
@@ -1271,17 +1223,12 @@ Signup process modal style rules
     margin: 0;
   }
 
-  .ChooseSkills {
-    padding: 0 !important;
+  .ChooseSkills #project-editor-selected-tags {
+    width: calc(100% - 62px - 1.818px);
+    overflow-y: scroll;
 
-    #project-editor-selected-tags {
-      width: calc(100% - 62px - 1.818px);
-      overflow-y: scroll;
-      flex-shrink: 1;
-
-      #project-editor-selected-tags-container {
-        height: 135px;
-      }
+    #project-editor-selected-tags-container {
+      height: 135px;
     }
   }
 
@@ -1331,9 +1278,7 @@ Signup process modal style rules
       #project-editor-selected-tags {
         overflow-y: scroll;
         width: auto;
-        flex-grow: 1;
         padding: 15px;
-        padding-right: 8px;
       }
 
       #project-editor-tag-search {
@@ -1342,7 +1287,6 @@ Signup process modal style rules
         max-width: auto;
         gap: 10px;
         padding: 15px;
-        padding-right: 8px;
       }
     }
 
@@ -1356,22 +1300,6 @@ Signup process modal style rules
   body {
     padding: 0px;
   }
-
-  #signupProcess-title {
-    font-size: 1.5rem;
-  }
-
-  #signupProcess-subTitle {
-    font-size: .875rem;
-  }
-
-  .project-editor-section-header {
-    font-size: 1.1rem !important;
-  }
-
-  .project-editor-extra-info {
-    font-size: .725rem !important;
-  }
 }
 
 @media screen and (max-width: 400px) {
@@ -1379,7 +1307,9 @@ Signup process modal style rules
     padding: 0px;
   }
 
-
+  #signupProcess-title {
+    font-size: 1.5rem;
+  }
 }
 
 /* #endregion */

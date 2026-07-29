@@ -99,8 +99,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ show, onBack, onNext })
                </li>
                <li>
                   Sensitive content such as Suicide, real or disturbing depictions of violence, 
-                  content that exploits children in any way and sexually explicit content should not be displayed in promotional images/videos.  
-                   Projects with these themes should be tagged appropriately.   
+                  content that exploits children in any way and sexually explicit content should not be displayed in promotional images/videos.     
                </li>
             </ul>
 

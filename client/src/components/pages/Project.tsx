@@ -625,7 +625,7 @@ const Project = () => {
                   :
                   <></>
                 }
-                {userID > 0 && approvalStatus == 'not-approved' ? (
+                {approvalStatus == 'not-approved' ?
                 <Popup>
                   <PopupButton
                     className="project-info-dropdown-option"
@@ -670,7 +670,7 @@ const Project = () => {
                       </div>
                     </div>
                   </PopupContent>
-                </Popup> ): ""}
+                </Popup> : ""}
               </div>
             </DropdownContent>
           </Dropdown>

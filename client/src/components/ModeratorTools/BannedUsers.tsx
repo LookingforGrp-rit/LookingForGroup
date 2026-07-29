@@ -20,7 +20,7 @@ const BannedUsers = ({ currentUserId, currentTab, displayMode }: BannedUsersProp
     const [loaded, setLoaded] = useState<boolean>(false);
     const [bannedUsers, setBannedUsers] = useState<UserDetail[]>([]);
 
-    // Loaders ================================================================
+    // Helper Methods =========================================================
     useEffect(() => {
         //get banned users to display
         const displayBannedUsers = async () => {

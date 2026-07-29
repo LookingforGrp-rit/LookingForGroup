@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { getReportedUsers } from "../../api/mod-tools";
 import { PanelBox } from "../PanelBox";
 import UserListView from "./ListViews/UserListView";
-import { UserDetail, UserReport } from "@looking-for-group/shared";
+import { UserDetail } from "@looking-for-group/shared";
 import { getUsersById } from "../../api/users";
 
 type ReportedUsersProps = {
@@ -19,60 +19,31 @@ const ReportedUsers = ({ currentUserId, currentTab, displayMode }: ReportedUsers
     // Variables ==============================================================
     const [loaded, setLoaded] = useState<boolean>(false);
     const [reportedUsers, setReportedUsers] = useState<UserDetail[]>([]);
-    const [association, setAssociation] = useState<Record<number, boolean>>({});
 
-    // Loaders ================================================================
+    // Helper Methods =========================================================
     useEffect(() => {
         //get reported users to display
         const displayReportedUsers = async () => {
-            const reports = ((await getReportedUsers()).data);
+            const reportedUsers = ((await getReportedUsers()).data);
             const tempPendingUserArray = [];
             const tempIds: Set<number> = new Set<number>();
 
-            if (reports) {
-                let entries = [];
-                for (const report of reports) {
-                    const userId = report.reportedId ? report.reportedId : -1;
-                    // check if report is repeated and is active
-                    if (!tempIds.has(userId) && report.active) {
-                        // get user detail
-                        const res = await getUsersById(userId);
-
-                        if (res.data) {
-                            const userDetail = res.data;
-
-                            tempIds.add(userId);
-                            tempPendingUserArray.push(userDetail);
-                            
-                            entries.push(checkAssociation(userDetail, report))
-                        }
+            if (reportedUsers !== undefined && reportedUsers != null) {
+                for (const user of reportedUsers) {
+                    const userId = user.reportedId ? user.reportedId : -1;
+                    const userPreview = await getUsersById(userId);
+                    if (!tempIds.has(userId) && user.active && userId !== currentUserId && user.reporterId !== currentUserId) {
+                        tempIds.add(userId);
+                        tempPendingUserArray.push(userPreview.data as UserDetail);
                     }
                 }
-                setAssociation(Object.fromEntries(entries));
             }
-
             setReportedUsers(tempPendingUserArray);
             setLoaded(true);
         }
 
         displayReportedUsers();
     }, [currentTab]);
-
-    // Helper Methods =========================================================
-    /**
-     * Checks if the current user (moderator) is associated to this report in any way
-     * @param user User detail
-     * @param report Report detail
-     * @returns [User id, associated or not]
-     */
-    const checkAssociation = (user: UserDetail, report: UserReport) => {
-        // check if the moderator is the user or the reporter
-        if (user.userId === currentUserId ||
-            report.reporterId === currentUserId) {
-            return [user.userId, true];
-        }
-        return [user.userId, false];
-    }
 
     // The final component ====================================================
     if (loaded) {
@@ -88,7 +59,7 @@ const ReportedUsers = ({ currentUserId, currentTab, displayMode }: ReportedUsers
                                 userId={currentUserId}
                             ></PanelBox>
                             // List view
-                            : <UserListView users={reportedUsers} association={association} />
+                            : <UserListView users={reportedUsers} />
                         : "No reported users!"}
                 </div>
             </div>

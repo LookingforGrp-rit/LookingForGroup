@@ -167,6 +167,15 @@ export const SkillsTab = ({
         const skillToDelete = profile.skills.find(s => s.skillId === skillId);
         if (!skillToDelete) return;
 
+        //if pending skill DO NOT CALL deleteSkill();
+        // if ("localId" in skillToDelete) {
+        //   updatePendingProfile({
+        //     ...profile,
+        //     skills: remaining,
+        //   });
+        //   return
+        // } else {
+
         updatePendingProfile({
           ...profile,
           skills: remaining,
@@ -182,6 +191,7 @@ export const SkillsTab = ({
         });
 
         return;
+        //}
 
       } else {
         //ADD

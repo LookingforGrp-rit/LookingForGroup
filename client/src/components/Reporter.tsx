@@ -29,9 +29,54 @@ const Reporter = ({ reporterId, modUserId, reason }: ProjectPanelProps) => {
     const subject = useRef<HTMLInputElement>(null);
     const message = useRef<HTMLTextAreaElement>(null);
 
+    // Loaders ================================================================
+    /**
+     * Gets the reporter's detail
+     */
+    const getReporter = async () => {
+        try {
+            const res = await getUsersById(reporterId);
+
+            if (res.data) {
+                setReporter(res.data);
+                await getAccessLevel(res.data.userId);
+            }
+        } catch (e) {
+            console.error('Error in getReporter: ', e);
+        }
+    };
+
+    /**
+     * Gets the user's access level
+     * @param userId User id
+     */
+    const getAccessLevel = async (userId: number) => {
+        try {
+            const res = await getUserAccessLevel(userId);
+
+            if (res.data) {
+                setIsModAdmin(res.data === 'Administrator' || res.data === 'Moderator');
+            }
+
+        } catch (e) {
+            console.error('Error in getAccessLevel', e);
+        }
+    };
+
+    // Load profile image
+    const imageSrc = usePreloadedImage(
+        reporter?.profileImage ?? profilePicture,
+        profilePicture,
+    );
+
+    useEffect(() => {
+        getReporter();
+    }, [reporterId]);
+
     // Helper Methods =========================================================
     /**
      * Sends the notification to the reporter and refresh page upon success
+     * TODO: Probably a different feedback than refresh but this for now
      */
     const sendMessage = async () => {
         if (!subject.current?.value || !message.current?.value) {
@@ -58,50 +103,6 @@ const Reporter = ({ reporterId, modUserId, reason }: ProjectPanelProps) => {
             setSystemMsg("Failed to send the message. Please try again.");
         }
     };
-
-    /**
-     * Gets the user's access level
-     * @param userId User id
-     */
-    const getAccessLevel = async (userId: number) => {
-        try {
-            const res = await getUserAccessLevel(userId);
-
-            if (res.data) {
-                setIsModAdmin(res.data === 'Administrator' || res.data === 'Moderator');
-            }
-
-        } catch (e) {
-            console.error('Error in getAccessLevel', e);
-        }
-    };
-
-    /**
-     * Gets the reporter's detail
-     */
-    const getReporter = async () => {
-        try {
-            const res = await getUsersById(reporterId);
-
-            if (res.data) {
-                setReporter(res.data);
-                await getAccessLevel(res.data.userId);
-            }
-        } catch (e) {
-            console.error('Error in getReporter: ', e);
-        }
-    };
-
-    // Load profile image
-    const imageSrc = usePreloadedImage(
-        reporter?.profileImage ?? profilePicture,
-        profilePicture,
-    );
-
-    // Loaders ================================================================
-    useEffect(() => {
-        getReporter();
-    }, [reporterId]);
 
     // Content ================================================================
     if (reporter) {

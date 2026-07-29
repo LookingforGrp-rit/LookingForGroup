@@ -8,13 +8,12 @@ import { RitStatus } from "@looking-for-group/shared/enums";
 type UserListViewProps = {
     users: UserDetail[],
     modsAdmins?: boolean,
-    association?: Record<number, boolean>
 };
 
-const UserListView = ({ users, modsAdmins = false, association = {} }: UserListViewProps) => {
+const UserListView = ({ users, modsAdmins = false }: UserListViewProps) => {
     // Variables ==============================================================
     const [accessLevels, setAccessLevels] = useState<Record<number, UserAccessLevel>>({});
-
+    
     // Helper Methods =========================================================
     /**
      * Used for navigation to other pages
@@ -34,41 +33,7 @@ const UserListView = ({ users, modsAdmins = false, association = {} }: UserListV
     }
 
     /**
-     * Converts into list view data row
-     * @param user User detail
-     * @returns list view data row
-     */
-    const listView = (user: UserDetail) => {
-        return <>
-            <tr
-                key={'user-report-' + user.userId}
-                className="list-card"
-                onClick={() => navigate(`${routes.PROFILE}?userID=${user.userId}`)}
-            >
-                <td className="list-card-title">
-                    {association[user.userId] &&
-                        <span className="tooltip">
-                            <i className="fa-solid fa-triangle-exclamation" style={{
-                                color: "#F59E0B",
-                                fontSize: "1.1rem",
-                            }}></i>&nbsp;&nbsp;
-                            <span className="tooltip-text">You're associated with this user/report and can't resolve it</span>
-                        </span>
-                    }
-                    {user.firstName} {user.lastName}
-                </td>
-                {modsAdmins && <td className="list-card-access-level" data-label="Access Level">{accessLevels[user.userId]}</td>}
-                <td className="list-card-pronouns" data-label="Pronouns">{user.pronouns.length > 0 ? user.pronouns : 'Not Provided'}</td>
-                <td className="list-card-location" data-label="Location">{user.location.length > 0 ? user.location : 'Not Provided'}</td>
-                <td className="list-card-rit-status" data-label="RIT Status">{user.ritStatus ? RitStatus[user.ritStatus] : 'Not Provided'}</td>
-                <td className="list-card-projects" data-label="Projects">{user.projects.length}</td>
-            </tr>
-        </>;
-    };
-
-    // Loaders ================================================================
-    /**
-     * Loads access levels if this if for mods and admins
+     * Get access levels if this if for mods and admins
      */
     useEffect(() => {
         if (!modsAdmins) return;
@@ -86,6 +51,28 @@ const UserListView = ({ users, modsAdmins = false, association = {} }: UserListV
 
         void loadAccessLevels();
     }, [users, modsAdmins]);
+
+    /**
+     * Converts into list view data row
+     * @param user User detail
+     * @returns list view data row
+     */
+    const listView = (user: UserDetail) => {
+        return <>
+            <tr
+                key={'user-report-' + user.userId}
+                className="list-card"
+                onClick={() => navigate(`${routes.PROFILE}?userID=${user.userId}`)}
+            >
+                <td className="list-card-title">{user.firstName} {user.lastName}</td>
+                {modsAdmins && <td className="list-card-access-level" data-label="Access Level">{accessLevels[user.userId]}</td>}
+                <td className="list-card-pronouns" data-label="Pronouns">{user.pronouns.length > 0 ? user.pronouns : 'Not Provided'}</td>
+                <td className="list-card-location" data-label="Location">{user.location.length > 0 ? user.location : 'Not Provided'}</td>
+                <td className="list-card-rit-status" data-label="RIT Status">{user.ritStatus ? RitStatus[user.ritStatus] : 'Not Provided'}</td>
+                <td className="list-card-projects" data-label="Projects">{user.projects.length}</td>
+            </tr>
+        </>;
+    };
 
     // The final component ====================================================
     return (
