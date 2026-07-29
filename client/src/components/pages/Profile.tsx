@@ -31,9 +31,7 @@ import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
 import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification, deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi } from "../../api/mod-tools";
-import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification, deactivateUserReport } from "../../api/mod-tools";
 // import { PopupContext } from "../Popup";
-import { UserReport } from "@looking-for-group/shared";
 import { Carousel, CarouselButton, CarouselContent, CarouselTabs } from "../ImageCarousel";
 import { getYouTubeEmbedID, getYouTubeEmbedURL } from "../../functions/parseYoutube";
 
