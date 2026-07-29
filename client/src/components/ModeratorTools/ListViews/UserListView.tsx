@@ -13,6 +13,27 @@ type UserListViewProps = {
 const UserListView = ({ users, modsAdmins = false }: UserListViewProps) => {
     // Variables ==============================================================
     const [accessLevels, setAccessLevels] = useState<Record<number, UserAccessLevel>>({});
+
+    // Loaders ================================================================
+    /**
+     * Loads access levels if this if for mods and admins
+     */
+    useEffect(() => {
+        if (!modsAdmins) return;
+
+        const loadAccessLevels = async () => {
+            const entries = await Promise.all(
+                users.map(async user => [
+                    user.userId,
+                    (await getAccessLevel(user.userId)) ?? "User",
+                ] as const)
+            );
+
+            setAccessLevels(Object.fromEntries(entries));
+        };
+
+        void loadAccessLevels();
+    }, [users, modsAdmins]);
     
     // Helper Methods =========================================================
     /**
@@ -31,26 +52,6 @@ const UserListView = ({ users, modsAdmins = false }: UserListViewProps) => {
             return res.data.toString() as UserAccessLevel;
         return 'User';
     }
-
-    /**
-     * Get access levels if this if for mods and admins
-     */
-    useEffect(() => {
-        if (!modsAdmins) return;
-
-        const loadAccessLevels = async () => {
-            const entries = await Promise.all(
-                users.map(async user => [
-                    user.userId,
-                    (await getAccessLevel(user.userId)) ?? "User",
-                ] as const)
-            );
-
-            setAccessLevels(Object.fromEntries(entries));
-        };
-
-        void loadAccessLevels();
-    }, [users, modsAdmins]);
 
     /**
      * Converts into list view data row

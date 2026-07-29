@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { routes } from '../../../constants/routes';
 import { ProjectDetail } from "@looking-for-group/shared";
@@ -5,9 +6,13 @@ import { ProjectContext } from "@looking-for-group/shared/enums";
 
 type ProjectListViewProps = {
     projects: ProjectDetail[],
+    association?: Record<number, boolean>
 };
 
-const ProjectListView = ({ projects }: ProjectListViewProps) => {
+const ProjectListView = ({ projects, association = {} }: ProjectListViewProps) => {
+    // Variables ==============================================================
+    const [associated, setAssociated] = useState<Record<number, boolean>>(association);
+
     // Helper Methods =========================================================
     /**
      * Used for navigation to other pages
@@ -38,7 +43,18 @@ const ProjectListView = ({ projects }: ProjectListViewProps) => {
                 className="list-card"
                 onClick={() => navigate(`${routes.PROJECT}?projectID=${project.projectId}`)}
             >
-                <td className="list-card-title">{project.title}</td>
+                <td className="list-card-title">
+                    {associated[project.projectId] &&
+                        <span className="tooltip">
+                            <i className="fa-solid fa-triangle-exclamation" style={{
+                                color: "#F59E0B",
+                                fontSize: "1.1rem",
+                            }}></i>&nbsp;&nbsp;
+                            <span className="tooltip-text">You're associated with this project/report and can't resolve it</span>
+                        </span>
+                    }
+                    {project.title}
+                </td>
                 <td className="list-card-owner" data-label="Project Owner">{project.owner.firstName} {project.owner.lastName}</td>
                 <td className="list-card-contet" data-label="Context">{project.context ? ProjectContext[project.context] : 'Not Provided'}</td>
                 <td className="list-card-status" data-label="Status">{project.status}</td>
@@ -46,6 +62,10 @@ const ProjectListView = ({ projects }: ProjectListViewProps) => {
             </tr>
         </>;
     };
+
+    useEffect(() => {
+        console.log(associated);
+    }, [association]);
 
     // The final component ====================================================
     return (

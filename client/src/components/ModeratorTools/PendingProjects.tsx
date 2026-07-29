@@ -19,8 +19,25 @@ const PendingProjects = ({ currentUserId, currentTab, displayMode }: PendingProj
     const [loaded, setLoaded] = useState<boolean>(false);
     const [pendingProjects, setPendingProjects] = useState<ProjectDetail[]>([]);
     const [pendingProjectsIds, setPendingProjectsIds] = useState<Set<number>>(new Set);
+    const [association, setAssociation] = useState<Record<number, boolean>>({});
 
     // Helper Methods =========================================================
+    /**
+     * Checks if the current user (moderator) is associated to this project in any way 
+     * @param project Project detail
+     * @returns [Project id, associated or not]
+     */
+    const checkAssociation = (project: ProjectDetail) => {
+        // check if the moderator is the owner or a member
+        if (project.owner.userId === currentUserId ||
+            project.members.some(member => member.user.userId === currentUserId)
+        ) {
+            return [project.projectId, true];
+        }
+        return [project.projectId, false];
+    }
+
+    // Loaders ================================================================
     useEffect(() => {
         //get reported projects to display
         const displayPendingProjects = async () => {
@@ -29,12 +46,16 @@ const PendingProjects = ({ currentUserId, currentTab, displayMode }: PendingProj
             let tempIds: Set<number> = new Set();
 
             if (pendingProjects.data !== undefined && pendingProjects.data !== null) {
+                let entries = [];
+
                 for (const project of pendingProjects.data) {
-                    if(project.owner.userId !== currentUserId){
-                        tempPendingProjectArray.push(project);
-                        tempIds.add(project.projectId);
-                    }
+                    tempPendingProjectArray.push(project);
+                    tempIds.add(project.projectId);
+
+                    entries.push(checkAssociation(project));
                 }
+
+                setAssociation(Object.fromEntries(entries));
                 setPendingProjectsIds(tempIds);
             }
             setPendingProjects(tempPendingProjectArray);
@@ -58,7 +79,7 @@ const PendingProjects = ({ currentUserId, currentTab, displayMode }: PendingProj
                                 userId={currentUserId}
                             ></PanelBox>
                             // List view
-                            : <ProjectListView projects={pendingProjects} />
+                            : <ProjectListView projects={pendingProjects} association={association} />
                         : "No pending projects!"}
                 </div>
             </div>

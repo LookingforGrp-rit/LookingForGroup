@@ -20,7 +20,7 @@ const ReportedUsers = ({ currentUserId, currentTab, displayMode }: ReportedUsers
     const [loaded, setLoaded] = useState<boolean>(false);
     const [reportedUsers, setReportedUsers] = useState<UserDetail[]>([]);
 
-    // Helper Methods =========================================================
+    // Loaders ================================================================
     useEffect(() => {
         //get reported users to display
         const displayReportedUsers = async () => {
@@ -32,7 +32,7 @@ const ReportedUsers = ({ currentUserId, currentTab, displayMode }: ReportedUsers
                 for (const user of reportedUsers) {
                     const userId = user.reportedId ? user.reportedId : -1;
                     const userPreview = await getUsersById(userId);
-                    if (!tempIds.has(userId) && user.active && userId !== currentUserId && user.reporterId !== currentUserId) {
+                    if (!tempIds.has(userId) && user.active && userId !== currentUserId) {
                         tempIds.add(userId);
                         tempPendingUserArray.push(userPreview.data as UserDetail);
                     }
