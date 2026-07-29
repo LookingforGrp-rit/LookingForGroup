@@ -1,13 +1,14 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import deleteVideoService from '#services/projects/videos/delete-video.ts';
+import { deleteGalleryImageService } from '#services/me/gallery/delete-image.ts';
 
-//DELETE api/projects/{id}/videos/{videoId}
-//deletes a video from the project
-const deleteVideoController = async (req: Request, res: Response) => {
-  const videoId = parseInt(req.params.videoId as string);
-  //add the video to the project
-  const result = await deleteVideoService(videoId);
+//DELETE api/me/{userId}/gallery/images/{imageId}
+//removes an image from a gallery
+const removeGalleryImageController = async (req: Request, res: Response) => {
+  const userId = parseInt(req.params.userId as string);
+  const imageId = parseInt(req.params.imageId as string);
+
+  const result = await deleteGalleryImageService(userId, imageId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -22,19 +23,18 @@ const deleteVideoController = async (req: Request, res: Response) => {
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Video Not Found',
+      error: 'Image not found',
       data: null,
     };
     res.status(404).json(resBody);
     return;
   }
-
   const resBody: ApiResponse = {
     status: 200,
     error: null,
-    data: null,
+    data: result,
   };
   res.status(200).json(resBody);
 };
 
-export default deleteVideoController;
+export default removeGalleryImageController;

@@ -83,7 +83,7 @@ const addGalleryImageController = async (req: AuthenticatedRequest, res: Respons
   }
 
   const resBody: ApiResponse = {
-    status: 200,
+    status: 201,
     error: null,
     data: result,
   };
