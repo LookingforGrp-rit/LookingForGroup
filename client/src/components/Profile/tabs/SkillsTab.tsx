@@ -384,7 +384,7 @@ export const SkillsTab = ({
           }
           value={searchValue}
           setValue={setSearchValue}
-          placeholderText='Search for Tag'
+          placeholderText='Search for Skill'
 
         />
         <div id="project-editor-tag-wrapper">
