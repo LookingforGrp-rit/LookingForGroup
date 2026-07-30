@@ -13,17 +13,19 @@ import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSo
 import { SortableTag } from "./SortableItem";
 import { clampDragWithinContainer } from "./dragModifiers";
 import { Fragment } from "react";
-import TagDisplay from "../../TagDisplay";
+import TagDisplay, { mediumToTagOrSkill, tagToTagOrSkill } from "../../TagDisplay";
 import { ThemeIcon } from "../../ThemeIcon";
 
 // --- holds the possible tabs from tag types ---
-const tagTabs = ['Project Type', 'Genre', 'Style', 'Game Engine'] as TagType[]
+const tagTabs = ['Project Type', 'Genre', 'Style', 'Game Engine', 'Purpose', 'Content Warning'] as TagType[]
 
 // Category color for each tag tab, matching the tag/filter-tab colors.
 const tagTabColors: Record<string, string> = {
   Medium: 'blue',
   Genre: 'green',
   Style: 'pink',
+  Purpose: 'orange',
+  "Content Warning": 'red', //TODO: replace this red (and maybe the orange) with updated colors once those colors are decided
   'Game Engine': 'yellow',
   'Project Type': 'blue'
 };
@@ -42,6 +44,7 @@ type TagsTabProps = {
   failCheck: boolean;
   updateFailCheck: boolean;
   message: string;
+  isSaving: boolean;
 };
 
 /**
@@ -73,6 +76,7 @@ export const TagsTab = ({
   failCheck,
   updateFailCheck,
   message,
+  isSaving,
 }: TagsTabProps) => {
 
   projectAfterTagsChanges = structuredClone(projectData);
@@ -410,8 +414,8 @@ export const TagsTab = ({
           )}
         </div>
         <div className="project-editor-extra-info">
-          Drag and drop to reorder. The first 2 tags will be displayed on your
-          project's discover card.
+          Drag and drop to reorder. The first 3 tags will be displayed on your
+          project's panel on the Projects page.
         </div>
         {projectAfterTagsChanges.tags.length === 0 && (
           <div className="error">*At least 1 tag is required</div>
@@ -431,7 +435,7 @@ export const TagsTab = ({
               {projectAfterTagsChanges.tags.map((t, index) => (
                 <Fragment key={t.tagId}>
                   {/* Divider marks the cutoff: the first two tags appear on the discover card */}
-                  {index === 2 && <hr id="selected-tag-divider" />}
+                  {index === 3 && <hr id="selected-tag-divider" />}
                   <SortableTag
                     id={t.tagId} tag={{
                       skillId: t.tagId,
@@ -486,7 +490,7 @@ export const TagsTab = ({
       <div id="project-editor-tag-search">
         <SearchBar
           key={currentTagsTab}
-          dataSets={[{ data: [...allTags.filter((tag) => tag.type != "Positions" && tag.type != "Purpose" && tag.type != "Major"), ...allMediums] }]}
+          dataSets={[{ data: [...allTags.filter((tag) => tag.type != "Positions" && tag.type != "Context" && tag.type != "Major"), ...allMediums] }]}
           onSearch={handleSearch}
           value={searchValue}
           setValue={setSearchValue}
@@ -513,48 +517,15 @@ export const TagsTab = ({
         <div id="project-editor-tag-search-container">
           <TagDisplay
             selected={[[
-              ...projectAfterTagsChanges.tags.map(
-                tag => ({
-                  ...tag,
-                  category:
-                    tag.type === "Game Engine" ? "Game Engine" :
-                      tag.category,
-                  id: tag.tagId
-                })
-              ),
-              ...projectAfterTagsChanges.mediums.map(
-                medium => ({
-                  label: medium.label,
-                  id: medium.mediumId,
-                  category: "Medium",
-                  type: "Project Type",
-                })
-              )
+              ...tagToTagOrSkill(projectAfterTagsChanges.tags),
+              ...mediumToTagOrSkill(projectAfterTagsChanges.mediums)
             ], []]}
             toggleTag={handleTagSelect}
             tabs={tagTabs}
             tabId={currentTagsTab}
-            all={[...allTags, ...allMediums].map(
-              tag => ({
-                ...tag,
-                category:
-                  tag.type === "Project Type" ? "Medium" :
-                    tag.type === "Game Engine" ? "Game Engine" :
-                      tag.category,
-                id: tag.tagId
-              })
-            )}
+            all={tagToTagOrSkill([...allTags, ...allMediums])}
             searchValue={searchValue}
-            searchData={(searchedTags as Tag[]).map(
-              tag => ({
-                ...tag,
-                category:
-                  tag.type === "Project Type" ? "Medium" :
-                    tag.type === "Game Engine" ? "Game Engine" :
-                      tag.category,
-                id: tag.tagId
-              })
-            )}
+            searchData={tagToTagOrSkill(searchedTags as Tag[])}
           />
         </div>
       </div>
@@ -565,17 +536,26 @@ export const TagsTab = ({
               <div id="invalid-input-error" className={"save-error-msg-general"}>
                 <p>*{message}*</p>
               </div>}
-            <PopupButton
-              buttonId="project-editor-save"
-              callback={() => {
-                // Incomplete form: still clickable so the save validation runs,
-                // shows the error, and auto-scrolls to the first missing field.
-                if (!saveable) saveProject?.();
-                else setConfirm(true);
-              }}
-            >
-              Save Changes
-            </PopupButton>
+            {isSaving ? 
+            (
+              // Currently Saving
+              <div className='spinning-loader'></div>
+            ) : (
+              // Save is complete or hasn't been pressed
+              <PopupButton
+                  buttonId="project-editor-save"
+                  callback={() => {
+                    // Incomplete form: still clickable so the save validation runs,
+                    // shows the error, and auto-scrolls to the first missing field.
+                    if (!saveable) saveProject?.();
+                    else setConfirm(true);
+                  }}
+                >
+                  Save Changes
+                </PopupButton>
+              )  
+            }
+
             {confirm ?
               <PopupContent useClose={false} callback={() => setConfirm(false)}>
                 <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
@@ -587,12 +567,22 @@ export const TagsTab = ({
                     Cancel
                   </PopupButton>
                 </div>
-              </PopupContent> : ""}
+              </PopupContent> : ""
+            }
           </Popup>
-          <DeleteProjectButton
-            projectID={unmodifiedProject.projectId}
-            projectTitle={unmodifiedProject.title}
-          />
+
+          {isSaving ?
+            (
+              // Just here for blank space and to prevent 
+              // accidental deletion while a project is saving
+              ""
+            ) : (
+              <DeleteProjectButton
+                projectID={unmodifiedProject.projectId}
+                projectTitle={unmodifiedProject.title}
+              />
+            )
+          }
         </div>
       </div>
     </div>

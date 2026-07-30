@@ -28,14 +28,12 @@ describe('uidExists test service,', async () => {
       ritEmail: 'real@rit.edu',
       firstName: 'Real',
       lastName: 'User',
-      preferredName: 'Real',
       profileImage: null,
       headline: 'Testing',
       pronouns: 'they/them',
       title: 'Student',
       displayPhone: false,
       ritStatus: null,
-      mentor: false,
       createdAt: new Date(),
       updatedAt: new Date(),
       googleId: '1',
@@ -44,6 +42,7 @@ describe('uidExists test service,', async () => {
       privacy: 'public',
       phoneNumber: null,
       accessLevel: 'User',
+      galleryEnabled: false,
     };
 
     const result = await uidExistsService(1);

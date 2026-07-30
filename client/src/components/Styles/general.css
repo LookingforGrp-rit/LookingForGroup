@@ -290,10 +290,13 @@ button {
 }
 
 button:focus-visible,
+[role="button"]:focus-visible,
 #back:focus-visible,
 a:focus-visible,
+div:focus-visible,
 input:focus-visible,
 select:focus-visible,
+.project-panel:has(.project-link-overlay:focus-visible),
 textarea:focus-visible {
   transition: 0s;
   outline: 3px solid var(--primary-color);
@@ -314,7 +317,7 @@ input:focus {
 /*give sections of the page a drop shadow*/
 section {
   margin: 10px;
-  padding: 4px 16px 16px 16px;
+  padding: 16px;
   /* border-style: solid;
   border: 2px solid black;
   box-shadow: 10px 10px 5px lightblue; */
@@ -579,6 +582,16 @@ orange-button class makes the button orange, white-button class makes the button
 @media screen and (max-width: 700px) {
   .project-back-btn {
     margin: 10px 0px;
+  }
+
+  #main {
+    margin: 0 auto 100px;
+  }
+}
+
+@media screen and (max-width: 550px) {
+  .project-back-btn {
+    margin: 0px;
   }
 
   #main {
@@ -994,6 +1007,11 @@ Page popup style rules
 
 }
 
+.popup:has(> #filters-popup) {
+  max-height: fit-content !important;
+  border-radius: 15px;
+}
+
 .popup:has(> .small-popup) {
   max-width: 800px;
   height: 40vh;
@@ -1158,6 +1176,14 @@ body.modal-open {
   scrollbar-width: none;
 }
 
+@media screen and (max-width: 1180px) {
+  #project-creator-editor {
+    scrollbar-width: none;
+    padding-top: 5px;
+    box-sizing: border-box;
+  }
+}
+
 .popup-close {
   position: absolute;
   border-radius: 4px !important;
@@ -1246,6 +1272,7 @@ body.modal-open {
 
   #match-button {
     width: fit-content;
+    min-width: 136px;
     height: 40px;
     padding: 5px 16px;
     font-size: 1.25rem;
@@ -1349,22 +1376,20 @@ body.modal-open {
     font-size: 1rem;
     font-weight: 400;
     color: var(--neutral-gray);
-    /* Indicate should be clicked without being a button */
     cursor: pointer;
-    transition: 0.2s;
-    padding: 1px;
-    /* margin: 14px 38px; */
-    width: 15%;
+    transition: color 0.2s ease;
+    padding: 1px 1px 5px 1px;
+    width: max-content;
+    white-space: nowrap;
+    flex-shrink: 0;
+
     text-align: center;
   }
 
-  .filter-tab:hover {
-    color: var(--primary-color);
-    font-weight: 500;
-    transform: none;
-    padding-bottom: 5px;
-    transition: 0.2s;
-    text-decoration: underline;
+  .filter-tab:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 3px;
+    border-radius: 4px;
   }
 
   .filter-tab.selected {
@@ -1409,11 +1434,6 @@ body.modal-open {
   }
 }
 
-@media screen and (max-width: 700px) {
-  #filter-tabs {
-    column-gap: min(6vw, 45px);
-  }
-}
 
 /* Styles for required fields */
 .requiredAsterisk {
@@ -1443,13 +1463,19 @@ body.modal-open {
       width: 100%;
       display: flex;
       flex-wrap: nowrap;
-      overflow-x: scroll;
+      overflow-x: scroll !important;
       scroll-behavior: smooth;
       scrollbar-width: none;
-      justify-content: left !important;
+      justify-content: flex-start !important;
       ;
       column-gap: 5vw;
     }
+  }
+}
+
+@media screen and (max-width: 700px) {
+  #filter-tabs {
+    column-gap: min(6vw, 45px);
   }
 }
 
@@ -1473,12 +1499,12 @@ body.modal-open {
 
   .popup #filters-popup {
     h2 {
-      margin-top: 3.76vh;
+      margin-top: 20px;
       margin-bottom: 3.32vh;
     }
 
     .popup-section {
-      margin: 1.44vh 8.47vw;
+      margin: 0vh 8.47vw;
     }
 
     #filters {
@@ -1493,6 +1519,25 @@ body.modal-open {
     #selected-section {
       height: 19.7vh;
       padding: 1.77vh 2.52vw;
+    }
+
+    #match-button,
+    .delete-button,
+    #primary-btn {
+      min-width: 100px;
+      font-size: 1rem;
+    }
+
+    #primary-btn {
+      min-width: 80px;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+    }
+
+    h4 {
+      font-size: .675rem;
     }
   }
 }
@@ -1542,7 +1587,20 @@ Header style rules
 }
 
 #header.active {
-  z-index: 15;
+  z-index: 15 !important;
+}
+
+.notifications-portal {
+  position: fixed !important;
+  top: 70px;
+  right: 48px;
+  z-index: 9999 !important;
+}
+
+@media screen and (max-width: 800px) {
+  .notifications-portal {
+    right: 12px;
+  }
 }
 
 @media screen and (max-width: 800px) {
@@ -1619,6 +1677,39 @@ Header style rules
   }
 }
 
+@media screen and (max-width: 550px) {
+  #header {
+    height: 75px;
+    align-items: start;
+    padding-top: 20px;
+  }
+
+  #discover-filters-parent {
+    top: 65px;
+  }
+
+  #header-buttons #about-btn {
+    width: 36px;
+    height: 36px;
+
+    svg {
+      width: 25px;
+      height: 25px;
+    }
+  }
+
+  #notif-btn,
+  #profile-btn {
+    width: 36px;
+    height: 36px !important;
+
+    img {
+      width: 25px !important;
+      height: 25px !important;
+    }
+  }
+}
+
 @media screen and (max-width: 500px) {
   #header-buttons .dropdown {
     position: absolute;
@@ -1652,6 +1743,16 @@ Header style rules
     margin: 0;
     /* Narrower than the viewport so both edges always stay on screen. */
     width: min(340px, calc(100vw - 24px));
+  }
+
+  /*when search bar is active, other header buttons disappear*/
+  #header-searchbar:has(input:focus)~#header-buttons {
+    display: none !important;
+  }
+
+  #header:has(#header-searchbar input:focus) {
+    display: block;
+    padding: 20px 0;
   }
 }
 
@@ -1844,7 +1945,7 @@ Search style rules
   flex-direction: row;
   gap: 10px;
   /* float: right; */
-  /* align-content: center; */
+  align-items: center;
   /* margin: auto; */
 }
 
@@ -1889,6 +1990,22 @@ Search style rules
   .search-bar {
     font-size: 1rem;
     /* width: 200px; */
+  }
+}
+
+@media only screen and (max-width:550px) {
+  .search-bar {
+    font-size: .875rem;
+    height: 20px;
+
+  }
+
+  .search-input {
+    padding: 5px;
+  }
+
+  .fa-search {
+    font-size: 1rem;
   }
 }
 
@@ -1945,29 +2062,59 @@ Dropdown style rules
   position: relative;
   width: min(340px, 90vw);
   max-height: 70vh;
-  overflow-y: auto;
-  background-color: var(--header-color);
+  background-color: var(--dropdown-color);
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   text-align: left;
   scrollbar-color: var(--text-color) var(--header-color);
   scrollbar-width: thin;
+  margin-top: 10px;
+  padding: 10px;
+
+  hr {
+    border: 0;
+    height: 2px;
+    background: var(--header-color);
+  }
 }
 
 #notifications-panel .notifications-header {
   position: sticky;
   top: 0;
   z-index: 1;
-  background-color: var(--header-color);
-  padding: 10px 16px;
+  padding: 0 6px;
   font-weight: 700;
   font-size: 1rem;
   color: var(--primary-color);
   border-bottom: 1px solid var(--bg-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notification-clear-all {
+  background: none;
+  border: none;
+  color: var(--main-text);
+  font-size: 0.85em;
+  cursor: pointer;
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  i {
+    color: #ff4d4f;
+  }
+}
+
+/* Dynamic state when isClearing is true */
+.notification-clear-all.clearing {
+  cursor: wait;
+  opacity: 0.6;
 }
 
 #notifications-panel .notifications-empty {
-  padding: 18px 16px;
+  padding: 8px 6px;
   color: var(--main-text);
   font-style: italic;
 }
@@ -1978,6 +2125,8 @@ Dropdown style rules
 
 #notifications-panel .notifications-list {
   list-style: none;
+  overflow-y: auto;
+  max-height: 65vh;
   margin: 0;
   padding: 0;
 }
@@ -2323,8 +2472,24 @@ Input style rules
 }
 
 @media only screen and (max-width: 700px) {
-  .label-input-box {
+  .CompleteProfile .label-input-box {
     width: calc(100vw - 60px);
+  }
+}
+
+@media only screen and (max-width: 550px) {
+  .input-combo-label {
+    font-size: 1.1rem;
+  }
+
+  .input {
+    min-height: 40px;
+    font-size: .875rem;
+  }
+
+  .select {
+    font-size: .875rem;
+    height: 40px;
   }
 }
 

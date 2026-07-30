@@ -80,7 +80,6 @@ describe('getUserByIdService', () => {
       ritEmail: 'gold@rit.edu',
       firstName: '',
       lastName: '',
-      preferredName: '',
       privacy: 'public',
       phoneNumber: null,
       googleId: '2222222222',
@@ -109,7 +108,6 @@ describe('getUserByIdService', () => {
         users: [],
       },
       profileImage: null,
-      mentor: false,
       designer: false,
       developer: false,
       headline: '',
@@ -118,6 +116,7 @@ describe('getUserByIdService', () => {
       location: '',
       majors: [],
       displayPhone: false,
+      tagBlacklist: [],
     };
 
     vi.mocked(prisma.users.findUnique).mockResolvedValue(prismaUser as any);

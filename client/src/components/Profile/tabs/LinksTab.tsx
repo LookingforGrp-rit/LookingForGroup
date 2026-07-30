@@ -22,7 +22,7 @@ interface LinksTabProps {
 }
 
 let localIdIncrement = 0;
-let profileAfterLinkChanges: PendingUserProfile;
+//let profileAfterLinkChanges: PendingUserProfile;
 
 /**
  * Profile Links tab. Displays editable social links UI.
@@ -42,13 +42,28 @@ export const LinksTab: React.FC<LinksTabProps> = ({
 
   const [profileAfterLinkChanges, setLocalProfile] = useState(profile)
 
+  //stores the usernames for each social row
+  const [usernames, setUsernames] = useState<Record<number, string>>({});
+
   // complete list of socials
   const [allSocials, setAllSocials] = useState<Social[]>([]);
 
   const [error, setError] = useState<string | null>(null);
 
+  //initial username when load
   useEffect(() => {
     setLocalProfile(structuredClone(profile))
+
+    const initialUsernames: Record<number, string> = {};
+    profile.socials.forEach((soc, i) => {
+      const base = BaseSocialUrl[soc.label as keyof typeof BaseSocialUrl] || "";
+      initialUsernames[i] = soc.url.startsWith(base)
+        ? soc.url.substring(base.length)
+        : soc.url;
+
+    })
+
+    setUsernames(initialUsernames);
   }, [profile]);
 
   // Get social option data
@@ -98,20 +113,42 @@ export const LinksTab: React.FC<LinksTabProps> = ({
   ) => {
     const socials = [...profileAfterLinkChanges.socials];
 
-    const updatedSocial = {
-      ...socials[index],
-      [field]: field === "url" ? baseUrl + value : value,
-    };
+    if (field === "url") {
+      //update local state
+      setUsernames(prev => ({
+        ...prev,
+        [index]: value,
+      }))
 
-    socials[index] = updatedSocial;
+      //update url in profile
+      //supports adding the transfer protocol into the text box
+      if(value.includes("https://") || value.includes("http://")){
+        socials[index] = {
+          ...socials[index],
+          url: value,
+        };
+      }
+      else{
+        socials[index] = {
+          ...socials[index],
+          url: baseUrl + value,
+        };
+      }
+    } else {
+      socials[index] = {
+        ...socials[index],
+        alias: value,
+      };
+    }
 
     updatePendingProfile({
       ...profileAfterLinkChanges,
       socials,
     });
 
+    const updatedSocial = socials[index];
     const hasAlias = updatedSocial.alias.trim() !== "";
-    const hasUrl = updatedSocial.url.trim() !== baseUrl;
+    const hasUrl = updatedSocial.url.trim() !== "";
 
     if (!hasAlias || !hasUrl) {
       setError("Both Label and URL must be filled in to save changes.");
@@ -268,28 +305,28 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                     opacity: !social.label ? 0.4 : 1,
                     cursor: !social.label ? "not-allowed" : "text",
                   }}
-                  placeholder={url === '' || !social.label ? "URL" : 'Username'}
-                  value={social.url && social.label ? social.url.substring(url.length) : ''}
+                  placeholder={(url as string) === "" || (url as string) === "https://" ? "URL" : 'Username'}
+                  value={usernames[index] ?? ''} //stop cursor jumping
                   onChange={(e) => {
                     handleSocialChange(index, "url", e.target.value, url);
                   }}
                 />
                 <div id="clear-all-trash-row">
-                <button
-                  type="button"
-                  className="delete-position-button-alt button-reset"
-                  onClick={() => handleDeleteSocial(index)}
-                  title="Remove social link"
-                >
-                  <div id="clear-all-trash-row">
-                  <ThemeIcon
-                    id="trash"
-                    width={18}
-                    height={18}
-                    ariaLabel="Delete position"
-                  />
-                  </div>
-                </button>
+                  <button
+                    type="button"
+                    className="delete-position-button-alt button-reset"
+                    onClick={() => handleDeleteSocial(index)}
+                    title="Remove social link"
+                  >
+                    <div id="clear-all-trash-row">
+                      <ThemeIcon
+                        id="trash"
+                        width={18}
+                        height={18}
+                        ariaLabel="Delete position"
+                      />
+                    </div>
+                  </button>
                 </div>
               </div>
             );
@@ -303,6 +340,7 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                 ...profileAfterLinkChanges,
                 socials: [...profileAfterLinkChanges.socials,
                 {
+                  id: 0,
                   label: '',
                   url: '',
                   alias: '',

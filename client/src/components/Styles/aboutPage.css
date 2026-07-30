@@ -1,258 +1,262 @@
 /* Contains style rules that handles the styling for the About page */
-.about-main{
+.about-main {
   display: flex !important;
   align-content: left !important;
+  justify-content: center !important;
 }
 
-.about-header{
-  color:var(--primary-color);
+.about-header {
+  color: var(--primary-color);
   font-size: 2.4rem;
-  align-self:left;
+  align-self: left;
+  text-align: center;
   margin-top: 0;
   font-weight: 600;
 }
 
-.about-container{
-  left:10px;
-  align-self: left;
-  margin: 0rem !important;
-  width: 90% !important;
+.about-container {
+  padding: 0 !important;
+  justify-content: center;
+  margin-top: 40px !important;
+  width: 100% !important;
   max-width: none !important;
   padding-left: 0% !important;
   padding-top: 0% !important;
 }
 
-.about-section{
+.about-section {
   width: 100%;
   margin: 0rem !important;
-  padding-left:0%
 }
 
-.about-header-two{
-  color:var(--primary-color);
+.about-header-two {
+  color: var(--primary-color);
   font-size: 1.7rem;
   margin-top: 1%;
   margin-bottom: 0;
   font-weight: 600;
-  padding-left: 16px;
+  text-align: center;
 }
 
-.about-header-three{
-  color:var(--primary-color);
+.about-header-three {
+  color: var(--primary-color);
   font-size: 1.4rem;
   margin-top: 1%;
   font-weight: 600;
 }
 
-#credits{
+#credits {
   margin-left: 0px !important;
   padding-left: 16px !important;
 }
 
-#credits-title{
-  color:var(--primary-color);
-  font-size: 1.7rem !important;
+#credits-title {
+  color: var(--primary-color);
+  font-size: 2rem !important;
   margin-top: 1% !important;
   margin-left: 0% !important;
   font-weight: 600 !important;
+  text-align: center !important;
+  margin-bottom: 50px !important;
 }
 
-.guidelines-list{
+.guidelines-list {
   padding-left: 16px !important;
 }
 
-#about-purpose{
+#about-purpose {
   background-color: var(--header-color);
-  width: 100%;
+  margin: 0 auto !important;
+  max-width: 90%;
   border-radius: 10px;
-  margin-bottom: 2% !important;
-  padding-left: 16px;
+  margin-bottom: 20px !important;
+
+  h2 {
+    text-align: left;
+  }
 }
 
-.features-list{
+.features-list {
   width: 100%;
-  margin-left: 0%;
-  padding-left: 0%;
-  display: grid;
-  grid-template-areas:
-    "purpose creation"
-    "management profile";
-  gap: 1%;
+  max-width: 1620px;
+  display: flex !important;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
 }
 
-#features-section{
+#features-section {
   padding-left: 0% !important;
+  padding-right: 0% !important;
 }
 
-#about-purpose > .about-header-two{
+#guidelines-section div,
+#data-section div {
+  margin-bottom: 45px;
+}
+
+#about-purpose>.about-header-two {
   padding-left: 0px;
 }
 
-.about-section > .about-header-three{
+.about-section>.about-header-three {
   padding-left: 16px;
 }
 
-.about-box{
+.about-box {
   background: var(--about-gradient);
-  width: 90%;
   border-radius: 10px;
-  margin-left: 0%;
   display: grid;
   grid-template-areas:
     "text image";
+  max-width: 650px;
 }
 
-.about-text{
-  color:var(--main-text);
+.about-text {
+  color: var(--main-text);
   font-size: 1.2rem;
 }
 
-.heading-text-pair{
+.heading-text-pair {
   width: 100%;
   margin: 0%;
   padding: 0%;
   grid-area: text;
 }
 
-.heading-image-pair{
+.heading-image-pair {
   width: 100%;
   margin: 0%;
   padding: 0%;
   display: grid;
-  grid-template-areas: 
+  grid-template-areas:
     "heading imageB";
 }
 
-.text-image-pair{
+.text-image-pair {
   width: 100%;
   margin: 0%;
   padding: 0%;
   display: grid;
-  grid-template-areas: 
+  grid-template-areas:
     "paragraph imageC";
 }
 
-.text-image-pair > .about-text{
+.text-image-pair>.about-text {
   width: 90%;
 }
 
-.heading-image-pair > .about-header-three{
+.heading-image-pair>.about-header-three {
   margin-top: 5%;
 }
 
-.about-img-a{
+.about-img-a {
   grid-area: image;
   margin-top: 5%;
   align-self: center;
   display: inline;
 }
 
-.about-img-b{
+.about-img-b {
   grid-area: imageB;
   margin-top: 5%;
   align-self: center;
   display: none;
 }
 
-.about-img-c{
+.about-img-c {
   grid-area: imageC;
   margin-top: 5%;
   align-self: center;
   display: none;
 }
 
-
-
-.about-text-purpose{
-  width:65%;
-}
-
-#purpose-box{
-  grid-area: purpose;
-}
-
-#creation-box{
-  grid-area: creation;
-}
-
-#management-box{
-  grid-area: management;
-}
-
-#profile-box{
-  grid-area: profile;
-}
-
-@media (max-width: 1250px){
-  .features-list{
-    display: grid;
-    grid-template-areas:
-      "purpose creation"
-      "management profile";
-    gap: 1%;
+@media (max-width: 1830px) {
+  .features-list {
+    flex-direction: column;
   }
 
-  .about-box{
+  #creation-box,
+  #profile-box {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #purpose-box,
+  #management-box {
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
+
+@media (max-width:1360px) {
+  .features-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  #creation-box,
+  #profile-box,
+  #purpose-box,
+  #management-box {
+    margin: 10px auto !important;
+  }
+}
+
+@media (max-width: 1250px) {
+  .features-list {
+    .about-header-three {
+      padding-top: 20px;
+    }
+  }
+
+  .about-box {
     display: grid;
     grid-template-areas:
       "text image";
+    width: clamp(200px, 375px, 375px);
   }
 
-  .heading-text-pair{
+  .heading-text-pair {
     width: 100%;
     margin: 0%;
     padding: 0%;
     grid-area: text;
   }
 
-  .text-image-pair > .about-text{
+  .text-image-pair>.about-text {
     width: 90%;
   }
 
-  .heading-image-pair > .about-header-three{
+  .heading-image-pair>.about-header-three {
     margin-top: 5%;
   }
 
-  .about-img-a{
+  .about-img-a {
     grid-area: image;
     margin-top: 5%;
   }
 
-  .about-text-purpose{
-    width:95%;
+  .about-text-purpose {
+    width: 100%;
   }
 
-  #purpose-box{
-    grid-area: purpose;
-  }
-
-  #creation-box{
-    grid-area: creation;
-  }
-
-  #management-box{
-    grid-area: management;
-  }
-
-  #profile-box{
-    grid-area: profile;
-  }
-
-  .about-img-a{
+  .about-img-a {
     grid-area: image;
     margin-top: 5%;
     align-self: center;
     display: none;
   }
 
-  .about-img-b{
+  .about-img-b {
     grid-area: imageB;
     margin-top: 5%;
     align-self: right;
     display: inline;
   }
 
-  .about-img-c{
+  .about-img-c {
     grid-area: imageC;
     margin-top: 5%;
     align-self: right;
@@ -260,294 +264,345 @@
   }
 }
 
-@media (max-width: 920px){
-  .features-list{
-    width: 100%;
-    margin-left: 0%;
-    padding-left: 0%;
-    display: grid;
-    grid-template-areas:
-      "purpose" 
-      "creation"
-      "management"
-      "profile";
-    gap: 1%;
+@media (max-width: 1196px) {
+  .features-list {
+    flex-direction: column;
   }
 
-  .about-box{
+  #creation-box,
+  #profile-box {
+    margin-left: auto !important;
+    margin-right: 50px !important;
+  }
+
+  #purpose-box,
+  #management-box {
+    margin-right: auto !important;
+    margin-left: 50px !important;
+  }
+
+  .about-box {
+    width: clamp(100px, 425px, 425px);
+  }
+}
+
+@media (max-width: 1025px) {
+  .features-list {
+    width: 100%;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  .about-box {
     display: grid;
     grid-template-areas:
       "text image";
+    width: auto;
   }
 
-  .about-text{
-    color:var(--main-text);
+  .about-text {
+    color: var(--main-text);
     font-size: 1.2rem;
   }
 
-  .heading-text-pair{
+  .heading-text-pair {
     width: 100%;
     margin: 0%;
     padding: 0%;
     grid-area: text;
   }
 
-  .text-image-pair > .about-text{
+  .text-image-pair>.about-text {
     width: 90%;
   }
 
-  .heading-image-pair > .about-header-three{
+  .heading-image-pair>.about-header-three {
     margin-top: 5%;
   }
 
-  .about-img-a{
+  .about-img-a {
     grid-area: image;
     margin-top: 5%;
   }
 
-  .about-text-purpose{
-    width:95%;
+  .about-text-purpose {
+    width: 100%;
   }
 
-  #purpose-box{
+  #purpose-box {
     grid-area: purpose;
   }
 
-  #creation-box{
+  #creation-box {
     grid-area: creation;
   }
 
-  #management-box{
+  #management-box {
     grid-area: management;
   }
 
-  #profile-box{
+  #profile-box {
     grid-area: profile;
   }
 
-  .about-img-a{
+  .about-img-a {
     grid-area: image;
     margin-top: 5%;
     align-self: center;
     display: inline;
   }
 
-  .about-img-b{
+  .about-img-b {
     grid-area: imageB;
     margin-top: 5%;
     align-self: right;
     display: none;
   }
 
-  .about-img-c{
+  .about-img-c {
     grid-area: imageC;
     margin-top: 5%;
     align-self: right;
     display: none;
   }
+
+  .lfg-contributor {
+    padding: 15px;
+
+    .project-contributor-profile {
+      width: 65px;
+      height: 65px;
+    }
+  }
+
+  #credit-members-container {
+    gap: 20px !important;
+    margin: 20px 5px !important;
+  }
+
+  .features-list {
+    display: flex !important;
+  }
+
+  #creation-box,
+  #profile-box {
+    justify-content: flex-end;
+  }
 }
 
-@media (max-width: 599px){
-  .about-section{
+@media (max-width:920px) {
+  .features-list {
+    flex-direction: column;
+  }
+
+  #creation-box,
+  #profile-box,
+  #purpose-box,
+  #management-box {
+    margin: 10px auto !important;
+  }
+}
+
+@media (max-width: 599px) {
+  .about-section {
     padding-left: 0%;
   }
 
-  #about-purpose{
+  #about-purpose {
     padding-left: 16px;
   }
-  
-  .features-list{
+
+  .features-list {
     width: 100%;
     margin-left: 0%;
     padding-left: 0%;
-    display: grid;
-    grid-template-areas:
-      "purpose" 
-      "creation"
-      "management"
-      "profile";
-    gap: 1%;
   }
 
-  .about-box{
+  .about-box {
     display: grid;
     grid-template-areas:
       "text image";
   }
 
-  .about-text{
-    color:var(--main-text);
+  .about-text {
+    color: var(--main-text);
     font-size: 1.2rem;
   }
 
-  .heading-text-pair{
+  .heading-text-pair {
     width: 100%;
     margin: 0%;
     padding: 0%;
     grid-area: text;
   }
 
-  .text-image-pair > .about-text{
+  .text-image-pair>.about-text {
     width: 95%;
   }
 
-  .heading-image-pair > .about-header-three{
+  .heading-image-pair>.about-header-three {
     margin-top: 5%;
     margin-left: 5%;
     font-size: 1.55rem;
 
   }
 
-  .heading-image-pair{
+  .heading-image-pair {
     width: 100%;
     margin: 0%;
     padding: 0%;
-    gap:5%;
+    gap: 5%;
     display: grid;
-    grid-template-areas: 
+    grid-template-areas:
       "heading imageB";
   }
 
-  .text-image-pair{
+  .text-image-pair {
     width: 100%;
     margin: 0%;
     padding: 0%;
     display: grid;
     gap: 0%;
-    grid-template-areas: 
+    grid-template-areas:
       "paragraph imageC";
   }
 
-  .about-img-a{
+  .about-img-a {
     grid-area: image;
     margin-top: 5%;
     align-self: center;
     display: none;
   }
 
-  .about-img-b{
+  .about-img-b {
     grid-area: imageB;
     margin-top: 5%;
     align-self: right;
     display: inline;
   }
 
-  .about-img-c{
+  .about-img-c {
     grid-area: imageC;
     margin-top: 5%;
     align-self: right;
     display: inline;
   }
 
-  .about-text-purpose{
-    width:98%;
+  .about-text-purpose {
+    width: 98%;
   }
 
-  #purpose-box{
+  #purpose-box {
     grid-area: purpose;
   }
 
-  #creation-box{
+  #creation-box {
     grid-area: creation;
   }
 
-  #management-box{
+  #management-box {
     grid-area: management;
   }
 
-  #profile-box{
+  #profile-box {
     grid-area: profile;
   }
 }
 
-@media (max-width: 350px){
-  .about-box{
+@media (max-width:400px) {
+  .about-box {
+    width: auto;
+  }
+}
+
+@media (max-width: 350px) {
+  .about-box {
     display: grid;
     grid-template-areas:
       "text image";
   }
 
-  .about-text{
-    color:var(--main-text);
+  .about-text {
+    color: var(--main-text);
     font-size: 1.2rem;
   }
 
-  .heading-text-pair{
+  .heading-text-pair {
     width: 100%;
     margin: 0%;
     padding: 0%;
     grid-area: text;
   }
 
-  .text-image-pair > .about-text{
+  .text-image-pair>.about-text {
     width: 95%;
   }
 
-  .heading-image-pair > .about-header-three{
+  .heading-image-pair>.about-header-three {
     margin-top: 5%;
     margin-left: 5%;
     font-size: 1.55rem;
 
   }
 
-  .heading-image-pair{
+  .heading-image-pair {
     width: 100%;
     margin: 0%;
     padding: 0%;
-    gap:5%;
+    gap: 5%;
     display: grid;
-    grid-template-areas: 
+    grid-template-areas:
       "heading imageB";
   }
 
-  .text-image-pair{
+  .text-image-pair {
     width: 100%;
     margin: 0%;
     padding: 0%;
     display: grid;
     gap: 0%;
-    grid-template-areas: 
+    grid-template-areas:
       "paragraph imageC";
   }
 
-  .about-img-a{
+  .about-img-a {
     grid-area: image;
     margin-top: 5%;
     align-self: center;
     display: none;
   }
 
-  .about-img-b{
+  .about-img-b {
     grid-area: imageB;
     margin-top: 5%;
     align-self: right;
     display: none;
   }
 
-  .about-img-c{
+  .about-img-c {
     grid-area: imageC;
     margin-top: 5%;
     align-self: right;
     display: inline;
   }
 
-  .about-text-purpose{
-    width:98%;
+  .about-text-purpose {
+    width: 98%;
   }
 
-  #purpose-box{
+  #purpose-box {
     grid-area: purpose;
   }
 
-  #creation-box{
+  #creation-box {
     grid-area: creation;
   }
 
-  #management-box{
+  #management-box {
     grid-area: management;
   }
 
-  #profile-box{
+  #profile-box {
     grid-area: profile;
   }
 }

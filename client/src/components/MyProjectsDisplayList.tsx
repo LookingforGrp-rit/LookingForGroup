@@ -17,6 +17,7 @@ type ApprovalStatusKey = keyof typeof ApprovalStatus;
 type MyProjectsDisplayListProps = {
   projectData: ProjectDetail;
   approvalStatus: ApprovalStatusKey;
+  setApprovalStatus: (status: ApprovalStatusKey) => void,
 };
 /**
  * MyProjectsDisplayList renders a single project as a list item for the "My Projects" page.
@@ -40,7 +41,7 @@ type MyProjectsDisplayListProps = {
  * @param approvalStatus - Project approval status (keyof ProjectApprovalStatus from "@looking-for-group/shared/enums")
  * @returns {JSX.Element} The project list card element.
  */
-const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDisplayListProps) => {
+const MyProjectsDisplayList = ({ projectData, approvalStatus, setApprovalStatus}: MyProjectsDisplayListProps) => {
   // Navigation hook
   const navigate = useNavigate();
 
@@ -153,7 +154,7 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
                 />
                 Edit Project
               </button>
-              {approvalStatus === 'not-approved' ?
+              {isOwner && approvalStatus === 'not-approved' ?
               <Popup>
                 <PopupButton className='card-leave-button'>
                   <ThemeIcon
@@ -179,7 +180,10 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
                     <div id="project-request-buttons">
                       <PopupButton buttonId="request-confirm-button"
                       callback={() => {
-                        if (projectData) requestProjectReview(projectData.projectId);
+                        if (projectData) {
+                          requestProjectReview(projectData.projectId);
+                          setApprovalStatus("under-review");
+                        }
                       }}
                       >
                         Request Review

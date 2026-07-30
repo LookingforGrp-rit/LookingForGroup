@@ -34,7 +34,6 @@ describe('createUserService', async () => {
       username: 'goldleaf',
       firstName: 'Gold',
       lastName: 'Leaf',
-      preferredName: 'Gold',
       ritEmail: 'goldleaf@rit.edu',
       profileImage: null,
       displayPhone: false,
@@ -42,7 +41,6 @@ describe('createUserService', async () => {
       pronouns: '',
       title: '',
       ritStatus: null,
-      mentor: false,
       createdAt: new Date(),
       updatedAt: new Date(),
       location: '',
@@ -50,6 +48,7 @@ describe('createUserService', async () => {
       privacy: 'public',
       phoneNumber: null,
       accessLevel: 'User',
+      galleryEnabled: false,
     };
 
     const mePrivate: MePrivate = {
@@ -57,7 +56,6 @@ describe('createUserService', async () => {
       username: 'goldleaf',
       firstName: 'Gold',
       lastName: 'Leaf',
-      preferredName: 'Gold',
       ritEmail: 'goldleaf@rit.edu',
       googleId: '1234',
       privacy: 'public',
@@ -71,7 +69,6 @@ describe('createUserService', async () => {
       ritStatus: 'FirstYear',
       location: '',
       bio: '',
-      mentor: false,
       projects: [],
       skills: [],
       socials: [],
@@ -97,6 +94,7 @@ describe('createUserService', async () => {
       developer: false,
       displayPhone: false,
       apiUrl: '',
+      tagBlacklist: [],
     };
 
     vi.mocked(prisma.users.create).mockResolvedValue(prismaUser);
@@ -107,7 +105,6 @@ describe('createUserService', async () => {
         username: 'goldleaf',
         firstName: 'Gold',
         lastName: 'Leaf',
-        preferredName: 'Gold',
         ritEmail: 'goldleaf@rit.edu',
         googleId: '1234',
       },
@@ -120,7 +117,6 @@ describe('createUserService', async () => {
         username: 'goldleaf',
         firstName: 'Gold',
         lastName: 'Leaf',
-        preferredName: 'Gold',
         ritEmail: 'goldleaf@rit.edu',
       },
       select: expect.objectContaining({}),

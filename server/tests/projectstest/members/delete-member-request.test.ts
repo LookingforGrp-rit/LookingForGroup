@@ -1,6 +1,6 @@
 import type {
   MemberRequestStatus,
-  ProjectPurpose,
+  ProjectContext,
   ProjectStatus,
   Visibility,
 } from '@looking-for-group/shared';
@@ -31,7 +31,7 @@ const prismaProject = {
   hook: '',
   projectId: 100,
   globalVisibility: 'public' as Visibility,
-  purpose: 'Academic' as ProjectPurpose,
+  context: 'Academic' as ProjectContext,
   status: 'Planning' as ProjectStatus,
   thumbnailId: 8,
   title: 'test 1',

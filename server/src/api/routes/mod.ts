@@ -6,11 +6,21 @@ import { deactivateUserReport } from '#controllers/mod/deactivate-user-report.ts
 import { deleteProjectReport } from '#controllers/mod/delete-project-report.ts';
 import { deleteProject } from '#controllers/mod/delete-project.ts';
 import { deleteUserReport } from '#controllers/mod/delete-user-report.ts';
+import { getBugReportById } from '#controllers/mod/get-bug-report-by-id.ts';
+import { getBugReports } from '#controllers/mod/get-bug-reports.ts';
 import { getProjectReportById } from '#controllers/mod/get-project-report-by-id.ts';
 import { getProjectReports } from '#controllers/mod/get-project-reports.ts';
 import { getUserReportById } from '#controllers/mod/get-user-report-by-id.ts';
 import { getUserReports } from '#controllers/mod/get-user-reports.ts';
+import { sendNotification } from '#controllers/mod/send-notification.ts';
 import { unbanUser } from '#controllers/mod/unban-user.ts';
+import { updateBugReport } from '#controllers/mod/update-bug-report.ts';
+import { requiresNotSelf } from '#middleware/authorization/requires-not-self.ts';
+import { PathParameterLocation } from '#middleware/validators/parameter-location/path-param-location.ts';
+import { ProjectReportedInPathParameterLocation } from '#middleware/validators/parameter-location/project-reported-in-path-param-location.ts';
+import { ProjectReporterInPathParameterLocation } from '#middleware/validators/parameter-location/project-reporter-in-path-param-location.ts';
+import { ReportedInPathParameterLocation } from '#middleware/validators/parameter-location/reported-in-path-param-location.ts';
+import { ReporterInPathParameterLocation } from '#middleware/validators/parameter-location/reporter-in-path-param-location.ts';
 import { userExistsAt } from '#middleware/validators/user-exists-at.ts';
 import { userReportExistsAt } from '#middleware/validators/user-report-exists-at.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
@@ -37,21 +47,83 @@ router.use(requiresLogin, injectCurrentUser, authenticated(requiresModerator));
 
 router.get('/project-report/', authenticated(getProjectReports));
 router.get('/user-report/', authenticated(getUserReports));
-router.get('/project-report/:id', authenticated(getProjectReportById));
-router.get('/user-report/:id', authenticated(getUserReportById));
+router.get(
+  '/project-report/:id',
+  authenticated(
+    requiresNotSelf(
+      new Map([
+        [new ProjectReporterInPathParameterLocation(), 'id'],
+        [new ProjectReportedInPathParameterLocation(), 'id'],
+      ]),
+    ),
+  ),
+  authenticated(getProjectReportById),
+);
+router.get(
+  '/user-report/:id',
+  authenticated(
+    requiresNotSelf(
+      new Map([
+        [new ReporterInPathParameterLocation(), 'id'],
+        [new ReportedInPathParameterLocation(), 'id'],
+      ]),
+    ),
+  ),
+  authenticated(getUserReportById),
+);
+router.get('/bug-report/', authenticated(getBugReports));
+router.get('/bug-report/:id', authenticated(getBugReportById));
+
+router.patch('/bug-report/:id', authenticated(updateBugReport));
 
 router.patch('/clear-profile/:id/', authenticated(clearProfile));
 router.patch(
   '/user-report/:id/deactivate',
   userReportExistsAt('path', 'id'),
+  authenticated(
+    requiresNotSelf(
+      new Map([
+        [new ReporterInPathParameterLocation(), 'id'],
+        [new ReportedInPathParameterLocation(), 'id'],
+      ]),
+    ),
+  ),
   authenticated(deactivateUserReport),
 );
 
-router.post('/ban-user/:id', userExistsAt('path', 'id'), authenticated(banUser));
+router.post('/notification', authenticated(sendNotification));
+router.post(
+  '/ban-user/:id',
+  userExistsAt('path', 'id'),
+  authenticated(requiresNotSelf(new Map([[new PathParameterLocation(), 'id']]))),
+  authenticated(banUser),
+);
 
 router.delete('/delete-project/:id/', authenticated(deleteProject));
-router.delete('/unban-user/:googleId/', authenticated(unbanUser));
-router.delete('/project-report/:id', authenticated(deleteProjectReport));
-router.delete('/user-report/:id', authenticated(deleteUserReport));
+router.delete('/unban-user/:id/', authenticated(unbanUser));
+router.delete(
+  '/project-report/:id',
+  authenticated(
+    requiresNotSelf(
+      new Map([
+        [new ProjectReporterInPathParameterLocation(), 'id'],
+        [new ProjectReportedInPathParameterLocation(), 'id'],
+      ]),
+    ),
+  ),
+  authenticated(deleteProjectReport),
+);
+router.delete(
+  '/user-report/:id',
+  authenticated(
+    requiresNotSelf(
+      new Map([
+        [new ReporterInPathParameterLocation(), 'id'],
+        [new ReportedInPathParameterLocation(), 'id'],
+      ]),
+    ),
+  ),
+  authenticated(deleteUserReport),
+);
 
 export default router;

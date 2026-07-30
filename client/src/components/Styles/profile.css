@@ -251,18 +251,9 @@ Profile Panel component style rules
   opacity: 1;
 }
 
-@media (max-width: 499px) {
+@media screen and (max-width:1050px) {
   .profile-panel {
-    width: clamp(180px, 250px, 250px) !important;
-    display: flex;
-
-
-    img {
-      border-radius: 10px !important;
-      object-fit: contain !important;
-      margin-left: auto !important;
-      margin-right: auto !important;
-    }
+    width: clamp(180px, 340px, 340px) !important;
   }
 }
 
@@ -271,14 +262,32 @@ Profile Panel component style rules
     width: 98% !important;
     display: flex;
 
+    h2 {
+      font-size: 1.2rem;
+    }
+
+    h3 {
+      font-size: 1rem;
+    }
+  }
+}
+
+@media screen and (max-width: 555px) {
+  .profile-panel {
+    h2 {
+      font-size: 1.2rem;
+    }
+
+    h3 {
+      font-size: 1rem;
+    }
   }
 }
 
 @media (min-width: 556px) and (max-width: 799px) {
   .profile-panel {
-    width: clamp(180px, 250px, 250px) !important;
+    width: clamp(180px, 90%, 350px) !important;
     display: flex;
-
 
     img {
       border-radius: 10px !important;
@@ -289,6 +298,29 @@ Profile Panel component style rules
   }
 }
 
+@media only screen and (max-width: 550px) {
+
+  #quote {
+    font-size: 0.775rem !important;
+    line-height: normal !important;
+    padding-top: 10px !important;
+    padding: 10px 14px !important;
+  }
+}
+
+@media (max-width: 499px) {
+  .profile-panel {
+    width: clamp(120px, 100%, 100%) !important;
+    display: flex;
+
+    img {
+      border-radius: 10px !important;
+      object-fit: contain !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+  }
+}
 
 
 
@@ -1472,7 +1504,7 @@ New Profile page style rules
     border-color: var(--liked-section-bg);
     border-style: solid;
     padding: 10px 0px;
-    max-height: 500px;
+    max-height: 75vh;
     overflow-y: scroll;
     overflow-x: hidden;
 
@@ -1887,7 +1919,8 @@ New Profile page style rules
   width: 100%;
 }
 
-#about-me-buttons a:link, #about-me-buttons a:visited {
+#about-me-buttons a:link,
+#about-me-buttons a:visited {
   display: flex;
   gap: 10px;
   align-items: center;
@@ -2069,10 +2102,10 @@ New Profile page style rules
    box's own background behind it). . */
 #profile-invite-project .select-options,
 #profile-invite-role .select-options {
-  position: static;
+  position: absolute;
   display: block;
   width: 100%;
-  max-height: 200px;
+  max-height: 150px;
   box-shadow: none;
 }
 
@@ -2098,6 +2131,10 @@ New Profile page style rules
     grid-template-columns: max-content 1fr;
     column-gap: 10px;
     row-gap: 10px;
+  }
+
+  #likes-container {
+    height: 70vh;
   }
 
   /* Trim the wide horizontal padding so the role select/dropdown has room on
@@ -2390,6 +2427,45 @@ New Profile page style rules
       color: var(--primary-color);
     }
   }
+}
+
+/* Delete-account confirmation popup in the profile editor. The shared
+   .delete-user-* styling lives inside a Settings-only selector, so it never
+   reaches this popup — style it here (scoped to profile-delete-* classes so
+   Settings is unaffected). */
+.profile-delete-confirm-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+}
+
+.profile-delete-confirm {
+  text-align: center;
+  width: 6rem;
+  padding: 4px 6px;
+  border: 1px solid var(--neutral-gray);
+  border-radius: 5px;
+  background-color: var(--bg-color);
+  color: var(--main-text);
+}
+
+.profile-delete-confirm::placeholder {
+  color: var(--neutral-gray);
+}
+
+.profile-delete-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.profile-delete-error {
+  margin: 0 0 12px 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--error-delete-color);
 }
 
 /* #endregion */

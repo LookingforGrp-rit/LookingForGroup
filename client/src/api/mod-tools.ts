@@ -1,18 +1,27 @@
-import { GET, DELETE, POST, PUT, PATCH } from "./index";
-import { ApiResponse, UserAccessLevel, UnapproveProjectInput } from "@looking-for-group/shared";
-import { ProjectPreview, ProjectDetail, ProjectReport, UserReport, ModeratorNotificationInput, BanUserInput} from "@looking-for-group/shared";
-import { deleteUser } from "./users";
+import { GET, DELETE, POST, PATCH } from "./index";
+import {
+    ApiResponse,
+    UserAccessLevel,
+    UnapproveProjectInput,
+    ProjectDetail,
+    ProjectReport,
+    UserReport,
+    ModeratorNotificationInput,
+    BanUserInput,
+    UserDetail,
+    BanDetail,
+} from "@looking-for-group/shared";
 
 /**
  * Gets the list of all pending projects
  * @returns List of all pending projects or an error message if the request fails
  */
-export const getPendingProjects = async (): Promise<ApiResponse<ProjectPreview[]>> => {
-  const apiURL = "/projects/unapproved";
-  const response = await GET(apiURL);
+export const getPendingProjects = async (): Promise<ApiResponse<ProjectDetail[]>> => {
+    const apiURL = "/projects/unapproved";
+    const response = await GET(apiURL);
 
-  if (response.error) console.log(`Error in getPendingProjects: ${response.error}`);
-  return response;
+    if (response.error) console.log(`Error in getPendingProjects: ${response.error}`);
+    return response;
 };
 
 /**
@@ -25,7 +34,7 @@ export const deleteProjectRequest = async (
     message: string
 ): Promise<ApiResponse> => {
     const apiURL = `/projects/unapproved/${projectId}`;
-    const response = await DELETE(apiURL, {reason: message});
+    const response = await DELETE(apiURL, { reason: message });
 
     if (response.error) console.log(`Error in deleteProjectRequest: ${response.error}`);
     return response;
@@ -42,9 +51,8 @@ export const approveProjectRequest = async (
     projectData: ProjectDetail,
 ): Promise<ApiResponse> => {
     const apiURL = `/projects/${projectId}/approve`;
-    
+
     const response = await PATCH(apiURL, projectData);
-    console.log(response.status);
 
     if (response.error) console.log(`Error in approveProjectRequest: ${response.error}`);
     return response;
@@ -90,6 +98,30 @@ export const getReportedUsers = async (): Promise<ApiResponse<UserReport[]>> => 
 };
 
 /**
+ * Gets the list of all banned users
+ * @returns List of all banned users or an error message if the request fails 
+ */
+export const getBannedUsers = async (): Promise<ApiResponse<UserDetail[]>> => {
+    const apiURL = `/users/blacklist`;
+    const response = await GET(apiURL);
+
+    if (response.error) console.log(`Error in getBannedUsers: ${response.error}`);
+    return response; 
+}
+
+/**
+ * Gets the list of all banned users
+ * @returns List of all banned users or an error message if the request fails 
+ */
+export const getBanDetail = async (userId: number): Promise<ApiResponse<BanDetail>> => {
+    const apiURL = `/users/blacklist/${userId}`;
+    const response = await GET(apiURL);
+
+    if (response.error) console.log(`Error in getBanDetail: ${response.error}`);
+    return response; 
+}
+
+/**
  * Gets the access level of the current user
  */
 export const getUserAccessLevel = async (userId: number): Promise<ApiResponse<UserAccessLevel>> => {
@@ -105,20 +137,23 @@ export const getUserAccessLevel = async (userId: number): Promise<ApiResponse<Us
  * @param reportId Report ID of the project report to delete
  * @param projectId Project ID of the project to unapprove
  * @param data Message for project owner explaining why their project was unapproved
- * @returns ApiResponse from unapproveProject
+ * @returns ApiResponse from unapproveProject and deleteProjectReport
  */
-export const approveProjectReport = async(
-    reportId: number, 
-    projectId: number, 
+export const takeDownProject = async (
+    reportId: number,
+    projectId: number,
     data: UnapproveProjectInput
-): Promise<ApiResponse> => {
+): Promise<{ unapprove: ApiResponse, deleteReport: ApiResponse }> => {
     const unapproveRes = await unapproveProject(projectId, data);
     const deleteRes = await deleteProjectReport(reportId);
 
-    if (unapproveRes.error) console.log(`Error in approveProjectReport (unapproveProject): ${unapproveRes.error}`);
-    if (deleteRes.error) console.log(`Error in approveProjectReport (deleteProjectReport): ${deleteRes.error}`);
+    if (unapproveRes.error) console.log(`Error in takeDownProject(unapproveProject): ${unapproveRes.error}`);
+    if (deleteRes.error) console.log(`Error in takeDownProject(deleteProjectReport): ${deleteRes.error}`);
 
-    return unapproveRes;
+    return {
+        unapprove: unapproveRes,
+        deleteReport: deleteRes,
+    };
 };
 
 /**
@@ -127,15 +162,20 @@ export const approveProjectReport = async(
  * @param data Notification data
  * @returns ApiResponse from deactivateUserReport
  */
-export const warnUser = async (reportId: number, data: ModeratorNotificationInput): Promise<ApiResponse> => {
+export const warnUser = async (
+    reportId: number,
+    data: ModeratorNotificationInput
+): Promise<{ deactivate: ApiResponse, notification: ApiResponse }> => {
     const deactivateRes = await deactivateUserReport(reportId);
-    // !! sends mod message to user (API not setup yet)
-    // const notifyRes = await sendModeratorNotification(data);
+    const warnRes = await sendModeratorNotification(data);
 
     if (deactivateRes.error) console.log(`Error in WarnUser(deactivateUserReport): ${deactivateRes.error}`);
-    // if (notifyRes.error) console.log(`Error in WarnUser(sendModeratorNotification): ${notifyRes.error}`);
-    
-    return deactivateRes;
+    if (warnRes.error) console.log(`Error in WarnUser(sendModeratorNotification): ${warnRes.error}`);
+
+    return {
+        deactivate: deactivateRes,
+        notification: warnRes,
+    };
 }
 
 /**
@@ -157,8 +197,7 @@ export const deactivateUserReport = async (reportId: number): Promise<ApiRespons
  * @returns ApiResponse from the API call to send a moderation notification to a user
  */
 export const sendModeratorNotification = async (data: ModeratorNotificationInput): Promise<ApiResponse> => {
-    // !! sends mod message to user (API not setup yet)
-    const apiURL = `/mod/notify`;
+    const apiURL = `/mod/notification`;
     const res = await POST(apiURL, data);
 
     if (res.error) console.log(`Error in sendModeratorNotification: ${res.error}`);
@@ -169,16 +208,16 @@ export const sendModeratorNotification = async (data: ModeratorNotificationInput
  * Bans a user from the site
  * @param reportId The id of the report to delete
  * @param data Data needed fro banning a user from the site
- * @returns ApiResponse from the API call to ban a user
+ * @returns ApiResponse from the API call to ban a user and deleteUserReport
  */
-export const banUser = async (reportId: number, data: BanUserInput): Promise<ApiResponse> => {
+export const banUser = async (
+    data: BanUserInput
+): Promise<ApiResponse> => {
     const apiUrl = `/mod/ban-user/${data.userId}`;
     const res = await POST(apiUrl, data);
 
-    const deleteReport = await deleteUserReport(reportId);
-
     if (res.error) console.log(`Error in banUser: ${res.error}`);
-    if (deleteReport.error) console.log(`Error in banUser(deleteReport): ${res.error}`);
+
     return res;
 };
 
@@ -186,7 +225,7 @@ export const banUser = async (reportId: number, data: BanUserInput): Promise<Api
  * Deletes a project report
  * @param reportId The id of the report to delete
  */
-export const deleteProjectReport = async (reportId: number, ): Promise<ApiResponse> => {
+export const deleteProjectReport = async (reportId: number,): Promise<ApiResponse> => {
     const apiURL = `/mod/project-report/${reportId}`;
     const response = await DELETE(apiURL, {});
 
@@ -195,13 +234,110 @@ export const deleteProjectReport = async (reportId: number, ): Promise<ApiRespon
 };
 
 /**
- * Deletes a user report
- * @param reportId The id of the report to delete
+ * Promotes the user to mod
+ * @param currentUserId The person who is promoting. Must be an admin
+ * @param userToPromote The user to promote to mod
  */
-export const deleteUserReport = async (reportId: number, ): Promise<ApiResponse> => {
+export const promoteToMod = async (
+    currentUserId: number,
+    userToPromote: number
+): Promise<ApiResponse> => {
+    const apiURL = `/admin/promote`;
+    const response = await PATCH(apiURL, { userId: userToPromote });
+
+    if (response.error) console.log(`Error in promoteToMod: ${response.error}`);
+    return response;
+};
+
+/**
+ * Demotes the mod to a regular user
+ * @param currentUserId The person who is demoting. Must be an admin
+ * @param userToPromote The mod to demote to user
+ */
+export const demoteToUser = async (
+    currentUserId: number,
+    userToDemote: number
+): Promise<ApiResponse> => {
+    const apiURL = `/admin/demote`;
+    const response = await PATCH(apiURL, { userId: userToDemote });
+
+    if (response.error) console.log(`Error in demoteToUser: ${response.error}`);
+    return response;
+};
+
+/**
+ * Deletes a user report
+ * @param reportId reportId The id of the report to delete
+ * @returns ApiResponse from the API call to delete user report
+ */
+export const deleteUserReport = async (reportId: number,): Promise<ApiResponse> => {
     const apiURL = `/mod/user-report/${reportId}`;
     const response = await DELETE(apiURL, {});
 
     if (response.error) console.log(`Error in deleteUserReport: ${response.error}`);
     return response;
 };
+
+export const unbanUser = async (userId: number): Promise<ApiResponse> => {
+    const apiURL = `/mod/unban-user/${userId}`;
+    const response = await DELETE(apiURL, {});
+
+    if (response.error) console.log(`Error in unbanUser: ${response.error}`);
+    return response;
+};
+
+/**
+ * Creates a bug report
+ * @returns ApiResponse from the API call to get bug reports
+ */
+export const reportBug = async (bugReportText: string): Promise<ApiResponse> => {
+    const apiURL = `/me/report-bug`;
+    const response = await POST(apiURL, {reportText: bugReportText});
+
+    if (response.error) console.log(`Error in getBugReports: ${response.error}`);
+    return response;
+};
+
+/**
+ * Gets all bug reports
+ * @returns ApiResponse from the API call to get bug reports
+ */
+export const getBugReports = async (): Promise<ApiResponse> => {
+    const apiURL = `/mod/bug-report/`;
+    const response = await GET(apiURL);
+
+    if (response.error) console.log(`Error in getBugReports: ${response.error}`);
+    return response;
+};
+
+/**
+ * Gets the specified bug report by its id
+ * @param reportId reportId The id of the report to get
+ * @returns ApiResponse from the API call to get the specified bug report
+ */
+export const getBugReportById = async (reportId: number): Promise<ApiResponse> => {
+    const apiURL = `/mod/bug-report/${reportId}`;
+    const response = await GET(apiURL);
+
+    if (response.error) console.log(`Error in getBugReportById: ${response.error}`);
+    return response;
+};
+
+/**
+ * Gets the specified bug report by its id
+ * @param reportId reportId The id of the report to update
+ * @param modNotes Notes from the mod to the user about the report
+ * @param isResolved Is this bug resolved? (i.e. is this no longer a concern?)
+ * @returns ApiResponse from the API call to update bug report
+ */
+export const updateBugReport = async (reportId: number, modNotes: string, isResolved: boolean): Promise<ApiResponse> => {
+    const apiURL = `/mod/bug-report/${reportId}`;
+    const response = await PATCH(apiURL, {
+        isResolved: isResolved,
+        modNotes: modNotes
+    });
+
+    if (response.error) console.log(`Error in updateBugReport: ${response.error}`);
+    return response;
+};
+

@@ -21,7 +21,7 @@ const createProjectService = async (
         globalVisibility: data.globalVisibility || 'public',
         status: data.status || undefined,
         audience: data.audience || undefined,
-        purpose: data.purpose,
+        context: data.context,
         users: {
           connect: {
             userId: userId,
@@ -31,7 +31,7 @@ const createProjectService = async (
       select: ProjectDetailSelector,
     });
 
-    await addMemberService(project.projectId, { userId, roleId: 77 });
+    await addMemberService(project.projectId, { userId, roleId: 73 });
 
     return transformProjectToDetail(project);
   } catch (e) {

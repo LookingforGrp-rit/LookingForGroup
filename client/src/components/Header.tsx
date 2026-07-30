@@ -2,17 +2,21 @@ import { SearchBar, DataSet } from './SearchBar';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { NotificationsDropdown } from './NotificationsDropdown';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect, useContext, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
+import { useState, useEffect, useContext, ChangeEvent, FocusEvent, /*KeyboardEvent,*/ SetStateAction } from 'react';
 import * as paths from '../constants/routes';
 import { ThemeIcon } from './ThemeIcon';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { useLocation } from 'react-router-dom'; // Hook to access the current location
 import profilePicture from '../images/lfrog.png';
 import { getUserAccessLevel } from '../api/mod-tools.ts';
+import { PagePopup } from './PagePopup.tsx';
 
 //user utils
-import { getCurrentAccount, getCurrentUsername, googleLogout } from '../api/users.ts';
-import { MePrivate } from '@looking-for-group/shared';
+import { getCurrentAccount, /*getCurrentUsername,*/ googleLogout } from '../api/users.ts';
+import { AddBugReportInput, MePrivate } from '@looking-for-group/shared';
+import { Popup, PopupButton, PopupContent, /*PopupContext*/ } from './Popup.tsx';
+import { reportBug } from '../api/mod-tools.ts';
+import { ApiResponse } from '@looking-for-group/shared';
 
 //Header component to be used in pages
 
@@ -27,6 +31,7 @@ type HeaderProps = {
   dataSets: DataSet[];
   onSearch: (results: unknown[][]) => void;
   value?: string;
+  setSearch?: React.Dispatch<SetStateAction<string>>;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   hideSearchBar?: boolean;
   hideBackButton?: boolean;
@@ -35,6 +40,7 @@ type HeaderProps = {
   searchOnFocus?: (e: FocusEvent<HTMLInputElement>) => void;
   placeholderText: string;
   mobilePlaceholderText?: string;
+  searchBlocklist?: string[];
 };
 
 /**
@@ -56,6 +62,7 @@ export const Header: React.FC<HeaderProps> = ({
   dataSets,
   onSearch,
   value = "",
+  setSearch,
   onChange,
   hideSearchBar = false,
   hideBackButton = true,
@@ -63,7 +70,8 @@ export const Header: React.FC<HeaderProps> = ({
   setCurrentUserId,
   searchOnFocus,
   placeholderText = "",
-  mobilePlaceholderText }) => {
+  mobilePlaceholderText,
+  searchBlocklist = [] }) => {
   // User info state
   const [firstName, setFirstName] = useState<string | null>(null);
   const [lastName, setLastName] = useState<string | null>(null);
@@ -72,6 +80,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [userId, setUserId] = useState<number>();
   const location = useLocation(); // Hook to access the current location
 
+  /* Is user admin OR moderator? */
   const [isUserAdmin, setIsUserAdmin] = useState<boolean>(false);
 
   // Pull the theme and setTheme function from useState() via a context
@@ -85,21 +94,42 @@ export const Header: React.FC<HeaderProps> = ({
 
   const navigate = useNavigate(); // Hook for navigation
 
+    // State variable for displaying output of API request, whether success or failure
+  const [showResult, setShowResult] = useState(false);
+
+  const [requestType, setRequestType] = useState<"bug-report" | null>(null);
+    const [resultObj, setResultObj] = useState<ApiResponse>({
+      status: 400,
+      data: null,
+      error: "Not initialized",
+    });
+
+  // Bug report text, tracked in state so the character counter updates as the user types
+  const BUG_REPORT_MAX = 2000;
+  const [bugReportText, setBugReportText] = useState('');
+
+  // Mirrors the old Input component: the count turns orange/red as it fills up
+  const bugReportCountClass = () => {
+    const percentLeft = (BUG_REPORT_MAX - bugReportText.length) / BUG_REPORT_MAX;
+    let className = 'character-count';
+    if (percentLeft <= .25) className += ' character-count-close';
+    if (percentLeft <= .1) className += ' character-count-danger';
+    return className;
+  };
+
   /**
    * Checks mod permissions for the user on render (in useEffect)
    */
   const getUserPermissions = async () => {
     /* Ensures the user is logged in */
     const userAccount = await getCurrentAccount();
-    if (userAccount.status === 200 && userAccount.data?.userId)
-    {
-        setUserId(userAccount.data?.userId);
-        /* User must have mod permissions to access mod page */
-        const accessLevel = await getUserAccessLevel(userAccount.data.userId);
-        if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator')
-        {
-            setIsUserAdmin(true);
-        }
+    if (userAccount.status === 200 && userAccount.data?.userId) {
+      setUserId(userAccount.data?.userId);
+      /* User must have mod permissions to access mod page */
+      const accessLevel = await getUserAccessLevel(userAccount.data.userId);
+      if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator') {
+        setIsUserAdmin(true);
+      }
     }
   };
 
@@ -158,24 +188,25 @@ export const Header: React.FC<HeaderProps> = ({
   // },[]);
 
   // Navigate to a page and optionally update sidebar (if implemented)
-  const handlePageChange = (path: string) => {
-    //Have code to update sidebar display (unsure of how to do this yet)
-    //Navigate to desired page
-    navigate(path);
-  };
+  // const handlePageChange = (path: string) => {
+  //   //Have code to update sidebar display (unsure of how to do this yet)
+  //   //Navigate to desired page
+  //   navigate(path);
+  // };
 
-  // Navigate to the current user's profile
-  const handleProfileAccess = async () => {
-    // navigate to Profile, attach userID
-    const res = await getCurrentUsername();
-    const userId = res.data?.userId;
-    navigate(`${paths.routes.PROFILE}?userID=${userId}`);
+  // // Navigate to the current user's profile
+  // const handleProfileAccess = async () => {
+  //   // navigate to Profile, attach userID
+  //   const res = await getCurrentUsername();
+  //   const userId = res.data?.userId;
+  //   navigate(`${paths.routes.PROFILE}?userID=${userId}`);
 
-    // Collapse the dropwdown if coming from another user's page
-    if (window.location.href.includes("profile")) {
-      window.location.reload();
-    }
-  };
+  //   // Collapse the dropwdown if coming from another user's page
+  //   if (window.location.href.includes("profile")) {
+  //     window.location.reload();
+  //   }
+  // };
+
   const returnProfileAccess = () => {
     // navigate to Profile, attach userID
     if (userId) return (`${paths.routes.PROFILE}?userID=${userId}`);
@@ -203,6 +234,28 @@ export const Header: React.FC<HeaderProps> = ({
     }
   }, [theme]);
 
+  /**
+   * Used for processing a bug report
+   */
+  const handleBugReport = async () => {
+    if (bugReportText.trim().length !== 0) {
+        const response = await reportBug(bugReportText.trim());
+        if (response.status === 200) {
+          setRequestType("bug-report");
+          setResultObj(response);
+        }
+      } 
+    else {
+      /* No message associated with report */
+      setResultObj({
+        status: 400,
+        data: null,
+        error: "Please submit a description of the bug that you're reporting.",
+      });
+    }
+    setShowResult(true);
+  };
+
   return (
     <header id="header" className={active ? 'active' : ''}>
       {/* Conditional rendering for search bar */}
@@ -211,11 +264,13 @@ export const Header: React.FC<HeaderProps> = ({
           <SearchBar
             dataSets={dataSets}
             onSearch={onSearch}
+            setValue={setSearch}
             value={value}
             onChange={onChange}
             onFocus={searchOnFocus}
             placeholderText={placeholderText}
             mobilePlaceholderText={mobilePlaceholderText}
+            searchBlocks={searchBlocklist}
           />
         </div>
       )}
@@ -306,7 +361,7 @@ export const Header: React.FC<HeaderProps> = ({
                   }
                   className="header-login-btn"
                 >
-                  <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in or sign up'} />
+                  <ThemeIcon id={'login'} width={25} height={25} className={'mono-stroke'} ariaLabel={'log in or sign up'} />
                   Log In / Sign Up
                 </button>
               </div>
@@ -334,13 +389,13 @@ export const Header: React.FC<HeaderProps> = ({
                 <hr />
                 {/* Moderation Page Link */}
                 {/* TO DO: Change icon when a new icon is found */}
-                {isUserAdmin ? 
-                <a href={paths.routes.MODERATION}>
-                  <ThemeIcon id={'settings'} width={25} height={25} className={'mono-stroke'} ariaLabel={'settings'} />
-                  Moderation
-                </a>
-                : ""}
-                
+                {isUserAdmin ?
+                  <a href={paths.routes.MODERATION}>
+                    <ThemeIcon id={'moderation'} width={25} height={25} className={'mono-fill'} ariaLabel={'moderation'} />
+                    Moderation
+                  </a>
+                  : ""}
+
                 {/* Dark/Light Theme Switcher */}
                 <button onClick={switchTheme}>
                   <ThemeIcon id={'mode'} width={25} height={25} className={'mono-stroke'} ariaLabel={'current mode'} />
@@ -353,12 +408,55 @@ export const Header: React.FC<HeaderProps> = ({
                   Settings
                 </Link>
 
-                {/* Report a Bug button */}
-                {/* No functionality yet */}
-                <button onClick={() => {console.log("Report a bug button pressed");}}>
-                  <ThemeIcon id={'warning'} width={25} height={25} className={''} ariaLabel={'report a bug'} />
-                  Report a Bug
-                </button>{' '}
+                {/* Bug report popup */}
+                <Popup>
+                  {/* Report a Bug button */}
+                  <PopupButton buttonId='btn-report-bug'>
+                    <ThemeIcon id={'warning'} width={25} height={25} className={''} ariaLabel={'report a bug'} />
+                    Report a Bug
+                  </PopupButton>
+
+                  <PopupContent callback={() => setBugReportText("")}>
+                    {/* Using the editor styles temporarily because they look good for this menu */}
+                    <div className="small-popup" id="report-popup">
+                    <h3>Report a Bug</h3>
+                    <p>Please explain what the bug is, and the steps leading up to it occuring.</p>
+
+                    <div id='bug-report-field'>
+                      <div className="input-multiline-container" style={{ position: 'relative' }}>
+                        <span className={bugReportCountClass()}>
+                          {bugReportText.length} / {BUG_REPORT_MAX}
+                        </span>
+                        <textarea
+                          id='input-bug-report'
+                          name='input-bug-report'
+                          className="input input-multiline"
+                          placeholder="Write your reasoning here..."
+                          required
+                          minLength={1}
+                          maxLength={BUG_REPORT_MAX}
+                          rows={5}
+                          value={bugReportText}
+                          onChange={(e) => {
+                            // Match the old Input behaviour: strip leading spaces and
+                            // collapse trailing runs of spaces to a single one.
+                            const trimmed = e.currentTarget.value
+                              .replace(/ +$/g, " ")
+                              .replace(/^ +/g, "");
+                            setBugReportText(trimmed);
+                          }}
+                        />
+                      </div>
+                      <span className='required-asterisk' aria-hidden="true" title="Required">*</span>
+                    </div>
+
+                    <button type='submit' id="btn-bug-report-submit"
+                      onClick={() => {
+                        handleBugReport()
+                      }}>Submit</button>
+                    </div>
+                  </PopupContent>
+                </Popup>
 
                 {/* LOG OUT Button */}
                 <button onClick={async () => {
@@ -374,6 +472,33 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
             )}
           </DropdownContent>
+          {/* Leave result popup */}
+          <PagePopup
+            width={"fit-content"}
+            height={"fit-content"}
+            popupId={"result"}
+            zIndex={16} //keep at 16 so success msg appears over all popups, including dropdown
+            show={showResult}
+            setShow={setShowResult}
+          >
+            <div className="small-popup">
+              {resultObj.status === 200 ? (
+                <p>
+                  <span className="success-msg">Success:</span>
+                  &nbsp;
+                  {requestType === "bug-report"
+                    ? "Your report was sent! Your request will be processed and receive an update shortly."
+                    : "Uh oh! Something went wrong when submitting your report!"}
+                </p>
+              ) : (
+                <p>
+                  <span className="error-msg">Error:</span>
+                  &nbsp;
+                  {resultObj.error}
+                </p>
+              )}
+            </div>
+          </PagePopup>
         </Dropdown>
       </div>
     </header >

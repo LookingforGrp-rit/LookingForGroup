@@ -21,12 +21,12 @@ export class InviteAcceptedNotificationBuilder implements NotificationBuilder {
             userId: true,
             title: true,
             users: {
-              select: { preferredName: true },
+              select: { firstName: true },
             },
           },
         },
         users: {
-          select: { preferredName: true },
+          select: { firstName: true },
         },
       },
     });
@@ -45,10 +45,10 @@ export class InviteAcceptedNotificationBuilder implements NotificationBuilder {
     const inviteeData = data.users;
     // BUILDING THE NOTIFICATION //
     notification.receiverId = projectData.userId;
-    notification.subjectLine = `${inviteeData.preferredName} has accepted your invitation to join ${projectData.title}`;
+    notification.subjectLine = `${inviteeData.firstName} has accepted your invitation to join ${projectData.title}`;
 
-    notification.message = `Hello ${ownerData.preferredName},<br /><br />`;
-    notification.message += `<strong>${inviteeData.preferredName}</strong> has accepted your invitation to join <strong>${projectData.title}</strong> `;
+    notification.message = `Hello ${ownerData.firstName},<br /><br />`;
+    notification.message += `<strong>${inviteeData.firstName}</strong> has accepted your invitation to join <strong>${projectData.title}</strong> `;
     notification.message += `as a <strong>${roleData?.label as string}</strong>. You may also assign them to other roles if need be.<br /><br />`;
     notification.message += `Happy building!<br />`;
     notification.message += `LFG Team`;

@@ -3,8 +3,8 @@ import type { Request, Response } from 'express';
 import deleteVideoService from '#services/projects/videos/delete-video.ts';
 
 //DELETE api/projects/{id}/videos/{videoId}
-//adds a video to the project
-const getVideoController = async (req: Request, res: Response) => {
+//deletes a video from the project
+const deleteVideoController = async (req: Request, res: Response) => {
   const videoId = parseInt(req.params.videoId as string);
   //add the video to the project
   const result = await deleteVideoService(videoId);
@@ -37,4 +37,4 @@ const getVideoController = async (req: Request, res: Response) => {
   res.status(200).json(resBody);
 };
 
-export default getVideoController;
+export default deleteVideoController;

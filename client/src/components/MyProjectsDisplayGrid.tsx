@@ -6,7 +6,7 @@ import { Popup, PopupButton, PopupContent } from "./Popup";
 import { LeaveDeleteContext } from "../contexts/LeaveDeleteContext";
 import { PagePopup } from "./PagePopup";
 import { deleteProject, requestProjectReview } from "../api/projects";
-import { ApiResponse, ProjectDetail, ProjectFollowers } from "@looking-for-group/shared";
+import { ApiResponse, ProjectDetail } from "@looking-for-group/shared";
 import { leaveProject } from "../api/users";
 import { ThemeIcon } from "./ThemeIcon";
 import placeholderThumbnail from "../images/project_temp.png";
@@ -20,6 +20,7 @@ type ApprovalStatusKey = keyof typeof ApprovalStatus;
 type MyProjectsDisplayGridProps = {
   projectData: ProjectDetail;
   approvalStatus: ApprovalStatusKey;
+  setApprovalStatus: (status: ApprovalStatusKey) => void;
 };
 /**
  * MyProjectsDisplayGrid renders a single project card in a grid layout for the "My Projects" page.
@@ -41,7 +42,7 @@ type MyProjectsDisplayGridProps = {
  * @param approvalStatus - Project approval status (keyof ProjectApprovalStatus from "@looking-for-group/shared/enums")
  * @returns The project card element.
  */
-const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDisplayGridProps) => {
+const MyProjectsDisplayGrid = ({ projectData, approvalStatus, setApprovalStatus, }: MyProjectsDisplayGridProps) => {
   //Navigation hook
   const navigate = useNavigate();
   // Context providing project ID, ownership status, and reload function
@@ -119,7 +120,11 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
         <img
           className="grid-card-image"
           src={usePreloadedImage(
-            projectData.thumbnail?.image ?? placeholderThumbnail,
+            // Fall back to the first uploaded image when no thumbnail is starred,
+            // rather than showing the default placeholder.
+            projectData.thumbnail?.image
+              ?? projectData.projectImages?.[0]?.image
+              ?? placeholderThumbnail,
             placeholderThumbnail
           )}
           alt={`${projectData.title}`}
@@ -155,7 +160,7 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
                 />
                 Edit Project
               </button>
-              {approvalStatus === 'not-approved' ?
+              {isOwner && approvalStatus === 'not-approved' ?
                 <Popup>
                   <PopupButton className='card-leave-button'>
                     <ThemeIcon
@@ -182,7 +187,10 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
                         <div id="project-request-buttons">
                           <PopupButton buttonId="request-confirm-button"
                             callback={() => {
-                              if (projectData) requestProjectReview(projectData.projectId);
+                              if (projectData) {
+                                requestProjectReview(projectData.projectId);
+                                setApprovalStatus("under-review");
+                              }
                             }}
                           >
                             Request Review
@@ -274,7 +282,7 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
         width={"fit-content"}
         height={"fit-content"}
         popupId={"result"}
-        zIndex={16}
+        zIndex={16} //keep at 16 so success msg appears over all popups, including dropdown
         show={showResult}
         setShow={setShowResult}
         onClose={reloadProjects}

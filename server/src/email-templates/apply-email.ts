@@ -49,7 +49,7 @@ const ApplyEmail = ({
   projectImage,
   applyLink,
 }: ApplyEmailProps) => {
-  const previewText = `Application for ${senderName.firstName} ${senderName.lastName} on Looking For Group`;
+  const previewText = `[DO NOT REPLY] Application for ${senderName.firstName} ${senderName.lastName} on Looking For Group`;
 
   return createElement(
     Html,

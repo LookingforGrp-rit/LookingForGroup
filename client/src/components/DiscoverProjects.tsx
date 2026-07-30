@@ -7,7 +7,7 @@ import { Tag, StringDictionary, Medium, Role, TagType, } from '@looking-for-grou
 import { Select, SelectButton, SelectOptions } from './Select';
 import MoreFiltersButton from './MoreFiltersButton';
 import { Tag as TagElement } from './Tag';
-import TagDisplay from './TagDisplay';
+import TagDisplay, { tagToTagOrSkill } from './TagDisplay';
 
 
 interface DiscoverProjectsProps {
@@ -122,6 +122,8 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                 Style: 'Style',
                 Other: 'Other',
                 Genre: 'Genre',
+                Context: 'Context',
+                ContentWarning: 'Content Warning',
                 Purpose: 'Purpose',
                 Medium: 'Project Type',
             }
@@ -184,17 +186,21 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     const toggleTag = (id: number, type: string, update?: boolean) => {
         let newActiveTags: Tag[];
         let newExclusionTags: Tag[];
-        const tag = allTags.find((tag) => tag.tagId === id && tag.type === type as TagType);
+        let tag; 
+        if (id === -1) 
+            tag = {tagId: id, label: "New", type, category: "Other"} as Tag;
+        else 
+            tag = allTags.find((tag) => tag.tagId === id && tag.type === type as TagType);
         if (!tag) return;
 
-        if (activeTagFilters.some(t => t === tag)) {
+        if (activeTagFilters.some(t => t.tagId === id && t.type == type )) {
             // Remove the tag from the active list
-            newActiveTags = activeTagFilters.filter(t => t !== tag);
+            newActiveTags = activeTagFilters.filter(t => t.tagId !== id && t.type !== type );
             newExclusionTags = [...activeExclusionFilters, tag];
         }
-        else if (activeExclusionFilters.some(t => t === tag)) {
+        else if (activeExclusionFilters.some(t => t.tagId === id && t.type == type )) {
             newActiveTags = activeTagFilters;
-            newExclusionTags = activeExclusionFilters.filter(t => t !== tag);
+            newExclusionTags = activeExclusionFilters.filter(t => t.tagId !== id && t.type !== type );
         }
         else {
             // Add the tag to the active list
@@ -353,6 +359,8 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                     id="filters-left-scroll"
                     className={`filters-scroller ${!showLeftArrow ? 'hide' : ''}`}
                     onClick={() => scrollTags('left')}
+                    value={'left'}
+                    aria-label='scroll left'
                 >
                     <i className="fa fa-caret-left"></i>
                 </button>
@@ -370,7 +378,9 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     //tagLabel === 'Soft Skills' ? "Soft" :
                                     tagLabel;
                         const type = 'Project Type';
-                        const tagObj: Tag = { tagId: allTags.find((tag) => tag.label == label)?.tagId ?? 0, label, type, category: "Other" };
+                        const id = label === "New" ? -1 :
+                            allTags.find(tag => tag.label == label)?.tagId;
+                        const tagObj: Tag = { tagId: id ?? 0, label, type, category: "Other" };
                         return (
                             <button key={`${type}-${label}`}
                                 className={"discover-tag-filter" + 
@@ -388,6 +398,8 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                     id="filters-right-scroll"
                     className={`filters-scroller ${!showRightArrow ? 'hide' : ''}`}
                     onClick={() => scrollTags('right')}
+                    value={'right'}
+                    aria-label='scroll right'
                 >
                     <i className="fa fa-caret-right"></i>
                 </button>
@@ -502,53 +514,13 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     <hr />
                                     <div id="filter-tags">
                                         <TagDisplay
-                                            selected={[activeTagFilters.map(
-                                                (tag) => ({
-                                                    id: tag.tagId,
-                                                    label: tag.label,
-                                                    type: tag.type,
-                                                    category:
-                                                        tag.type === "Project Type" ? "Medium" :
-                                                            tag.type === "Positions" ? "Position" :
-                                                                tag.category,
-                                                })
-                                            ), activeExclusionFilters.map(
-                                                (tag) => ({
-                                                    id: tag.tagId,
-                                                    label: tag.label,
-                                                    type: tag.type,
-                                                    category:
-                                                        tag.type === "Project Type" ? "Medium" :
-                                                            tag.type === "Positions" ? "Position" :
-                                                                tag.category,
-                                                })
-                                            )]}
+                                            selected={[tagToTagOrSkill(activeTagFilters), tagToTagOrSkill(activeExclusionFilters)]}
                                             toggleTag={toggleTag}
                                             tabs={filterPopupTabs.map(tab => tab.categoryName)}
                                             tabId={activeTabId}
-                                            all={allTags.map(
-                                                (tag) => ({
-                                                    id: tag.tagId,
-                                                    label: tag.label,
-                                                    type: tag.type,
-                                                    category:
-                                                        tag.type === "Project Type" ? "Medium" :
-                                                            tag.type === "Positions" ? "Position" :
-                                                                tag.category,
-                                                })
-                                            )}
+                                            all={tagToTagOrSkill(allTags)}
                                             searchValue={searchValue}
-                                            searchData={searchedTags?.map(
-                                                (tag) => ({
-                                                    id: tag.tagId,
-                                                    label: tag.label,
-                                                    type: tag.type,
-                                                    category:
-                                                        tag.type === "Project Type" ? "Medium" :
-                                                            tag.type === "Positions" ? "Position" :
-                                                                tag.category,
-                                                })
-                                            )}
+                                            searchData={tagToTagOrSkill(searchedTags)}
                                         />
                                     </div>
                                 </div>
@@ -568,14 +540,17 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                         callback={() => {
                                             // Reset tag filters before adding results in
                                             setActiveTagFilters([]);
+                                            // Exclusion tags were being left behind — clear them too
+                                            setActiveExclusionFilters([]);
                                             const discoverFilters = document.getElementsByClassName('discover-tag-filter');
 
-                                            // Remove any/all other clicked discover tags
+                                            // Remove any/all clicked (included) and excluded discover tags
                                             for (let i = 0; i < discoverFilters.length; i++) {
                                                 discoverFilters[i].classList.remove('discover-tag-filter-selected');
+                                                discoverFilters[i].classList.remove('discover-tag-filter-excluded');
                                             }
 
-                                            // Sets active filters displayed to "none" 
+                                            // Sets active filters displayed to "none"
                                             setAppliedFiltersDisplay([]);
                                         }}
                                     >

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
@@ -12,19 +12,24 @@ import { ShareButton } from "../ShareButton";
 import { ThemeIcon } from "../ThemeIcon";
 import { getByID, getVideos, projectApprovalRequestExists, deleteProject, requestProjectReview } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
+import Reporter from "../Reporter";
+import { LeaveDeleteContext } from "../../contexts/LeaveDeleteContext";
 import {
   deleteProjectFollowing,
   addProjectFollowing,
   getProjectFollowing,
   leaveProject as leaveProjectApi,
 } from "../../api/users";
-import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
+import { leaveProject } from "../../api/users";
 import { MePrivate, ProjectPreview, ProjectVideo, ProjectWithFollowers, ProjectReport, UnapproveProjectInput } from "@looking-for-group/shared";
-import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
+import { ProjectContext, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 //import { router } from "../../../../server/src/api/routes/me.ts"
 import { reportProject } from "../../api/projects";
 import { getCurrentAccount } from "../../api/users";
-import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport, approveProjectReport } from "../../api/mod-tools";
+import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport, takeDownProject, sendModeratorNotification, unapproveProject } from "../../api/mod-tools";
+import { PagePopup } from "../PagePopup";
+import { ApiResponse } from "@looking-for-group/shared";
+import { projectDataManager } from "../../api/data-managers/project-data-manager";
 
 //Main component for the project page
 /**
@@ -39,18 +44,30 @@ const Project = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const projectID: number = Number(urlParams.get("projectID"));
 
+  // State variable for displaying output of API request, whether success or failure
+  const [showResult, setShowResult] = useState(false);
+
+  // Context providing project ID, ownership status, and reload function
+  const { projId, isOwner, reloadProjects, removeProject } = useContext(LeaveDeleteContext);
+  const [requestType, setRequestType] = useState<"delete" | "leave">("delete");
+  const [resultObj, setResultObj] = useState<ApiResponse>({
+    status: 400,
+    data: null,
+    error: "Not initialized",
+  });
+
   //state variable used to check whether or not data was successfully obtained from database
   // State variable used to determine permissions level, and if user should have edit access
   // const [userPerms, setUserPerms] = useState(-1);
 
   const [user, setUser] = useState<MePrivate | null>();
-  const [userID, setUserID] = useState<number>();
+  const [userID, setUserID] = useState<number>(0);
   const [isUserAdmin, setIsUserAdmin] = useState<boolean>();
 
   const [displayedProject, setDisplayedProject] =
     useState<ProjectWithFollowers>();
 
-  const [reportedProject, setReportedProject] = useState<ProjectReport>();
+  const [reportList, setReportList] = useState<ProjectReport[]>([]);
 
   type ApprovalStatusKey = keyof typeof ApprovalStatus;
   const [approvalStatus, setApprovalStatus] = useState<ApprovalStatusKey>('not-approved');
@@ -64,7 +81,8 @@ const Project = () => {
   const [videos, setVideos] = useState<ProjectVideo[]>();
 
   const reportMessage = useRef<HTMLTextAreaElement>(null);
-  const modMessage = useRef<HTMLTextAreaElement>(null);
+  const declineMessage = useRef<HTMLTextAreaElement>(null);
+  const takeDownMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>("");
 
   /**
@@ -121,15 +139,17 @@ const Project = () => {
        * Checks if the project has been reported and updates the useState
        */
       const isProjectReported = async () => {
+        const tempReportList: ProjectReport[] = [];
         const currentProject = projectResp.data as ProjectPreview;
         const reportedProjects = await getReportedProjects();
         if (reportedProjects.data !== null && reportedProjects.data !== undefined) {
           for (const report of reportedProjects.data) {
-            if (report.projectId === currentProject.projectId) {
-              setReportedProject(report);
+            if (report.projectId === currentProject.projectId && data?.userId !== report.userId) {
+              tempReportList.push(report);
             }
           }
         }
+        setReportList(tempReportList);
       };
 
       isProjectReported();
@@ -197,7 +217,10 @@ const Project = () => {
   const handleApproveRequest = async () => {
     if (displayedProject) {
       setApprovalStatus("approved");
-      await approveProjectRequest(projectID, displayedProject);
+      const res = await approveProjectRequest(projectID, displayedProject);
+      if (res.status === 204) {
+        navigate(paths.routes.MODERATION);
+      }
     }
   };
 
@@ -266,30 +289,56 @@ const Project = () => {
    * @param action The action to take on the report ('dismiss' or 'unapprove project')
    */
   const resolveReport = async (action: 'dismiss' | 'unapprove project') => {
-    if (!reportedProject) return;
-    let res;
+    if (!reportList) return;
 
-    switch (action) {
-      case 'dismiss':
-        res = await deleteProjectReport(reportedProject.reportId);
-        break;
-      case 'unapprove project':
-        res = await approveProjectReport(
-          reportedProject.reportId,
-          reportedProject.projectId,
-          {
-            reason: modMessage.current?.value ?? ''
-          } as UnapproveProjectInput
-        );
-        break;
-      default:
-        console.error(`Unknown action: ${action}`);
-        break;
-    }
+    //delete all the reports
+    if (action === 'dismiss') {
+      const res = await Promise.all(reportList.map(r => deleteProjectReport(r.reportId)));
 
-    if (res?.status === 200) {
-      // refresh page
-      window.location.reload();
+      // send an update to reporter
+      const notif = await Promise.all(reportList.map(r => sendModeratorNotification({
+        modUserId: userID,
+        receiverId: r.userId,
+        subjectLine: `Your Report on ${displayedProject?.title} has been dismissed`,
+        message: 'Thank you for submitting your report. ' +
+          'Our moderation team has completed its review. ' +
+          'After carefully reviewing the information provided and any relevant evidence, ' +
+          'we have determined that this report does not warrant moderation action at this time. ' +
+          'As a result, the report has been dismissed.',
+        type: 'General',
+      })));
+
+      if (res?.every(r => r.status === 200) && notif.every(r => r.status === 201)) {
+        navigate(paths.routes.MODERATION);
+      }
+    } else if (action === 'unapprove project') {
+      //unnaprove the project, then delete the reports
+      const unapproveRes = await unapproveProject(
+        projectID,
+        {
+          reason: takeDownMessage.current?.value ?? ''
+        } as UnapproveProjectInput)
+
+      const deleteRes = await Promise.all(reportList.map(r => deleteProjectReport(r.reportId)));
+
+      const notif = await Promise.all(reportList.map(r => sendModeratorNotification({
+        modUserId: userID,
+        receiverId: r.userId,
+        subjectLine: `Update on Your Report: ${displayedProject?.title} has been taken down`,
+        message: 'Thank you for submitting your report. ' +
+          'After reviewing the reported project, ' +
+          'our moderation team determined that it violated our community guidelines ' +
+          'and the project has been removed from public view.',
+        type: 'General',
+      })));
+
+      if (unapproveRes.status === 200
+        && deleteRes?.every(r => r.status === 200)
+        && notif.every(r => r.status === 201)) {
+        navigate(paths.routes.MODERATION);
+      }
+    } else {
+      console.error(`Unknown action: ${action}`);
     }
   };
 
@@ -298,11 +347,15 @@ const Project = () => {
    */
   const handleLeaveProject = async () => {
     const res = await leaveProjectApi(projectID);
+    setRequestType("leave");
+    setResultObj(res);
     if (res.status === 200) {
-      navigate(paths.routes.MYPROJECTS);
-    } else {
+      setTimeout(() => removeProject(projectID), 1500);
+    }
+    else {
       console.error("Error leaving project:", res.error);
     }
+    setShowResult(true);
   };
 
   /**
@@ -316,7 +369,10 @@ const Project = () => {
   const handleDeleteProjectRequest = async (message: string) => {
     if (displayedProject) {
       setApprovalStatus('not-approved');
-      await deleteProjectRequest(projectID, message);
+      const res = await deleteProjectRequest(projectID, message);
+      if (res.status === 204) {
+        navigate(paths.routes.MODERATION);
+      }
     }
   };
 
@@ -360,32 +416,18 @@ const Project = () => {
           updateDisplayedProject={setDisplayedProject}
         /*permissions={userPerms}*/
         />
-        {/* Owner options: leave or delete the project */}
-        <Dropdown>
-          <DropdownButton className="project-info-dropdown-btn">
-            <ThemeIcon
-              id={"menu"}
-              width={40}
-              height={40}
-              className={"color-fill dropdown-menu"}
-              ariaLabel={"More options"}
-            />
-          </DropdownButton>
-          <DropdownContent rightAlign={true}>
-            <div id="project-info-dropdown">
-              {/* Share Button */}
-              <ShareButton />
-              {approvalStatus == 'not-approved' ?
+
+        {approvalStatus == 'not-approved' ?
                 <Popup>
                   {/* Request Review button */}
-                  <PopupButton className='project-info-dropdown-option'>
-                    <ThemeIcon
+                  <PopupButton buttonId='project-info-request'>
+                    {/* <ThemeIcon
                       id={"request-review"}
                       width={27}
                       height={27}
                       ariaLabel={"request-Review"}
                       className="mono-fill"
-                    />
+                    /> */}
                     Request Review
                   </PopupButton>
                   <PopupContent>
@@ -417,6 +459,22 @@ const Project = () => {
                     </div>
                   </PopupContent>
                 </Popup> : ""}
+
+        {/* Owner options: leave or delete the project */}
+        <Dropdown>
+          <DropdownButton className="project-info-dropdown-btn">
+            <ThemeIcon
+              id={"menu"}
+              width={40}
+              height={40}
+              className={"color-fill dropdown-menu"}
+              ariaLabel={"More options"}
+            />
+          </DropdownButton>
+          <DropdownContent rightAlign={true}>
+            <div id="project-info-dropdown">
+              {/* Share Button */}
+              <ShareButton />
               {/* Leave Project */}
               <Popup>
                 <PopupButton className="project-info-dropdown-option">
@@ -443,7 +501,7 @@ const Project = () => {
                     <div className="confirm-deny-btns">
                       <PopupButton
                         className="confirm-btn"
-                        callback={handleLeaveProject}
+                        callback={() => {handleLeaveProject();}}
                       >
                         Leave
                       </PopupButton>
@@ -556,9 +614,9 @@ const Project = () => {
                         <div className="confirm-deny-btns">
                           <PopupButton
                             className="confirm-btn"
-                            callback={leaveProject}
+                            callback={() => {handleLeaveProject()}}
                           >
-                            Confirm
+                            Leave
                           </PopupButton>
                           <PopupButton className="deny-btn">Cancel</PopupButton>
                         </div>
@@ -568,6 +626,7 @@ const Project = () => {
                   :
                   <></>
                 }
+                {userID > 0 && approvalStatus == 'not-approved' ? (
                 <Popup>
                   <PopupButton
                     className="project-info-dropdown-option"
@@ -612,7 +671,7 @@ const Project = () => {
                       </div>
                     </div>
                   </PopupContent>
-                </Popup>
+                </Popup> ): ""}
               </div>
             </DropdownContent>
           </Dropdown>
@@ -665,6 +724,7 @@ const Project = () => {
                 }}
               />
               <div className="project-contributor-info">
+                {displayedProject.owner.userId === memberUser.userId ? <ThemeIcon id={'owner-crown'} width={18} height={18} className={'color-fill'} ariaLabel="Project Owner"/> : ""}
                 <div className="team-member-name">
                   {memberUser.firstName} {memberUser.lastName}
                 </div>
@@ -874,11 +934,11 @@ const Project = () => {
               <div id="project-overview-title">Project Overview</div>
               <div id="project-overview-text">{displayedProject.description}</div>
               {/* Sections could also be added with some extra function, 
-            title and content can be assigned to similar elements */}
-              {displayedProject.purpose && (
+                title and content can be assigned to similar elements */}
+              {displayedProject.context && (
                 <>
-                  <div className="project-overview-section-header">Purpose</div>
-                  <div>{ProjectPurpose[displayedProject.purpose]}</div>
+                  <div className="project-overview-section-header">Context</div>
+                  <div>{ProjectContext[displayedProject.context]}</div>
                 </>
               )}
               {displayedProject.audience?.trim() && (
@@ -944,56 +1004,62 @@ const Project = () => {
             </div>
 
             {/* Mod options to approveor reject a project request (request edits in order to approve) */}
-            {isUserAdmin && approvalStatus == 'under-review' ? <div className="mod-project-options">
-              <h4>Approve?</h4>
-              <p>You can approve this project or request changes.</p>
-              <div id="mod-options-btns">
-                <button id="mod-approve-btn" onClick={() => { if (displayedProject) { handleApproveRequest(); } }}>Approve</button>
-                <Popup>
-                  <PopupButton className="delete-button">Decline</PopupButton>
-                  <PopupContent>
-                    <div className="small-popup" id="report-popup">
-                      <h3>Decline Approval Request</h3>
-                      <p>What changes should be made to {displayedProject?.title} in order to receive approval?</p>
-                      <textarea placeholder="Write the requested changes here..." className="input input-multiline" ref={modMessage}></textarea>
-                      <div className="confirm-deny-btns">
-                        <button
-                          id="team-delete-member-cancel-button"
-                          className="button-reset"
-                        >
-                          Cancel
-                        </button>
-                        <button className="confirm-btn" onClick={() => { handleDeleteProjectRequest(modMessage?.current ? modMessage.current.value : "No message provided."); }}>Submit</button>
-                      </div>
-                    </div>
-                  </PopupContent>
-                </Popup>
-              </div>
-            </div>
-              : ""}
-
-            {/* Mod options to accept, decline, or request changes to a reported project // are we doing edits on reported projects?  */}
-            {isUserAdmin && reportedProject ? (
-              <div className="mod-project-options">
-                <h4>Unapprove?</h4>
-                <p>You can ignore this report or request edits on this project.</p>
-                <p>Reason for this report: {reportedProject.reason}</p>
-                <div id="mod-options-btns">
-                  <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')}>Dismiss Report</button>
+            {isUserAdmin && approvalStatus == 'under-review' && userID !== displayedProject.owner.userId
+              ? <div className="mod-project-options">
+                <h4>Project Review Request</h4>
+                <p>You can approve this project to make it publicly visible, or decline the request.
+                  When declining, you may include an optional message explaining the changes needed before the project can be approved.</p>
+                <div className="mod-options-btns">
+                  <button id="mod-approve-btn" onClick={() => { if (displayedProject) { handleApproveRequest(); } }}>Approve</button>
                   <Popup>
-                    <PopupButton className="mod-edit-btn">Request Edits</PopupButton>
+                    <PopupButton className="delete-button">Decline</PopupButton>
                     <PopupContent>
                       <div className="small-popup" id="report-popup">
-                        <h3>Request Edits</h3>
-                        <p>What should the user change about their project?</p>
-                        <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={modMessage}></textarea>
+                        <h3>Decline Approval Request</h3>
+                        <p>You may include an optional message explaining what changes should be made to <strong>{displayedProject?.title}</strong> before it can be approved.</p>
+                        <textarea placeholder="Write the requested changes here..." className="input input-multiline" ref={declineMessage}></textarea>
                         <div className="confirm-deny-btns">
-                          <button
-                            id="cancel-button"
+                          <PopupButton
+                            buttonId="request-decline-button"
                             className="button-reset"
                           >
                             Cancel
-                          </button>
+                          </PopupButton>
+                          <button className="confirm-btn" onClick={() => { handleDeleteProjectRequest(declineMessage?.current ? declineMessage.current.value : "No message provided."); }}>Submit</button>
+                        </div>
+                      </div>
+                    </PopupContent>
+                  </Popup>
+                </div>
+              </div>
+              : ""}
+
+            {/* Mod options to accept, decline, or request changes to a reported project // are we doing edits on reported projects?  */}
+            {isUserAdmin && reportList.length !== 0 && userID !== displayedProject.owner.userId ? (
+              <div className="mod-project-options">
+                <h4>Reports</h4>
+                <p>You can dismiss this report or take down the project.
+                  Taking down the project will remove it from public view.
+                  You may also include an optional message explaining why the project was taken down or
+                  what changes are needed before it can be approved again.</p>
+                {reportList.map(r => <Reporter modUserId={userID} reporterId={r.userId} reason={r.reason} key={'reporter-' + r.userId} />)}
+                <div className="mod-options-btns">
+                  <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')}>Dismiss Report</button>
+                  <Popup>
+                    <PopupButton className="mod-edit-btn">Take Down</PopupButton>
+                    <PopupContent>
+                      <div className="small-popup" id="report-popup">
+                        <h3>Take Down {displayedProject.title}</h3>
+                        <p>You may include an optional message explaining what the user should change about their project.
+                          The project will be taken down from public view until appropriate changes have been made and it has been approved again.</p>
+                        <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={takeDownMessage}></textarea>
+                        <div className="confirm-deny-btns">
+                          <PopupButton
+                            buttonId="edits-cancel-button"
+                            className="button-reset"
+                          >
+                            Cancel
+                          </PopupButton>
                           <button className="confirm-btn" onClick={() => resolveReport('unapprove project')}>Submit</button>
                         </div>
                       </div>
@@ -1019,6 +1085,34 @@ const Project = () => {
           </div>
         </main>
       )}
+      {/* Leave result popup */}
+      <PagePopup
+        width={"fit-content"}
+        height={"fit-content"}
+        popupId={"result"}
+        zIndex={16} //keep at 16 so success msg appears over all popups, including dropdown
+        show={showResult}
+        setShow={setShowResult}
+        onClose={() => {if (resultObj.status === 200) {navigate(paths.routes.MYPROJECTS);} reloadProjects()}}
+      >
+        <div className="small-popup">
+          {resultObj.status === 200 ? (
+            <p>
+              <span className="success-msg">Success:</span>
+              &nbsp;
+              {requestType === "delete"
+                ? "The project has been deleted."
+                : "You have left the project."}
+            </p>
+          ) : (
+            <p>
+              <span className="error-msg">Error:</span>
+              &nbsp;
+              {resultObj.error}
+            </p>
+          )}
+        </div>
+      </PagePopup>
     </div>
   );
 };

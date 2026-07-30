@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FileImage } from './FileImage';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { Select, SelectButton, SelectOptions } from './Select';
@@ -14,8 +14,8 @@ interface ImageUploaderProps {
   // If true, only allow image files
   keepImage?: boolean;
   // Callback triggered when the user selects a valid file
-  onFileSelected?: (file: File) => void;
-  // Determines styling and behavior 
+  onFileSelected?: (file: File, altText: string) => void;
+  // Determines styling and behavior
   type?: 'profile' | 'project';
 }
 
@@ -35,7 +35,7 @@ const ProjectImageUploader = (props: ImageUploaderProps) => {
 
 /**
  * ImageUploader handles file selection for images.
- * 
+ *
  * @param initialImageUrl - URL of the initial image to display
  * @param initialImageFile - File object to display initially
  * @param keepImage - whether to accept only certain file types
@@ -56,106 +56,375 @@ const ImageUploader = ({
   const [zoom, setZoom] = useState(100);
   const [dX, setDX] = useState(0);
   const [dY, setDY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [prevPos, setPrevPos] = useState<{x:number, y:number}>({x:0, y:0});
 
   const [cropFile, setCropFile] = useState<File>();
   const [cropImg, setCropImg] = useState<string>();
+
+  // Files selected together but not yet cropped. They're cropped one at a time
+  // through the popup so every image in a multi-select gets added, not just one.
+  const pendingFiles = useRef<File[]>([]);
 
   const tempImage = useRef<HTMLImageElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const inputX = useRef<HTMLInputElement>(null);
   const inputY = useRef<HTMLInputElement>(null);
   const inputZoom = useRef<HTMLInputElement>(null);
+  const inputAlt = useRef<HTMLInputElement>(null);
   const fileReader = new FileReader();
 
-  const [aspectRatio, setAspectRatio] = useState<string>('4/3');
+  const [aspectRatio, setAspectRatio] = useState<string>('1/1');
 
   const [labelName, setLabelName] = useState("drop-area");
+
+  const [loadingImage, setLoadingImage] = useState(false);
+
+  const [altText, setAltText] = useState("");
+
+//mouse dragging for cropping
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (e.button === 0 || e.button === 1 || e.button === 2) {
+      e.preventDefault(); // stop context menu
+      setIsDragging(true);
+      setPrevPos({ x: e.clientX, y: e.clientY });
+
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!isDragging || !tempImage.current || !canvas.current) return;
+
+    const rect = canvas.current.getBoundingClientRect();
+
+    const deltaX = (e.clientX - prevPos.x) * (canvas.current.width / rect.width);
+    const deltaY = (e.clientY - prevPos.y) * (canvas.current.height / rect.height);
+
+    const rawDX = dX - deltaX;
+    const rawDY = dY -deltaY;
+
+    const newDX = clampDX(rawDX);
+    const newDY = clampDY(rawDY);
+
+    setDX(newDX);
+    setDY(newDY);
+
+    setPrevPos({ x: e.clientX, y: e.clientY });
+    updateCanvas();
+  };
+
+  //image boundaries clamp
+  const clampDX = (value: number) => {
+    const maxDX = getMaxDX();
+
+    if (value > maxDX) return maxDX;
+    if (value < -maxDX) return -maxDX;
+    return value;
+  };
+  const clampDY = (value: number) => {
+    const maxDY = getMaxDY();
+
+    if (value > maxDY) return maxDY;
+    if (value < -maxDY) return -maxDY;
+    return value;
+  };
+  const getMaxDX = () => {
+    if (!tempImage.current || !canvas.current) return 100; // fallback
+
+    const effectiveZoom = Math.max(zoom, 100);
+    const w = tempImage.current.width * (effectiveZoom / 100);
+    const canvasWidth = canvas.current.width;
+
+    return (w - canvasWidth) / 2;
+  };
+
+  const getMaxDY = () => {
+    if (!tempImage.current || !canvas.current) return 100;
+
+    const effectiveZoom = Math.max(zoom, 100);
+    const h = tempImage.current.height * (effectiveZoom / 100);
+    const canvasHeight = canvas.current.height;
+
+    return (h - canvasHeight) / 2;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+//wheel zooming for cropping
+  // const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
+  //   if(!tempImage.current || !canvas.current) return;
+
+  //   const delta = e.deltaY > 0 ? 0.95 : 1.05;
+  //   const newZoom = zoom * delta;
+
+  //   const minZoom = Math.max(
+  //     (canvas.current?.width! / tempImage.current?.width!) * 100,
+  //     (canvas.current?.height! / tempImage.current?.height!) * 100
+  //   );
+
+  //   const clampedZoom = Math.min(500, Math.max(minZoom, newZoom));
+
+  //   const w = tempImage.current.width * (clampedZoom / 100);
+  //   const h = tempImage.current.height * (clampedZoom / 100);
+
+  //   const cw = canvas.current.width;
+  //   const ch = canvas.current.height;
+
+  //   const maxDX = (w - cw) / 2;
+  //   const maxDY = (h - ch) / 2;
+
+  //   const newDX = Math.min(maxDX, Math.max(-maxDX, dX));
+  //   const newDY = Math.min(maxDY, Math.max(-maxDY, dY));
+
+  //   setDX(newDX);
+  //   setDY(newDY);
+
+  //   setZoom(clampedZoom);
+  //   updateCanvas();
+  // };
+
+  const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
+    if (!tempImage.current || !canvas.current) return;
+
+    const delta = e.deltaY > 0 ? 0.95 : 1.05;
+    const newZoom = zoom * delta;
+
+    const minZoom = getMinZoom();
+    const maxZoom = getMaxZoom();
+
+    const clampedZoom = Math.min(maxZoom, Math.max(minZoom, newZoom));
+
+    setZoom(clampedZoom);
+
+    // Re‑clamp DX/DY after zoom changes
+    setDX(clampDX(dX));
+    setDY(clampDY(dY));
+
+    updateCanvas();
+  };
+
+  const getMinZoom = () => {
+    if (!tempImage.current || !canvas.current) return 100;
+
+    return Math.max(
+      (canvas.current.width / tempImage.current.width) * 100,
+      (canvas.current.height / tempImage.current.height) * 100
+    );
+  };
+  const getMaxZoom = () => 500;
+
+
+
+
 
   /**
    * updates the canvas element for cropping images
    */
   const updateCanvas = useCallback(() => {
-    const ctx = canvas.current?.getContext("2d");
+    const tempCtx = canvas.current;
+    if(!tempCtx || !tempImage.current) return;
+
+    const ctx = tempCtx.getContext("2d");
+    if(!ctx) return;
+
     ctx?.clearRect(0, 0, canvas.current?.width as number, canvas.current?.height as number);
+
+    //improve image quality
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.filter = "none";
+
     if (tempImage.current && canvas.current){
-      //helper variables
-      const minZoom = 100 * Math.max(canvas.current?.width / tempImage.current?.width,
-             canvas.current?.height / tempImage.current?.height);
-      const newZoom = (zoom * (1000 -minZoom) / 1000) + minZoom
-      const w = tempImage.current.width / 100 * newZoom;
-      const h = tempImage.current.height / 100 * newZoom;
+      const w = tempImage.current.width * (zoom / 100);
+      const h = tempImage.current.height * (zoom / 100);
+
       ctx?.drawImage(
         tempImage.current,
-        -(dX * (w / 2 - canvas.current.width / 2) / canvas.current.width) + canvas.current.width / 2 - w / 2,
-        (dY * (h / 2 - canvas.current.height / 2) / canvas.current.height)  + canvas.current.height / 2 - h / 2,
+        canvas.current.width / 2 - w / 2 - dX,
+        canvas.current.height / 2 - h / 2 - dY,
         w,
-        h);
-      }
+        h
+      );
+
+    }
   }, [tempImage, dX, dY, zoom, canvas]);
 
-  // Validate file type and handle image input change
-  // If keepImage is true, only allows PNG/JPEG
-  const handleImgChange = useCallback(async () => {
-    const file = inputRef.current?.files?.[0];
-    if (!file) return;
+  // Reads one file, draws it on the crop canvas, and opens the crop popup.
+  // Shared by the initial selection and each queued file.
+  const loadFileIntoCrop = useCallback((file: File) => {
+    setCropFile(file);
+    setDX(0);
+    setDY(0);
+    if ((file.size > 100000 && type === "profile") || file.size > 2000000) {
+      onFileSelected(file, altText);
+      return;
+    }
 
-    if (keepImage && (file.type === "image/png" || file.type === "image/jpeg")) {
-      setCropFile(file);
-      fileReader.readAsDataURL(file);
-      setCropImg(fileReader.result as string);
-      updateCanvas();
-    } else {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      setCropImg(result);
+
+      const img = new Image();
+      img.onload = () => {
+        tempImage.current = img;
+
+        const c = canvas.current;
+        if (!c) return;
+
+        // Compute minZoom (same as handlewheel)
+        const minZoom = Math.max(
+          (c.width / img.width) * 100,
+          (c.height / img.height) * 100
+        );
+
+        setZoom(minZoom);
+
+        //request animation frame to ensure canvas is updated after image is loaded
+        requestAnimationFrame(() => {
+          updateCanvas();
+        });
+        setLoadingImage(false);
+      };
+      img.src = result;
+    };
+    reader.onerror = () => setCropImg(placeholder);
+    reader.readAsDataURL(file);
+  }, [updateCanvas, altText]);
+
+  const handleImgChange = useCallback(async () => {
+    const input = inputRef.current;
+    if(!input) return;
+
+    const files = input.files;
+    if (!files || files.length === 0) return;
+    
+
+    // Split the selection into supported images and anything we can't use, so a
+    // multi-select of several photos all get queued instead of dropping all but one.
+    const supported: File[] = [];
+    let hadUnsupported = false;
+    for (const file of Array.from(files)) {
+      if (keepImage && (file.type === "image/png" || file.type === "image/jpeg")) {
+        supported.push(file);
+      } else {
+        hadUnsupported = true;
+      }
+    }
+
+    //so can open same file and load popup again, otherwise it won't trigger change event if same file is selected
+    input.value = "";
+
+    if (hadUnsupported) {
       alert("File type not supported: Please use .PNG or .JPG");
     }
-  }, [keepImage, setCropFile, fileReader, inputRef]);
+    if (supported.length === 0) return;
+
+    // Crop the first image now; the rest wait in the queue and are loaded one at
+    // a time as each crop is confirmed (see sendImg).
+    pendingFiles.current = supported.slice(1);
+    loadFileIntoCrop(supported[0]);
+  }, [keepImage, loadFileIntoCrop]);
 
   const sendImg = useCallback(
     () => canvas.current?.toBlob(async(blob) => {
       const newFile = new File([blob as Blob], cropFile?.name as string, {type:cropFile?.type});
-      onFileSelected(newFile);
+      onFileSelected(newFile, inputAlt.current?.value ?? altText);
       if (inputRef.current) inputRef.current.value = "";
-      setCropImg(undefined);
-  }, cropFile?.type), [onFileSelected, setCropImg, cropFile, canvas]);
 
-  // Effect for cleanup if needed; currently just removes event listeners 
+      // Move on to the next queued image, or close the popup when the batch is done.
+      const next = pendingFiles.current.shift();
+      if (next) {
+        loadFileIntoCrop(next);
+      } else {
+        setCropImg(undefined);
+      }
+    }, cropFile?.type), 
+  [onFileSelected, setCropImg, cropFile, canvas, loadFileIntoCrop, altText]);
+
+  
+  // Effect for cleanup if needed; currently just removes event listeners
   useEffect(() => {
-    tempImage.current?.addEventListener("load", updateCanvas);
-    fileReader.onload = () => setCropImg(fileReader.result as string);
+    if (!cropImg) return; // popup is not open, no need to set up canvas
+
+    const c = canvas.current;
+    const img = tempImage.current;
+    if (!c || !img) return;
+
+    // Set actual drawing resolution to match CSS size
+    c.width = c.clientWidth;
+    c.height = c.clientHeight;
+
+    const w = img.width * (zoom / 100);
+    const h = img.height * (zoom / 100);
+
+    const maxDX = Math.max(0, (w - c.width) / 2);
+    const maxDY = Math.max(0, (h - c.height) / 2);
+
+    // Re-clamp drag offsets whenever zoom changes
+    setDX(prev => Math.min(maxDX, Math.max(-maxDX, prev)));
+    setDY(prev => Math.min(maxDY, Math.max(-maxDY, prev)));
+
+    // Draw AFTER zoom is applied
+    requestAnimationFrame(() => updateCanvas());
+
+
     fileReader.onerror = () => setCropImg(placeholder);
-    
+
     const input = inputRef.current;
     if (!input) return;
 
-    return () => input.removeEventListener('change', sendImg);
-  }, [sendImg, fileReader, placeholder, setCropImg, inputRef]);
+    input.addEventListener('change', handleImgChange);
+
+    return () => input.removeEventListener('change', handleImgChange);
+  }, [handleImgChange, fileReader, placeholder, updateCanvas, inputRef, cropImg, zoom]);
+
 
   useEffect(()=> {
     updateCanvas();
   }, [zoom, dX, dY]);
-  
-  const cropPopup = (cropImg !== undefined ?
+
+  const closePopup = useCallback(() => {
+    if (!loadingImage) {
+      pendingFiles.current = []; 
+      setCropImg(undefined); 
+    }
+  }, [loadingImage, pendingFiles, setCropImg]);
+
+  const cropPopup = useMemo(
+  () => cropImg !== undefined ?
     <Popup startOpen={true}>
-      <PopupContent confirmation={true} callback={() => setCropImg(undefined)}>
+      <PopupContent confirmation={true} callback={closePopup}>
         <div className="project-crop">
         <label id="project-crop-header">Crop image for thumbnail usage</label>
         <canvas ref={canvas} id="canvas"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onWheel={handleWheel}
+          onContextMenu={(e) => e.preventDefault()}
+
           width={
           aspectRatio === "16/9" ? 1600 :
           aspectRatio === "4/3" ? 800 :
           aspectRatio === "1/1" ? 800 :
           aspectRatio === "2/3" ? 600 :
           600}
-          
+
           height={
           aspectRatio === "16/9" ? 900 :
           aspectRatio === "4/3" ? 600 :
           aspectRatio === "1/1" ? 800 :
           aspectRatio === "2/3" ? 900 :
           1300}
-          
+
           style={{aspectRatio:aspectRatio}}
         ></canvas>
-        <img ref={tempImage} id="refImage" src={cropImg} alt={cropImg} />
+
+        {/* <img ref={tempImage} id="refImage" src={cropImg} alt={cropImg} /> */}
         <div id="aspect-row">
           <Select>
           <SelectButton
@@ -171,7 +440,7 @@ const ImageUploader = ({
             const ratio = (
               e.target as HTMLButtonElement
             ).value;
-  
+
             await setAspectRatio(ratio);
             updateCanvas();
             }}
@@ -190,50 +459,99 @@ const ImageUploader = ({
           />
           </Select>
         </div>
-        <div id="zoom-row">
-          <input
-          type="range" ref={inputZoom}
-          id="zoom" name="zoom"
-          onChange={() => {
-            setZoom(inputZoom.current?.valueAsNumber as number);
-          }}
-          onInput={() => {
-            setZoom(inputZoom.current?.valueAsNumber as number);
-          }}
-          min={0} 
-          max={1000}
-          defaultValue={zoom} />
-          <label className="slider-text" htmlFor="zoom">Zoom</label>
+        <div className="project-crop-mouse-instructions">
+          <p>You can also drag the image around the view using the mouse, and zoom in and out with the scroll wheel.</p>
         </div>
-        <div id="xTrans-row">
-          <input
-          type="range" ref={inputX}
-          id="xTrans" name="xTrans"
-          onChange={() => {
-            setDX(inputX.current?.valueAsNumber as number);
-          }}
-          onInput={() => {
-            setDX(inputX.current?.valueAsNumber as number);
-          }}
-          min={canvas.current ? -canvas.current.width : -100}
-          max={canvas.current ? canvas.current.width : 100}
-          defaultValue={dX} />
-          <label className="slider-text" htmlFor="xtrans">Xpos</label>
-        </div>
-        <div id="yTrans-row">
-          <input
-          type="range" ref={inputY}
-          id="yTrans" name="yTrans"
-          onChange={() => {
-            setDY(inputY.current?.valueAsNumber as number);
-          }}
-          onInput={() => {
-            setDY(inputY.current?.valueAsNumber as number);
-          }}
-          min={canvas.current ? -canvas.current.height : -100}
-          max={canvas.current ? canvas.current.height : 100}
-          defaultValue={dY} />
-          <label className="slider-text" htmlFor="yTrans">Ypos</label>
+        <div id="hide-range-rows">  
+          <div id="zoom-row">
+            <input
+            type="range" ref={inputZoom}
+            id="zoom" name="zoom"
+            onChange={() => {
+              const raw = inputZoom.current?.valueAsNumber ?? zoom;
+              const minZoom = getMinZoom();
+              const maxZoom = getMaxZoom();
+
+              const clampedZoom = Math.min(maxZoom, Math.max(minZoom, raw));
+              setZoom(clampedZoom);
+
+              // Re‑clamp DX/DY after zoom changes
+              setDX(clampDX(dX));
+              setDY(clampDY(dY));
+              updateCanvas();
+            }}
+            onInput={() => {
+              const raw = inputZoom.current?.valueAsNumber ?? zoom;
+              const minZoom = getMinZoom();
+              const maxZoom = getMaxZoom();
+
+              const clampedZoom = Math.min(maxZoom, Math.max(minZoom, raw));
+              setZoom(clampedZoom);
+
+              // Re‑clamp DX/DY after zoom changes
+              setDX(clampDX(dX));
+              setDY(clampDY(dY));
+              updateCanvas();
+            }}
+            min={getMinZoom()}
+            max={getMaxZoom()}
+            value={zoom} />
+            <label className="slider-text" htmlFor="zoom">Zoom</label>
+          </div>
+          <div id="xTrans-row">
+            <input
+            type="range" ref={inputX}
+            id="xTrans" name="xTrans"
+            onChange={() => {
+              const raw = inputX.current?.valueAsNumber ?? 0;
+              const clamped = clampDX(raw);
+              setDX(clamped);
+              updateCanvas();
+            }}
+            onInput={() => {
+              const raw = inputX.current?.valueAsNumber ?? 0;
+              const clamped = clampDX(raw);
+              setDX(clamped);
+              updateCanvas();
+            }}
+            min={-getMaxDX()}
+            max={getMaxDX()}
+            value={dX} />
+              <label className="slider-text" htmlFor="xtrans">Xpos</label>
+          </div>
+          <div id="yTrans-row">
+            <input
+            type="range" ref={inputY}
+            id="yTrans" name="yTrans"
+            onChange={() => {
+              const raw = inputY.current?.valueAsNumber ?? 0;
+              const clamped = clampDY(raw);
+              setDY(clamped);
+              updateCanvas();
+
+            }}
+            onInput={() => {
+              const raw = inputY.current?.valueAsNumber ?? 0;
+              const clamped = clampDY(raw);
+              setDY(clamped);
+              updateCanvas();
+            }}
+            min={-getMaxDY()}
+            max={getMaxDY()}
+            value={dY} />
+            <label className="slider-text" htmlFor="yTrans">Ypos</label>
+          </div>
+          <div id='alt-text-input'>
+            <input
+            type='text' ref={inputAlt}
+            placeholder='enter the caption/alt text for the image'
+            onChange={() => {
+              console.log(inputAlt.current?.value)
+              setAltText(inputAlt.current?.value as string)
+            }}
+            >
+            </input>
+          </div>
         </div>
         <div className="project-crop-extra-info">
           Crop your image to a set ratio that better matches the site.
@@ -241,17 +559,18 @@ const ImageUploader = ({
         <div className="confirm-project-crop">
           <PopupButton buttonId="project-crop-save" callback={sendImg} doNotClose={() => true}>Crop Image</PopupButton>
           {/* If the action is canceled, no picture is uploaded */}
-          <PopupButton buttonId="project-crop-cancel" callback={() => setCropImg(undefined)} className="project-info-buttons" doNotClose={() => true}>Cancel</PopupButton>
+          <PopupButton buttonId="project-crop-cancel" callback={closePopup} className="project-info-buttons" doNotClose={() => true}>Cancel</PopupButton>
         </div>
         </div>
       </PopupContent>
     </Popup>
-  : "");
+  : "",
+  [cropImg, canvas, inputX, inputY, dX, dY, zoom, inputZoom]);
 
   const profileVariant = (
     <>
       {cropPopup}
-        <label htmlFor="image-uploader" id="profile-image-uploader" className={labelName} 
+        <label htmlFor="image-uploader" id="profile-image-uploader" className={labelName}
           onDragEnter={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -299,7 +618,7 @@ const ImageUploader = ({
               alt="upload image"
               className="camera-button"
             />
-          </div> : 
+          </div> :
           initialImageUrl ?
           <div id="img-view">
             <img
@@ -328,7 +647,7 @@ const ImageUploader = ({
   const projectVariant = (
     <>
       {cropPopup}
-      <label htmlFor="image-uploader" id="project-image-uploader" className={labelName} 
+      <label htmlFor="image-uploader" id="project-image-uploader" className={labelName}
           onDragEnter={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -362,6 +681,7 @@ const ImageUploader = ({
           multiple accept=".png, .jpg"
           ref={inputRef}
           onChange={handleImgChange}
+          onClick={() => setLoadingImage(true)}
           disabled={cropImg !== undefined}
           hidden={true}
         />

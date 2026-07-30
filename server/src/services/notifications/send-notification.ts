@@ -9,6 +9,7 @@ type SendNotificationServiceSuccess = ServiceSuccessSubset<'CREATED'>;
 const sendNotificationService = async (
   builder: NotificationBuilder,
   request: Request,
+  isGlobal?: boolean,
 ): Promise<SendNotificationServiceError | SendNotificationServiceSuccess> => {
   // notification is created in the database
   try {
@@ -20,6 +21,7 @@ const sendNotificationService = async (
         subjectLine: notification.subjectLine,
         message: notification.message,
         timeSent: new Date(Date.now()),
+        isGlobal: isGlobal ?? false,
       },
     });
 

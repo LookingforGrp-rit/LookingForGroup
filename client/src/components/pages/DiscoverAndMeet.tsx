@@ -11,7 +11,8 @@ import {
   ApiResponse, Tag, NumberDictionary, StructuredProjectInfo,
   StructuredUserInfo, UserPreview, ProjectPreview,
   UserDetail, ProjectWithFollowers,
-  MePrivate
+  MePrivate,
+  Skill
 } from '@looking-for-group/shared';
 
 //import api utils
@@ -45,7 +46,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
                 lightSrc={'/assets/bannerImages/people1_light.png'}
                 darkSrc={'/assets/bannerImages/people1_dark.png'}
                 id={'profile-hero-img-1'}
-                alt={'banner image'}
+                alt={'"Explore profiles"'}
               />
               {/* <div>
                 <span className='profile-hero-highlight'>Explore profiles</span> to see each other's personality, expertise, and project history.
@@ -58,7 +59,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
                 lightSrc={'/assets/bannerImages/people2_light.png'}
                 darkSrc={'/assets/bannerImages/people2_dark.png'}
                 id={'profile-hero-img-2'}
-                alt={'banner image'}
+                alt={'"Follow Users"'}
               />
               {/* <div className="panel-text">
                 Find someone interesting? <span className='profile-hero-highlight'>Send a message!</span><br/>
@@ -72,7 +73,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
                 lightSrc={'/assets/bannerImages/people3_light.png'}
                 darkSrc={'/assets/bannerImages/people3_dark.png'}
                 id={'profile-hero-img-3'}
-                alt={'banner image'}
+                alt={'"Find your group!"'}
               />
               {/* <div>
                 Keep your profile up to date with your skills, project preferences, and interests to 
@@ -454,10 +455,10 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
             matchesAll = false;
           }
         }
-        // Purpose tag 
-        else if (tag.type === 'Purpose' && item.purpose) {
-          const projectPurpose = item.purpose.toLowerCase();
-          if (!projectPurpose.includes(tag.label.toLowerCase())) {
+        // Context tag 
+        else if (tag.type === 'Context' && item.context) {
+          const projectContext = item.context.toLowerCase();
+          if (!projectContext.includes(tag.label.toLowerCase())) {
             //matchesAny = true;
             matchesAll = false;
           }
@@ -499,7 +500,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
    * Changes what items are shown to the user whenever a filter has been added or changed
    * @param activeTagFilters Tags that are shown to the user now
    */
-  const updateUserList = async (activeTagFilters: Tag[]) => {
+  const updateUserList = async (activeTagFilters: Tag[] | Skill[]) => {
     const userList = fullUserList;
 
     // Get user info to match with tags
@@ -530,7 +531,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           matchesAny = true;
         }
         // Check for specific skills
-        else if (tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft' || tag.type === 'Audio') {
+        else if (tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft' || tag.type === 'Audio' || tag.type === 'Engineer') {
           const userSkills = item.skills?.map((s) => s?.label?.toLowerCase())
             .filter((s) => typeof s === 'string');
 

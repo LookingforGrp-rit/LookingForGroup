@@ -4,8 +4,6 @@ export const MePreviewSelector = Object.freeze({
   lastName: true,
   username: true,
   profileImage: true,
-  preferredName: true,
-  mentor: true,
   userSkills: {
     select: {
       skills: {

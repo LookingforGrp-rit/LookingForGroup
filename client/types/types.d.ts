@@ -39,7 +39,11 @@ import {
   UpdateJobSkillInput,
   DeleteJobSkillInput,
   JobSkill,
-  UpdateMemberRequestInput
+  UpdateMemberRequestInput,
+  UpdateTagBlacklistInput,
+  ChangeOwnerInput,
+  AddGalleryImageInput,
+  AddGalleryVideoInput
 } from "@looking-for-group/shared";
 
 /**
@@ -100,6 +104,9 @@ interface ProjectChanges {
    * All resources to be deleted
    */
   delete: ProjectChangesDeletes;
+  /**
+   * 
+   */
 }
 
 /**
@@ -194,6 +201,11 @@ interface ProjectChangesUpdates {
    * All member requests to be updated
    */
   memberRequests: CRUDRequest<UpdateMemberRequestInput>[];
+
+  /**
+   * Ownership change, special data type doesn't seem nessecary
+   */
+  ownerChanges: CRUDRequest<number>[];
 }
 
 /**
@@ -329,6 +341,10 @@ interface UserChangesCreates {
    * All socials to be created
    */
   socials: CRUDRequest<AddUserSocialInput>[];
+
+  GalleryImages: CRUDRequest<AddGalleryImageInput>[];
+
+  GalleryVideos: CRUDRequest<AddGalleryVideoInput>[];
 }
 
 /**
@@ -344,6 +360,12 @@ interface UserChangesUpdates {
    * All skills to be updated
    */
   skills: CRUDRequest<UpdateUserSkillInput>[];
+
+  
+  /**
+   * Tag blacklist to be updated
+   */
+  tagBlacklist: CRUDRequest<UpdateTagBlacklistInput>[];
 
   /**
    * All socials to be updated
@@ -374,6 +396,10 @@ interface UserChangesDeletes {
    * All socials to be deleted
    */
   socials: CRUDRequest<null>[];
+
+  GalleryImages: CRUDRequest<null>[];
+
+  GalleryVideos: CRUDRequest<null>[];
 }
 
 /**

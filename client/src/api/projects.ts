@@ -84,8 +84,8 @@ export const reportProject = async (
   projectId: number,
   report: string,
 ): Promise<ApiResponse> => {
-  const apiURL = `/me/projects/report/${projectId}/${report}`;
-  const response = await POST(apiURL, {});
+  const apiURL = `/me/projects/report/${projectId}`;
+  const response = await POST(apiURL, {reason: report});
   
   //if (response.error) console.log(`Error in reportProject: ${response.error}`);
   //else console.log(response);
@@ -164,6 +164,18 @@ export const getMemberRequestByProjectID = async (
     console.log(`Error in getMemberRequestByProjectID: ${response.error}`);
   return response;
 };
+
+export const changeOwner = async (
+  projectId: number,
+  userId: number,
+): Promise<ApiResponse<unknown>> => {
+  const apiURL = `/projects/${projectId}/change-owner/${userId}`;
+  const response = await PATCH(apiURL, {});
+  
+  if (response.error)
+    console.log(`Error in changeOwner: ${response.error}`);
+  return response;
+}
 
 /**
  * Retrieves data of a project by its ID
@@ -949,4 +961,5 @@ export default {
   deleteJobSkill,
   // getImageByFileName,
   projectApprovalRequestExists,
+  changeOwner,
 };

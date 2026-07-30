@@ -1,6 +1,5 @@
-import { memo, FC, ChangeEvent, FocusEvent, useState, useCallback } from 'react';
-import { useMediaQuery } from './UseMediaQuery';
-
+import { memo, FC, ChangeEvent, FocusEvent, useState, useCallback, useEffect } from 'react';
+import useMediaQuery from '@mui/material/useMediaQuery';
 export interface DataSet {
   data: unknown[];
 }
@@ -41,6 +40,8 @@ interface SearchBarProps {
   //If omitted, it's derived from placeholderText by dropping the leading
   //"Search by "/"Search for " (e.g. "Search by Project" -> "Project").
   mobilePlaceholderText?: string;
+  
+  searchBlocks?: string[];
 }
 
 //Screens this narrow can't fit the full "Search by ..." placeholder.
@@ -64,10 +65,10 @@ const deriveMobilePlaceholder = (text: string): string =>
  * @returns JSX element containing a styled search input with icon
  */
 //FIXME: create way to update results if a new dataset is provided: discover page filter and project editor tag filters do not save search state
-export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange, setValue, onFocus, placeholderText = "Search by Project", mobilePlaceholderText }) => {
+export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange, setValue, onFocus, placeholderText = "Search by Project", mobilePlaceholderText, searchBlocks = [] }) => {
   // Internal query state for uncontrolled mode
   const [internalQuery, setInternalQuery] = useState('');
-
+  
   // On mobile the full "Search by ..." text overflows, so show just the noun.
   const isMobile = useMediaQuery(MOBILE_QUERY);
   const effectivePlaceholder = isMobile
@@ -83,17 +84,21 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     // Convert the query to lowercase
     const newQuery = event.target.value.toLowerCase();
-
     // If onChange is passed in, call it
     if (onChange) {
       onChange(event);
-    } else {
+    }
+    
+    if (setValue) 
+      setValue(newQuery);
+    else {
       setInternalQuery(newQuery);
     }
-    if (setValue) setValue(newQuery);
-    if (newQuery.length > 0) handleSearch(newQuery);
-    handleSearch(newQuery);
   };
+
+  useEffect(() => {
+    handleSearch(value ?? internalQuery);
+  }, [value, internalQuery]);
 
   /**
    * Performs filtering across all datasets based on the query.
@@ -110,44 +115,37 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
         if (typeof item === 'object') {
           // ONLY return fields we want to match, this avoids unintended searchbar behavior
           // Search using all string props on the item
-          const includesInValue = (val: unknown): boolean => {
-            if (val === null) return false;
+          const includesInValue = (val: unknown, key?: string): boolean => {
+            if (!val) return false;
             if (typeof val === 'string') {
+              if (val.toLowerCase().includes("api")|| 
+                  searchBlocks.includes(key ?? "") ||
+                  key?.includes("id")) return false;
               return val.toLowerCase().includes(currentQuery);
             }
             if (Array.isArray(val)) {
-              return val.some((el) => typeof el === 'string' && el.toLowerCase().includes(currentQuery));
+              return val.some(e => includesInValue(e, key));
             }
             if (val && typeof val === 'object') {
-              return Object.values(val).some(includesInValue);
+              let keys = Object.keys(val);
+              let values = Object.values(val);
+              let match = false;
+              for (let i = 0; i < values.length; i++) {
+                if (includesInValue(values[i], keys[i].toLowerCase()))
+                  match = true;
+              }
+              return match;
             }
             return false;
           };
 
           if (item === null) return false;
-
-          //Force typing to remove extra data and only check for relevant data
-          type RelevantData = {
-            firstName: string,
-            lastName: string,
-            preferredName: string,
-            email: string,
-            title: string,
-            label: string,
-          };
-          const proccessedItem = item as RelevantData;
-          const finalItem = {
-            firstName: proccessedItem.firstName ?? null,
-            lastName: proccessedItem.lastName ?? null,
-            preferredName: proccessedItem.preferredName ?? null,
-            email: proccessedItem.email ?? null,
-            title: proccessedItem.title ?? null,
-            label: proccessedItem.label ?? null,
-          };
+          
+          let proccessedItem = item as typeof dataSet.data;
 
           for (const q of splitSearchQuery) {
             currentQuery = q;
-            if (!Object.values(finalItem).some(includesInValue)) return false;
+            if (!includesInValue(proccessedItem)) return false;
           }
           return true;
         }
@@ -167,7 +165,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
     <div className="search-wrapper">
       {/* Prevent form submission from refreshing the page */}
       <div className="search-bar">
-        <div role="button" className="search-button" aria-label="Search">
+        <div className="search-button">
           <i className="fa fa-search" aria-hidden="true"></i>
         </div>
         {/* Input field for search query */}
@@ -178,7 +176,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
           value={value ?? internalQuery}
           onChange={handleChange}
           onFocus={onFocus}
-          tabIndex={2}
+          tabIndex={0}
           onKeyDown={(e) => {
             {/* Prevent odd popup behavior on enter click */ }
             if (e.key === 'Enter') {
@@ -192,7 +190,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
           }}
           aria-label='Searchbar'
           autoFocus={false}
-          autoComplete="searchbar-off"
+          autoComplete="off"
         />
       </div>
     </div>

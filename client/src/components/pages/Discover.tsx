@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, ChangeEvent, useEffect, useEffectEvent } from 'react';
+import React, { useMemo, useState, useCallback, useEffect, useEffectEvent } from 'react';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
@@ -24,7 +24,7 @@ let index = 0;
 
 //Default should be 10
 //Determines the number of different projects for some reason
-let count = 10;
+const count = 10;
 
 //Synchronous storing of the full project list for quick reference
 let syncFullProjectList: ProjectPreview[] = [];
@@ -171,17 +171,13 @@ export const DiscoverPage = () => {
 
   //Attempt at detecting when the user has scrolled to near the bottom of the screen
   const scrollEvent = useEffectEvent(() => {
-    //console.log(`scrolled by ${}`);
-    //document.documentElement.scrollBy() is always 0 
-
-    //WAAAAAAIT DID I FIND IT
     const fullPage = document.querySelector('.page'); //the element that holds all of the page stuff
     if (fullPage) {
-      const scrollPercent = fullPage.scrollTop / (fullPage.clientHeight / 2); //clientHeight seemed to be doubled so i halved it
-
-      if (scrollPercent >= 0.95) {
+      //scrollTop seems to be the difference between scrollHeight and an accurate reading of the height, 
+      //percent will now always equal 1 when at the bottom.
+      const scrollPercent =  fullPage.clientHeight / (fullPage.scrollHeight - fullPage.scrollTop);
+      if (scrollPercent >= 0.70) {
         sortProjects();
-        console.log("load more projects");
       }
     }
   });
@@ -207,7 +203,7 @@ export const DiscoverPage = () => {
   const setupProjectData = async (method: string, invert: boolean): Promise<void> => {
     //Doesn't check if projects are alreadys in projects so many are repeated
     //I think the weirdness below fixes it? I'm not sure since the only 3 bug is still present
-    let returnedProjects: ProjectPreview[] = await getPaginatedProjects(method);
+    const returnedProjects: ProjectPreview[] = await getPaginatedProjects(method);
 
     //Probably doesn't work since it's not checking projectId?
     // returnedProjects = returnedProjects.filter((project) => !projects.includes(project));
@@ -261,7 +257,7 @@ export const DiscoverPage = () => {
 
     setLoadObj(returnedProjects.length < count ?
       <p style={{ color: 'red' }}>No More Projects!</p> :
-      <button id='btn-loadmore' onClick={() => sortProjects()}>Load More Projects</button>);
+      <button id='btn-loadmore' onClick={projectLoadButton}>Load More Projects</button>);
 
     
 
@@ -278,7 +274,7 @@ export const DiscoverPage = () => {
         );
         break;
       case 'Popular':
-        const followersList = await Promise.all(projects.map(
+        { const followersList = await Promise.all(projects.map(
           project => getProjectFollowers(project.projectId)
         ));
         const projectsWithFollowers = projects.map((project, index) => {
@@ -294,7 +290,7 @@ export const DiscoverPage = () => {
           return p2followers - p1followers;
         })
           .map(item => item.project);
-        break;
+        break; }
     }
     
     if (invert) {
@@ -332,110 +328,94 @@ export const DiscoverPage = () => {
     filterData = {tags: activeTagFilters, excludeTags: activeExclusionFilters, filterMode, sortMode};
     
     const projectList = syncFullProjectList;
-    // Get project and user info to match with tags
-    const items: ProjectWithFollowers[] = [];
-    for (const item of projectList) {
-      if (projectCache[item.projectId].full != undefined) {
-        items.push(projectCache[item.projectId].full as ProjectWithFollowers);
-      }
-      else {
-        const projectData = await getByID(item.projectId);
-        if (projectData.data) {
-          items.push(projectData.data);
-          projectCache[item.projectId].full = projectData.data;
+
+    // Helper: build full item list (prefer cache) and filter by tags/exclusions
+    const buildAndFilter = async (sourcePreviews: ProjectPreview[]) => {
+      const items: ProjectWithFollowers[] = [];
+      for (const item of sourcePreviews) {
+        if (projectCache[item.projectId]?.full != undefined) {
+          items.push(projectCache[item.projectId].full as ProjectWithFollowers);
         } else {
-          console.error("Error getting project data from " + item.projectId);
+          const projectData = await getByID(item.projectId);
+          if (projectData.data) {
+            items.push(projectData.data);
+            projectCache[item.projectId] = projectCache[item.projectId] || {};
+            projectCache[item.projectId].full = projectData.data;
+          } else {
+            console.error("Error getting project data from " + item.projectId);
+          }
         }
       }
-    }
-    let tagFilteredList = items.filter((item) => {
-      for (let tag of activeExclusionFilters) {
-        if (item.tags.some((projectTag) => projectTag.tagId === tag.tagId && projectTag.type === tag.type) ||
+
+      const tagFilteredList = items.filter((item) => {
+        for (const tag of activeExclusionFilters) {
+          if (
+            item.tags.some((projectTag) => projectTag.tagId === tag.tagId && projectTag.type === tag.type) ||
             item.mediums.some((medium) => medium.mediumId === tag.tagId && tag.type === "Project Type") ||
             item.jobs.some((job) => job.jobId === tag.tagId && tag.type === "Role") ||
-            (item.purpose === tag.label && tag.type === "Purpose"))
-          return false;
-      }
-      if (activeTagFilters.length === 0) return true;
-      let matchesAny = false;
-      let matchesAll = true;
-      for (const tag of activeTagFilters) {
-        // Check project type by name since IDs are not unique relative to tags
-        // Project Type tag
-        if (tag.type === 'Project Type' && Array.isArray(item.mediums)) {
-          const projectTypes = item.mediums.map((t) => t.label.toLowerCase());
-          if (tag.label === `New`) {
-            //change the subtraction to change the 
-            const cutOff = Date.now() - 604800000; //604,800,000 is 1 week in milliseconds
-            const date = Date.parse(item.createdAt.toString());
-            if (date > cutOff) {
+            (item.context === tag.label && tag.type === "Context")
+          )
+            return false;
+        }
+        if (activeTagFilters.length === 0) return true;
+        let matchesAny = false;
+        let matchesAll = true;
+        for (const tag of activeTagFilters) {
+          if (tag.type === 'Project Type' && Array.isArray(item.mediums)) {
+            const projectTypes = item.mediums.map((t) => t.label.toLowerCase());
+            if (tag.label === `New`) {
+              const cutOff = Date.now() - 604800000;
+              const date = Date.parse(item.createdAt.toString());
+              if (date > cutOff) {
+                matchesAny = true;
+              } else {
+                matchesAll = false;
+              }
+            } else if (projectTypes.includes(tag.label.toLowerCase())) {
               matchesAny = true;
+            } else {
+              matchesAll = false;
             }
-            else {
+          } else if (tag.type === 'Context' && item.context) {
+            const projectContext = item.context.toLowerCase();
+            if (projectContext.includes(tag.label.toLowerCase())) {
+              matchesAny = true;
+            } else {
+              matchesAll = false;
+            }
+          } else if (tag.type === "Positions") {
+            const roles = item.jobs.map((job) => job.role);
+            if (roles.find((role) => role.roleId === tag.tagId)) matchesAny = true;
+            else matchesAll = false;
+          } else if (tag.tagId && item.tags) {
+            const tagIDs = item.tags.map((itemTag) => itemTag.tagId);
+            if (tagIDs.includes(tag.tagId)) {
+              matchesAny = true;
+            } else {
               matchesAll = false;
             }
           }
-          else if (projectTypes.includes(tag.label.toLowerCase())) {
-            matchesAny = true;
-          }
-          else {
-            matchesAll = false;
-          }
         }
-        // Purpose tag 
-        else if (tag.type === 'Purpose' && item.purpose) {
-          const projectPurpose = item.purpose.toLowerCase();
-          if (projectPurpose.includes(tag.label.toLowerCase())) {
-            matchesAny = true;
-          }
-          else {
-            matchesAll = false;
-          }
-        }
-        else if (tag.type === "Positions") {
-          const roles = item.jobs.map((job) => job.role);
+        return filterMode === "Match Any" ? matchesAny : matchesAll;
+      });
 
-          if (roles.find((role) => role.roleId === tag.tagId))
-            matchesAny = true;
-          else
-            matchesAll = false;
-        }
-        // Tag check can be done by ID: Genre
-        else if (tag.tagId && item.tags) {
-          const tagIDs = item.tags.map((itemTag) => itemTag.tagId);
+      return tagFilteredList;
+    };
 
-          if (tagIDs.includes(tag.tagId)) {
-            matchesAny = true;
-          }
-          else {
-            matchesAll = false;
-          }
-        }
-
-      }
-      if (filterMode === "Match Any") return matchesAny;
-      else return matchesAll;
-    });
-
-    // If no tags are currently selected, render all projects
-    // !! Needs to be skipped if searchbar has any input !!
-    if (tagFilteredList.length === 0 && activeTagFilters.length === 0) {
-      tagFilteredList = JSON.parse(JSON.stringify(fullProjectList));
-
-      setFilteredProjectList(fullProjectList);
+    // If no tags are currently selected, render all projects (use syncFullProjectList)
+    if (activeTagFilters.length === 0 && activeExclusionFilters.length === 0) {
+      setFilteredProjectList(syncFullProjectList);
       return;
     }
 
-    //doing both updates messes with the display updating
-    //setProjectSearchData(tagFilteredList);
-
-    // Set displayed projects
-    setFilteredProjectList(tagFilteredList);
+    // Build and filter across the entire project list
+    const filtered = await buildAndFilter(projectList);
+    setFilteredProjectList(filtered);
   };
 
   useEffect(() => {
     sortProjects();
-    setLoadObj(<button id='btn-loadmore' onClick={() => sortProjects()}>Load More Projects</button>);
+    setLoadObj(<button id='btn-loadmore' onClick={projectLoadButton}>Load More Projects</button>);
   }, []);
 
   const sortProjects = useCallback((newSortMode?: sortModes) => {
@@ -470,6 +450,11 @@ export const DiscoverPage = () => {
     if (newSortMode) setSortMode(newSortMode);
   }, [sortMode]);
 
+  const projectLoadButton = useCallback(() => {
+    sortProjects();
+    setCurrentSearch('');
+  }, []);
+
   /**
   * Updates the filtered project list with new search information
   * @param searchResults
@@ -497,9 +482,8 @@ export const DiscoverPage = () => {
       }
     }
 
-    setFilteredProjectList(matches);
-
-    // Preload full project data for search results so the like icon state is available immediately.
+    // Preload full project data for search results so the like icon state is available immediately,
+    // and apply any currently active tag/exclusion filters so filters persist during search.
     (async () => {
       const newCache = projectCache;
       for (const projectId of matchIds) {
@@ -507,6 +491,7 @@ export const DiscoverPage = () => {
           try {
             const projectData = await getByID(projectId);
             if (projectData.data) {
+              newCache[projectId] = newCache[projectId] || {};
               newCache[projectId].full = projectData.data;
             }
           } catch (error) {
@@ -515,11 +500,80 @@ export const DiscoverPage = () => {
         }
       }
       setProjectCache(newCache);
+
+      // If there are active filters, filter the matched full items by those tags.
+      if (filterData.tags.length > 0 || filterData.excludeTags.length > 0) {
+        const matchedFullItems: ProjectWithFollowers[] = [];
+        for (const preview of matches) {
+          const cached = newCache[preview.projectId];
+          if (cached?.full) matchedFullItems.push(cached.full as ProjectWithFollowers);
+        }
+
+        const tagFiltered = matchedFullItems.filter((item) => {
+          for (const tag of filterData.excludeTags) {
+            if (
+              item.tags.some((projectTag) => projectTag.tagId === tag.tagId && projectTag.type === tag.type) ||
+              item.mediums.some((medium) => medium.mediumId === tag.tagId && tag.type === "Project Type") ||
+              item.jobs.some((job) => job.jobId === tag.tagId && tag.type === "Role") ||
+              (item.context === tag.label && tag.type === "Context")
+            )
+              return false;
+          }
+          if (filterData.tags.length === 0) return true;
+          let matchesAny = false;
+          let matchesAll = true;
+          for (const tag of filterData.tags) {
+            if (tag.type === 'Project Type' && Array.isArray(item.mediums)) {
+              const projectTypes = item.mediums.map((t) => t.label.toLowerCase());
+              if (tag.label === `New`) {
+                const cutOff = Date.now() - 604800000;
+                const date = Date.parse(item.createdAt.toString());
+                if (date > cutOff) {
+                  matchesAny = true;
+                } else {
+                  matchesAll = false;
+                }
+              } else if (projectTypes.includes(tag.label.toLowerCase())) {
+                matchesAny = true;
+              } else {
+                matchesAll = false;
+              }
+            } else if (tag.type === 'Context' && item.context) {
+              const projectContext = item.context.toLowerCase();
+              if (projectContext.includes(tag.label.toLowerCase())) {
+                matchesAny = true;
+              } else {
+                matchesAll = false;
+              }
+            } else if (tag.type === "Positions") {
+              const roles = item.jobs.map((job) => job.role);
+              if (roles.find((role) => role.roleId === tag.tagId)) matchesAny = true;
+              else matchesAll = false;
+            } else if (tag.tagId && item.tags) {
+              const tagIDs = item.tags.map((itemTag) => itemTag.tagId);
+              if (tagIDs.includes(tag.tagId)) {
+                matchesAny = true;
+              } else {
+                matchesAll = false;
+              }
+            }
+          }
+          return filterData.filterMode === "Match Any" ? matchesAny : matchesAll;
+        });
+
+        // Map back to the original previews for rendering
+        const tagFilteredIds = new Set(tagFiltered.map((t) => t.projectId));
+        const previewMatches = matches.filter((m) => tagFilteredIds.has(m.projectId));
+
+        setFilteredProjectList(previewMatches.length > 0 ? previewMatches : []);
+      } else {
+        setFilteredProjectList(matches);
+      }
     })();
   }, [fullProjectList, projectCache]);
 
   //gets the discover stuff at the bottom
-  let discoverPanelContents: React.ReactElement
+  let discoverPanelContents: React.ReactElement;
   if (!loaded) {
     discoverPanelContents = (
       <div className='placeholder-spacing'>
@@ -583,15 +637,17 @@ export const DiscoverPage = () => {
   return (
     //TEMP FIX for spamming requests: use onScrollEnd
     //Looks alright but theres probably better solutions
-    <div className="page discover-page" tabIndex={-1} onScrollEnd={scrollEvent}>
+    <main className="page discover-page" tabIndex={-1} onScrollEnd={scrollEvent}>
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={projectDataSet}
         onSearch={searchProjects}
-        value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
+        value={currentSearch}
+        setSearch={setCurrentSearch}
         setCurrentUserId={getAuth}
         searchOnFocus={handleSearchFocus}
         placeholderText="Search by Project"
         mobilePlaceholderText="Projects"
+        searchBlocklist={["username", "createdat", "updatedat"]}
       />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {heroContent}
@@ -602,7 +658,7 @@ export const DiscoverPage = () => {
         Clicking a tag filter adds it to a list & updates panel display based on that list
         Changes to filters via filter menu are only applied after a confirmation
       */}
-      <main id="main" tabIndex={-1} aria-label='main content'>
+      <article id="main" tabIndex={-1} aria-label='main content'>
         <DiscoverProjects updateItemList={updateProjectList} />
 
         {/* Panel container. itemAddInterval can be whatever. 25 feels good for now */}
@@ -612,8 +668,8 @@ export const DiscoverPage = () => {
         </div>
 
         {loadObj}
-      </main>
+      </article>
       <ToTopButton />
-    </div>
+    </main>
   );
 }

@@ -30,11 +30,15 @@ import type {
   MyMember,
   SessionUserData,
   CreateUserInput,
+  UpdateTagBlacklistInput,
+  GalleryImage,
+  GalleryVideo,
+  AddGalleryImageInput,
+  AddGalleryVideoInput,
 } from "@looking-for-group/shared";
 
-/* USER CRUD */
+//#region USER CRUD/LOGIN
 
-//This probably will change with shibboleth???
 /**
  * Creates a new user
  * @param userData - data for creating a user
@@ -135,6 +139,93 @@ export const getCurrentAccount = async (): Promise<ApiResponse<MePrivate>> => {
 };
 
 /**
+ * gets the images uploaded to a user's gallery
+ * @param userId the ID of the user with the gallery
+ * @returns an array of all the images from a user gallery
+ */
+export const getGalleryImages = async (userId: number): Promise<ApiResponse<GalleryImage[]>> => {
+  const apiURL = `/me/gallery/${userId}/images`;
+  const response = await GET(apiURL);
+
+  if (response.error) console.log(`Error in addPic: ${response.error}`);
+  return response;
+}
+
+/**
+ * gets the videos uploaded to a user's gallery
+ * @param userId the ID of the user with the gallery
+ * @returns an array of all the videos from a user gallery
+ */
+export const getGalleryVideos = async (userId: number): Promise<ApiResponse<GalleryVideo[]>> => {
+  const apiURL = `/me/gallery/${userId}/videos`;
+  const response = await GET(apiURL);
+
+  if (response.error) console.log(`Error in addPic: ${response.error}`);
+  return response;
+}
+
+/**
+ * adds an image to the user's gallery
+ * @param userId id of the user
+ * @param image information on the image to be uploaded
+ * @returns response
+ */
+export const postGalleryImage = async (userId: number, imageData: AddGalleryImageInput): Promise<ApiResponse<GalleryImage>> => {
+  const apiURL = `/me/gallery/${userId}/images`;
+  
+  const form = new FormData();
+  for (const [name, value] of Object.entries(imageData)) {
+    if (value !== null) form.append(name, value);
+  }
+  const response = await POST(apiURL, form);
+
+  if (response.error) console.log(`Error in addPic: ${response.error}`);
+  return response as ApiResponse<GalleryImage>;
+}
+
+/**
+ * adds a video to the user's gallery
+ * @param userId id of the user
+ * @param video information on the video to be uploaded
+ * @returns response
+ */
+export const postGalleryVideo = async (userId: number, video: AddGalleryVideoInput): Promise<ApiResponse<GalleryVideo>> => {
+  const apiURL = `/me/gallery/${userId}/videos`;
+  const response = await POST(apiURL, video);
+
+  if (response.error) console.log(`Error in addPic: ${response.error}`);
+  return response as ApiResponse<GalleryVideo>;
+}
+
+/**
+ * removes an image from the user's gallery
+ * @param userId id of the user
+ * @param imageId id of the image
+ * @returns response
+ */
+export const deleteGalleryImage = async (userId: number, imageId: number): Promise<ApiResponse<any>> => {
+  const apiURL = `/me/gallery/${userId}/images/${imageId}`;
+  const response = await DELETE(apiURL);
+
+  if (response.error) console.log(`Error in addPic: ${response.error}`);
+  return response;
+}
+
+/**
+ * removes a video from the user's gallery
+ * @param userId id of the user
+ * @param videoId id of the video
+ * @returns response
+ */
+export const deleteGalleryVideo = async (userId: number, videoId: number): Promise<ApiResponse<any>> => {
+  const apiURL = `/me/gallery/${userId}/videos/${videoId}`;
+  const response = await DELETE(apiURL);
+
+  if (response.error) console.log(`Error in addPic: ${response.error}`);
+  return response;
+}
+
+/**
  * Edit information for one user, specified by URL.
  * @param userData - The data to change for the user
  * @returns response data
@@ -165,13 +256,12 @@ export const editUser = async (
  */
 export const reportUser = async (
   userId: number,
-  report: string,
+  report: string
 ): Promise<ApiResponse> => {
-  const apiURL = `/me/users/report/${userId}/${report}`;
-  const response = await POST(apiURL, {});
-  
-  //if (response.error) console.log(`Error in reportUser: ${response.error}`);
-  //else console.log(response);
+  const apiURL = `/me/users/report/${userId}`;
+  const response = await POST(apiURL, { reason: report });
+
+  if (response.error) console.log(`Error in reportUser: ${response.error}`);
   return response;
 };
 
@@ -184,9 +274,57 @@ export const deleteUser = async (): Promise<ApiResponse> => {
   return response;
 };
 
+/**
+ * Gets an array of all userIDs the current user has blocked
+ * @returns number[] of all userIDs the current user has blocked
+ */
+export const getBlockedUsersById = async () => {
+  const apiURL = `/me/blocklist`;
+  const response = await GET(apiURL);
+  //console.log(response);
+
+  if (response.error) {
+    console.error(response.error);
+  }
+
+  return response;
+}
+
+/**
+ * Blocks a user by userID
+ * @param blockedUserID The userID of the person to block
+ */
+export const blockUser = async (blockedUserID: number | undefined) => {
+  const apiURL = `/me/blocklist`;
+  const response = await POST(apiURL, { userId: blockedUserID });
+  //console.log(response);
+
+  if (response.error) {
+    console.error(response.error);
+  }
+
+  return response;
+}
+
+/**
+ * Unblocks a user by userID
+ * @param blockedUserID The userID of the person to unblock
+ */
+export const unblockUser = async (blockedUserID: number | undefined) => {
+  const apiURL = `/me/blocklist`;
+  const response = await DELETE(apiURL, { userId: blockedUserID });
+  //console.log(response);
+
+  if (response.error) {
+    console.error(response.error);
+  }
+
+  return response;
+}
+
 /* ACCOUNT INFO/ PASSWORD RESET*/
 
-/* LOOKUP USER */
+//#region USER LOOKUP
 
 /**
  * Get User by Username
@@ -217,8 +355,9 @@ export const getUserByEmail = async (
   //console.log(response);
   return response;
 };
+//#endregion
 
-/* USER FOLLOWINGS */
+//#region USER FOLLOWINGS
 
 /**
  * Get people that a user is following.
@@ -274,8 +413,42 @@ export const deleteUserFollowing = async (id: number) => {
   //console.log(response);
   return response;
 };
+//#endregion
 
-/* PROJECT FOLLOWINGS/VISIBILITY */
+//#region TAG BLACKLIST
+
+/**
+ * Get the current user's tag blacklist
+ * @returns 200 if successful, 404 if not
+ */
+export const getTagExclusion = async (): Promise<
+  ApiResponse<Tag[]>
+> => {
+  const url = `/me/tag-blacklist`;
+  const response = await GET(url);
+
+  return response;
+};
+
+/**
+ * Update the current user's tag blacklist
+ * @param {Tag[]} newBlacklist - The updated tag blacklist
+ * @returns 201 if successful, 404 if not
+ */
+export const updateTagExclusion = async (
+  newBlacklist: UpdateTagBlacklistInput
+): Promise<ApiResponse<Tag[]>> => {
+  const url = `/me/tag-blacklist`;
+  const response = await POST(url, newBlacklist);
+
+  if (response.error) console.log(`Error in updateTagBlacklist: ${response.error}`);
+  //console.log(response);
+  return response as ApiResponse<Tag[]>;
+};
+
+//#endregion
+
+// #region PROJECT FOLLOWINGS/VISIBILITY
 
 //Get the current user's projects
 export const getProjectsByUser = async (): Promise<
@@ -382,6 +555,9 @@ export const deleteProjectFollowing = async (
   return response;
 };
 
+//#endregion
+
+//#region SOCIALS
 // Get socials for the current user based on ID.
 export const getUserSocials = async (): Promise<ApiResponse<MySocial[]>> => {
   const url = `/me/socials`;
@@ -437,7 +613,9 @@ export const deleteUserSocial = async (
   //console.log(response);
   return response;
 };
+//#endregion
 
+//#region SKILLS
 // Get skills for the current user based on ID
 export const getUserSkills = async (): Promise<ApiResponse<MySkill[]>> => {
   const url = `/me/skills`;
@@ -494,6 +672,9 @@ export const deleteUserSkill = async (
   return response as ApiResponse<null>;
 };
 
+//#endregion
+
+//#region MAJORS
 // Get majors for the current user based on ID
 export const getUserMajors = async (): Promise<ApiResponse<MyMajor[]>> => {
   const url = `/me/majors`;
@@ -528,8 +709,9 @@ export const deleteUserMajor = async (
   //console.log(response);
   return response as ApiResponse<null>;
 };
+//#endregion
 
-/* DATASETS */
+//#region DATASETS
 
 /**
  * Retrieves list of majors.
@@ -596,6 +778,7 @@ export const getSocials = async (): Promise<ApiResponse<Social[]>> => {
   //console.log(response);
   return response;
 };
+//#endregion
 
 export default {
   createNewUser,
@@ -635,4 +818,10 @@ export default {
   getTags,
   getSocials,
   getCurrentAccount,
+  getGalleryImages,
+  getGalleryVideos,
+  postGalleryImage,
+  postGalleryVideo,
+  deleteGalleryImage,
+  deleteGalleryVideo,
 };

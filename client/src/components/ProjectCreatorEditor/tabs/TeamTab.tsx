@@ -25,7 +25,8 @@ import {
 	getCurrentAccount
 } from "../../../api/users";
 import {
-	getMemberRequestByProjectID
+	getMemberRequestByProjectID,
+	changeOwner,
 } from "../../../api/projects"
 import {
 	ProjectJob,
@@ -117,6 +118,7 @@ type TeamTabProps = {
 	message: string;
 	messages: string[];
 	setMessages: React.Dispatch<React.SetStateAction<string[]>>;
+	isSaving: boolean;
 };
 
 /**
@@ -154,7 +156,8 @@ export const TeamTab = ({
 	updateFailCheck,
 	message,
 	messages,
-	setMessages
+	setMessages,
+	isSaving
 }: TeamTabProps) => {
 	// --- Hooks ---
 	// State for storing all available roles from the API.
@@ -220,6 +223,9 @@ export const TeamTab = ({
 	const [messageText, setMessageText] = useState("");
 
 	const [confirm, setConfirm] = useState(false);
+
+	const [newOwner, setNewOwner] = useState<UserPreview | null>(null);
+	const [ownerChange, setOwnerChange] = useState("");
 	/**
 	 * Handles invitation request in local and data manager
 	 */
@@ -254,6 +260,7 @@ export const TeamTab = ({
 
 	const { setOpen: closeOuterPopup } = useContext(PopupContext);
 	const { setOpen } = useContext(PopupContext);
+	
 	// Check if the Pending Requests tab is unsaved
 	const isPendingRequestsUnsaved = useMemo(() => {
 		const currentInvitations = pendingInvitations || [];
@@ -331,6 +338,7 @@ export const TeamTab = ({
 	useEffect(() => {
 		setErrorMember(errorAddMember);
 	}, [errorAddMember, setErrorMember]);
+
 	useEffect(() => {
 		setErrorPosition(errorAddPosition);
 	}, [errorAddPosition, setErrorPosition]);
@@ -447,7 +455,6 @@ export const TeamTab = ({
 		projectAfterTeamChanges.jobs
 	]);
 
-
 	// Load correct contact name in open positions
 	useEffect(() => {
 		const loadName = async () => {
@@ -475,10 +482,11 @@ export const TeamTab = ({
 		},
 		[projectAfterTeamChanges.jobs]
 	);
+
 	/**
-   * Helper function that retrieves all pending requests associated to the project
-   * @returns Pending requests (using useState)
-   */
+	 * Helper function that retrieves all pending requests associated to the project
+	 * @returns Pending requests (using useState)
+	 */
 	const getPendingRequests = async () => {
 		if (!projectData.projectId) return;
 
@@ -501,6 +509,7 @@ export const TeamTab = ({
 			setPendingRequestsLoaded(true);
 		}
 	};
+
 	// Load pending member requests once per project when no saved local state exists
 	useEffect(() => {
 		if (!pendingRequestsLoaded && projectData.projectId) {
@@ -1053,6 +1062,25 @@ export const TeamTab = ({
 		return " Date was undefined";
 	}
 
+	//make date safe to stop crashing
+	const safeDate = (value: Date | string | null | undefined) => {
+		if (!value) return "None";
+
+		//convert to real date
+		const dateObj = value instanceof Date ? value : new Date(value)
+
+		//validate
+		if (isNaN(dateObj.getTime())) return "None";
+
+		//convert to ISO string + remove time
+		const date = dateObj.toISOString().slice(0, 10);
+
+		//no date
+		if (date === "1900-01-01") return "None";
+
+		return `${date}`;
+	}
+
 	// --- Content variables ---
 	// JSX content for viewing position details.
 	const positionViewWindow =
@@ -1195,7 +1223,8 @@ export const TeamTab = ({
 								Job Start:
 							</span>
 
-							{undefinedDateToString(currentJob?.jobStart)}
+							{//if no date was inserted, "none" appears
+								safeDate(currentJob?.jobStart)}
 						</div>
 
 						<div id="position-end">
@@ -1203,7 +1232,7 @@ export const TeamTab = ({
 								Job End:
 							</span>
 
-							{undefinedDateToString(currentJob?.jobEnd)}
+							{safeDate(currentJob?.jobEnd)}
 						</div>
 
 						<div id="position-compensation">
@@ -1412,8 +1441,45 @@ export const TeamTab = ({
 						) : "None"}
 				</div>
 			</div>
-
 			<div id="edit-position-details">
+				<div id="edit-position-details-top">
+					<div className="edit-position-container">
+						<div id="edit-position-job-start">
+							<label className="edit-position-job-start">Job Start</label>
+							<input
+								type="date"
+								id="input-job-start"
+								name="job-start"
+								min="1000-01-01"
+								max="9999-12-31"
+								onChange={(e) => {
+									if (currentJob) {
+										currentJob.jobStart = e.currentTarget.valueAsDate;
+									} else {
+										console.log("currentJob is undefined");
+									}
+								}}>
+							</input></div>
+
+						<div id="edit-position-job-end">
+							<label className="edit-position-job-end">Job End</label>
+							<input
+								type="date"
+								id="input-job-end"
+								name="job-end"
+								min="1000-01-01"
+								max="9999-12-31"
+								onChange={(e) => {
+									if (currentJob) {
+										currentJob.jobEnd = e.currentTarget.valueAsDate;
+									} else {
+										console.log("currentJob is undefined");
+									}
+								}}>
+							</input>
+						</div>
+					</div>
+				</div>
 				<div id="edit-position-details-left">
 					<div className="edit-position-container">
 						<label className="edit-position-availability">
@@ -1546,39 +1612,6 @@ export const TeamTab = ({
 
 				</div>
 				<div id="edit-position-details-right">
-					<div className="edit-position-container">
-						<label className="edit-position-job-start">Job Start</label>
-						<input
-							type="date"
-							id="input-job-start"
-							name="job-start"
-							min="1000-01-01"
-							max="9999-12-31"
-							onChange={(e) => {
-								if (currentJob) {
-									currentJob.jobStart = e.currentTarget.valueAsDate;
-								} else {
-									console.log("currentJob is undefined");
-								}
-							}}>
-						</input>
-
-						<label className="edit-position-job-end">Job End</label>
-						<input
-							type="date"
-							id="input-job-end"
-							name="job-end"
-							min="1000-01-01"
-							max="9999-12-31"
-							onChange={(e) => {
-								if (currentJob) {
-									currentJob.jobEnd = e.currentTarget.valueAsDate;
-								} else {
-									console.log("currentJob is undefined");
-								}
-							}}>
-						</input>
-					</div>
 					<div className="edit-position-container">
 						<label className="edit-position-compensation">
 							Compensation
@@ -1759,7 +1792,8 @@ export const TeamTab = ({
 	// Check if team tab is in edit mode
 	const positionWindow =
 		editMode === true ? positionEditWindow : positionViewWindow;
-	// Renders the current member requests interface with member cards and edit functionality.
+	
+		// Renders the current member requests interface with member cards and edit functionality.
 	const currentRequestsContent: JSX.Element = useMemo(
 		() => (
 			<div id="project-editor-project-requests">
@@ -2027,6 +2061,7 @@ export const TeamTab = ({
 							}}
 						/>
 						<div className="project-editor-project-member-info">
+							{projectAfterTeamChanges.owner.userId === member.user?.userId ? <ThemeIcon id={'owner-crown'} width={18} height={18} className={'color-fill'} ariaLabel="Project Owner"/> : ""}
 							<div className="project-editor-project-member-name">
 								{member.user?.firstName} {member.user?.lastName}
 							</div>
@@ -2124,38 +2159,157 @@ export const TeamTab = ({
 											/>
 										</Select>
 									</div>
+									{projectAfterTeamChanges.owner.userId === currentMember?.user?.userId
+										&& currentMember.role?.label.toLowerCase() !== "owner" ?
+										<div id="project-team-change-owner">
+											<label>Choose a member to take ownership of the project</label>
+											<div id="user-search-container">
+												<Dropdown>
+													<DropdownButton buttonId="user-search-dropdown-button">
+														<SearchBar
+															key={searchBarKey}
+															value={ownerChange}
+															onChange={(e) =>
+																setOwnerChange(e.target.value)
+															}
+															dataSets={[
+																{ data: projectAfterTeamChanges.members }
+															]}
+															onSearch={(results) => {
+																handleSearch(
+																	results as UserPreview[][]
+																);
+															}}
+															placeholderText='Search Members'>
+														</SearchBar>
+													</DropdownButton>
+													<DropdownContent>
+														<div id="user-search-results">
+															{projectAfterTeamChanges.members.map(
+																(user, index) => (
+																	<DropdownButton
+																		key={user.user?.userId}
+																		className={`user-search-item
+																		${index === 0 ? "top" : ""}
+																		${index === searchResults.length - 1 ? "bottom" : ""}`}
+																		callback={() => {
+																			setNewOwner(user.user);
+																			setOwnerChange(`${user.user?.firstName} ${user.user?.lastName} (${user.user?.username})`)
+																			if (errorAddMember === "To relinquish ownership, you must select a new owner.")
+																				setErrorAddMember("");
+																		}
+																		}
+																	>
+																		<p className="user-search-name">
+																			{user.user?.firstName}{" "}
+																			{user.user?.lastName}
+																		</p>
+																		<p className="user-search-username">
+																			{user.user?.username}
+																		</p>
+																	</DropdownButton>
+																)
+															)}
+														</div>
+													</DropdownContent>
+												</Dropdown>
+											</div>
+										</div> :
+										""
+									}
+									{errorAddMember !== "" ?
+										<div>
+											{errorAddMember}
+										</div>
+										: ""}
 									{/* Action buttons */}
 									<div className="project-editor-button-pair">
 										{/* Save Button */}
 										<PopupButton
 											buttonId="team-edit-member-save-button"
+											doNotClose={() =>
+												!currentMember ||
+												!currentMember.user ||
+												!currentMember.user.userId ||
+												(currentMember.user.userId === projectAfterTeamChanges.owner?.userId && !newOwner)
+											}
 											callback={() => {
-												// TODO error messages
-												if (!currentMember) return;
-												if (
-													isNullOrUndefined(
-														currentMember.user
-													)
-												)
+												if (!currentMember) {
+													setErrorAddMember("No member selected.");
 													return;
+												};
+												if (!currentMember.user || !currentMember.user.userId) {
+													setErrorAddMember("Member is missing user information.");
+													return;
+												} // cant edit owner role
+												if (currentMember.user.userId === projectAfterTeamChanges.owner?.userId && !newOwner) {
+													setErrorAddMember("To relinquish ownership, you must select a new owner.");
+													return;
+												}
+												//if (isNullOrUndefined(currentMember.user)) return;
 
+												if (newOwner) {
+													dataManager?.swapOwner({
+														id: {
+															type: "canon",
+															value: newOwner.userId,
+														},
+														data: newOwner.userId,
+													});
+													dataManager?.updateMember({
+														id: {
+															type: "canon",
+															value: newOwner.userId,
+														},
+														data: {
+															roleId: 77,
+															profileVisibility: "public"
+														}
+													})
+													let newMembers = structuredClone(projectAfterTeamChanges.members).map(
+														(member) => {
+															// if this member matches the updated member
+															if (
+																newOwner
+																	.userId ===
+																member.user
+																	?.userId
+															) {
+																// update role
+																return {
+																	...member,
+																	role: { label: "Owner", roleId: 77 }
+																} as PendingProjectMember;
+															} else {
+																// if it doesn't match, do nothing to the member
+																return member;
+															}
+														}
+													);
+													projectAfterTeamChanges.members = newMembers;
+												}
 												// update member in data manager
-												dataManager?.updateMember({
-													id: {
-														type:
-															"localId" in
-																currentMember
-																? "local"
-																: "canon",
-														value: currentMember
-															.user?.userId
-													},
-													data: {
-														roleId: currentMember
-															.role?.roleId
-													}
-												});
-
+												try {
+													dataManager?.updateMember({
+														id: {
+															type:
+																"localId" in
+																	currentMember
+																	? "local"
+																	: "canon",
+															value: currentMember
+																.user?.userId
+														},
+														data: {
+															roleId: currentMember
+																.role?.roleId
+														}
+													});
+												} catch (e) {
+													console.error(e);
+													setErrorAddMember("Failed to update member");
+													return;
+												}
 												// update team changes array
 												projectAfterTeamChanges.members =
 													projectAfterTeamChanges.members.map(
@@ -2213,48 +2367,55 @@ export const TeamTab = ({
 													<PopupButton
 														className="delete-button"
 														callback={() => {
-															if (
-																!currentMember
-															) {
-																// TODO: error message here
+															if (!currentMember) {
+																setErrorAddMember("no member selected");
 																return;
 															}
-															if (
-																isNullOrUndefined(
-																	currentMember.user
-																)
-															) {
-																// TODO: error message here
+															if (!currentMember.user || !currentMember.user.userId) {
+																setErrorAddMember("Member is missing user information")
+																return;
+															} //no deleting project owner
+															if (currentMember.user.userId === projectAfterTeamChanges.owner?.userId) {
+																setErrorAddMember("Owner cannot be removed");
 																return;
 															}
 
-															if (
-																"localId" in
-																currentMember
-															) {
-																dataManager?.deleteMember(
-																	{
-																		id: {
-																			type: "local",
-																			value: currentMember
-																				.user
-																				.userId
-																		},
-																		data: null
-																	}
-																);
+															if ("localId" in currentMember) {
+																try {
+																	dataManager?.deleteMember(
+																		{
+																			id: {
+																				type: "local",
+																				value: currentMember
+																					.user
+																					.userId
+																			},
+																			data: null
+																		}
+																	);
+																} catch (e) {
+																	console.error(e);
+																	setErrorAddMember("Failed to delete member");
+																	return;
+																}
 															} else {
-																dataManager?.deleteMember(
-																	{
-																		id: {
-																			type: "canon",
-																			value: currentMember
-																				.user
-																				.userId
-																		},
-																		data: null
-																	}
-																);
+																try {
+																	dataManager?.deleteMember(
+																		{
+																			id: {
+																				type: "canon",
+																				value: currentMember
+																					.user
+																					.userId
+																			},
+																			data: null
+																		}
+																	);
+																} catch (e) {
+																	console.error(e);
+																	setErrorAddMember("Failed to delete member");
+																	return;
+																}
 															}
 															projectAfterTeamChanges.members =
 																projectAfterTeamChanges.members.filter(
@@ -2576,8 +2737,9 @@ export const TeamTab = ({
 
 			<div id="project-editor-team-content">
 				{teamTabContent}
-				{/* Merge another project's whole team into this one (invite-based) */}
-				{currentTeamTab === 0 && (
+				{/* Merge another project's whole team into this one (invite-based).
+				    Owner-only: non-owner members can't merge another team into this project. */}
+				{currentTeamTab === 0 && currentUserId === projectAfterTeamChanges.owner?.userId && (
 					<MergeProjectTeam
 						dataManager={dataManager}
 						targetProjectId={projectAfterTeamChanges.projectId as number}
@@ -2602,16 +2764,25 @@ export const TeamTab = ({
 								<p>*{message}*</p>
 							</div>
 						)}
-						<PopupButton
-							buttonId="project-editor-save"
-							callback={() => {
-								// Incomplete form: still clickable so the save validation
-								// runs, shows the error, and auto-scrolls to the missing field.
-								if (!saveable) saveProject?.();
-								else setConfirm(true)
-							}}>
-							Save Changes
-						</PopupButton>
+						{isSaving ?
+							(
+								// Currently Saving
+								<div className='spinning-loader'></div>
+							) : (
+								// Save is complete or hasn't been pressed
+								<PopupButton
+									buttonId="project-editor-save"
+									callback={() => {
+										// Incomplete form: still clickable so the save validation
+										// runs, shows the error, and auto-scrolls to the missing field.
+										if (!saveable) saveProject?.();
+										else setConfirm(true)
+									}}>
+									Save Changes
+								</PopupButton>
+							)
+						}
+
 						{confirm ?
 							<PopupContent useClose={false} callback={() => setConfirm(false)}>
 								<div id="confirm-editor-save-text">
@@ -2628,12 +2799,22 @@ export const TeamTab = ({
 										Cancel
 									</PopupButton>
 								</div>
-							</PopupContent> : ""}
+							</PopupContent> : ""
+						}
 					</Popup>
-					<DeleteProjectButton
-						projectID={unmodifiedProject.projectId}
-						projectTitle={unmodifiedProject.title}
-					/>
+
+					{isSaving ?
+						(
+							// Just here for blank space and to prevent 
+							// accidental deletion while a project is saving
+							""
+						) : (
+							<DeleteProjectButton
+								projectID={unmodifiedProject.projectId}
+								projectTitle={unmodifiedProject.title}
+							/>
+						)
+					}
 				</div>
 			</div>
 		</div>

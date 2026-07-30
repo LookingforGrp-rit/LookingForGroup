@@ -10,6 +10,9 @@ import { addUserFollowing, deleteUserFollowing, getUsersById } from '../api/user
 interface ProfilePanelProps {
   profileData: UserPreview;
   currentUserId: number;
+  // Called after the user unfollows, so a parent (e.g. the profile "likes"
+  // list) can drop this card immediately instead of waiting for a refresh.
+  onUnfollow?: (userId: number) => void;
 }
 
 /**
@@ -21,7 +24,7 @@ interface ProfilePanelProps {
  * @param profileData - UserPreview object containing basic user info (name, image, title, location, pronouns, fun fact, etc.)
  * @returns JSX element representing a user profile panel
  */
-export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) => {
+export const ProfilePanel = ({ profileData, currentUserId, onUnfollow }: ProfilePanelProps) => {
 
   const navigate = useNavigate();
   const profileURL = `${paths.routes.PROFILE}?userID=${profileData.userId}`;
@@ -80,18 +83,20 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
       }
       else { // no longer following
         await deleteUserFollowing(profileData.userId);
+        onUnfollow?.(profileData.userId);
       }
     }
   };
 
   return (
     <div
+      tabIndex={0}
       className={'profile-panel'}
       onClick={() => navigate(profileURL)}
     >
       <img
         src={usePreloadedImage(`${profileData.profileImage}`, profilePicture)}
-        alt='profile image'
+        alt={`${profileData.firstName} ${profileData.lastName}'s avatar`}
       />
 
       <div className={'profile-panel-extras'} ref={profilePanel} hidden={true}>
@@ -116,6 +121,7 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
           height={27}
           id={"heart-filled"}
           ariaLabel="unfollow profile"
+          role='button'
           onClick={(e) => { toggleFollow(); e.stopPropagation(); }} // stopPropagation cancels the redirect of the parent
         />
           : profileData.userId !== currentUserId ? <ThemeIcon
@@ -123,6 +129,7 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
             height={27}
             id={"heart-empty"}
             ariaLabel="follow profile"
+            role='button'
             onClick={(e) => { toggleFollow(); e.stopPropagation(); }} // stopPropagation cancels the redirect of the parent
           /> : ""}
 

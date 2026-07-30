@@ -17,6 +17,7 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
 
     const req: AuthenticatedRequest = request as AuthenticatedRequest;
     const body: RequestToJoinInput = req.body as RequestToJoinInput;
+    const roleId: number = body.roleId;
     const projectId = parseInt(req.params.id as string);
     const prospectiveMemberId = body.prospectiveMemberId;
 
@@ -25,13 +26,15 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
       where: {
         projectId,
         prospectiveMemberId,
+        roleId,
+        requestStatus: 'Pending',
       },
       select: {
         requestId: true,
         roleId: true,
         users: {
           select: {
-            preferredName: true,
+            firstName: true,
             lastName: true,
             username: true,
           },
@@ -40,7 +43,7 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
           select: {
             title: true,
             users: {
-              select: { preferredName: true },
+              select: { firstName: true },
             },
           },
         },
@@ -57,8 +60,8 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
     });
 
     const projectTitle = data.projects.title;
-    const ownerName = data.projects.users.preferredName;
-    const requesterName = data.users.preferredName;
+    const ownerName = data.projects.users.firstName;
+    const requesterName = data.users.firstName;
     const requesterLastName = data.users.lastName;
     const requesterUsername = data.users.username;
     const roleName = roleData?.label;
@@ -75,7 +78,7 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
     notification.message += `has requested to join your project <strong>${projectTitle}</strong> as a <strong>${roleName as string}</strong>.<br /><br />  `;
     if (body.message) {
       notification.message += `${requesterName} has provided a message:<br />`;
-      notification.message += `"${body.message}"<br /><br />`;
+      notification.message += `${body.message}<br /><br />`;
     }
     notification.message += `You may view the `;
     notification.message += `<a href="${requesterProfileLink}">requester's profile</a>.<br /><br />`;

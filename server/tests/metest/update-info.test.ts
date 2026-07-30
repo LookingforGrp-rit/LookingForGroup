@@ -78,7 +78,6 @@ const transformed: MePrivate = {
   designer: false,
   developer: true,
   firstName: 'Eric',
-  preferredName: 'Eric',
   followers: {
     users: [],
     count: 0,
@@ -100,7 +99,6 @@ const transformed: MePrivate = {
   lastName: '',
   location: '',
   majors: [] as MyMajor[],
-  mentor: false,
   phoneNumber: '',
   profileImage: 'new.png',
   projects: [] as MyMember[],
@@ -115,6 +113,7 @@ const transformed: MePrivate = {
   username: '',
   privacy: 'public',
   displayPhone: false,
+  tagBlacklist: [],
 };
 
 describe('updateUserInfoService', () => {

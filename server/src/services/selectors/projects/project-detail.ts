@@ -7,7 +7,7 @@ import { ProjectPreviewSelector } from './project-preview.ts';
 export const ProjectDetailSelector = Object.freeze({
   ...ProjectPreviewSelector,
   description: true,
-  purpose: true,
+  context: true,
   status: true,
   audience: true,
   createdAt: true,

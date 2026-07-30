@@ -9,6 +9,12 @@ import { addProjectFollowing } from '#controllers/me/followings/add-follow-proj.
 import { addUserFollowing } from '#controllers/me/followings/add-follow-user.ts';
 import { deleteProjectFollowing } from '#controllers/me/followings/delete-follow-proj.ts';
 import { deleteUserFollowing } from '#controllers/me/followings/delete-follow-user.ts';
+import addGalleryImageController from '#controllers/me/gallery/add-image.ts';
+import addGalleryVideoController from '#controllers/me/gallery/add-video.ts';
+import deleteGalleryImageController from '#controllers/me/gallery/delete-image.ts';
+import deleteGalleryVideoController from '#controllers/me/gallery/delete-video.ts';
+import getGalleryImageController from '#controllers/me/gallery/get-images.ts';
+import getGalleryVideoController from '#controllers/me/gallery/get-videos.ts';
 import { getAccount } from '#controllers/me/get-acc.ts';
 import { getMyProjects } from '#controllers/me/get-my-proj.ts';
 import { getUsernameByGoogle } from '#controllers/me/get-username-google.ts';
@@ -21,6 +27,7 @@ import { deleteNotification } from '#controllers/me/notifications/delete-notific
 import { getNotification } from '#controllers/me/notifications/get-notification.ts';
 import { getNotifications } from '#controllers/me/notifications/get-notifications.ts';
 import { readNotification } from '#controllers/me/notifications/read-notification.ts';
+import { reportBugController } from '#controllers/me/report-bug.ts';
 import { reportProjectController } from '#controllers/me/report-proj.ts';
 import { reportUserController } from '#controllers/me/report-user.ts';
 import addSkills from '#controllers/me/skills/add-skills.ts';
@@ -31,12 +38,14 @@ import { addSocial } from '#controllers/me/socials/add-social.ts';
 import { deleteSocial } from '#controllers/me/socials/delete-social.ts';
 import { getSocials } from '#controllers/me/socials/get-socials.ts';
 import { updateSocial } from '#controllers/me/socials/update-social.ts';
+import { getTagBlacklist } from '#controllers/me/tag-blacklist/get-tag-blacklist.ts';
+import { updateTagBlacklist } from '#controllers/me/tag-blacklist/update-tag-blacklist.ts';
 import { updateUserInfo } from '#controllers/me/update-info.ts';
 import { updateProjectProfileVisibilityController } from '#controllers/me/update-project-profile-visibility.ts';
 import { isUserBlocked } from '#middleware/validators/is-user-blocked.ts';
 import { MeParameterLocation } from '#middleware/validators/parameter-location/me-param-location.ts';
 import { PathParameterLocation } from '#middleware/validators/parameter-location/path-param-location.ts';
-import { ProjectInPathParameterLocation } from '#middleware/validators/parameter-location/project-in-path-param-location.ts';
+import { ProjectOwnerInPathParameterLocation } from '#middleware/validators/parameter-location/project-owner-in-path-param-location.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
@@ -67,7 +76,7 @@ router.use(requiresLogin, injectCurrentUser);
 router.post(
   '/followings/projects/:id',
   projectExistsAt('path', 'id'),
-  isUserBlocked(new ProjectInPathParameterLocation(), '', new MeParameterLocation(), ''),
+  isUserBlocked(new ProjectOwnerInPathParameterLocation(), 'id', new MeParameterLocation(), ''),
   authenticated(addProjectFollowing),
 );
 
@@ -183,6 +192,24 @@ router.delete(
 );
 //#endregion
 
+//#region Gallery routes
+router.get('/gallery/:userId/images', authenticated(getGalleryImageController));
+
+router.get('/gallery/:userId/videos', authenticated(getGalleryVideoController));
+
+router.post(
+  '/gallery/:userId/images',
+  upload.single('file'),
+  authenticated(addGalleryImageController),
+);
+
+router.post('/gallery/:userId/videos', authenticated(addGalleryVideoController));
+
+router.delete('/gallery/:userId/images/:imageId', authenticated(deleteGalleryImageController));
+
+router.delete('/gallery/:userId/videos/:videoId', authenticated(deleteGalleryVideoController));
+//#endregion
+
 //#region Notifications routes
 router.get('/notifications', authenticated(getNotifications));
 
@@ -217,5 +244,14 @@ router.get('/get-username', authenticated(getUsernameByGoogle));
 
 //Report user
 router.post('/users/report/:id', userExistsAt('path', 'id'), authenticated(reportUserController));
+
+//#region Tag blacklist routes
+//Gets a user's tag blacklist
+router.get('/tag-blacklist', authenticated(getTagBlacklist));
+
+//Update a user's tag blacklist
+router.patch('/tag-blacklist', authenticated(updateTagBlacklist));
+//Report bug
+router.post('/report-bug', authenticated(reportBugController));
 
 export default router;

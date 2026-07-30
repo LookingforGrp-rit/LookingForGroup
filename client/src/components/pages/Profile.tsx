@@ -9,27 +9,46 @@ import "../Styles/projects.css";
 import "../Styles/settings.css";
 import "../Styles/pages.css";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo, } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../../constants/routes";
 import { Header, loggedIn } from "../Header";
 import { PanelBox } from "../PanelBox";
 import { ProfileEditPopup } from "../Profile/ProfileEditPopup";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
-import { Popup, PopupButton, PopupContent } from "../Popup";
+import { Popup, PopupButton, PopupContent, } from "../Popup";
 import { Select, SelectButton, SelectOptions } from "../Select";
 import { ThemeIcon } from "../ThemeIcon";
 import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
+import Reporter from "../Reporter";
 import profilePicture from "../../images/lfrog.png";
-import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles } from "../../api/users";
+import {
+  getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing,
+  getJobTitles,
+  getBlockedUsersById,
+  blockUser,
+  unblockUser,
+  getGalleryImages,
+  getGalleryVideos
+} from "../../api/users";
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
-import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserReport } from '@looking-for-group/shared';
+import {
+  MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail,
+  UserAccessLevel, UserReport, BanDetail,
+  GalleryImage,
+  GalleryVideo
+} from '@looking-for-group/shared';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
-import { getReportedUsers, getUserAccessLevel, deleteUserReport, warnUser, banUser } from "../../api/mod-tools";
+import {
+  getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification,
+  deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi
+} from "../../api/mod-tools";
+import { getYouTubeEmbedID, getYouTubeEmbedURL } from "../../functions/parseYoutube";
+import { Carousel, CarouselButton, CarouselContent, CarouselTabs } from "../ImageCarousel";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -42,7 +61,7 @@ type Project = ProjectPreview;
  * Profile page with user information collected from profileID.
  * @returns JSX Element
  */
-const Profile = (userProfile: any) => {
+const Profile = (/*userProfile: any*/) => {
   // --------------------
   // Global variables
   // --------------------
@@ -57,11 +76,21 @@ const Profile = (userProfile: any) => {
   const [isUsersProfile, setIsUsersProfile] = useState<boolean>(false);
 
   const [displayedProfile, setDisplayedProfile] = useState<UserDetail>();
-  const [userID, setUserID] = useState<number>();
+  const [userID, setUserID] = useState<number>(0);
+
+  const [isUserMod, setIsUserMod] = useState<boolean>(false);
   const [isUserAdmin, setIsUserAdmin] = useState<boolean>(false);
 
+  const [displayedProfileAccessLevel, setDisplayedProfileAccessLevel] = useState<UserAccessLevel>('User');
+  const [previousDisplayedProfileAccessLevel, setPreviousDisplayedProfileAccessLevel] = useState<UserAccessLevel>('User');
+
   const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
-  const [reportedUser, setReportedUser] = useState<UserReport>();
+  const [activeReportList, setActiveReportList] = useState<UserReport[]>([]);
+  const [inactiveReportList, setInactiveReportList] = useState<UserReport[]>([]);
+  
+  const [showGallery, setShowGallery] = useState(false);
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
+  const [galleryVideos, setGalleryVideos] = useState<GalleryVideo[]>([]);
 
   // stores all followed users to display on personal user profile
   const [followedProfilesList, setFollowedProfilesList] = useState<UserPreview[]>([]);
@@ -77,9 +106,19 @@ const Profile = (userProfile: any) => {
 
   const [majorsArr, setMajorsArr] = useState<string[]>([]);
 
+  // If the user is banned
+  const [modActionComplete, setModActionComplete] = useState<boolean>(false);
+  const [banned, setBanned] = useState<boolean>(false);
+  const [unbanned, setUnbanned] = useState<boolean>(false);
+  const [banDetail, setBanDetail] = useState<BanDetail>();
+
   const reportMessage = useRef<HTMLTextAreaElement>(null);
-  const modMessage = useRef<HTMLTextAreaElement>(null);
+  const warnMessage = useRef<HTMLTextAreaElement>(null);
+  const banMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>('');
+  const [promoteResponseText, setPromoteResponseText] = useState<string>('');
+  const [demoteResponseText, setDemoteResponseText] = useState<string>('');
+  const [banReasonSystemMsg, setBanReasonSystemMsg] = useState<string>('');
 
   // ---- Invite-to-project popup state (only used when viewing someone else) ----
   // Projects the current logged-in user owns; populated lazily so we don't fetch
@@ -100,6 +139,8 @@ const Profile = (userProfile: any) => {
       return { name: project.title, description: project.hook };
     }
   );
+
+  let blockButton;
 
   // --------------------
   // Page redirect
@@ -146,6 +187,28 @@ const Profile = (userProfile: any) => {
     loadFollow();
   }, [userID, profileID]);
 
+  useEffect(() => {
+    if (userID === undefined || userID === -1) return;
+
+    const loadGallery = async () => {
+      const imageResponse = await getGalleryImages(userID);
+      const videoResponse = await getGalleryVideos(userID);
+
+      if (imageResponse.data)
+        setGalleryImages(imageResponse.data);
+
+      if (videoResponse.data)
+        setGalleryVideos(videoResponse.data);
+    }
+
+    loadGallery();
+  }, [userID]);
+
+  useEffect(() => {
+    if (isUsersProfile || galleryImages.length > 0 || galleryVideos.length > 0)
+      setShowGallery(true);
+
+  }, [isUsersProfile, galleryImages, galleryVideos])
 
 
   // --------------------
@@ -174,8 +237,8 @@ const Profile = (userProfile: any) => {
   }, [profileID, userID])
 
   /**
-     * Checks mod permissions for the user on render (in useEffect)
-     */
+   * Checks mod permissions for the user on render (in useEffect). The CURRENT user
+   */
   const getUserPermissions = async () => {
     /* Ensures the user is logged in */
     const userAccount = await getCurrentAccount();
@@ -184,23 +247,185 @@ const Profile = (userProfile: any) => {
       /* User must have mod permissions to access mod page */
       const accessLevel = await getUserAccessLevel(userAccount.data.userId);
       if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator') {
+        setIsUserMod(true);
+      }
+      if (accessLevel.data?.toString() == 'Administrator') {
         setIsUserAdmin(true);
       }
     }
   };
 
   /**
-   * Checks if the user has been reported and updates the useState
+   * Checks permissions for the user of the DISPLAYED PROFILE on render (in useEffect).
+   */
+  const getProfileUserPermissions = async () => {
+    /* Ensures the user is logged in */
+    const userAccount = await getUsersById(parseInt(profileID));
+    if (userAccount.status === 200 && userAccount.data?.userId) {
+      const accessLevel = await getUserAccessLevel(userAccount.data.userId);
+      switch (accessLevel.data?.toString()) {
+        case 'User':
+          setDisplayedProfileAccessLevel('User');
+          setPreviousDisplayedProfileAccessLevel('User');
+          break;
+        case 'Moderator':
+          setDisplayedProfileAccessLevel('Moderator');
+          setPreviousDisplayedProfileAccessLevel('Moderator');
+          break;
+        case 'Administrator':
+          setDisplayedProfileAccessLevel('Administrator');
+          setPreviousDisplayedProfileAccessLevel('Administrator');
+          break;
+        default:
+          setDisplayedProfileAccessLevel('User');
+          setPreviousDisplayedProfileAccessLevel('User');
+      }
+    }
+  };
+
+  /**
+   * Checks if the displayed user has been reported and updates the useState
    */
   const isUserReported = async () => {
+    const tempActiveList: UserReport[] = [];
+    const tempInactiveList: UserReport[] = [];
     const currentUser = parseInt(profileID);
     const reportedUsers = (await getReportedUsers()).data;
     if (reportedUsers !== null && reportedUsers !== undefined) {
       for (const report of reportedUsers) {
         if (report.reportedId === currentUser) {
-          setReportedUser(report);
+          if (report.active) {
+            if (report.reporterId !== userID) tempActiveList.push(report)
+          }
+          else {
+            tempInactiveList.push(report);
+          }
         }
       }
+    }
+    setActiveReportList(tempActiveList);
+    setInactiveReportList(tempInactiveList);
+  };
+
+  /**
+   * Checks if the displayed user is a banned user 
+   * If so, get more details on it
+   */
+  const isUserBanned = async () => {
+    const displayedUser = parseInt(profileID);
+    const bannedUsers = (await getBannedUsers()).data;
+    if (bannedUsers) {
+      for (const u of bannedUsers) {
+        if (u.userId === displayedUser) {
+          setBanned(true);
+          const res = await getBanDetail(displayedUser);
+          if (res.data)
+            setBanDetail(res.data);
+        }
+      }
+    }
+  };
+
+  /**
+ * Checks if the displayed user is blocked
+ * If so, change the block button to unblock
+ */
+  const isUserBlocked = async () => {
+    const blocklistRequest = await getBlockedUsersById();
+    let blocklist: UserPreview[] = [];
+    let blocklistUserIds: number[] = [];
+
+    //Success
+    if (blocklistRequest.status === 200) {
+      blocklist = blocklistRequest.data;
+      blocklistUserIds = blocklist.map((userPreview) => userPreview.userId);
+    }
+
+    //Internal server error
+    else if (blocklistRequest.status === 500) {
+      const errorType: string = "Internal server error";
+      console.log(`${errorType} on getBlockedUsersById`);
+      console.log(blocklistRequest.error);
+    }
+
+    const blockUserID = displayedProfile?.userId;
+
+    if (displayedProfile?.userId && blocklistUserIds.includes(displayedProfile?.userId)) {
+      return <button
+        className="profile-menu-dropdown-button"
+        id="profile-menu-block"
+        onClick={async () => {
+          //THE PARAMETER IS THE PERSON TO BLOCK
+          const unblockUserRequest = await unblockUser(blockUserID);
+
+          //Success
+          if (unblockUserRequest.status === 204) {
+            window.location.reload();
+          }
+
+          //Bad request
+          else if (unblockUserRequest.status === 400) {
+            const errorType: string = "Bad request";
+            console.log(`${errorType} on unblockUser`);
+            console.log(unblockUserRequest.error);
+          }
+
+          //Conflict
+          else if (unblockUserRequest.status === 409) {
+            const errorType: string = "Conflict";
+            console.log(`${errorType} on unblockUser`);
+            console.log(unblockUserRequest.error);
+          }
+
+          //Internal server error
+          else if (unblockUserRequest.status === 500) {
+            const errorType: string = "Internal server error";
+            console.log(`${errorType} on unblockUser`);
+            console.log(unblockUserRequest.error);
+          }
+        }}
+      >
+        <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
+        Unblock
+      </button>;
+    } else {
+      return <button
+        className="profile-menu-dropdown-button"
+        id="profile-menu-block"
+        onClick={async () => {
+          //THE PARAMETER IS THE PERSON TO BLOCK
+          const blockUserRequest = await blockUser(blockUserID);
+
+          //Success
+          if (blockUserRequest.status === 200) {
+            window.location.reload();
+          }
+
+          //Bad request
+          else if (blockUserRequest.status === 400) {
+            const errorType: string = "Bad request";
+            console.log(`${errorType} on blockUser`);
+            console.log(blockUserRequest.error);
+          }
+
+          //Conflict
+          else if (blockUserRequest.status === 409) {
+            const errorType: string = "Conflict";
+            console.log(`${errorType} on blockUser`);
+            console.log(blockUserRequest.error);
+          }
+
+          //Internal server error
+          else if (blockUserRequest.status === 500) {
+            const errorType: string = "Internal server error";
+            console.log(`${errorType} on blockUser`);
+            console.log(blockUserRequest.error);
+          }
+        }}
+      >
+        <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
+        Block
+      </button>;
     }
   };
 
@@ -208,7 +433,6 @@ const Profile = (userProfile: any) => {
    * Toggles following the user.
    */
   const followUser = async () => {
-
     if (!loggedIn) {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search } }); // Redirect if logged out
     } else {
@@ -288,7 +512,7 @@ const Profile = (userProfile: any) => {
 
       // Only run this if profile data exists for user
       if (data) {
-        console.log(data);
+        //console.log(data);
         setDisplayedProfile(data);
         setMajorsArr(data.majors.map((maj) => maj.label));
         await getProfileProjectData();
@@ -378,8 +602,17 @@ const Profile = (userProfile: any) => {
       }
     };
     loadInviteOptions();
+    // CURRENT user permissions
     getUserPermissions();
+
+    // THIS PROFILE's user permissions
+    getProfileUserPermissions();
+
+    // is the displayed profile a reported user
     isUserReported();
+
+    // is the displayed profile a banned user
+    isUserBanned();
 
     return () => {
       cancelled = true;
@@ -471,43 +704,153 @@ const Profile = (userProfile: any) => {
   };
 
   /**
-     * Resolves a user report
-     * @param action The action to take on the report ('dismiss', 'warn' or 'ban')
-     */
+   * Promotes a user to mod
+   */
+  const promoteToModPressed = async () => {
+    const response = await promoteToMod(userID ? userID : -1, displayedProfile ? displayedProfile.userId : -1);
+    let responseText = response.error;
+    if (responseText === null || responseText === undefined) {
+      setDisplayedProfileAccessLevel('Moderator');
+      responseText = `Success! ${displayedProfile ? displayedProfile.firstName : "This user"} is now a Moderator!`;
+    }
+    else {
+      responseText = "Uh oh! Something went wrong when promoting the user!";
+    }
+    setPromoteResponseText(responseText);
+  }
+
+  /**
+   * Demotes a mod to user
+   */
+  const demoteToUserPressed = async () => {
+    const response = await demoteToUser(userID ? userID : -1, displayedProfile ? displayedProfile.userId : -1);;
+    let responseText = response.error;
+    if (responseText === null || responseText === undefined) {
+      setDisplayedProfileAccessLevel('User');
+      responseText = `Success! ${displayedProfile ? displayedProfile.firstName : "This user"} is now a User!`;
+    }
+    else {
+      responseText = "Uh oh! Something went wrong when demoting the user!";
+    }
+    setDemoteResponseText(responseText);
+  }
+
+  /**
+   * Resolves a user report
+   * @param action action The action to take on the report ('dismiss', 'warn' or 'ban')
+   * @returns void, refreshes the page if success
+   */
   const resolveReport = async (action: 'dismiss' | 'warn' | 'ban') => {
-    if (!reportedUser) return;
-    let res;
+    if (activeReportList.length === 0) return;
 
-    switch (action) {
-      case 'dismiss':
-        res = await deleteUserReport(reportedUser.reportId);
-        break;
-      case 'warn':
-        res = await warnUser(reportedUser.reportId, {
-          message: modMessage?.current?.value ?? '',
-          receiverId: reportedUser.reportedId,
-          subjectLine: 'Moderator Request for Edits',
-          modUserId: userID ?? 0,
-        });
-        break;
-      case 'ban':
-        res = await banUser(
-          reportedUser.reportId,
-          {
-            reason: modMessage?.current?.value ?? '',
-            userId: reportedUser.reportedId,
-          }
-        );
-        break;
-      default:
-        console.error(`Unknown action: ${action}`);
+    if (action === 'dismiss') {
+      const res = await Promise.all(
+        activeReportList.map(r => deleteUserReport(r.reportId))
+      );
+
+      // send an update to reporter
+      const notif = await Promise.all(activeReportList.map(r => sendModeratorNotification({
+        modUserId: userID,
+        receiverId: r.reporterId,
+        subjectLine: `Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName} has been dismissed`,
+        message: 'Thank you for submitting your report. ' +
+          'Our moderation team has completed its review. ' +
+          'After carefully reviewing the information provided and any relevant evidence, ' +
+          'we have determined that this report does not warrant moderation action at this time. ' +
+          'As a result, the report has been dismissed.',
+        type: 'General',
+      })));
+
+      if (res?.every(r => r.status === 200) && notif.every(r => r.status === 201)) {
+        setModActionComplete(true);
+        navigate(paths.routes.MODERATION);
+      };
+
+    } else if (action === 'warn') {
+      const warnRes = await sendModeratorNotification({
+        modUserId: userID ?? 0,
+        receiverId: parseInt(profileID) ?? 0,
+        subjectLine: 'Action Required: Changes Requested to Your Profile',
+        message: warnMessage.current?.value ?? '',
+        type: 'Warning',
+      });
+
+      const deactivateRes = await Promise.all(activeReportList.map(
+        r => deactivateUserReport(r.reportId)
+      ));
+
+      // send an update to reporter
+      const notif = await Promise.all(activeReportList.map(r => sendModeratorNotification({
+        modUserId: userID,
+        receiverId: r.reporterId,
+        subjectLine: `Update on Your Report: ${displayedProfile?.firstName} ${displayedProfile?.lastName} has been warned`,
+        message: 'Thank you for submitting your report. ' +
+          'Our moderation team has completed its review. ' +
+          'After reviewing the information provided, we have taken action on the reported user by requesting changes to their profile. ' +
+          'The user has been notified and asked to address the reported issue.',
+        type: 'General',
+      })));
+
+      if (warnRes.status === 201
+        && deactivateRes?.every(r => r.status === 200)
+        && notif.every(r => r.status === 201)) {
+        setModActionComplete(true);
+        navigate(paths.routes.MODERATION);
+      }
+    } else if (action === 'ban') {
+      if (!banMessage?.current?.value) {
+        setBanReasonSystemMsg('Ban reason cannot be empty. Please provide a reason before banning this user.');
+        setModActionComplete(true);
         return;
-    }
+      } else {
+        setBanReasonSystemMsg('');
+      }
 
-    if (res?.status === 200) {
-      // refresh page
-      window.location.reload();
+      const banRes = await banUser(
+        {
+          reason: banMessage.current.value,
+          userId: parseInt(profileID) ?? 0,
+        }
+      );
+
+      const deactivateRes = await Promise.all(activeReportList.map(
+        r => deactivateUserReport(r.reportId)
+      ));
+
+      // send an update to reporter
+      const notif = await Promise.all(activeReportList.map(r => sendModeratorNotification({
+        modUserId: userID,
+        receiverId: r.reporterId,
+        subjectLine: `Update on Your Report: ${displayedProfile?.firstName} ${displayedProfile?.lastName} has been banned`,
+        message: 'Thank you for submitting your report. ' +
+          'Our moderation team has completed its review. ' +
+          'After reviewing the information provided, we have determined that further action was necessary. ' +
+          'The reported user has been banned from Looking For Group.',
+        type: 'General',
+      })));
+
+      if (banRes.status === 200 &&
+        deactivateRes.every(r => r.status === 200) &&
+        notif.every(r => r.status === 201)) {
+        setModActionComplete(true);
+        setBanned(true);
+      }
+    } else {
+      console.error(`Unknown action: ${action}`);
     }
+  };
+
+  /**
+   * Unbans a banned user
+   * @param userId User Id of banned user
+   */
+  const unbanUser = async (userId: number) => {
+    const res = await unbanUserApi(userId);
+
+    if (res.status === 200) {
+      setUnbanned(true);
+    }
+    setModActionComplete(true);
   };
 
   // --------------------
@@ -542,67 +885,129 @@ const Profile = (userProfile: any) => {
               onClick={() => followUser()}
             />
           )}
-
-          {/* TODO: Implement Share, Block, and Report functionality */}
           <Dropdown>
             <DropdownButton>
               <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'} />
             </DropdownButton>
             <DropdownContent>
               <div id="profile-menu-dropdown">
-                <ShareButton />
-                <button
-                  className="profile-menu-dropdown-button"
-                  id="profile-menu-block"
-                >
-                  <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
-                  Block
-                </button>
-                <Popup>
-                  <PopupButton
-                    className="project-info-dropdown-option"
-                  >
-                    <ThemeIcon
-                      id={"warning"}
-                      width={27}
-                      height={27}
-                      ariaLabel={"Report"}
-                    />
-                    Report
-                  </PopupButton>
-                  <PopupContent>
-                    <div className="small-popup" id="report-popup">
-                      <h3>Report {displayedProfile?.firstName ?? "User"} {displayedProfile?.lastName ?? ""}</h3>
-                      <p>You are about to report {displayedProfile?.firstName ?? "User"}. Please provide your reasoning below.</p>
-                      <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></textarea>
-                      <div className="confirm-deny-btns">
-                        <PopupButton
-                          buttonId="team-delete-member-cancel-button"
-                          className="button-reset"
-                        >
-                          Cancel
-                        </PopupButton>
-                        {/* The Report Button */}
-                        <Popup>
-                          <PopupButton
-                            className="delete-button"
-                            callback={reportUserPressed}
-                            closeParent={() => true}> {/* doesnt work*/}
-                            Report
-                          </PopupButton>
-                          <PopupContent>
-                            <div className="small-popup">
-                              <p>{reportResponseText}</p>
-                              <PopupButton buttonId="continue-button" closeParent={() => true}>
-                                Continue
+                {isUserAdmin && displayedProfileAccessLevel !== 'Administrator' ?
+                  <Popup>
+                    <PopupButton className="project-info-dropdown-option">
+                      <ThemeIcon id={'settings'} width={27} height={27} className={'mono-stroke'} ariaLabel={"Manage User Permissions"} />
+                      Manage Permissions
+                    </PopupButton>
+                    {displayedProfileAccessLevel === 'User' && previousDisplayedProfileAccessLevel === 'User' ?
+                      <PopupContent>
+                        <div className="small-popup" id="manage-perms-popup">
+                          <h3>Manage {displayedProfile?.firstName ?? "User"}'s Permissions</h3>
+                          <p>Promote {displayedProfile?.firstName ?? "User"} to Moderator?</p>
+                          <div className="confirm-deny-btns">
+                            <PopupButton
+                              buttonId="team-delete-member-cancel-button"
+                              className="button-reset"
+                            >
+                              Cancel
+                            </PopupButton>
+                            <Popup>
+                              <PopupButton
+                                className="confirm-btn"
+                                callback={promoteToModPressed}>
+                                Promote
                               </PopupButton>
-                            </div>
-                          </PopupContent>
-                        </Popup>
-                      </div>
-                    </div>
-                  </PopupContent>
-                </Popup>
+                            </Popup>
+                          </div>
+                        </div>
+                      </PopupContent> :
+                      (previousDisplayedProfileAccessLevel == 'User' ? <PopupContent callback={() => { setPreviousDisplayedProfileAccessLevel('Moderator'); }}>
+                        <div className="small-popup">
+                          <p>{promoteResponseText}</p>
+                          <PopupButton buttonId="continue-button" callback={() => { setPreviousDisplayedProfileAccessLevel('Moderator'); }}>
+                            Continue
+                          </PopupButton>
+                        </div>
+                      </PopupContent> : "")}
+                    {displayedProfileAccessLevel === 'Moderator' && previousDisplayedProfileAccessLevel === 'Moderator' ?
+                      <PopupContent>
+                        <div className="small-popup" id="manage-perms-popup">
+                          <h3>Manage {displayedProfile?.firstName ?? "User"}'s Permissions</h3>
+                          <p>Demote {displayedProfile?.firstName ?? "Moderator"} to User?</p>
+                          <div className="confirm-deny-btns">
+                            <PopupButton
+                              buttonId="team-delete-member-cancel-button"
+                              className="button-reset"
+                            >
+                              Cancel
+                            </PopupButton>
+                            <Popup>
+                              <PopupButton
+                                className="delete-button"
+                                callback={demoteToUserPressed}>
+                                Demote
+                              </PopupButton>
+                            </Popup>
+                          </div>
+                        </div>
+                      </PopupContent> :
+                      (previousDisplayedProfileAccessLevel == 'Moderator' ? <PopupContent callback={() => { setPreviousDisplayedProfileAccessLevel('User'); }}>
+                        <div className="small-popup">
+                          <p>{demoteResponseText}</p>
+                          <PopupButton buttonId="continue-button" callback={() => { setPreviousDisplayedProfileAccessLevel('User'); }}>
+                            Continue
+                          </PopupButton>
+                        </div>
+                      </PopupContent> : "")}
+                  </Popup> : ""}
+                <ShareButton />
+                {userID > 0 && (
+                  <>
+                    {isUserBlocked()}
+                    <Popup>
+                      <PopupButton
+                        className="project-info-dropdown-option"
+                      >
+                        <ThemeIcon
+                          id={"warning"}
+                          width={27}
+                          height={27}
+                          ariaLabel={"Report"}
+                        />
+                        Report
+                      </PopupButton>
+                      <PopupContent>
+                        <div className="small-popup" id="report-popup">
+                          <h3>Report {displayedProfile?.firstName ?? "User"} {displayedProfile?.lastName ?? ""}</h3>
+                          <p>You are about to report {displayedProfile?.firstName ?? "User"}. Please provide your reasoning below.</p>
+                          <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></textarea>
+                          <div className="confirm-deny-btns">
+                            <PopupButton
+                              buttonId="team-delete-member-cancel-button"
+                              className="button-reset"
+                            >
+                              Cancel
+                            </PopupButton>
+                            {/* The Report Button */}
+                            <Popup>
+                              <PopupButton
+                                className="delete-button"
+                                callback={reportUserPressed}>
+                                Report
+                              </PopupButton>
+                              <PopupContent>
+                                <div className="small-popup">
+                                  <p>{reportResponseText}</p>
+                                  <PopupButton buttonId="continue-button">
+                                    Continue
+                                  </PopupButton>
+                                </div>
+                              </PopupContent>
+                            </Popup>
+                          </div>
+                        </div>
+                      </PopupContent>
+                    </Popup>
+                  </>
+                )}
               </div>
             </DropdownContent>
           </Dropdown>
@@ -611,6 +1016,104 @@ const Profile = (userProfile: any) => {
     </>
   );
 
+  const fullGallery = useMemo(() => {
+    return [
+      ...galleryVideos.map(v => {
+        const embedUrl = getYouTubeEmbedURL(v.videoUrl); 
+        if (!embedUrl) return null;
+        
+        return ( <>
+          <label>{v.title}</label>
+          <iframe
+            key={`video-${v.position}`}
+            src={embedUrl}
+            title={v.title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            style={{ width: 'auto', height: '100%', aspectRatio: '16/9', border: 'none', objectFit: 'cover' }}
+          ></iframe>
+        </>
+        );
+    }).filter(item => item !== null),
+    ...galleryImages.map(i => ( <>
+        <label>{i.altText}</label>
+        <img
+          key={`img-${i.position}`}
+          src={i.image}
+          alt={i.altText}
+          // Click to view the image full-size in the lightbox
+          // style={{ cursor: 'zoom-in' }}
+          // onClick={(e) => setLightboxSrc((e.currentTarget as HTMLImageElement).src)}
+          // onError={(e) => {
+          //   const projectImg = e.target as HTMLImageElement;
+          //   projectImg.src = placeholderThumbnail;
+          // }}
+        />
+      </>
+    )),
+    ];
+  }, [galleryImages, galleryVideos]);
+
+  const galleryPreviews = useMemo(() => {
+    return [
+      ...galleryVideos.map(v => {
+        const embedID = getYouTubeEmbedID(v.videoUrl);
+
+        return <>
+        <ThemeIcon
+            width={25}
+            height={18}
+            id="youtube"
+            className={"mono-fill"}
+            ariaLabel="youtube"
+          />
+          <img
+            key={`img-${v.position}`}
+            src={`http://img.youtube.com/vi/${embedID}/default.jpg`}
+            alt={v.title}
+          />
+        </>
+      }),
+      ...galleryImages.map(i => (
+        <img
+          key={`img-${i.position}`}
+          src={i.image}
+          alt={i.altText}
+        />
+      )),
+    ];
+  }, [galleryImages, galleryVideos]);
+
+ const userGallery = 
+  <div id="user-gallery">
+    <h1 id="title">Gallery</h1>
+    {fullGallery.length > 0 ?
+      <Carousel
+        dataList={fullGallery}
+      >
+        <div className='gallery-carousel'>
+          <CarouselContent className='gallery-carousel-content' />
+          {fullGallery.length > 1 ?
+          <div className='carousel-row'>
+            <CarouselButton
+              direction='left'
+              className='gallery-carousel-btn'
+              size='small'
+            />
+            <CarouselTabs className='gallery-carousel-tabs'>{galleryPreviews}</CarouselTabs>
+            <CarouselButton 
+              direction='right'
+              className='gallery-carousel-btn'
+              size='small'
+            />
+          </div> : ""}
+        </div>
+      </Carousel> :
+      <label id="emtpy-carousel">
+        No gallery items yet...<br/>Edit your profile and upload your achievments!<br/>(not visible to others while empty)
+      </label>
+    }
+  </div>
   //console.log(followedProjectsIds);
   // --------------------
   // Final component
@@ -680,12 +1183,12 @@ const Profile = (userProfile: any) => {
                       {displayedProfile?.pronouns}
                     </div> : ""}
                   {/* Only show mentor status if user is a mentor */}
-                  {displayedProfile?.mentor &&
+                  {/* {displayedProfile?.mentor &&
                     <div className="profile-extra">
                       <ThemeIcon id={'mentor'} width={20} height={20} className={'mono-fill'} ariaLabel={'Mentorship Status'} />
                       Mentor
                     </div>
-                  }
+                  } */}
                 </div>
 
                 <div id="profile-description">{displayedProfile?.bio}</div>
@@ -707,13 +1210,76 @@ const Profile = (userProfile: any) => {
             </div>
           </div>
 
+          {/* Mod options for unbanning a banned user */}
+          {(!isUsersProfile) && isUserMod && banned && banDetail && displayedProfile && (<>
+            <div className="mod-user-options">
+              <h2>Unban this User</h2>
+              <p>Unbanning this user will unfreeze their account, allowing them to log in to Looking For Group again.
+                Any regular user permissions will be restored.</p>
+              <p>Ban Reason: {banDetail.banReason}</p>
+              <div className="mod-options-btns">
+                <Popup>
+                  <PopupButton className="mod-unban-btn">Unban</PopupButton>
+                  <PopupContent>
+                    <div className="small-popup" id="report-popup">
+                      <h3>Unban {displayedProfile.firstName} {displayedProfile.lastName}</h3>
+                      <p>Are you sure you want to unban this user?
+                        After this user is unbanned, their account will be unfrozen and they will be able to log in to Looking For Group again.
+                        Their regular user permissions will also be restored.</p>
+                      <div className="confirm-deny-btns">
+                        <PopupButton
+                          buttonId="unban-cancel-button"
+                          className="button-reset"
+                          callback={() => {
+                            setModActionComplete(false);
+                          }}
+                        >
+                          Cancel
+                        </PopupButton>
+                        <Popup>
+                          <PopupButton buttonId="mod-unban-btn" className="delete-button" callback={() => unbanUser(displayedProfile.userId)}>Unban</PopupButton>
+                          <PopupContent>
+                            <div className="small-popup">
+                              {modActionComplete
+                                ? (<>
+                                  <p>{unbanned
+                                    ? "This user has been unbanned and has received an email notification. Their account has been unfrozen, they can now log in to Looking For Group again, and all regular user permissions have been restored."
+                                    : "Uh-oh! Something went wrong while unbanning this user. Please try again later."}
+                                  </p>
+                                  <PopupButton buttonId="continue-button" callback={() => { if (unbanned) navigate(paths.routes.MODERATION); }}>
+                                    {unbanned ? "Continue" : "Close"}
+                                  </PopupButton>
+                                </>)
+                                : <div className='placeholder-spacing'>
+                                  <div className='spinning-loader'></div>
+                                </div>
+                              }
+                            </div>
+                          </PopupContent>
+                        </Popup>
+                      </div>
+                    </div>
+                  </PopupContent>
+                </Popup>
+              </div>
+            </div>
+          </>)}
+
           {/* Mod options when this is a reported user */}
-          {(!isUsersProfile) && isUserAdmin && reportedUser ? <div id="mod-user-options">
-            <h4>Request Edits or Ban?</h4>
-            {!reportedUser.active ? <p>This report is inactive at the moment because a moderator has warned the user and/or requested changes already.</p> : ""}
-            <p>You can dismiss this report, request edits, or ban them.</p>
-            <p>Reason for this report: {reportedUser.reason}</p>
-            <div id="mod-options-btns">
+          {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div className="mod-user-options">
+            <h2>Reports</h2>
+            <p>You can dismiss this report, warn the user and request edits from them, or ban the user.</p>
+            <h3>Active Reports</h3>
+            <p>These reports are currently under review and have not yet been resolved.
+              Resolve them by dismissing the reports, warning the user, or banning the user.
+              All active reports will be resolved using the same action.</p>
+            {activeReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'active-reporter-' + r.reporterId} />)}
+            {inactiveReportList.length !== 0 && (<>
+              <h3>Inactive Reports</h3>
+              <p>These reports have already been reviewed and are no longer active.</p>
+            </>)}
+            {inactiveReportList.map(r => <Reporter modUserId={userID} reporterId={r.reporterId} reason={r.reason} key={'inactive-reporter-' + r.reporterId} />)}
+            <div className="mod-options-btns">
               <button id="mod-dismiss-btn" onClick={() => resolveReport('dismiss')} >Dismiss Report</button>
               <Popup>
                 <PopupButton className="mod-edit-btn">Warn User</PopupButton>
@@ -721,40 +1287,78 @@ const Profile = (userProfile: any) => {
                   <div className="small-popup" id="report-popup">
                     <h3>Warn User</h3>
                     <p>What should the user change about their profile?</p>
-                    <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={modMessage}></textarea>
+                    <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={warnMessage}></textarea>
                     <div className="confirm-deny-btns">
-                      <button
-                        id="cancel-button"
+                      <PopupButton
+                        buttonId="edits-cancel-button"
                         className="button-reset"
+                        callback={() => { setModActionComplete(false); }}
                       >
                         Cancel
-                      </button>
+                      </PopupButton>
                       <button className="confirm-btn" onClick={() => resolveReport('warn')}>Submit</button>
                     </div>
                   </div>
                 </PopupContent>
               </Popup>
               <Popup>
-                <PopupButton buttonId="mod-decline-btn" className="delete-button">Ban User</PopupButton>
+                <PopupButton
+                  buttonId="mod-decline-btn"
+                  className="delete-button"
+                  callback={() => {
+                    setModActionComplete(false);
+                    setBanned(false);
+                    setBanReasonSystemMsg('');
+                  }}
+                >
+                  Ban User
+                </PopupButton>
                 <PopupContent>
                   <div className="small-popup" id="report-popup">
                     <h3>Ban {displayedProfile?.firstName} {displayedProfile?.lastName} from LookingForGroup</h3>
                     <p>Why are you banning this user?</p>
-                    <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={modMessage}></textarea>
+                    <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={banMessage}></textarea>
                     <div className="confirm-deny-btns">
-                      <button
-                        id="cancel-button"
+                      <PopupButton
+                        buttonId="ban-cancel-button"
                         className="button-reset"
+                        callback={() => {
+                          setModActionComplete(false);
+                          setBanned(false);
+                          setBanReasonSystemMsg('');
+                        }}
                       >
                         Cancel
-                      </button>
-                      <button className="confirm-btn" onClick={() => resolveReport('ban')}>Submit</button>
+                      </PopupButton>
+                      <Popup>
+                        <PopupButton buttonId="mod-submit-ban-btn" className="confirm-btn" callback={() => resolveReport('ban')}>Submit</PopupButton>
+                        <PopupContent>
+                          <div className="small-popup">
+                            {modActionComplete
+                              ? (<>
+                                <p>{banned
+                                  ? "The user's account has been frozen and they can no longer log in to Looking For Group. The banned user has received an email explaining the ban and the reason provided. All reporters have received an update notification informing them that action has been taken."
+                                  : banReasonSystemMsg}
+                                </p>
+                                <PopupButton buttonId="continue-button" callback={() => { if (banned) navigate(paths.routes.MODERATION); }}>
+                                  {banned ? "Continue" : "Close"}
+                                </PopupButton>
+                              </>)
+                              : <div className='placeholder-spacing'>
+                                <div className='spinning-loader'></div>
+                              </div>
+                            }
+                          </div>
+                        </PopupContent>
+                      </Popup>
                     </div>
                   </div>
                 </PopupContent>
               </Popup>
             </div>
           </div> : ""}
+
+          {showGallery ? userGallery : ""}
 
           <div id="profile-extra">
             <div id="contact-and-skills">
@@ -928,114 +1532,6 @@ const Profile = (userProfile: any) => {
                           </>
                         )}
                       </div>
-                      {myOwnedProjects.length === 0 ? (
-                        <div id="profile-invite-empty">
-                          You don't own any projects yet. Create one to start
-                          inviting people.
-                        </div>
-                      ) : inviteSuccess ? (
-                        <div id="profile-invite-success">
-                          Invite sent! {displayedProfile?.firstName} will get an
-                          email to accept or decline.
-                        </div>
-                      ) : (
-                        <>
-                          <div id="profile-invite-form">
-                            <label
-                              className="profile-invite-label"
-                              htmlFor="profile-invite-project"
-                            >
-                              Project
-                            </label>
-                            <div id="profile-invite-project">
-                              <Select>
-                                <SelectButton
-                                  placeholder="Select a project"
-                                  searchable={true}
-                                  type="input"
-                                />
-                                <SelectOptions
-                                  callback={(e) => {
-                                    const value = (e.target as HTMLButtonElement)
-                                      .value;
-                                    const proj = myOwnedProjects.find(
-                                      (p) => p.title === value
-                                    );
-                                    setInviteProjectId(proj?.projectId ?? null);
-                                  }}
-                                  options={myOwnedProjects.map((proj) => ({
-                                    markup: <>{proj.title}</>,
-                                    value: proj.title,
-                                    disabled: false,
-                                  }))}
-                                />
-                              </Select>
-                            </div>
-
-                            <label
-                              className="profile-invite-label"
-                              htmlFor="profile-invite-role"
-                            >
-                              Role
-                            </label>
-                            <div id="profile-invite-role">
-                              <Select>
-                                <SelectButton
-                                  placeholder="Select a role"
-                                  searchable={true}
-                                  type="input"
-                                />
-                                <SelectOptions
-                                  callback={(e) => {
-                                    const value = (e.target as HTMLButtonElement)
-                                      .value;
-                                    const role = allRoles.find(
-                                      (r) => r.label === value
-                                    );
-                                    setInviteRoleId(role?.roleId ?? null);
-                                  }}
-                                  options={allRoles.map((role) => ({
-                                    markup: <>{role.label}</>,
-                                    value: role.label,
-                                    disabled: false,
-                                  }))}
-                                />
-                              </Select>
-                            </div>
-
-                            <label
-                              className="profile-invite-label"
-                              htmlFor="profile-invite-message"
-                            >
-                              Message
-                            </label>
-                            <textarea
-                              id="profile-invite-message"
-                              placeholder={`Optional note to ${displayedProfile?.firstName ?? "them"}...`}
-                              value={inviteMessage}
-                              onChange={(e) => setInviteMessage(e.target.value)}
-                              maxLength={500}
-                            />
-                          </div>
-
-                          {inviteError && (
-                            <div className="error" id="profile-invite-error">
-                              {inviteError}
-                            </div>
-                          )}
-
-                          <div className="project-editor-button-pair">
-                            <PopupButton
-                              buttonId="profile-invite-send"
-                              callback={handleSendInvite}
-                              doNotClose={() => !inviteSuccess}
-                              disabled={inviteSending}
-                            >
-                              {inviteSending ? "Sending..." : "Send Invite"}
-                            </PopupButton>
-                          </div>
-                        </>
-                      )}
                     </PopupContent>
                   </Popup>
                 )}
@@ -1102,6 +1598,14 @@ const Profile = (userProfile: any) => {
                           itemList={followedProjectsList}
                           userId={userID as number}
                           followedProjectIds={followedProjectsIds}
+                          onUnfollow={(id) => {
+                            setFollowedProjectsList((list) => list.filter((p) => p.projectId !== id));
+                            setFollowProjectsIds((ids) => {
+                              const next = new Set(ids);
+                              next.delete(id);
+                              return next;
+                            });
+                          }}
                         />
                         : <p className="no-saved-items">You have no saved projects!</p>)
                       :
@@ -1111,6 +1615,9 @@ const Profile = (userProfile: any) => {
                           category={"profiles"}
                           itemList={followedProfilesList}
                           userId={userID as number}
+                          onUnfollow={(id) => {
+                            setFollowedProfilesList((list) => list.filter((u) => u.userId !== id));
+                          }}
                         />
                         : <p className="no-saved-items">You have no saved users!</p>)
 

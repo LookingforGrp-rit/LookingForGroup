@@ -23,7 +23,7 @@ export class RequestRejectedNotificationBuilder implements NotificationBuilder {
         },
         users: {
           select: {
-            preferredName: true,
+            firstName: true,
             userId: true,
           },
         },
@@ -45,7 +45,7 @@ export class RequestRejectedNotificationBuilder implements NotificationBuilder {
     notification.receiverId = inviteeData.userId;
     notification.subjectLine = `Your request to join ${projectData.title} has been rejected.`;
 
-    notification.message = `Hello ${inviteeData.preferredName},<br /><br />`;
+    notification.message = `Hello ${inviteeData.firstName},<br /><br />`;
     notification.message += `Your request to join <strong>${projectData.title}</strong> as a <strong>${roleData?.label as string}</strong> has been rejected.<br /><br />`;
     notification.message += `Thank you for your interest, and we wish you the best with your future projects!<br /><br />`;
     notification.message += `LFG Team`;

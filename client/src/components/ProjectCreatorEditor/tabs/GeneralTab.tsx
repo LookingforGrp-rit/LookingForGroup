@@ -1,7 +1,7 @@
 // --- Imports ---
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import { ProjectPurpose, ProjectStatus, ProjectWithFollowers } from "@looking-for-group/shared";
-import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+import { ProjectContext, ProjectStatus, ProjectWithFollowers } from "@looking-for-group/shared";
+import { ProjectContext as ProjectContextEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 import { PopupButton, PopupContent, Popup, PopupContext } from '../../Popup';
 import LabelInputBox from "../../LabelInputBox";
 import { DeleteProjectButton } from "../DeleteProjectButton";
@@ -34,6 +34,7 @@ type GeneralTabProps = {
   failCheck: boolean;
   updateFailCheck: boolean;
   message: string;
+  isSaving : boolean;
 };
 
 /**
@@ -58,6 +59,7 @@ export const GeneralTab = ({
   failCheck,
   updateFailCheck,
   message,
+  isSaving,
 }: GeneralTabProps) => {
 
   projectAfterGeneralChanges = structuredClone(projectData);
@@ -176,17 +178,17 @@ export const GeneralTab = ({
       </LabelInputBox>
 
       <LabelInputBox
-        label={"Purpose"}
+        label={"Context"}
         inputType={"none"}
-        forceUnsaved={unmodifiedProject.purpose !== projectAfterGeneralChanges.purpose}
-        id="project-editor-purpose-input"
+        forceUnsaved={unmodifiedProject.context !== projectAfterGeneralChanges.context}
+        id="project-editor-context-input"
       >
         <Select>
           <SelectButton
             placeholder="Select"
             initialVal={
-              projectAfterGeneralChanges.purpose ?
-                ProjectPurposeEnums[projectAfterGeneralChanges.purpose] :
+              projectAfterGeneralChanges.context ?
+                ProjectContextEnums[projectAfterGeneralChanges.context] :
                 ""
             }
             className="project-editor-input-item"
@@ -194,18 +196,18 @@ export const GeneralTab = ({
           />
           <SelectOptions
             callback={(e) => {
-              const purpose = (
+              const context = (
                 e.target as React.ButtonHTMLAttributes<HTMLButtonElement>
-              ).value as ProjectPurposeEnums;
+              ).value as ProjectContextEnums;
 
-              if (purpose && Object.values(ProjectPurposeEnums).includes(purpose as ProjectPurposeEnums)) {
+              if (context && Object.values(ProjectContextEnums).includes(context as ProjectContextEnums)) {
                 projectAfterGeneralChanges = {
                   ...projectAfterGeneralChanges,
-                  purpose: purpose as ProjectPurpose,
+                  context: context as ProjectContext,
                 };
                 updatePendingProject(projectAfterGeneralChanges);
 
-                const key = Object.keys(ProjectPurposeEnums).find(key => ProjectPurposeEnums[key as keyof typeof ProjectPurposeEnums] === purpose)
+                const key = Object.keys(ProjectContextEnums).find(key => ProjectContextEnums[key as keyof typeof ProjectContextEnums] === context)
 
                 dataManager?.updateFields({
                   id: {
@@ -213,12 +215,12 @@ export const GeneralTab = ({
                     type: "canon",
                   },
                   data: {
-                    purpose: key as ProjectPurpose,
+                    context: key as ProjectContext,
                   },
                 });
               }
             }}
-            options={Object.values(ProjectPurposeEnums).map((option) => {
+            options={Object.values(ProjectContextEnums).map((option) => {
               return {
                 markup: <>{option}</>,
                 value: option,
@@ -257,7 +259,8 @@ export const GeneralTab = ({
 
       <LabelInputBox
         label={"Short Description"}
-        labelInfo="Share a brief summary of your project. This will be displayed in your project's discover card."
+        labelInfo="Give a brief overview of your project. This will be displayed on the Projects page,
+        and give important information to applicants."
         inputType={"multi"}
         id={"project-editor-description-input"}
         maxLength={300}
@@ -319,40 +322,60 @@ export const GeneralTab = ({
           <div id="invalid-input-error" className={"save-error-msg-general"}>
             <p>*{message}*</p>
           </div>}
-          <PopupButton
-            buttonId="project-editor-save"
-            callback={() => {
-              // Incomplete form: still clickable so the save validation runs,
-              // shows the error, and auto-scrolls to the first missing field.
-              if (!saveable) {
-                saveProject?.();
-                return;
-              }
-              else setConfirm(true);
-              console.log(`Current save ref: ${saveButtonRef.current}`);
-              saveButtonRef.current?.focus();
-            }}
-          >
-            Save Changes
-          </PopupButton>
+
+          {isSaving ? 
+            (
+              // Currently Saving
+              <div className='spinning-loader'></div>
+            ) : (
+              // Save is complete or hasn't been pressed
+              <PopupButton
+                buttonId="project-editor-save"
+                callback={() => {
+                  // Incomplete form: still clickable so the save validation runs,
+                  // shows the error, and auto-scrolls to the first missing field.
+                  if (!saveable) {
+                    saveProject?.();
+                    return;
+                  }
+                  else setConfirm(true);
+                  console.log(`Current save ref: ${saveButtonRef.current}`);
+                  saveButtonRef.current?.focus();
+                }}
+              >
+                Save Changes
+              </PopupButton>
+            )
+          }
+        
           {confirm ?
-          <PopupContent useClose={false} callback={() => setConfirm(false)}>
-            <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
-            <div id="confirm-editor-save">
-              <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save"
-                  ref={saveButtonRef} >
-                Confirm
-              </PopupButton>
-              <PopupButton buttonId="team-edit-member-cancel-button">
-                Cancel
-              </PopupButton>
-            </div>
-          </PopupContent> : ""}
+            <PopupContent useClose={false} callback={() => setConfirm(false)}>
+              <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+              <div id="confirm-editor-save">
+                <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save"
+                    ref={saveButtonRef} >
+                  Confirm
+                </PopupButton>
+                <PopupButton buttonId="team-edit-member-cancel-button">
+                  Cancel
+                </PopupButton>
+              </div>
+            </PopupContent> : ""
+          }
         </Popup>
-        <DeleteProjectButton
-          projectID={unmodifiedProject.projectId}
-          projectTitle={unmodifiedProject.title}
-        />
+        
+        {isSaving ?
+          (
+            // Just here for blank space and to prevent 
+            // accidental deletion while a project is saving
+            ""
+          ) : (
+            <DeleteProjectButton
+              projectID={unmodifiedProject.projectId}
+              projectTitle={unmodifiedProject.title}
+            />
+          )
+        }
         </div>
       </div>
 

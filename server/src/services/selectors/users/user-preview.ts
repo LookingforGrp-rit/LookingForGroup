@@ -3,10 +3,8 @@ export const UserPreviewSelector = Object.freeze({
   firstName: true,
   lastName: true,
   username: true,
-  preferredName: true,
   profileImage: true,
   privacy: true,
-  mentor: true,
   displayPhone: true,
   phoneNumber: true,
   userSkills: {

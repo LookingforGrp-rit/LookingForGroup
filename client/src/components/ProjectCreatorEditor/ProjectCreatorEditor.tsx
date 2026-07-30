@@ -16,13 +16,13 @@ import {
   getByID,
   requestProjectReview,
 } from "../../api/projects";
-import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
+import { ProjectContext as ProjectContextEnums, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
-import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, MemberRequests, } from '@looking-for-group/shared';
+import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectContext, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, MemberRequests, ApiResponse, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
-
+import { setIsSaving, getIsSaving } from "../pages/MyProjects";
 
 type ApprovalStatusKey = keyof typeof ApprovalStatus;
 
@@ -118,6 +118,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   // Tracks details on the current user, used when creating a project, not when editing
   const [currentUser, setCurrentUser] = useState<UserDetail>();
 
+  
   // Check if the current project can be saved
   let valid = false;
   if ((modifiedProject?.title != "" && modifiedProject?.title != undefined && modifiedProject?.title != null)
@@ -142,7 +143,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       dataManager = await projectDataManager(projectID);
 
       const data = dataManager.getSavedProject();
-
+      
       setProjectData(data);
       setModifiedProject(data);
     } catch (err) {
@@ -156,7 +157,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const updateMessage = async () => {
     let newMessage = "";
     if (modifiedProject?.title === "" || modifiedProject?.title === undefined) newMessage = "Project is missing a title!";
-    else if (modifiedProject?.mediums.length == 0) newMessage = "Project is missing a medium!";
+    else if (modifiedProject?.mediums.length == 0) newMessage = "Project is missing a project type!";
     else if (modifiedProject?.tags.length == 0) newMessage = "Project is missing tags!";
     else if (modifiedProject?.hook === "" || modifiedProject?.hook === undefined) newMessage = "Project is missing a short description!";
     else if (modifiedProject?.description === "" || modifiedProject?.description === undefined) newMessage = "Project is missing a description!";
@@ -169,14 +170,22 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
    * @param updatedPendingProject - parameter of updateDisplayedProject, using is faster than trying for modifiedProject
    */
   const fastUpdateMessage = (updatedPendingProject: PendingProject) => {
-    let newMessage = "Project cannot have same title as existing project!"; //for some reason, the initial newMessage value pops up if you've met all the requirements *and then* change title to a duplicate name. so, default value is now the duplicate title error text
+    let newMessage = "";
     if (updatedPendingProject.title !== null && updatedPendingProject.title !== undefined) { getUniqueProjectTitle(updatedPendingProject?.title, projectID); }
-    if (updatedPendingProject.title === "" || updatedPendingProject.title === undefined) newMessage = "Project is missing a title!";
-    else if (!isUniqueTitle) newMessage = "Project cannot have same title as existing project!";
-    else if (updatedPendingProject.hook === "" || updatedPendingProject.hook === undefined) newMessage = "Project is missing a Short Description!";
-    else if (updatedPendingProject.description === "" || updatedPendingProject.description === undefined) newMessage = "Project is missing a Project Overview!";
-    else if (updatedPendingProject.mediums.length == 0) newMessage = "Project is missing a medium!";
-    else if (updatedPendingProject.tags.length == 0) newMessage = "Project is missing tags!";
+    if(getIsSaving())
+    {
+        newMessage = "Project is saving! Please wait a moment!"
+    }
+    else
+    {
+      newMessage = "Project cannot have same title as existing project!"; //for some reason, the initial newMessage value pops up if you've met all the requirements *and then* change title to a duplicate name. so, default value is now the duplicate title error text
+      if (updatedPendingProject.title === "" || updatedPendingProject.title === undefined) newMessage = "Project is missing a title!";
+      else if (!isUniqueTitle) newMessage = "Project cannot have same title as existing project!";
+      else if (updatedPendingProject.hook === "" || updatedPendingProject.hook === undefined) newMessage = "Project is missing a Short Description!";
+      else if (updatedPendingProject.description === "" || updatedPendingProject.description === undefined) newMessage = "Project is missing a Project Overview!";
+      else if (updatedPendingProject.mediums.length == 0) newMessage = "Project is missing a project type!";
+      else if (updatedPendingProject.tags.length == 0) newMessage = "Project is missing tags!";
+    }
 
     setMessage(newMessage);
   }
@@ -200,14 +209,23 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     }
     setSaved(true);
     setConfirm(false);
-    setMessage("Project is missing a Short Description!");
+
+    if(getIsSaving())
+    {
+      setMessage("Project is saving! Please wait a moment!");
+    }
+    else
+    {
+        
+      setMessage("Project is missing a Short Description!");
+    }
 
     if (newProject) {
       // Setup default project for creation
       const newData = {
         title: "My Project",
         description: "",
-        purpose: null,
+        context: null,
         status: "Planning",
         audience: "",
         globalVisibility: "public",
@@ -219,7 +237,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           user: currentUser ?? (await getCurrentAccount()).data,
           role: {
             roleId: 77,
-            label: "owner"
+            label: "Owner"
           },
           memberSince: new Date(Date.now()),
           apiUrl: "api/user/" + currentUser?.userId
@@ -230,6 +248,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         tags: [] as Tag[],
         mediums: [] as Medium[],
         approved: false,
+        owner: {...currentUser ?? (await getCurrentAccount()).data}
       } as ProjectWithFollowers;
 
       setProjectData(newData);
@@ -275,27 +294,18 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       const currentSocialsResponse = await getProjectSocials(projectID);
       const currentSocials = currentSocialsResponse.data || [];
 
-      // Process each social in the modified project
-      for (const social of modifiedProject?.projectSocials || []) {
-        if (!social.url || !social.websiteId || !social.alias || social.websiteId === 0) continue;
+      const tempSocial: ProjectSocial = {
+        id: -1,
+        url: '',
+        alias: '',
+        apiUrl: '',
+        websiteId: 0,
+        label: '',
+      }
+      const modifiedSocials = modifiedProject?.projectSocials || [tempSocial];
 
-        // If there is an existing social ID, update it; otherwise, add a new social
-        if (social.id) {
-          await updateProjectSocial(projectID, social.id, {
-            url: social.url,
-            alias: social.alias,
-            websiteId: social.websiteId,
-          });
-        } else {
-          await addProjectSocial(projectID, {
-            websiteId: social.websiteId,
-            alias: social.alias,
-            url: social.url,
-          });
-        }
-
-        // Delete socials that were removed
-        const modifiedSocialIds = (modifiedProject?.projectSocials || [])
+      for (let i = 0; i < (modifiedSocials.length || 1); i++) {
+        const modifiedSocialIds = (modifiedProject?.projectSocials || [tempSocial])
           .filter(s => s.url && s.websiteId && s.websiteId !== 0)
           .map(s => s.id);
 
@@ -303,6 +313,23 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           if (!modifiedSocialIds.includes(currentSocial.id)) {
             await deleteProjectSocial(projectID, currentSocial.id);
           }
+        }
+
+        if (!modifiedSocials[i].url || !modifiedSocials[i].websiteId || !modifiedSocials[i].alias || modifiedSocials[i].websiteId === 0) continue;
+
+        // If there is an existing social ID, update it; otherwise, add a new social
+        if (modifiedSocials[i].id) {
+          await updateProjectSocial(projectID, modifiedSocials[i].id, {
+            url: modifiedSocials[i].url,
+            alias: modifiedSocials[i].alias,
+            websiteId: modifiedSocials[i].websiteId,
+          });
+        } else {
+          await addProjectSocial(projectID, {
+            websiteId: modifiedSocials[i].websiteId,
+            alias: modifiedSocials[i].alias,
+            url: modifiedSocials[i].url,
+          });
         }
       }
     } catch (error) {
@@ -465,7 +492,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
    * @returns Promise<void>
    */
   const saveProject = async () => {
-
+    
     // default to no errors
     setFailCheck(false);
 
@@ -544,6 +571,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     // }
 
     try {
+      // Used to set the save changes button to a loading icon
+      await setIsSaving(true);
+
       // EXISTING PROJECT
       if (!newProject && projectID) {
         //Updates display automatically when adding members        
@@ -561,8 +591,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       } else if (newProject) {
         const newStatus = Object.keys(ProjectStatusEnums).find(
           key => ProjectStatusEnums[key as keyof typeof ProjectStatusEnums] === modifiedProject.status)
-        const newPurpose = Object.keys(ProjectPurposeEnums).find(
-          key => ProjectPurposeEnums[key as keyof typeof ProjectPurposeEnums] === modifiedProject.purpose)
+        const newContext = Object.keys(ProjectContextEnums).find(
+          key => ProjectContextEnums[key as keyof typeof ProjectContextEnums] === modifiedProject.context)
 
         const response = await createNewProject({
           title: modifiedProject?.title as string,
@@ -571,7 +601,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           audience: modifiedProject?.audience as string,
           globalVisibility: modifiedProject?.globalVisibility as Visibility,
           status: newStatus as ProjectStatus,
-          purpose: newPurpose as ProjectPurpose,
+          context: newContext as ProjectContext,
         });
 
         if (!response.error && response.data) {
@@ -693,19 +723,21 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           await dataManager.saveChanges();
         }
       }
-
+      
       // Mark project as saved so cleanup won't delete it
       setSaved(true);
       setProjectData(dataManager.getSavedProject());
       // Remove the unload blocker before reloading the page, otherwise the prior
       // `saved === false` closure can still fire and trigger a browser prompt.
       window.onbeforeunload = null;
-      projectID !== 0
-        ? window.location.reload()
-        : navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
+      window.location.reload();
+      // projectID !== 0
+      // ? window.location.reload()
+      // : navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
     } catch (err) {
       console.error(err);
     }
+    
   };
 
   const updatePendingProject = (updatedPendingProject: PendingProject) => {
@@ -849,6 +881,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 failCheck={failCheck}
                 updateFailCheck={updateFailCheck}
                 message={message}
+                isSaving={getIsSaving()}
               />
             ) : currentTab === 1 ? (
               <MediaTab
@@ -861,6 +894,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 failCheck={failCheck}
                 updateFailCheck={updateFailCheck}
                 message={message}
+                isSaving={getIsSaving()}
               />
             ) : currentTab === 2 ? (
               <TagsTab
@@ -873,6 +907,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 failCheck={failCheck}
                 updateFailCheck={updateFailCheck}
                 message={message}
+                isSaving={getIsSaving()}
               />
             ) : currentTab === 3 ? (
               <TeamTab
@@ -897,6 +932,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 message={message}
                 messages={projectMessages}
                 setMessages={setProjectMessages}
+                isSaving={getIsSaving()}
               />
             ) : currentTab === 4 ? (
               <LinksTab
@@ -911,6 +947,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 updateFailCheck={updateFailCheck}
                 message={message}
                 currentUser={currentUser as UserDetail}
+                isSaving={getIsSaving()}
               />
             ) : (
               <></>

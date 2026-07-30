@@ -70,7 +70,7 @@ const SideBar = () => {
       // Only the mobile layout specifically displays the "own profile" sidebar button
       // Default "profile" brings you to your own page
 
-      if (width < breakpoint && window.location.href.endsWith(`userID=${userId}`)) {
+      if (width <= breakpoint && window.location.href.endsWith(`userID=${userId}`)) {
         // Is it the mobile layout, and is it DEFINITELY your own page?
         startingPage = "My Profile";
         for (const i of sidebarBtns) {
@@ -103,20 +103,6 @@ const SideBar = () => {
       for (const i of sidebarBtns) {
         i.classList.remove("active");
       }
-      if (startingPage === "Discover")
-        document
-          .querySelector("#discover-sidebar-btn")
-          ?.classList.add("active");
-      else if (startingPage === "Meet")
-        document.querySelector("#meet-sidebar-btn")?.classList.add("active");
-      else if (startingPage === "My Projects")
-        document
-          .querySelector("#my-projects-sidebar-btn")
-          ?.classList.add("active");
-      else if (startingPage === "My Profile")
-        document
-          .querySelector("#my-profile-sidebar-btn")
-          ?.classList.add("active");
   }
 
   const [activePage, setActivePage] = useState<string>(startingPage); // State to manage the active page [Discover, Meet, My Projects, Messages, Profile, Settings]
@@ -232,7 +218,7 @@ const SideBar = () => {
   }
 
   // Mobile layout
-  if (width < breakpoint) {
+  if (width <= breakpoint) {
     return (
       <nav>
         <div className={active ? "sideBarContainer active" : "sideBarContainer"}>

@@ -3,12 +3,14 @@ import UserAccessLevel = require("@looking-for-group/shared/enums");
 import type { Request } from "express";
 
 // Enums for better typing
-export type SkillType = "Developer" | "Designer" | "Engineer" | "Soft" | "Audio" | "Role" | "Major";
+export type SkillType = "Developer" | "Designer" | "Engineer" | "Soft" | "Audio" | "Role" | "Major" | "Other";
 export type TagType =
   | "Other"
   | 'Style'
   | 'Genre'
   | "Purpose"
+  | "Context"
+  | "Content Warning"
   | "Project Type"
   | "Role"
   | "Major"
@@ -18,13 +20,15 @@ export type TagType =
 export type GenreCategory = 'Game' | "Story" | 'Music';
 export type StyleCategory = 'Visual' | 'Film/Video';
 export type GameEngine = 'Unity' | 'Unreal Engine' | 'Godot' | 'Twine' | 'MonoGame'
+export type ContentWarning = 'Maturity Rating' | 'Triggers'
+export type ContextCategory = 'Usage' | 'Field'
 export type DesignerCategory = 'Discipline' | 'Design Software' | 'Art and Animation' | 'Photo Editing' | 'Video Software';
 export type DeveloperCategory = 'Discipline' | 'Framework' | 'API' | 'Software' | 'Coding Language' | 'Operating System' | 'Game Engine';
 export type SoftCategory = 'Discipline' | 'Personal' | 'Team';
 export type AudioCategory = 'Discipline' | 'DAW/Audio Editor' | 'Notation' | 'Middleware';
 export type EngineerCategory = 'Discipline' | 'Engineering Software' | 'Hardware'
 export type SkillCategory = DeveloperCategory | DesignerCategory | AudioCategory | SoftCategory | EngineerCategory | "Other";
-export type TagCategory = GenreCategory | StyleCategory | GameEngine | "Other";
+export type TagCategory = GenreCategory | StyleCategory | GameEngine | ContentWarning | ContextCategory | "Other";
 export type RitStatus =
   | "FirstYear"
   | "SecondYear"
@@ -40,7 +44,7 @@ export type SkillProficiency =
   | "Intermediate"
   | "Advanced"
   | "Expert";
-export type ProjectPurpose =
+export type ProjectContext =
   | "Personal"
   | "PortfolioPiece"
   | "Academic"
@@ -50,7 +54,7 @@ export type ProjectStatus =
   | "Development"
   | "PostProduction"
   | "Complete";
-export type JobAvailability = "FullTime" | "PartTime" | "Flexible";
+export type JobAvailability = "FullTime" | "PartTime" | "PtFt";
 export type JobLocation = "OnSite" | "Remote" | "Hybrid" | "Flexible";
 export type JobCompensation = "Unpaid" | "Paid";
 export type MemberRequestStatus = "Accepted" | "Declined" | "Pending";
@@ -58,6 +62,7 @@ export type ProjectSortMethod = "Newest" | "A-Z" | "Popular";
 export type UserSortMethod = "Newest" | "A-Z";
 export type Visibility = "public" | "private";
 export type UserAccessLevel = "User" | "Moderator" | "Administrator";
+export type ModNotificationType = "Warning" | "General" | "Announcement";
 //do we even need this visibility enum at all? it's stored as a 0/1 in the db anyway
 //a problem for another day, i really don't feel like fixing it right now
 
@@ -560,6 +565,7 @@ export type MyProjectFollowing = {
   apiUrl: string;
 };
 
+
 // USERS
 
 /**
@@ -582,11 +588,6 @@ export interface UserPreview {
   lastName: string;
 
   /**
- * The user's preferred name
- */
-  preferredName: string;
-
-  /**
    * The users's username
    */
   username: string;
@@ -595,11 +596,6 @@ export interface UserPreview {
    * The location of the user's profile image, or null if unset
    */
   profileImage: string | null;
-
-  /**
-   * If the user has self-identified as a mentor
-   */
-  mentor: boolean;
 
   /**
    * If the user has selected any designer skills
@@ -708,6 +704,13 @@ export interface UserDetail extends UserPreview {
   followers: UserFollowsList;
 }
 
+export interface BanDetail {
+  /**
+   * Ban reason
+   */
+  banReason: string;
+}
+
 export interface UserEmail extends Pick<UserPreview, 'userId' | 'firstName' | 'lastName'> {
   /**
    * The user's rit email
@@ -735,10 +738,6 @@ export interface MePreview {
    */
   lastName: string;
   /**
-* The logged-in user's preferred name
-*/
-  preferredName: string;
-  /**
    * The logged-in users's username
    */
   username: string;
@@ -746,10 +745,6 @@ export interface MePreview {
    * The location of the logged-in user's profile image, or null if unset
    */
   profileImage: string | null;
-  /**
-   * If the logged-in user has self-identified as a mentor
-   */
-  mentor: boolean;
   /**
    * If the logged-in user has selected any designer skills
    */
@@ -802,11 +797,6 @@ export interface MeDetail extends MePreview {
    * The logged-in user's bio
    */
   bio: string;
-
-  /**
-   * If the logged-in user has self-identified as a mentor
-   */
-  mentor: boolean;
 
   /**
    * Projects the logged-in user is a member of and has chosen to show on their profile
@@ -874,6 +864,11 @@ export interface MePrivate extends MeDetail {
   googleId: string;
 
   /**
+   * The user's blacklisted tags
+   */
+  tagBlacklist: Tag[]
+
+  /**
    * The date on which the logged-in user's account was created
    */
   createdAt: Date;
@@ -882,6 +877,34 @@ export interface MePrivate extends MeDetail {
    * The date on which the logged-in user's account was last updated
    */
   updatedAt: Date;
+}
+
+/**
+ * Data for images added to user gallery
+ */
+export interface GalleryImage {
+  galleryImageId: number;
+  image: string;
+  altText: string;
+  position: number;
+  userId: number;
+}
+
+export interface PendingGalleryImage {
+  localId: number;
+  image: File;
+  altText: string;
+}
+
+/**
+ * Data for viseos added to user gallery
+ */
+export interface GalleryVideo {
+  galleryVideoId: number;
+  videoUrl: string;
+  title: string;
+  position: number;
+  userId: number;
 }
 
 // PROjECT DATA
@@ -1197,9 +1220,9 @@ export interface ProjectDetail extends ProjectPreview {
   description: string;
 
   /**
-   * The project's purpose, such as "Personal", null if unset
+   * The project's context, such as "Personal" or "Academic", null if unset
    */
-  purpose: ProjectPurpose | null;
+  context: ProjectContext | null;
 
   /**
    * The current status of the project, such as "Development"
@@ -1372,7 +1395,6 @@ export type UpdateUserInput = Partial<
     MePrivate,
     | "firstName"
     | "lastName"
-    | "preferredName"
     | "headline"
     | "pronouns"
     | "title"
@@ -1384,7 +1406,6 @@ export type UpdateUserInput = Partial<
     | 'displayPhone'
   > & {
     profileImage?: File;
-    mentor?: "true" | "false";
   }
 >;
 export type CreateUserInput = Partial<
@@ -1402,12 +1423,10 @@ export type CreateUserInput = Partial<
     | 'displayPhone'
   > & {
     profileImage?: string;
-    mentor?: true | false;
   }
 > & {
   firstName: string;
   lastName: string;
-  preferredName: string;
   googleId?: string;
   username: string;
   ritEmail: string;
@@ -1416,7 +1435,6 @@ export type CreateUserInput = Partial<
 export type SessionUserData = Partial<{
   firstName: string;
   lastName: string;
-  preferredName: string;
   email: string;
   googleId: string;
   userExists: boolean;
@@ -1459,6 +1477,18 @@ export type UpdateProjectProfileVisibilityInput = {
   profileVisibility: Visibility;
 };
 
+export type AddGalleryImageInput = {
+  file: File;
+  altText: string;
+}
+
+export type AddGalleryVideoInput = {
+  videoUrl: string;
+  title: string;
+}
+
+
+
 /**
  * The full data of a user report
  */
@@ -1494,6 +1524,57 @@ export type UserReport = {
   active: boolean;
 }
 
+/**
+ * The full data of a bug report
+ */
+export type BugReport = {
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+
+  /**
+   * Report ID in the DB
+   */
+  reportId: number;
+
+  /**
+   * ID of the user who made the report
+   */
+  userId: number;
+
+  /**
+   * Text of the report
+   */
+  reportText: string;
+
+  /**
+   * Time the report was made
+   */
+  createdAt: Date;
+
+  /**
+   * Whether the report has been resolved or is still open
+   */
+  isResolved: boolean;
+
+  /**
+   * Notes from a mod about the issue
+   */
+  modNotes: string;
+
+}
+
+/**
+ * Data required to create a bug report 
+ */
+export type AddBugReportInput = {
+  /**
+   * Description regarding the bud
+   */
+  reportText: string;
+}
+
 // PROJECTS inputs
 
 /**
@@ -1503,7 +1584,7 @@ export type CreateProjectInput = Required<Pick<ProjectDetail, "title">> &
   Partial<
     Pick<
       ProjectDetail,
-      "hook" | "description" | "status" | "audience" | "purpose" | 'globalVisibility'
+      "hook" | "description" | "status" | "audience" | "context" | 'globalVisibility'
     >
   >;
 
@@ -1691,7 +1772,6 @@ export type DeleteJobSkillInput = {
  * Data required to filter request
  */
 export type FilterRequest = {
-  mentor?: boolean;
   designer?: boolean;
   developer?: boolean;
   skills?: number[];
@@ -1722,9 +1802,19 @@ export type CreateSkillInput = Pick<Skill, "label" | "type" | "category">;
 export type EditSkillInput = Partial<CreateSkillInput> & { skillId: number };
 
 /**
+ * Data required to update a user's tag blacklist
+ */
+export type UpdateTagBlacklistInput = {
+  tagBlacklist: Tag[]
+}
+
+/**
  * Data required to add a user report
  */
 export type AddUserReportInput = {
+  /**
+   * Reason for the report
+   */
   reason: string;
 };
 
@@ -1732,6 +1822,9 @@ export type AddUserReportInput = {
  * Data required to add a project report
  */
 export type AddProjectReportInput = {
+  /**
+   * Reason for the report
+   */
   reason: string;
 };
 
@@ -1739,6 +1832,9 @@ export type AddProjectReportInput = {
  * Data required to unapprove an already approved project
  */
 export type UnapproveProjectInput = {
+  /**
+   * Reason for unapproving the project
+   */
   reason: string;
 }
 
@@ -1746,16 +1842,58 @@ export type UnapproveProjectInput = {
  * Data required to send a notification to a moderator
  */
 export type ModeratorNotificationInput = {
+  /**
+   * Moderator user id
+   */
   modUserId: number;
+
+  /**
+   * User id of the receiver of the notification
+   */
   receiverId: number;
+
+  /**
+   * Subject line of the notification
+   */
   subjectLine: string;
+
+  /**
+   * Message of the notification
+   */
   message: string;
+
+  /**
+   * Type of moderator notification
+   */
+  type: ModNotificationType;
 }
 
 /**
  * Data required to ban a user from the site
  */
 export type BanUserInput = {
+  /**
+   * User id to ban
+   */
   userId: number;
+
+  /**
+   * Reason of the banning
+   */
   reason: string;
+}
+
+/**
+ * Data required to update a bug report 
+ */
+export type UpdateBugReportInput = {
+  /**
+   * Is the bug resolved?
+   */
+  isResolved: boolean;
+
+  /**
+   * Notes for resolving the bug
+   */
+  modNotes: string;
 }

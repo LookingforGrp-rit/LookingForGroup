@@ -1,5 +1,5 @@
 import type {
-  ProjectPurpose,
+  ProjectContext,
   ProjectStatus,
   ProjectJob,
   JobAvailability,
@@ -71,7 +71,7 @@ const prismaProject = {
   description: '',
   hook: '',
   projectId: 1,
-  purpose: 'Academic' as ProjectPurpose,
+  context: 'Academic' as ProjectContext,
   status: 'Planning' as ProjectStatus,
   globalVisibility: 'public' as Visibility,
   thumbnailId: 0,
@@ -110,7 +110,6 @@ const prismaUser = {
   firstName: 'Gold',
   lastName: 'Leaf',
   displayPhone: false,
-  preferredName: 'Leafleaf',
   ritEmail: 'gold@rit.edu',
   privacy: 'public' as Visibility,
   profileImage: null,
@@ -118,13 +117,13 @@ const prismaUser = {
   pronouns: '',
   title: '',
   ritStatus: null,
-  mentor: false,
   createdAt: new Date(),
   updatedAt: new Date(),
   location: '',
   bio: '',
   phoneNumber: null,
   accessLevel: 'User' as UserAccessLevel,
+  galleryEnabled: false,
 };
 
 vi.mock('#services/transformers/projects/parts/project-job.ts', () => ({

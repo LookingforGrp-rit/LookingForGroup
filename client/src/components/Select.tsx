@@ -107,16 +107,11 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         e.stopPropagation();
-                        target.blur();
+                        target?.blur();
                     } else if (e.key === ' ' || e.key === 'Spacebar') {
                         e.stopPropagation();
                     }
                     return;
-                }
-
-                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
-                    e.preventDefault();
-                    toggleOpen();
                 }
             }}
         >
@@ -137,10 +132,10 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
                             e.preventDefault();
                             e.stopPropagation();
                             e.currentTarget.blur();
-                        } else if (e.key === ' ' || e.key === 'Spacebar') {
-                            e.stopPropagation();
                         }
-                    }}
+                        else if (e.key === ' ' || e.key === 'Spacebar') {
+                            e.stopPropagation();
+                    }}}
                 />
             ) : (value || initialVal) ? (
                 <div className='value'>{(value) ? value : initialVal}</div>

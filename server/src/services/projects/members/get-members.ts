@@ -29,10 +29,6 @@ const getMembersService = async (projectId: number): Promise<ProjectMember[] | G
         member1.users.firstName.charCodeAt(0) - member2.users.firstName.charCodeAt(0),
     );
 
-    //For when the preferredName column is made in the database
-    // members = members.toSorted((member1, member2) =>
-    //   member1.users.preferredName.charCodeAt(0) - member2.users.preferredName.charCodeAt(0));
-
     return members.map((member) => transformProjectMember(projectId, member));
   } catch (e) {
     console.error(`Error in getMemberssService: ${e as Error}`);

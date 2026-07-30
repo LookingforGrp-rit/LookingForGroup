@@ -45,7 +45,7 @@ export const ProfileMeetPage = () => {
                 lightSrc={'/assets/bannerImages/people1_light.png'}
                 darkSrc={'/assets/bannerImages/people1_dark.png'}
                 id={'profile-hero-img-1'}
-                alt={'banner image'}
+                alt={'"Explore Profiles"'}
               />
               {/* <div>
                 <span className='profile-hero-highlight'>Explore profiles</span> to see each other's personality, expertise, and project history.
@@ -58,7 +58,7 @@ export const ProfileMeetPage = () => {
                 lightSrc={'/assets/bannerImages/people2_light.png'}
                 darkSrc={'/assets/bannerImages/people2_dark.png'}
                 id={'profile-hero-img-2'}
-                alt={'banner image'}
+                alt={'"Follow Users"'}
               />
               {/* <div className="panel-text">
                 Find someone interesting? <span className='profile-hero-highlight'>Send a message!</span><br/>
@@ -72,7 +72,7 @@ export const ProfileMeetPage = () => {
                 lightSrc={'/assets/bannerImages/people3_light.png'}
                 darkSrc={'/assets/bannerImages/people3_dark.png'}
                 id={'profile-hero-img-3'}
-                alt={'banner image'}
+                alt={'"Find your Group!"'}
               />
               {/* <div>
                 Keep your profile up to date with your skills, project preferences, and interests to 
@@ -204,8 +204,9 @@ export const ProfileMeetPage = () => {
     let tagFilteredList = items.filter((item) => {
       for (let tag of activeExclusionFilters) {
         if ((item.title === tag.label && tag.type === "Role") ||
-            item.majors.some(major => major.label === tag.label && major.majorId === tag.skillId) ||
-            item.skills.some(skill => skill.skillId === tag.skillId))
+          item.majors.some(major => major.label === tag.label && major.majorId === tag.skillId) ||
+          item.skills.some(skill => skill.type === tag.type && tag.category ==="Other") || //.type used instead of .skillId to accomodate for people tab filters, which reference general types and not specific skillIds
+          item.skills.some(skill => skill.skillId === tag.skillId)) 
           return false;
       }
       if (activeSkillFilters.length === 0) return true;
@@ -215,8 +216,10 @@ export const ProfileMeetPage = () => {
       for (const tag of activeSkillFilters) {
         // Check for broad filter label Developer
         if (tag.label === 'Developer') {
-          matchesAll = item.developer;
-          matchesAny = item.developer;
+          if (item.developer)
+            matchesAny = true;
+          else
+            matchesAll = false;
         }
         else if (tag.label === 'Designer') {
           if (item.designer)
@@ -285,7 +288,7 @@ export const ProfileMeetPage = () => {
 
     // If no tags are currently selected, render all projects
     // !! Needs to be skipped if searchbar has any input !!
-    if (tagFilteredList.length === 0 && activeSkillFilters.length === 0) {
+    if (activeExclusionFilters.length === 0 && activeSkillFilters.length === 0) {
       tagFilteredList = JSON.parse(JSON.stringify(fullUserList));
 
       setFilteredUserList(fullUserList);
@@ -353,7 +356,8 @@ export const ProfileMeetPage = () => {
         value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
         setCurrentUserId={getAuth}
         placeholderText="Search by Name"
-        mobilePlaceholderText="People" />
+        mobilePlaceholderText="People"
+        searchBlocklist={[/*"username"*/]} />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {profileHero}
 

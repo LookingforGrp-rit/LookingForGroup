@@ -190,11 +190,6 @@ paths:
             type: string
           description: The strictness with which to apply the filters (return if they match either any of the filters or all of them)
         - in: query
-          name: mentor
-          required: false
-          schema:
-            type: boolean
-        - in: query
           name: designer
           required: false
           schema:
@@ -603,8 +598,37 @@ paths:
                     example: null
                   data:
                     type: array
+                    items:
+                      $ref: '#/components/schemas/UserDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/blacklist/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get details on why the user is banned
+      responses:
+        '200':
+          description: Details on why the user is banned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
                     nullable: true
-                    example: []
+                    example: null
+                  data:
+                    allOf:
+                      - type: object
+                      - $ref: '#/components/schemas/BanDetail'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -998,6 +1022,100 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/me/tag-blacklist:
+    get:
+      summary: Get current user's tag blacklist
+      description: Returns the list of tags that the user has chosen to exclude from all their viewed content
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: List of socials the current user has
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      summary: Updates a user's tag blacklist
+      description: Updates the list of tags a user would like to exclude from their viewed content.
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tagBlacklist:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TagWithIdInput'
+      responses:
+        '201':
+          description: Tags created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Tag'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /api/me/socials:
     get:
       summary: Get current user's socials
@@ -1844,6 +1962,50 @@ paths:
                     example: 'User removed from blocklist.'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/report-bug:
+    post:
+      summary: Report a bug
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddBugReportInput'
+      responses:
+        '200':
+          description: Report created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
         '409':
           $ref: '#/components/responses/Conflict'
         '500':
@@ -4364,7 +4526,53 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/mod/unban-user/{googleId}:
+  /api/mod/notification:
+    post:
+      summary: Sends a notification to a user
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModeratorNotificationInput'
+      responses:
+        '201':
+          description: Notification sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullabe: true
+                    example: 'CREATED'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mod/unban-user/{id}:
     delete:
       summary: Unbans a user by removing them from a blacklist
       tags:
@@ -4372,10 +4580,10 @@ paths:
       security:
         - shibbolethAuth: []
       parameters:
-        - name: googleId
+        - name: id
           in: path
           required: true
-          description: Google ID of the user to be unbanned
+          description: User ID of the user to be unbanned
           schema:
             type: string
         - in: query
@@ -4416,6 +4624,13 @@ paths:
         - Mod
       security:
         - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       responses:
         '200':
           description: Project reports acquired successfully
@@ -4474,6 +4689,117 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/UserReport'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mod/bug-report/:
+    get:
+      summary: Get a list of all bug reports
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      responses:
+        '200':
+          description: Bug reports acquired successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BugReport'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mod/bug-report/{id}:
+    get:
+      summary: Get a bug report
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the bug report
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Bug report acquired successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BugReport'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      summary: Update a bug report
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the bug report
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBugReportInput'
+      responses:
+        '200':
+          description: Bug report updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BugReport'
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -4544,7 +4870,7 @@ paths:
           description: The user ID to be used as the current user
       responses:
         '200':
-          description: Project reports acquired successfully
+          description: Project report deleted successfully
           content:
             application/json:
               schema:
@@ -4631,7 +4957,7 @@ paths:
           description: The user ID to be used as the current user
       responses:
         '200':
-          description: Project reports acquired successfully
+          description: User report deleted successfully
           content:
             application/json:
               schema:
@@ -4685,7 +5011,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ProjectPreview'
+                      $ref: '#/components/schemas/ProjectDetail'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -5068,6 +5394,335 @@ paths:
                   data:
                     type: string
                     example:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  #GALLERY
+  /api/me/gallery/{userId}/images:
+    get:
+      summary: Gets all gallery images for the current user.
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      description: Retrieves all images stored in the user's gallery.
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: ID of the current user.
+      responses:
+        '200':
+          description: Gallery images retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        galleryImageId:
+                          type: integer
+                          example: 12
+                        image:
+                          type: string
+                          example: 'https://cdn.example.com/gallery/img123.png'
+                        altText:
+                          type: string
+                          example: 'My gallery image'
+                        position:
+                          type: integer
+                          example: 0
+                        userId:
+                          type: integer
+                          example: 42
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Adds an image to the current user's gallery.
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      description: Uploads an image file and alt text, stores the file to the users gallery
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: ID of current user.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The image file to upload.
+                altText:
+                  type: string
+                  description: Alt text describing the image.
+              required:
+                - file
+                - altText
+      responses:
+        '200':
+          description: Image added to gallery.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    properties:
+                      galleryImageId:
+                        type: integer
+                        example: 1
+                      image:
+                        type: string
+                        example: 'https://cdn.example.com/uploads/img123.png'
+                      altText:
+                        type: string
+                        example: 'My cool gallery image'
+                      position:
+                        type: integer
+                        example: 0
+                      userId:
+                        type: integer
+                        example: 42
+
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/gallery/{userId}/videos:
+    get:
+      summary: Gets all gallery videos for the current user.
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      description: Retrieves all videos stored in the user's gallery.
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: ID of the current user.
+      responses:
+        '200':
+          description: Gallery videos retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        galleryVideoId:
+                          type: integer
+                          example: 5
+                        videoUrl:
+                          type: string
+                          example: 'https://youtube.com/watch?v=abc123'
+                        title:
+                          type: string
+                          example: 'My gallery video'
+                        position:
+                          type: integer
+                          example: 1
+                        userId:
+                          type: integer
+                          example: 42
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Adds a video to the current user's gallery.
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      description: Adds a video URL and title to the user's gallery.
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: ID of the current user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                videoUrl:
+                  type: string
+                  description: URL of the video.
+                title:
+                  type: string
+                  description: Title describing the video.
+              required:
+                - videoUrl
+                - title
+      responses:
+        '201':
+          description: Video added to gallery.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    properties:
+                      galleryVideoId:
+                        type: integer
+                        example: 1
+                      videoUrl:
+                        type: string
+                        example: 'https://youtube.com/watch?v=abc123'
+                      title:
+                        type: string
+                        example: 'My gallery video'
+                      position:
+                        type: integer
+                        example: 0
+                      userId:
+                        type: integer
+                        example: 42
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/gallery/{userId}/images/{imageId}:
+    delete:
+      summary: Deletes an image from the current user's gallery.
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      description: Removes a gallery image by its ID.
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: ID of the current user.
+        - in: path
+          name: imageId
+          required: true
+          schema:
+            type: integer
+          description: ID of the gallery image to delete.
+      responses:
+        '204':
+          description: Image deleted successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 204
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    nullable: true
+                    example: null
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/gallery/{userId}/videos/{videoId}:
+    delete:
+      summary: Deletes a video from the current user's gallery.
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      description: Removes a gallery video by its ID.
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: ID of the current user.
+        - in: path
+          name: videoId
+          required: true
+          schema:
+            type: integer
+          description: ID of the gallery video to delete.
+      responses:
+        '204':
+          description: Video deleted successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 204
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    nullable: true
+                    example: null
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -5494,8 +6149,12 @@ components:
       $ref: 'schemas/users.yaml#/components/schemas/UserPreview'
     UserDetail:
       $ref: 'schemas/users.yaml#/components/schemas/UserDetail'
+    BanDetail:
+      $ref: 'schemas/users.yaml#/components/schemas/BanDetail'
     UserReport:
       $ref: 'schemas/users.yaml#/components/schemas/UserReport'
+    BugReport:
+      $ref: 'schemas/users.yaml#/components/schemas/BugReport'
 
     MySkill:
       $ref: 'schemas/me.yaml#/components/schemas/MySkill'
@@ -5593,6 +6252,8 @@ components:
       $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectVideoInput'
     CreateMemberRequestInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/CreateMemberRequestInput'
+    TagWithIdInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/TagWithIdInput'
     TagInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/TagInput'
     SkillInput:
@@ -5603,6 +6264,12 @@ components:
       $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectReportInput'
     BanUserInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/BanUserInput'
+    ModeratorNotificationInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/ModeratorNotificationInput'
+    AddBugReportInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddBugReportInput'
+    UpdateBugReportInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateBugReportInput'
 
     ErrorMessage:
       type: object

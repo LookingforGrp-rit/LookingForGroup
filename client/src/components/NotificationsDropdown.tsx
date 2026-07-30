@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Dropdown, DropdownButton, DropdownContent } from "./Dropdown";
+import { createPortal } from "react-dom";
 import { useNotifications } from "../hooks/useNotifications";
 import { getNotification } from "../api/notifications";
 import DOMPurify from 'dompurify';
@@ -53,6 +54,7 @@ const NotificationsPanel: React.FC<PanelProps> = ({
 }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [details, setDetails] = useState<Record<string, NotificationDetail>>({});
+  const [isClearing, setIsClearing] = useState(false);
 
   // Mount === open: pull the latest list whenever the dropdown opens.
   useEffect(() => {
@@ -81,12 +83,39 @@ const NotificationsPanel: React.FC<PanelProps> = ({
     }
   };
 
+  // Delete handler
+  const handleClearAll = async () => {
+    setIsClearing(true);
+    try {
+      await Promise.all(notifications.map((n) => remove(n.notificationId)));
+      await refresh();
+    } catch (err) {
+      console.error("Failed to clear all notifications", err);
+    } finally {
+      setIsClearing(false);
+    }
+  };
+
   return (
     <div id="notifications-panel">
       <div className="notifications-header">
         <span>Notifications</span>
+        
+        {/* Clear All Button */}
+        {notifications.length > 0 && !loading &&(
+          <button
+            type="button"
+            className="notification-clear-all"
+            aria-label="Clear all notifications"
+            onClick={() => void handleClearAll()}
+            disabled={isClearing}
+          >
+            <i className={`fa-solid fa-trash ${isClearing ? "fa-bounce" : ""}`}></i> 
+            {isClearing ? "Clearing..." : "Clear All"}
+          </button>
+        )}
       </div>
-
+      <hr></hr>
       {loading && notifications.length === 0 ? (
         <div className="notifications-empty">Loading...</div>
       ) : error ? (
@@ -177,14 +206,25 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
         </span>
       </DropdownButton>
       <DropdownContent rightAlign={true}>
-        <NotificationsPanel
-          notifications={notifications}
-          loading={loading}
-          error={error}
-          refresh={refresh}
-          markRead={markRead}
-          remove={remove}
-        />
+        {createPortal(
+          <div 
+            className="notifications-portal dropdown"
+            data-theme={theme}
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.nativeEvent.stopImmediatePropagation()}
+            onTouchStart={(e) => e.nativeEvent.stopImmediatePropagation()}
+          >
+            <NotificationsPanel
+              notifications={notifications}
+              loading={loading}
+              error={error}
+              refresh={refresh}
+              markRead={markRead}
+              remove={remove}
+            />
+          </div>,
+          document.body
+        )}
       </DropdownContent>
     </Dropdown>
   );

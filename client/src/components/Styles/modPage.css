@@ -3,9 +3,41 @@
     Most of the css styling rules for the Moderator page and mod options
 
 ================== */
+#mod-tools {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
 
-#mod-tools-block
-{
+    .announcement-area {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        width: 50%;
+        height: fit-content;
+
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        p {
+            width: 90%;
+            text-align: center;
+            margin: 0;
+        }
+
+        textarea {
+            outline: none;
+        }
+    }
+}
+
+#mod-actions-block {
+    /* position: relative; */
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -15,16 +47,22 @@
     background-color: var(--header-color);
     border-radius: 10px;
     padding: 10px;
+    margin-bottom: 20px;
     height: auto;
 
-    #mod-tools-tabs {
+    #mod-actions-tabs {
         display: flex;
         gap: 15px;
+        height: 8vh;
+        padding-top: 10px;
         align-items: flex-end;
-        height: 40px;
+        overflow-x: auto;
+        scrollbar-color: var(--primary-color) var(--liked-section-bg);
+        scrollbar-width: thin;
     }
-    button
-    {
+
+
+    button {
         color: var(--primary-color);
         background-color: var(--liked-section-bg);
         border-top-left-radius: 10px;
@@ -36,64 +74,74 @@
         padding-bottom: 0.4rem;
         font-weight: 600;
     }
+
     button:hover {
-      transform: none;
-      padding-bottom: 10px;
+        transform: none;
+        padding-bottom: 10px;
     }
-    #mod-content-container
-    {
-        width: calc(100% - 30px);
+
+    #mod-content-container {
+        box-sizing: border-box;
+        width: 100%;
         min-height: 100px;
         background-color: var(--liked-section-bg);
         border-radius: 10px;
         border-top-left-radius: 0px;
         border-color: var(--liked-section-bg);
         border-style: solid;
-        padding: 10px;
+        /* Need big padding in the bottom to fit the tooltip */
+        padding: 10px 10px 30px;
         max-height: 500px;
-        overflow-y: scroll;
+        overflow-y: auto;
         overflow-x: hidden;
     }
 }
+
 .mod-page {
     .page-title {
         padding: 20px;
     }
-    #mod-page-description
-    {
+
+    #mod-page-description {
         width: 90%;
         text-align: center;
     }
 }
-#mod-options-btns
-{
+
+.mod-options-btns {
     flex-wrap: wrap;
-    #mod-approve-btn
-    {
+    margin-top: 20px;
+
+    #mod-approve-btn {
         border: none;
         border-radius: 30px;
         padding: 10px 20px;
         background-color: var(--approved-green, #b1fca9);
-        color: var(--main-text);
+        color: black;
         font-size: 2ch;
         width: max-content;
         margin: auto min(1vw, 10px);
         font-weight: 700;
     }
-    .mod-edit-btn
-    {
+
+    .mod-edit-btn,
+    .mod-unban-btn {
         border: none;
         border-radius: 30px;
         padding: 10px 20px;
-        background-color: var(--under-review-yellow, #ffe1a2);
-        color: var(--main-text);
+        background-color: var(--warning-color, #FF6B4A);
+        color: var(--invert-text);
         font-size: 2ch;
         width: max-content;
         margin: auto min(1vw, 10px);
         font-weight: 700;
     }
-    #mod-dismiss-btn
-    {
+
+    .mod-unban-btn {
+        background-color: var(--error-delete-color);
+    }
+
+    #mod-dismiss-btn {
         border: none;
         border-radius: 30px;
         padding: 10px 20px;
@@ -104,37 +152,529 @@
         margin: auto min(1vw, 10px);
         font-weight: 700;
     }
+
     /* decline btn styled by delete-button */
-    #mod-decline-btn
-    {
-        color: var(--main-text);
+    #mod-decline-btn {
+        color: var(--invert-text);
     }
 }
 
-#mod-user-options
-{
+.mod-user-options {
     margin-top: 1vw;
     width: 100%;
     max-width: calc(100% - 40px);
 }
 
+.mod-user-options>p {
+    margin-top: 0;
+}
+
+#manage-perms-popup {
+    h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin: 0 0 15px;
+    }
+
+    p,
+    button {
+        font-size: 1.125rem;
+    }
+}
+
+/* Display switch */
+.display-switch {
+    box-sizing: border-box;
+    background-color: var(--header-color);
+    border: 0px;
+    border-radius: 100px;
+    padding: 2px;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    cursor: pointer;
+
+    display: flex;
+    width: fit-content;
+}
+
+.display-switch .display-switch-option {
+    box-sizing: border-box;
+    background-color: #00000000;
+    border: 0px;
+    border-radius: 100px;
+    width: 41px;
+    height: 41px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    i {
+        color: var(--primary-color);
+    }
+}
+
+.display-switch .display-switch-option:hover {
+    transition-duration: 0.25s;
+    background-color: var(--invert-text);
+}
+
+.display-switch .display-switch-option#selected {
+    background-color: var(--primary-color);
+
+    i {
+        color: var(--invert-text);
+    }
+}
+
+/* List View */
+.mod-tool .responsive-table {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+/* Headers */
+.header-label {
+    color: var(--primary-color);
+    text-align: left;
+    font-size: 1rem;
+    font-family: Inter;
+    font-weight: bold;
+    line-height: 28px;
+    letter-spacing: 0%;
+    padding: 0 10px;
+}
+
+.header-label.date {
+    max-width: 10ch;
+}
+
+/* Data Rows */
+.mod-tool .list-card {
+    box-sizing: border-box;
+    background-color: var(--header-color);
+
+    border: 0px;
+    border-radius: 10px;
+    height: fit-content;
+    font-size: 1.25rem;
+}
+
+.mod-tool .list-card:hover {
+    transform: translateY(-2px);
+    cursor: pointer;
+    transition: transform 0.2s ease-in;
+
+    .list-card-title {
+        text-decoration: underline;
+    }
+}
+
+.mod-tool .responsive-table tr td {
+    font-size: 1rem;
+    padding: 10px;
+}
+
+.mod-tool .responsive-table tr td:first-child {
+    text-align: left;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    width: fit-content;
+    padding: 10px;
+}
+
+.mod-tool .responsive-table tr td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    padding: 10px;
+}
+
+/* Bug Panel */
+.bug-panel {
+    width: 100%;
+    height: auto;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--header-color);
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    max-width: none;
+    overflow: hidden;
+    text-decoration: none;
+    margin: 10px 0;
+
+    .bug-reporter-profile {
+        width: clamp(45px, 15vw, 75px);
+        height: clamp(45px, 15vw, 75px);
+        border-radius: 50%;
+        border: 2px solid white;
+        object-fit: cover;
+        margin-right: 10px;
+    }
+
+    .bug-reporter {
+        width: 95%;
+        margin: 10px auto;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .bug-reporter-profile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bug-reporter-info {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Name */
+    h2 {
+        margin: 8px 15px 0 15px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        line-height: normal;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+
+    #see-details-btn {
+        border: none;
+        border-radius: 30px;
+        padding: 10px 20px;
+        background-color: var(--primary-color);
+        color: var(--invert-text);
+        font-size: 2ch;
+        width: max-content;
+        margin: auto min(1vw, 10px);
+        font-weight: 700;
+    }
+
+    .popup:has(#report-popup) {
+        overflow-x: hidden;
+    }
+
+    #report-popup {
+        height: fit-content;
+    }
+}
+
+#bug-reporter-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--primary-color);
+}
+
+/* Reporter Component */
+.reporter {
+    box-sizing: border-box;
+    max-width: 500px;
+    background-color: var(--bg-color);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.reporter>div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.reporter .reporter-info {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    min-width: 35%;
+}
+
+.reporter-header {
+    font-size: large;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin: 10px auto;
+}
+
+.reporter-profile:link,
+.reporter-profile:visited {
+    display: flex;
+    align-self: center;
+    flex-direction: column;
+    text-decoration: none;
+}
+
+.reporter-profile:hover {
+    text-decoration: underline;
+}
+
+.reporter-profile img {
+    width: clamp(45px, 15vw, 75px);
+    height: clamp(45px, 15vw, 75px);
+    border-radius: 50%;
+    border: 2px solid var(--main-text);
+    object-fit: cover;
+    margin: auto;
+}
+
+.reporter-profile p {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.tooltip {
+    display: inline-block;
+    position: relative;
+    cursor: help;
+}
+
+.tooltip-text {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    z-index: 1;
+
+    border: 1px solid var(--main-text);
+
+    width: 150px;
+    padding: 5px;
+    background-color: var(--liked-section-bg);
+    color: var(--main-text);
+    font-size: 0.8em;
+    line-height: 1.5em;
+    text-align: center;
+    border-radius: 6px;
+    white-space: normal;
+
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.reporter .tooltip-text {
+    top: 100%;
+    left: 0;
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+.reporter .open-btn {
+    /* height: 40px; */
+    padding: 5px 16px;
+    font-size: 1.25rem;
+    border: none;
+    border-radius: 40px;
+    background-color: var(--primary-color);
+    color: var(--invert-text);
+    font-weight: 700;
+    margin: auto;
+}
+
+.reporter .message-area {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.reporter .message-area textarea,
+.reporter .message-area input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.reporter .message-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.reporter .cancel-btn {
+    color: var(--main--text);
+    font-weight: normal;
+    background-color: transparent;
+}
+
+.reporter .reason {
+    width: 100%;
+}
+
 /* Mobile */
-@media screen and (max-width: 700px)
-{
-    #mod-tools-block
-    {
+@media only screen and (max-width: 1200px) {
+    .list-card-status {
+        flex-basis: 150px;
+    }
+
+    .header-label.status {
+        flex-basis: 150px;
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    #mod-tools {
+        display: block;
+        width: 95%;
+        margin: 0 auto;
+
+        .announcement-area {
+            width: auto;
+        }
+
+        #mod-actions-block {
+            width: 100%;
+        }
+    }
+
+    .mod-tool .list-card {
+        flex-wrap: wrap;
+    }
+
+    .mod-tool .list-card-title {
+        width: auto;
+        order: 1;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    .reporter>div {
+        flex-direction: column;
+    }
+
+    .reporter .message-area {
+        width: 100%;
+    }
+}
+
+@media only screen and (min-width:601px) and (max-width:950px) {
+    .mod-tool .responsive-table tr td {
+        font-size: 0.8em;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    #mod-actions-block {
         button {
             font-size: 1em;
             height: fit-content;
         }
-        #mod-tools-tabs
-        {
-            height: fit-content;
+
+        #mod-content-container {
+            border-top-right-radius: 0px;
+            padding: 10px;
+        }
+
+        .tooltip-text {
+            top: 100%;
+            left: 0;
+        }
+
+        #mod-actions-tabs {
+            height: 60px;
+            padding-right: 5px;
         }
     }
-    #mod-user-options
-    {
-        margin: 20px 0;
 
+    .mod-user-options {
+        margin: 20px 0;
+    }
+
+    .mod-tool .list-header {
+        display: none;
+    }
+
+    .mod-tool .list-card-title {
+        grid-area: name;
+        box-sizing: border-box;
+        padding: 5px;
+        word-break: break-word;
+        hyphens: auto;
+    }
+
+    .mod-tool .list-card-status {
+        grid-area: status;
+    }
+
+    .mod-tool .list-card-date {
+        grid-area: date;
+    }
+
+    .mod-tool .list-card {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        grid-template-areas: "name menu"
+            "status date";
+    }
+
+    /* Hide table headers (but not display: none;, for accessibility) */
+    .mod-tool .responsive-table thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .mod-tool .responsive-table tr {
+        display: block;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+    }
+
+    .mod-tool .responsive-table tr td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem;
+        margin-left: 5px;
+        border: none;
+        font-size: 0.7em;
+        text-align: right;
+    }
+
+    .mod-tool .responsive-table td:first-child {
+        display: block;
+    }
+
+    /* Inject the column header label */
+    .mod-tool .responsive-table td::before {
+        content: attr(data-label);
+        line-height: 1.5em;
+        font-weight: bold;
+        color: var(--main-text);
+        text-align: left;
+    }
+
+    #report-popup {
+        .mod-options-btns {
+            width: 150%;
+
+            #mod-dismiss-btn {
+                font-size: 1em;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 350px) {
+    .mod-tool .responsive-table td::before {
+        max-width: 7ch;
     }
 }
