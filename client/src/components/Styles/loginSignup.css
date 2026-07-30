@@ -396,7 +396,7 @@ Signup process modal style rules
   align-self: center;
   height: fit-content;
   max-height: 85vh;
-  width: min(calc(90vw - 20px), 1000px);
+  width: min(calc(90vw - 20px), 1055px);
   border-radius: 4px;
   padding: 0px;
   box-shadow: 0px 0px 10px 0px var(--border-color);
@@ -846,7 +846,7 @@ Signup process modal style rules
   flex-direction: column;
   gap: 13px;
   /* height: 100%; */
-  width: 100%;
+  width: 95%;
   margin: 10px 0 15px 0;
 
   div {
