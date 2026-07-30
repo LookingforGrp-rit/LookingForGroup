@@ -1176,6 +1176,14 @@ body.modal-open {
   scrollbar-width: none;
 }
 
+@media screen and (max-width: 1180px) {
+  #project-creator-editor {
+    scrollbar-width: none;
+    padding-top: 5px;
+    box-sizing: border-box;
+  }
+}
+
 .popup-close {
   position: absolute;
   border-radius: 4px !important;

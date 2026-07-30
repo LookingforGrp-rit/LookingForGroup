@@ -19,7 +19,7 @@ interface ImageVideoDisplayProps<Image, Video> {
 
   handleThumbnailChange?: (image: ProjectImage | PendingProjectImage) => void,
   handleImageDelete: ((image: Image) => void),
-  handleImageUpload: (file: File) => void,
+  handleImageUpload: (file: File, altText: string) => void,
 
   handleDeleteVideo: (video: Video) => void,
   handleAddVideo: (video: Video) => void,
