@@ -345,6 +345,16 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
     }
     await editUser({ profileImage: profileImage });
     setShowGetStartedModal(false);
+  }
+
+  //Create user and send them to appropriate location
+  const createProjectButton = async () => {
+    await createUser();
+    navigate(paths.routes.MYPROJECTS);
+  }
+
+  const joinProjectButton = async () => {
+    await createUser();
     navigate(paths.routes.HOME);
   }
 
@@ -579,8 +589,8 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
               setShowTOSModal(true);
               setShowGetStartedModal(false);
             }}
-            onCreateProject={createUser}
-            onJoinProject={createUser}
+            onCreateProject={createProjectButton}
+            onJoinProject={joinProjectButton}
           />
         </div>
         {/*************************************************************
