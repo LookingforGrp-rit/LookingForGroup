@@ -601,7 +601,7 @@ const Profile = (userProfile: any) => {
       const notif = await Promise.all(activeReportList.map(r => sendModeratorNotification({
         modUserId: userID,
         receiverId: r.reporterId,
-        subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
+        subjectLine: `Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName} has been dismissed`,
         message: 'Thank you for submitting your report. ' +
           'Our moderation team has completed its review. ' +
           'After carefully reviewing the information provided and any relevant evidence, ' +
@@ -632,7 +632,7 @@ const Profile = (userProfile: any) => {
       const notif = await Promise.all(activeReportList.map(r => sendModeratorNotification({
         modUserId: userID,
         receiverId: r.reporterId,
-        subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
+        subjectLine: `Update on Your Report: ${displayedProfile?.firstName} ${displayedProfile?.lastName} has been warned`,
         message: 'Thank you for submitting your report. ' +
           'Our moderation team has completed its review. ' +
           'After reviewing the information provided, we have taken action on the reported user by requesting changes to their profile. ' +
@@ -670,7 +670,7 @@ const Profile = (userProfile: any) => {
       const notif = await Promise.all(activeReportList.map(r => sendModeratorNotification({
         modUserId: userID,
         receiverId: r.reporterId,
-        subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
+        subjectLine: `Update on Your Report: ${displayedProfile?.firstName} ${displayedProfile?.lastName} has been banned`,
         message: 'Thank you for submitting your report. ' +
           'Our moderation team has completed its review. ' +
           'After reviewing the information provided, we have determined that further action was necessary. ' +

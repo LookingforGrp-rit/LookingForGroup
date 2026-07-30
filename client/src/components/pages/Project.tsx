@@ -298,7 +298,7 @@ const Project = () => {
       const notif = await Promise.all(reportList.map(r => sendModeratorNotification({
         modUserId: userID,
         receiverId: r.userId,
-        subjectLine: `Update on Your Report on ${displayedProject?.title}`,
+        subjectLine: `Your Report on ${displayedProject?.title} has been dismissed`,
         message: 'Thank you for submitting your report. ' +
           'Our moderation team has completed its review. ' +
           'After carefully reviewing the information provided and any relevant evidence, ' +
@@ -323,7 +323,7 @@ const Project = () => {
       const notif = await Promise.all(reportList.map(r => sendModeratorNotification({
         modUserId: userID,
         receiverId: r.userId,
-        subjectLine: `Update on Your Report on ${displayedProject?.title}`,
+        subjectLine: `Update on Your Report: ${displayedProject?.title} has been taken down`,
         message: 'Thank you for submitting your report. ' +
           'After reviewing the reported project, ' +
           'our moderation team determined that it violated our community guidelines ' +
