@@ -93,6 +93,7 @@ Project Panel component style rules
   overflow: hidden;
   text-decoration: none;
   margin: 10px 0;
+  max-width: 100%;
 
   .project-panel-meta {
     grid-area: tags;
@@ -184,9 +185,11 @@ Project Panel component style rules
     margin: 0;
     flex-shrink: 0;
     display: grid;
+    width: 100%;
+    box-sizing: border-box;
     grid-template:
       'title heart' 1fr
-      'tags heart' auto / 5fr 1fr;
+      'tags tags' auto / minmax(0, 1fr) auto;
     row-gap: 4px;
     /* display: flex;
     flex-direction: row;
@@ -204,6 +207,7 @@ Project Panel component style rules
       text-align: left;
       overflow-wrap: break-word;
       word-break: break-word;
+      align-self: center;
     }
 
     h2:hover {
@@ -218,7 +222,8 @@ Project Panel component style rules
       align-items: start;
       padding-left: 8px;
       height: 100%;
-      padding-top: 15px;
+      padding-top: 8px;
+      margin-bottom: 10px;
 
       .follow-amt {
         margin: 0;
@@ -1578,7 +1583,7 @@ Project Creator and Editor Popup style rules
   padding: 12px 15px;
   max-width: 204px;
   width: 100%;
-  gap: 10px;
+  gap: 5px;
   flex-direction: row;
   background-color: var(--header-color);
   border-radius: 10px;
@@ -1626,12 +1631,35 @@ Project Creator and Editor Popup style rules
   display: flex;
   flex-direction: column;
   justify-content: center;
-  text-align: center;
   flex: 1;
 }
 
 .project-editor-project-member-info>* {
   align-self: stretch;
+}
+
+.project-editor-project-member-info {
+  text-align: left;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(1fr, 3fr));
+  grid-template-rows: 2fr 1fr;
+
+  .project-editor-project-member-name {
+    grid-column: 2/3;
+    grid-row: 1/2;
+  }
+  .project-editor-project-member-role
+  {
+    grid-column: 2/3;
+    grid-row: 2/3;
+  }
+  #owner-crown {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    align-items: center;
+    justify-content: center;
+    margin: auto 5px;
+  }
 }
 
 .project-editor-project-member-role {
@@ -4029,6 +4057,7 @@ Project Carousel style rules
   margin-bottom: 5px;
   word-break: break-word;
   hyphens: auto;
+  min-width: 12vw;
 }
 
 #project-info-buttons {
@@ -4878,18 +4907,35 @@ button#positions-popup-list-item-active {
 
 .project-contributor-info {
   margin: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(1fr, 3fr));
+  grid-template-rows: 2fr 1fr;
 
   .team-member-name {
+    align-items: center;
+    justify-content: center;
+    margin: auto 0;
+    grid-column: 2/3;
+    grid-row: 1/2;
     font-weight: 700;
     font-size: 1rem;
     color: var(--primary-color);
   }
 
   .team-member-role {
+    grid-column: 2/3;
+    grid-row: 2/3;
     font-style: italic;
     font-size: clamp(0.625rem, 2vw, 0.875rem);
     font-weight: 400;
     color: var(--neutral-gray);
+  }
+  #owner-crown {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    align-items: center;
+    justify-content: center;
+    margin: auto 5px;
   }
 }
 
