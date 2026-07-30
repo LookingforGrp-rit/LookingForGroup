@@ -189,10 +189,14 @@ export const deleteUser = async (): Promise<ApiResponse> => {
  */
 export const getBlockedUsersById = async () => {
   const apiURL = `/me/blocklist`;
-  const blocklistrequest = await GET(apiURL);
-  const blocklist: UserPreview[] = blocklistrequest.data;
-  const blocklistUserIds: number[] = blocklist.map((userPreview) => userPreview.userId);
-  return blocklistUserIds;
+  const response = await GET(apiURL);
+  //console.log(response);
+
+  if (response.error) {
+    console.error(response.error);
+  }
+
+  return response;
 }
 
 /**
@@ -201,7 +205,14 @@ export const getBlockedUsersById = async () => {
  */
 export const blockUser = async (blockedUserID: number | undefined) => {
   const apiURL = `/me/blocklist`;
-  await POST(apiURL, { userId: blockedUserID });
+  const response = await POST(apiURL, { userId: blockedUserID });
+  //console.log(response);
+
+  if (response.error) {
+    console.error(response.error);
+  }
+
+  return response;
 }
 
 /**
@@ -210,7 +221,14 @@ export const blockUser = async (blockedUserID: number | undefined) => {
  */
 export const unblockUser = async (blockedUserID: number | undefined) => {
   const apiURL = `/me/blocklist`;
-  await DELETE(apiURL, { userId: blockedUserID });
+  const response = await DELETE(apiURL, { userId: blockedUserID });
+  //console.log(response);
+
+  if (response.error) {
+    console.error(response.error);
+  }
+
+  return response;
 }
 
 /* ACCOUNT INFO/ PASSWORD RESET*/

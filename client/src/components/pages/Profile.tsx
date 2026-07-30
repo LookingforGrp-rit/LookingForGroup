@@ -297,7 +297,23 @@ const Profile = (userProfile: any) => {
  * If so, change the block button to unblock
  */
   const isUserBlocked = async () => {
-    const blocklistUserIds: number[] = await getBlockedUsersById();
+    const blocklistRequest = await getBlockedUsersById();
+    let blocklist: UserPreview[] = [];
+    let blocklistUserIds: number[] = [];
+
+    //Success
+    if (blocklistRequest.status === 200) {
+      blocklist = blocklistRequest.data;
+      blocklistUserIds = blocklist.map((userPreview) => userPreview.userId);
+    }
+
+    //Internal server error
+    else if (blocklistRequest.status === 500) {
+      const errorType: string = "Internal server error";
+      console.log(`${errorType} on getBlockedUsersById`);
+      console.log(blocklistRequest.error);
+    }
+
     const blockUserID = displayedProfile?.userId;
 
     if (displayedProfile?.userId && blocklistUserIds.includes(displayedProfile?.userId)) {
@@ -306,8 +322,33 @@ const Profile = (userProfile: any) => {
         id="profile-menu-block"
         onClick={async () => {
           //THE PARAMETER IS THE PERSON TO BLOCK
-          await unblockUser(blockUserID);
-          window.location.reload();
+          const unblockUserRequest = await unblockUser(blockUserID);
+
+          //Success
+          if (unblockUserRequest.status === 204) {
+            window.location.reload();
+          }
+
+          //Bad request
+          else if (unblockUserRequest.status === 400) {
+            const errorType: string = "Bad request";
+            console.log(`${errorType} on unblockUser`);
+            console.log(unblockUserRequest.error);
+          }
+
+          //Conflict
+          else if (unblockUserRequest.status === 409) {
+            const errorType: string = "Conflict";
+            console.log(`${errorType} on unblockUser`);
+            console.log(unblockUserRequest.error);
+          }
+
+          //Internal server error
+          else if (unblockUserRequest.status === 500) {
+            const errorType: string = "Internal server error";
+            console.log(`${errorType} on unblockUser`);
+            console.log(unblockUserRequest.error);
+          }
         }}
       >
         <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
@@ -319,8 +360,33 @@ const Profile = (userProfile: any) => {
         id="profile-menu-block"
         onClick={async () => {
           //THE PARAMETER IS THE PERSON TO BLOCK
-          await blockUser(blockUserID);
-          window.location.reload();
+          const blockUserRequest = await blockUser(blockUserID);
+
+          //Success
+          if (blockUserRequest.status === 200) {
+            window.location.reload();
+          }
+
+          //Bad request
+          else if (blockUserRequest.status === 400) {
+            const errorType: string = "Bad request";
+            console.log(`${errorType} on blockUser`);
+            console.log(blockUserRequest.error);
+          }
+
+          //Conflict
+          else if (blockUserRequest.status === 409) {
+            const errorType: string = "Conflict";
+            console.log(`${errorType} on blockUser`);
+            console.log(blockUserRequest.error);
+          }
+
+          //Internal server error
+          else if (blockUserRequest.status === 500) {
+            const errorType: string = "Internal server error";
+            console.log(`${errorType} on blockUser`);
+            console.log(blockUserRequest.error);
+          }
         }}
       >
         <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
