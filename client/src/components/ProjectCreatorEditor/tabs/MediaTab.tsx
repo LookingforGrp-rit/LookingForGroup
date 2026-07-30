@@ -518,9 +518,9 @@ export const MediaTab = ({
 
             {/* Hover element */}
             <div className="project-image-hover">
-              {projectAfterMediaChanges.thumbnail === projectImage ||
-                ("imageId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.imageId) ||
-                ("localId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.localId) ?
+              {/* Use the same image-based check as the resting star above, so a
+                  starred thumbnail still shows filled while hovering. */}
+              {projectAfterMediaChanges.thumbnail?.image === projectImage.image ?
                 <ThemeIcon
                   id="star"
                   className="star filled-star"
