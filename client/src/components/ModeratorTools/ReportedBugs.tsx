@@ -37,7 +37,7 @@ const ReportedBugs = ({ currentUserId, currentTab }: ReportedBugsProps) => {
         }
 
         displayReportedBugs();
-    }, [currentTab]);
+    }, [currentTab, bugReports]);
 
     // The final component ====================================================
     if (loaded) {
