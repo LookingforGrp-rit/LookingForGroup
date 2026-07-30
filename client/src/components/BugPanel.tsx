@@ -27,7 +27,7 @@ export const BugPanel = ({currentUserId, reporterId, reportId }: BugPanelProps) 
 
   const [bugReport, setBugReport] = useState<BugReport>();
   const [reporter, setReporter] = useState<UserDetail>();
-  const BUG_REPORT_MAX = 500;
+  const BUG_REPORT_MAX = 2000;
 
   const [bugReportText, setBugReportText] = useState<string>('');
 
