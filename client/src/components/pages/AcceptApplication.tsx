@@ -7,6 +7,7 @@ import { Role } from '@looking-for-group/shared';
 import "../Styles/acceptInvite.css";
 
 const AcceptApplication = () => {
+    //#region Hooks
     const navigate = useNavigate(); // Hook for navigation
     const location = useLocation(); // Hook to access the current location
 
@@ -31,6 +32,7 @@ const AcceptApplication = () => {
     const [hasRespondPerm, setHasRespondPerm] = useState<boolean>(false); // Should the user have access to respond to this request
     const [systemMsg, setSystemMsg] = useState<string>(''); // Message for request not found or perm issue
     const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
+    //#endregion
 
     //#region Helper Methods
     const fetchRole = async (roleId: number) => {
@@ -117,10 +119,12 @@ const AcceptApplication = () => {
     }
     //#endregion
 
+    //#region Loaders
     // Fetch current user info on mount
     useEffect(() => {
         fetchUser();
     }, [navigate]);
+    //#endregion
 
     //#region Handlers
     const handleMemberRequest = async (
@@ -146,39 +150,37 @@ const AcceptApplication = () => {
     };
     //#endregion
 
-    return (
-        <>
-            <div className="background-cover">
-                <div className="error" aria-live="assertive" role="alert">{error}</div>
-                {
-                    loggedIn &&
-                    <div id="accept-invite-container">
-                        <div id="accept-invite-info">
-                            <h1>Hi, {firstName}!</h1>
-                            {
-                                hasRespondPerm
-                                    ? <>
-                                        <h2>{memberFirstName ?? "The owner"} {memberLastName ?? ""} has requested to join <span id="project-title">{projectTitle ?? "a project"}</span></h2>
-                                        <p>Their role will be {role?.label ?? "Member"}</p>
-                                        <div id="accept-invite-btns">
-                                            <button id="decline-button" onClick={() => { handleMemberRequest('Declined') }}>Decline Application</button>
-                                            <button onClick={() => { handleMemberRequest('Accepted') }}>Accept Application</button>
-                                        </div>
-                                    </>
-                                    : <>
-                                        <p>Looks like you're in the wrong place. </p>
-                                        <p>{systemMsg}</p>
-                                        <div id="accept-invite-btns">
-                                            <button onClick={() => { navigate(paths.routes.HOME) }}>Return Home</button>
-                                        </div>
-                                    </>
-                            }
-                        </div>
+    //#region Final component
+    return (<>
+        <div className="background-cover">
+            <div className="error" aria-live="assertive" role="alert">{error}</div>
+            {loggedIn && <>
+                <div id="accept-invite-container">
+                    <div id="accept-invite-info">
+                        <h1>Hi, {firstName}!</h1>
+                        {hasRespondPerm
+                            ? <>
+                                <h2>{memberFirstName ?? "The owner"} {memberLastName ?? ""} has requested to join <span id="project-title">{projectTitle ?? "a project"}</span></h2>
+                                <p>Their role will be {role?.label ?? "Member"}</p>
+                                <div id="accept-invite-btns">
+                                    <button id="decline-button" onClick={() => { handleMemberRequest('Declined') }}>Decline Application</button>
+                                    <button onClick={() => { handleMemberRequest('Accepted') }}>Accept Application</button>
+                                </div>
+                            </>
+                            : <>
+                                <p>Looks like you're in the wrong place. </p>
+                                <p>{systemMsg}</p>
+                                <div id="accept-invite-btns">
+                                    <button onClick={() => { navigate(paths.routes.HOME) }}>Return Home</button>
+                                </div>
+                            </>
+                        }
                     </div>
-                }
-            </div>
-        </>
-    );
+                </div>
+            </>}
+        </div>
+    </>);
+    //#endregion
 };
 
 export default AcceptApplication;

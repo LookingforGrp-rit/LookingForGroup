@@ -14,18 +14,31 @@ Styling of Accept Project Invite Page (AcceptInvitation.tsx)
 }
 
 #accept-invite-container {
-    width: 95%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: min(60vh, 525px);
-    max-width: 880px;
+    max-height: 90%;
+    height: 95%;
+    height: fit-content;
+    max-width: 85%;
+    width: fit-content;
     background-color: var(--bg-color);
     box-shadow: 0px 0px 10px 0px var(--shadow-color);
     border-radius: 10px;
     color: var(--primary-color);
-    margin: 0 auto;
+    margin: 20px auto;
     padding: 0;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--liked-section-bg);
+
+    #accept-invite-info {
+        width: 90%;
+        height: 100%;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
 
     button {
         width: fit-content;
@@ -60,24 +73,112 @@ Styling of Accept Project Invite Page (AcceptInvitation.tsx)
     h2 {
         font-size: 1.25rem;
         font-weight: 600;
-        color: var(--primary-color);
         margin: min(0.2vh, 2px) 0 min(0.51vh, 5px);
+        line-height: 2em;
     }
 
-    /* project title is slightly larger and capitalized */
+    h3 {
+        font-size: 1.2rem;
+        color: var(--primary-color);
+        margin: 0;
+    }
+
     #project-title {
         display: block;
         font-size: 1.5rem;
+        color: var(--primary-color);
     }
 
-    #accept-invite-info {
-        width: 80%;
-        height: 100%;
+    #project-metadata {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+    }
+
+    #project-image {
+        width: 300px;
+
+        img {
+            display: block;
+            width: 100%;
+        }
+    }
+
+    #project-attributes {
+        height: fit-content;
+        max-width: 50%;
+        padding: 10px 30px;
+        background-color: var(--liked-section-bg);
+        border-radius: 10px;
+
         display: flex;
         flex-direction: column;
-        align-items: center;
         justify-content: center;
-        text-align: center;
+        align-items: flex-start;
+
+        div {
+            width: 100%;
+            margin: 8px 0;
+            display: flex;
+        }
+
+        p {
+            margin: 0;
+            text-align: left;
+            word-break: break-word;
+        }
+
+        .detail-header {
+            flex: 0 0 10ch;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+    }
+
+    #project-tags {
+        width: fit-content;
+        margin: 20px auto;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--liked-section-bg);
+        border-radius: 10px;
+    }
+
+    #tags {
+        width: fit-content;
+        margin: 0;
+        padding: 15px 10px;
+        max-height: 100px;
+        list-style: none;
+
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+
+        overflow-y: scroll;
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-color) var(--liked-section-bg);
+        --webkit--mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+        mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+    }
+
+    .tag-label {
+        color: var(--invert-text);
+    }
+
+    #project-detail {
+        width: 100%;
+        margin: 15px 0;
+        text-align: left;
+    }
+
+    #role {
+        color: var(--primary-color);
+        font-weight: bold;
     }
 
     #accept-invite-btns {
@@ -87,24 +188,38 @@ Styling of Accept Project Invite Page (AcceptInvitation.tsx)
         justify-content: center;
         gap: 20px;
         width: fit-content;
-        margin: 0 auto;
+        margin: 50px auto;
     }
 }
 
-/*
-#accept-invite-modal
-{
-    display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--modal-gradient);
-  background-repeat: no-repeat;
-  z-index: 10;
-  margin: 0 auto;
-}*/
+@media only screen and (max-width: 1000px) {
+    #accept-invite-container {
+        max-height: 80%;
+        margin-bottom: 100px;
+    }
+
+    #project-metadata {
+        flex-direction: column !important;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    #project-metadata {
+        width: 100% !important;
+    }
+
+    #project-attributes div {
+        width: 100% !important;
+        display: block !important;
+
+        p {
+            margin: 3px 0 !important;
+        }
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    #project-image {
+        width: 80% !important;
+    }
+}

@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import usePreloadedImage from "../../functions/imageLoad";
+import thumbnailPicture from "../../images/project_temp.png";
+import { Tag } from '../Tag';
 import * as paths from '../../constants/routes';
 import { getByID, updateMemberRequest, getMemberRequest } from '../../api/projects';
 import { getCurrentAccount, getJobTitles } from '../../api/users';
-import { Role } from '@looking-for-group/shared';
+import { Role, ProjectDetail } from '@looking-for-group/shared';
+import { ProjectContext, ProjectStatus } from '@looking-for-group/shared/enums';
 import "../Styles/acceptInvite.css";
 
 const AcceptInvitation = () => {
+    //#region Hooks
     const navigate = useNavigate(); // Hook for navigation
     const location = useLocation(); // Hook to access the current location
 
@@ -14,21 +19,22 @@ const AcceptInvitation = () => {
     const { requestId } = useParams();
     const requestIdNum = Number(requestId);
 
+    const [loaded, setLoaded] = useState<boolean>(false);
+
     // User info state
     const [firstName, setFirstName] = useState<string | null>(null);
     const [userId, setUserId] = useState<number>();
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
     // Project info
+    const [project, setProject] = useState<ProjectDetail>();
     const [projectId, setProjectId] = useState<number>(0);
-    const [projectTitle, setProjectTitle] = useState<string | null>(null);
     const [role, setRole] = useState<Role | null>(null);
-    const [ownerFirstName, setOwnerFirstName] = useState<String | null>(null);
-    const [ownerLastName, setOwnerLastName] = useState<String | null>(null);
 
     const [hasRespondPerm, setHasRespondPerm] = useState<boolean>(false); // Should the user have access to respond to this request
     const [systemMsg, setSystemMsg] = useState<string>(''); // Message for request not found or perm issue
     const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
+    //#endregion
 
     //#region Helper Methods
     const fetchRole = async (roleId: number) => {
@@ -53,9 +59,7 @@ const AcceptInvitation = () => {
             const res = await getByID(projectId);
 
             if (res.data) {
-                setProjectTitle(res.data.title);
-                setOwnerFirstName(res.data.owner.firstName);
-                setOwnerLastName(res.data.owner.lastName);
+                setProject(res.data);
             }
         } catch (err) {
             setError('Fetch Project Error: ' + err);
@@ -103,6 +107,8 @@ const AcceptInvitation = () => {
 
                 // use res.data.userId because setUserId() does not immediately update userId
                 await fetchMemberRequest(requestIdNum, res.data.userId);
+
+                setLoaded(true);
             } else {
                 navigate(paths.routes.LOGIN, {
                     state: { from: location }
@@ -115,10 +121,18 @@ const AcceptInvitation = () => {
     }
     //#endregion
 
+    //#region Loaders
     // Fetch current user info on mount
     useEffect(() => {
         fetchUser();
     }, [navigate]);
+
+    // Load thumbnail image
+    const thumbnailSrc = usePreloadedImage(
+        project?.thumbnail?.image ?? thumbnailPicture,
+        thumbnailPicture,
+    );
+    //#endregion
 
     //#region Handlers
     const handleMemberRequest = async (
@@ -147,39 +161,82 @@ const AcceptInvitation = () => {
     };
     //#endregion
 
-    return (
-        <>
-            <div className="background-cover">
-                <div className="error" aria-live="assertive" role="alert">{error}</div>
-                {
-                    loggedIn &&
-                    <div id="accept-invite-container">
-                        <div id="accept-invite-info">
-                            <h1>Hi, {firstName}!</h1>
-                            {
-                                hasRespondPerm
-                                    ? <>
-                                        <h2>{ownerFirstName ?? "The owner"} {ownerLastName ?? ""} invited you to join <span id="project-title">{projectTitle ?? "a project"}</span></h2>
-                                        <p>Your role will be {role?.label ?? "Member"}</p>
-                                        <div id="accept-invite-btns">
-                                            <button id="decline-button" onClick={() => { handleMemberRequest('Declined') }}>Decline Invite</button>
-                                            <button onClick={() => { handleMemberRequest('Accepted') }}>Accept Invite</button>
+    //#region Final Component
+    return (<>
+        <div className="background-cover">
+            <div className="error" aria-live="assertive" role="alert">{error}</div>
+            {!loaded && <>
+                <div className='placeholder-spacing'>
+                    <div className='spinning-loader'></div>
+                </div>
+            </>}
+            {loggedIn && <>
+                <div id="accept-invite-container">
+                    <div id="accept-invite-info">
+                        <h1>Hi, {firstName}!</h1>
+                        {hasRespondPerm
+                            ? project
+                                ? <>
+                                    <h2>{project.owner.firstName} {project.owner.lastName} invited you to join <span id="project-title">{project.title}</span></h2>
+                                    <div id='project-metadata'>
+                                        <div id='project-image'>
+                                            <img
+                                                src={thumbnailSrc}
+                                                alt={`${project.title} thumbnail image`}
+                                                onError={(e) => {
+                                                    const profileImg = e.target as HTMLImageElement;
+                                                    profileImg.src = thumbnailPicture;
+                                                }}
+                                            ></img>
                                         </div>
-                                    </>
-                                    : <>
-                                        <p>Looks like you're in the wrong place. </p>
-                                        <p>{systemMsg}</p>
-                                        <div id="accept-invite-btns">
-                                            <button onClick={() => { navigate(paths.routes.HOME) }}>Return Home</button>
+                                        <div id='project-attributes'>
+                                            <div>
+                                                <p className='detail-header'>Status</p>
+                                                <p>{ProjectStatus[project.status]}</p>
+                                            </div>
+                                            <div>
+                                                <p className='detail-header'>Content</p>
+                                                <p>{ProjectContext[project.context!]}</p>
+                                            </div>
+                                            <div>
+                                                <p className='detail-header'>Audience</p>
+                                                <p>{project.audience}</p>
+                                            </div>
                                         </div>
-                                    </>
-                            }
-                        </div>
+                                    </div>
+                                    <div id='project-tags'>
+                                        <h3>Tags</h3>
+                                        <ul id='tags'>
+                                            {project.tags.sort((a, b) => a.displayOrder - b.displayOrder).map(tag => <li><Tag type={tag.type.toLowerCase()} selected={true}>{tag.label}</Tag></li>)}
+                                        </ul>
+                                    </div>
+                                    <div id='project-detail'>
+                                        <h3>Project Overview</h3>
+                                        <p>{project.description}</p>
+                                    </div>
+                                    <p>Your role will be <span id="role">{role?.label}</span></p>
+                                    <div id="accept-invite-btns">
+                                        <button id="decline-button" onClick={() => { handleMemberRequest('Declined') }}>Decline Invite</button>
+                                        <button onClick={() => { handleMemberRequest('Accepted') }}>Accept Invite</button>
+                                    </div>
+                                </> : <>
+                                    <div className='placeholder-spacing'>
+                                        <div className='spinning-loader'></div>
+                                    </div>
+                                </>
+                            : <>
+                                <p>Looks like you're in the wrong place.</p>
+                                <p>{systemMsg}</p>
+                                <div id="accept-invite-btns">
+                                    <button onClick={() => { navigate(paths.routes.HOME) }}>Return Home</button>
+                                </div>
+                            </>}
                     </div>
-                }
-            </div>
-        </>
-    );
+                </div>
+            </>}
+        </div>
+    </>);
+    //#endregion
 };
 
 export default AcceptInvitation;
