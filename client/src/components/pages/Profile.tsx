@@ -23,14 +23,26 @@ import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import Reporter from "../Reporter";
 import profilePicture from "../../images/lfrog.png";
-import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles } from "../../api/users";
+import {
+  getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing,
+  getJobTitles,
+  getBlockedUsersById,
+  blockUser,
+  unblockUser
+} from "../../api/users";
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
-import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel, UserReport, BanDetail } from '@looking-for-group/shared';
+import {
+  MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail,
+  UserAccessLevel, UserReport, BanDetail
+} from '@looking-for-group/shared';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
-import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification, deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi } from "../../api/mod-tools";
+import {
+  getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification,
+  deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi
+} from "../../api/mod-tools";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -117,6 +129,8 @@ const Profile = (userProfile: any) => {
       return { name: project.title, description: project.hook };
     }
   );
+
+  let blockButton;
 
   // --------------------
   // Page redirect
@@ -275,6 +289,109 @@ const Profile = (userProfile: any) => {
             setBanDetail(res.data);
         }
       }
+    }
+  };
+
+  /**
+ * Checks if the displayed user is blocked
+ * If so, change the block button to unblock
+ */
+  const isUserBlocked = async () => {
+    const blocklistRequest = await getBlockedUsersById();
+    let blocklist: UserPreview[] = [];
+    let blocklistUserIds: number[] = [];
+
+    //Success
+    if (blocklistRequest.status === 200) {
+      blocklist = blocklistRequest.data;
+      blocklistUserIds = blocklist.map((userPreview) => userPreview.userId);
+    }
+
+    //Internal server error
+    else if (blocklistRequest.status === 500) {
+      const errorType: string = "Internal server error";
+      console.log(`${errorType} on getBlockedUsersById`);
+      console.log(blocklistRequest.error);
+    }
+
+    const blockUserID = displayedProfile?.userId;
+
+    if (displayedProfile?.userId && blocklistUserIds.includes(displayedProfile?.userId)) {
+      return <button
+        className="profile-menu-dropdown-button"
+        id="profile-menu-block"
+        onClick={async () => {
+          //THE PARAMETER IS THE PERSON TO BLOCK
+          const unblockUserRequest = await unblockUser(blockUserID);
+
+          //Success
+          if (unblockUserRequest.status === 204) {
+            window.location.reload();
+          }
+
+          //Bad request
+          else if (unblockUserRequest.status === 400) {
+            const errorType: string = "Bad request";
+            console.log(`${errorType} on unblockUser`);
+            console.log(unblockUserRequest.error);
+          }
+
+          //Conflict
+          else if (unblockUserRequest.status === 409) {
+            const errorType: string = "Conflict";
+            console.log(`${errorType} on unblockUser`);
+            console.log(unblockUserRequest.error);
+          }
+
+          //Internal server error
+          else if (unblockUserRequest.status === 500) {
+            const errorType: string = "Internal server error";
+            console.log(`${errorType} on unblockUser`);
+            console.log(unblockUserRequest.error);
+          }
+        }}
+      >
+        <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
+        Unblock
+      </button>;
+    } else {
+      return <button
+        className="profile-menu-dropdown-button"
+        id="profile-menu-block"
+        onClick={async () => {
+          //THE PARAMETER IS THE PERSON TO BLOCK
+          const blockUserRequest = await blockUser(blockUserID);
+
+          //Success
+          if (blockUserRequest.status === 200) {
+            window.location.reload();
+          }
+
+          //Bad request
+          else if (blockUserRequest.status === 400) {
+            const errorType: string = "Bad request";
+            console.log(`${errorType} on blockUser`);
+            console.log(blockUserRequest.error);
+          }
+
+          //Conflict
+          else if (blockUserRequest.status === 409) {
+            const errorType: string = "Conflict";
+            console.log(`${errorType} on blockUser`);
+            console.log(blockUserRequest.error);
+          }
+
+          //Internal server error
+          else if (blockUserRequest.status === 500) {
+            const errorType: string = "Internal server error";
+            console.log(`${errorType} on blockUser`);
+            console.log(blockUserRequest.error);
+          }
+        }}
+      >
+        <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
+        Block
+      </button>;
     }
   };
 
@@ -810,13 +927,7 @@ const Profile = (userProfile: any) => {
                 <ShareButton />
                 {userID > 0 && (
                   <>
-                    <button
-                      className="profile-menu-dropdown-button"
-                      id="profile-menu-block"
-                    >
-                      <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
-                      Block
-                    </button>
+                    {isUserBlocked()}
                     <Popup>
                       <PopupButton
                         className="project-info-dropdown-option"
