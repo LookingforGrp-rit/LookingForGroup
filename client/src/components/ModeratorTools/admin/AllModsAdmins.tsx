@@ -43,7 +43,7 @@ const AllModsAdmins = ({ currentUserId, currentTab, displayMode }: AllModsAdmins
         }
 
         displayAllModsAdmins();
-    }, [currentTab, allModsAdmins]);
+    }, [currentTab]);
 
     // The final component ====================================================
     if (loaded) {

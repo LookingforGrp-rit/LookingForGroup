@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { getCurrentAccount, getUsersById } from '../api/users.ts';
 import { Popup } from './Popup.tsx';
 import profilePicture from '../images/lfrog.png';
+import { PagePopup } from './PagePopup.tsx';
+import { ApiResponse } from '@looking-for-group/shared';
 
 //import shares types
 import { UserDetail, BugReport } from '@looking-for-group/shared';
@@ -31,6 +33,18 @@ export const BugPanel = ({currentUserId, reporterId, reportId }: BugPanelProps) 
 
   const [bugReportText, setBugReportText] = useState<string>('');
 
+    // State variable for displaying output of API request, whether success or failure
+    const [showResult, setShowResult] = useState(false);
+    const [requestType, setRequestType] = useState<"handled-report" | null>(null);
+    const [resultObj, setResultObj] = useState<ApiResponse>({
+      status: 400,
+      data: null,
+      error: "Not initialized",
+    });
+
+    // AFTER the page popup, will the bug report be resolved?
+    const [willResolve, setWillResolve] = useState<boolean>(false);
+
   // Fetch bug report
   useEffect(() => {
     const getBugReport = async () => {
@@ -56,10 +70,13 @@ export const BugPanel = ({currentUserId, reporterId, reportId }: BugPanelProps) 
 
   /**
    * Handles what happens when a bug report is updated
-   * @param isResolved Is this bug report closed? Was it solved?
+   * Updating the isResolved status occurs in the PagePopup component
    */
-  const handleUpdateReport = async (isResolved: boolean) => {
-    const response = await updateBugReport(reportId, bugReportText, isResolved);
+  const handleUpdateReport = async () => {
+    const response = await updateBugReport(reportId, bugReportText, false);
+    setRequestType("handled-report");
+    setResultObj(response);
+    setShowResult(true);
   };
 
   // Mirrors the old Input component: the count turns orange/red as it fills up
@@ -89,7 +106,7 @@ export const BugPanel = ({currentUserId, reporterId, reportId }: BugPanelProps) 
                       <p>{bugReport?.reportText ? "Here is the message that the user sent: " : "No message was provided from the user."}</p>
                       <p>{bugReport?.reportText ? bugReport?.reportText : ""}</p>
 
-                      <p>You can send the user a message about their report, or close the report as resolved.</p>
+                      <p>You can send the user a message about their report and/or close the report as resolved.</p>
 
                       <div id='bug-report-field'>
                       <div className="input-multiline-container" style={{ position: 'relative' }}>
@@ -120,13 +137,13 @@ export const BugPanel = ({currentUserId, reporterId, reportId }: BugPanelProps) 
                         <PopupButton
                           buttonId="mod-edit-btn"
                           className="button-reset"
-                          callback={() => handleUpdateReport(false)}
+                          callback={() => handleUpdateReport()}
                         >
                           Send Update
                         </PopupButton>
                           <PopupButton
                             buttonId="mod-dismiss-btn"
-                            callback={() => {handleUpdateReport(true);}}>
+                            callback={() => {handleUpdateReport(); setWillResolve(true);}}>
                             Close Report
                           </PopupButton>
                       </div>
@@ -134,6 +151,36 @@ export const BugPanel = ({currentUserId, reporterId, reportId }: BugPanelProps) 
                   </PopupContent>
                 </Popup>
             </div>
+            {/* Bug Report result popup */}
+            <PagePopup
+              width={"fit-content"}
+              height={"fit-content"}
+              popupId={"result"}
+              zIndex={16} //keep at 16 so success msg appears over all popups, including dropdown
+              show={showResult}
+              setShow={setShowResult}
+              // Update isResolved must happen here so it doesn't interfere with the useEffect that re-renders
+              // with bugReports updates
+              onClose={async() => {await updateBugReport(reportId, bugReportText, willResolve);}}
+            >
+              <div className="small-popup">
+                {resultObj.status === 200 ? (
+                  <p>
+                    <span className="success-msg">Success:</span>
+                    &nbsp;
+                    {requestType === "handled-report"
+                      ? "The report was updated and the reporter will be notified!"
+                      : "Uh oh! This wasn't supposed to happen."}
+                  </p>
+                ) : (
+                  <p>
+                    <span className="error-msg">Error:</span>
+                    &nbsp;
+                    {resultObj.error}
+                  </p>
+                )}
+              </div>
+            </PagePopup>
         </div>
       </div>
   );

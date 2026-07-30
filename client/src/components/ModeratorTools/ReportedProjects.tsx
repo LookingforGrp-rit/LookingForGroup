@@ -70,7 +70,7 @@ const ReportedProjects = ({ currentUserId, currentTab, displayMode }: ReportedPr
         }
 
         displayReportedProjects();
-    }, [currentTab, reportedProjects]);
+    }, [currentTab]);
 
     // The final component ====================================================
     if (loaded) {

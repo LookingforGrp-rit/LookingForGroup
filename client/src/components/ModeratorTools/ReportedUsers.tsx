@@ -56,7 +56,7 @@ const ReportedUsers = ({ currentUserId, currentTab, displayMode }: ReportedUsers
         }
 
         displayReportedUsers();
-    }, [currentTab, reportedUsers]);
+    }, [currentTab]);
 
     // Helper Methods =========================================================
     /**
