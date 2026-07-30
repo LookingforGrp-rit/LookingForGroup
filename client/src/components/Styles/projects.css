@@ -4029,6 +4029,7 @@ Project Carousel style rules
   margin-bottom: 5px;
   word-break: break-word;
   hyphens: auto;
+  min-width: 12vw;
 }
 
 #project-info-buttons {
