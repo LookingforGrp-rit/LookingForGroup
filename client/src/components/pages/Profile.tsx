@@ -25,7 +25,10 @@ import Reporter from "../Reporter";
 import profilePicture from "../../images/lfrog.png";
 import {
   getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing,
-  getJobTitles
+  getJobTitles,
+  getBlockedUsersById,
+  blockUser,
+  unblockUser
 } from "../../api/users";
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
@@ -40,7 +43,6 @@ import {
   getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification,
   deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi
 } from "../../api/mod-tools";
-import { DELETE, GET, POST } from "../../api";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -295,9 +297,8 @@ const Profile = (userProfile: any) => {
  * If so, change the block button to unblock
  */
   const isUserBlocked = async () => {
-    const blocklistrequest = await GET(`/me/blocklist`);
-    const blocklist: UserPreview[] = blocklistrequest.data;
-    const blocklistUserIds: number[] = blocklist.map((userPreview) => userPreview.userId);
+    const blocklistUserIds: number[] = await getBlockedUsersById();
+    const blockUserID = displayedProfile?.userId;
 
     if (displayedProfile?.userId && blocklistUserIds.includes(displayedProfile?.userId)) {
       return <button
@@ -305,7 +306,7 @@ const Profile = (userProfile: any) => {
         id="profile-menu-block"
         onClick={() => {
           //THE PARAMETER IS THE PERSON TO BLOCK
-          DELETE(`/me/blocklist`, { userId: displayedProfile.userId });
+          unblockUser(blockUserID);
           window.location.reload();
         }}
       >
@@ -318,7 +319,7 @@ const Profile = (userProfile: any) => {
         id="profile-menu-block"
         onClick={() => {
           //THE PARAMETER IS THE PERSON TO BLOCK
-          POST(`/me/blocklist`, { userId: displayedProfile?.userId });
+          blockUser(blockUserID);
           window.location.reload();
         }}
       >

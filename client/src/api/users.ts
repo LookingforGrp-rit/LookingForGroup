@@ -168,8 +168,8 @@ export const reportUser = async (
   report: string
 ): Promise<ApiResponse> => {
   const apiURL = `/me/users/report/${userId}`;
-  const response = await POST(apiURL, {reason: report});
-  
+  const response = await POST(apiURL, { reason: report });
+
   if (response.error) console.log(`Error in reportUser: ${response.error}`);
   return response;
 };
@@ -182,6 +182,36 @@ export const deleteUser = async (): Promise<ApiResponse> => {
   //console.log(response);
   return response;
 };
+
+/**
+ * Gets an array of all userIDs the current user has blocked
+ * @returns number[] of all userIDs the current user has blocked
+ */
+export const getBlockedUsersById = async () => {
+  const apiURL = `/me/blocklist`;
+  const blocklistrequest = await GET(apiURL);
+  const blocklist: UserPreview[] = blocklistrequest.data;
+  const blocklistUserIds: number[] = blocklist.map((userPreview) => userPreview.userId);
+  return blocklistUserIds;
+}
+
+/**
+ * Blocks a user by userID
+ * @param blockedUserID The userID of the person to block
+ */
+export const blockUser = (blockedUserID: number | undefined) => {
+  const apiURL = `/me/blocklist`;
+  POST(apiURL, { userId: blockedUserID });
+}
+
+/**
+ * Unblocks a user by userID
+ * @param blockedUserID The userID of the person to unblock
+ */
+export const unblockUser = (blockedUserID: number | undefined) => {
+  const apiURL = `/me/blocklist`;
+  DELETE(apiURL, { userId: blockedUserID });
+}
 
 /* ACCOUNT INFO/ PASSWORD RESET*/
 
