@@ -199,18 +199,18 @@ export const getBlockedUsersById = async () => {
  * Blocks a user by userID
  * @param blockedUserID The userID of the person to block
  */
-export const blockUser = (blockedUserID: number | undefined) => {
+export const blockUser = async (blockedUserID: number | undefined) => {
   const apiURL = `/me/blocklist`;
-  POST(apiURL, { userId: blockedUserID });
+  await POST(apiURL, { userId: blockedUserID });
 }
 
 /**
  * Unblocks a user by userID
  * @param blockedUserID The userID of the person to unblock
  */
-export const unblockUser = (blockedUserID: number | undefined) => {
+export const unblockUser = async (blockedUserID: number | undefined) => {
   const apiURL = `/me/blocklist`;
-  DELETE(apiURL, { userId: blockedUserID });
+  await DELETE(apiURL, { userId: blockedUserID });
 }
 
 /* ACCOUNT INFO/ PASSWORD RESET*/
