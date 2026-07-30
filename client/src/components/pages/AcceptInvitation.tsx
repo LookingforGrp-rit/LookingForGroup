@@ -219,7 +219,8 @@ const AcceptInvitation = () => {
                                         <button id="decline-button" onClick={() => { handleMemberRequest('Declined') }}>Decline Invite</button>
                                         <button onClick={() => { handleMemberRequest('Accepted') }}>Accept Invite</button>
                                     </div>
-                                </> : <>
+                                </>
+                                : <>
                                     <div className='placeholder-spacing'>
                                         <div className='spinning-loader'></div>
                                     </div>
