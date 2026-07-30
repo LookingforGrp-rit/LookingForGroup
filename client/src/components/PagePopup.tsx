@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction, useEffect } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useEffect, useRef } from 'react';
 
 //This component is meant to be reusable in any area of the site, acting as an element that can be
 //  opened or closed after performing certain actions.
@@ -88,6 +88,8 @@ export const PagePopup = ({
   onClose = () => { },
 }: PagePopupProps) => {
 
+  const popupRef = useRef<HTMLDivElement>(null);
+
   // Lock body scroll when popup is open
   useEffect(() => {
     if (show) {
@@ -101,6 +103,19 @@ export const PagePopup = ({
     };
   }, [show]);
 
+  // Close on clicking outside of popup
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const refNode = popupRef.current as Node | null;
+      if (refNode && e.target instanceof Node && !refNode.contains(e.target) && e.button !== 2) {
+        onClose();
+        openClosePopup(show, setShow);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [show]);
+
   if (!show) return null;
 
   return (
@@ -110,6 +125,7 @@ export const PagePopup = ({
         <div
           id={`popup-${popupId}`}
           className="popup"
+          ref={popupRef}
           style={{
             width,
             height,

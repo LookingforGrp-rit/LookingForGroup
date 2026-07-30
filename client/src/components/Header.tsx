@@ -9,12 +9,14 @@ import { ThemeContext } from '../contexts/ThemeContext';
 import { useLocation } from 'react-router-dom'; // Hook to access the current location
 import profilePicture from '../images/lfrog.png';
 import { getUserAccessLevel } from '../api/mod-tools.ts';
+import { PagePopup } from './PagePopup.tsx';
 
 //user utils
 import { getCurrentAccount, /*getCurrentUsername,*/ googleLogout } from '../api/users.ts';
 import { AddBugReportInput, MePrivate } from '@looking-for-group/shared';
 import { Popup, PopupButton, PopupContent, /*PopupContext*/ } from './Popup.tsx';
-import { POST } from '../api/index.ts';
+import { reportBug } from '../api/mod-tools.ts';
+import { ApiResponse } from '@looking-for-group/shared';
 
 //Header component to be used in pages
 
@@ -91,6 +93,16 @@ export const Header: React.FC<HeaderProps> = ({
   const [active, setActive] = useState(false);
 
   const navigate = useNavigate(); // Hook for navigation
+
+    // State variable for displaying output of API request, whether success or failure
+  const [showResult, setShowResult] = useState(false);
+
+  const [requestType, setRequestType] = useState<"bug-report" | null>(null);
+    const [resultObj, setResultObj] = useState<ApiResponse>({
+      status: 400,
+      data: null,
+      error: "Not initialized",
+    });
 
   // Bug report text, tracked in state so the character counter updates as the user types
   const BUG_REPORT_MAX = 2000;
@@ -221,6 +233,28 @@ export const Header: React.FC<HeaderProps> = ({
       setModeToggle('Dark Mode');
     }
   }, [theme]);
+
+  /**
+   * Used for processing a bug report
+   */
+  const handleBugReport = async () => {
+    if (bugReportText.trim().length !== 0) {
+        const response = await reportBug(bugReportText.trim());
+        if (response.status === 200) {
+          setRequestType("bug-report");
+          setResultObj(response);
+        }
+      } 
+    else {
+      /* No message associated with report */
+      setResultObj({
+        status: 400,
+        data: null,
+        error: "Please submit a description of the bug that you're reporting.",
+      });
+    }
+    setShowResult(true);
+  };
 
   return (
     <header id="header" className={active ? 'active' : ''}>
@@ -382,7 +416,7 @@ export const Header: React.FC<HeaderProps> = ({
                     Report a Bug
                   </PopupButton>
 
-                  <PopupContent>
+                  <PopupContent callback={() => setBugReportText("")}>
                     {/* Using the editor styles temporarily because they look good for this menu */}
                     <div className="small-popup" id="report-popup">
                     <h3>Report a Bug</h3>
@@ -418,19 +452,7 @@ export const Header: React.FC<HeaderProps> = ({
 
                     <button type='submit' id="btn-bug-report-submit"
                       onClick={() => {
-                        if (bugReportText.trim().length !== 0) {
-
-                          POST(`/me/report-bug`, {
-                            reportText: bugReportText ? bugReportText : "No info provided."
-                          });
-                          window.location.reload();
-                        } else {
-                          const errorReport = document.querySelector("#error-report");
-
-                          if (errorReport) {
-                            errorReport.textContent = "Please fill submit a description of the bug.";
-                          }
-                        }
+                        handleBugReport()
                       }}>Submit</button>
                     </div>
                   </PopupContent>
@@ -450,6 +472,33 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
             )}
           </DropdownContent>
+          {/* Leave result popup */}
+          <PagePopup
+            width={"fit-content"}
+            height={"fit-content"}
+            popupId={"result"}
+            zIndex={16} //keep at 16 so success msg appears over all popups, including dropdown
+            show={showResult}
+            setShow={setShowResult}
+          >
+            <div className="small-popup">
+              {resultObj.status === 200 ? (
+                <p>
+                  <span className="success-msg">Success:</span>
+                  &nbsp;
+                  {requestType === "bug-report"
+                    ? "Your report was sent! Your request will be processed and receive an update shortly."
+                    : "Uh oh! Something went wrong when submitting your report!"}
+                </p>
+              ) : (
+                <p>
+                  <span className="error-msg">Error:</span>
+                  &nbsp;
+                  {resultObj.error}
+                </p>
+              )}
+            </div>
+          </PagePopup>
         </Dropdown>
       </div>
     </header >
