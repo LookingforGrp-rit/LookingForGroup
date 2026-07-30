@@ -9,6 +9,8 @@ import {
   UpdateUserSkillInput,
   UpdateUserSocialInput,
   UpdateTagBlacklistInput,
+  AddGalleryImageInput,
+  AddGalleryVideoInput,
 } from "@looking-for-group/shared";
 import {
   CRUDRequest,
@@ -30,6 +32,10 @@ import {
   updateUserSkill,
   updateUserSocial,
   updateTagExclusion,
+  deleteGalleryImage,
+  deleteGalleryVideo,
+  postGalleryImage,
+  postGalleryVideo,
 } from "../users";
 
 /**
@@ -61,6 +67,8 @@ export const userDataManager = async () => {
         majors: [],
         skills: [],
         socials: [],
+        GalleryImages: [],
+        GalleryVideos: [],
       },
       update: {
         fields: {
@@ -79,6 +87,8 @@ export const userDataManager = async () => {
         majors: [],
         skills: [],
         socials: [],
+        GalleryImages: [],
+        GalleryVideos: [],
       },
     };
 
@@ -263,6 +273,29 @@ export const userDataManager = async () => {
       errorMessage += (error as { message: string }).message;
     }
 
+    //gallery Images
+    try {
+      await runAndCollectErrors<AddGalleryImageInput>(
+        "Adding gallery image",
+        creates.GalleryImages,
+        ({ data }) => postGalleryImage(savedUser.userId, data)
+      );
+    } catch (error) {
+      errorMessage += (error as {message: string}).message;
+    }
+    
+
+    //gallery video
+    try {
+      await runAndCollectErrors<AddGalleryVideoInput>(
+        "Deleting Gallery Image",
+        creates.GalleryVideos,
+        ({ data }) => postGalleryVideo(savedUser.userId, data)
+      );
+    } catch (error) {
+      errorMessage += (error as {message: string}).message;
+    }
+
     if (errorMessage != "") {
       throw new Error(`Some creates failed: ${errorMessage}. `);
     }
@@ -306,6 +339,29 @@ export const userDataManager = async () => {
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
+    }
+
+    //gallery Images
+    try {
+      await runAndCollectErrors<null>(
+        "Deleting Gallery Image",
+        deletes.GalleryImages,
+        ({ id }) => deleteGalleryImage(savedUser.userId, id.value)
+      );
+    } catch (error) {
+      errorMessage += (error as {message: string}).message;
+    }
+    
+
+    //gallery Videos
+    try {
+      await runAndCollectErrors<null>(
+        "Deleting Gallery Image",
+        deletes.GalleryVideos,
+        ({ id }) => deleteGalleryVideo(savedUser.userId, id.value)
+      );
+    } catch (error) {
+      errorMessage += (error as {message: string}).message;
     }
 
     if (errorMessage != "") {
@@ -625,6 +681,52 @@ export const userDataManager = async () => {
     }
   };
 
+  const addGalleryImage = (image: CRUDRequest<AddGalleryImageInput>) => {
+    changes.create.GalleryImages.push(image);
+  }
+  
+  const addGalleryVideo = (video: CRUDRequest<AddGalleryVideoInput>) => {
+    changes.create.GalleryVideos.push(video);
+  }
+
+  const removeGalleryImage = (image: CRUDRequest<null>) => {
+    if (
+      image.id.type === "local" &&
+      changes.create.GalleryImages.some(({ id }) => id.value === image.id.value)
+    ) {
+      changes.create.GalleryImages = changes.create.GalleryImages.filter(
+        ({ id }) => id.value !== image.id.value
+      );
+      return;
+    }
+    
+    if (
+      image.id.type === "canon" &&
+      !changes.create.GalleryImages.some(({ id }) => id.value === image.id.value)
+    ) {
+      changes.delete.GalleryImages.push(image);
+    }
+  }
+
+  const removeGalleryVideo = (video: CRUDRequest<null>) => {
+    if (
+      video.id.type === "local" &&
+      changes.create.GalleryVideos.some(({ id }) => id.value === video.id.value)
+    ) {
+      changes.create.GalleryVideos = changes.create.GalleryVideos.filter(
+        ({ id }) => id.value !== video.id.value
+      );
+      return;
+    }
+    
+    if (
+      video.id.type === "canon" &&
+      !changes.create.GalleryVideos.some(({ id }) => id.value === video.id.value)
+    ) {
+      changes.delete.GalleryVideos.push(video);
+    }
+  }
+
   return {
     saveChanges,
     resetChanges,
@@ -640,5 +742,9 @@ export const userDataManager = async () => {
     deleteSkill,
     deleteSocial,
     getSavedUser,
+    addGalleryImage,
+    addGalleryVideo,
+    removeGalleryImage,
+    removeGalleryVideo,
   };
 };

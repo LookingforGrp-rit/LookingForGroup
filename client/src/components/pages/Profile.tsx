@@ -9,28 +9,40 @@ import "../Styles/projects.css";
 import "../Styles/settings.css";
 import "../Styles/pages.css";
 
-import { useState, useCallback, useEffect, useRef, useContext } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo, } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../../constants/routes";
 import { Header, loggedIn } from "../Header";
 import { PanelBox } from "../PanelBox";
 import { ProfileEditPopup } from "../Profile/ProfileEditPopup";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
-import { Popup, PopupButton, PopupContent, PopupContext } from "../Popup";
+import { Popup, PopupButton, PopupContent, } from "../Popup";
 import { Select, SelectButton, SelectOptions } from "../Select";
 import { ThemeIcon } from "../ThemeIcon";
 import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import Reporter from "../Reporter";
 import profilePicture from "../../images/lfrog.png";
-import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles } from "../../api/users";
+import {
+  getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing,
+  getJobTitles,
+  getBlockedUsersById,
+  blockUser,
+  unblockUser
+} from "../../api/users";
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
-import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel, UserReport, BanDetail } from '@looking-for-group/shared';
+import {
+  MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail,
+  UserAccessLevel, UserReport, BanDetail
+} from '@looking-for-group/shared';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
-import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification, deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi } from "../../api/mod-tools";
+import {
+  getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification,
+  deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi
+} from "../../api/mod-tools";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -43,7 +55,7 @@ type Project = ProjectPreview;
  * Profile page with user information collected from profileID.
  * @returns JSX Element
  */
-const Profile = (userProfile: any) => {
+const Profile = (/*userProfile: any*/) => {
   // --------------------
   // Global variables
   // --------------------
@@ -69,6 +81,10 @@ const Profile = (userProfile: any) => {
   const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
   const [activeReportList, setActiveReportList] = useState<UserReport[]>([]);
   const [inactiveReportList, setInactiveReportList] = useState<UserReport[]>([]);
+  
+  const [showGallery, setShowGallery] = useState(false);
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
+  const [galleryVideos, setGalleryVideos] = useState<GalleryVideo[]>([]);
 
   // stores all followed users to display on personal user profile
   const [followedProfilesList, setFollowedProfilesList] = useState<UserPreview[]>([]);
@@ -118,6 +134,8 @@ const Profile = (userProfile: any) => {
     }
   );
 
+  let blockButton;
+
   // --------------------
   // Page redirect
   // --------------------
@@ -162,6 +180,30 @@ const Profile = (userProfile: any) => {
     };
     loadFollow();
   }, [userID, profileID]);
+
+  useEffect(() => {
+    if (userID === undefined || userID === -1) return;
+
+    const loadGallery = async () => {
+      const imageResponse = await getGalleryImages(userID);
+      const videoResponse = await getGalleryVideos(userID);
+
+      if (imageResponse.data)
+        setGalleryImages(imageResponse.data);
+
+      if (videoResponse.data)
+        setGalleryVideos(videoResponse.data);
+    }
+
+    loadGallery();
+  }, [userID]);
+
+  useEffect(() => {
+    if (isUsersProfile || galleryImages.length > 0 || galleryVideos.length > 0)
+      setShowGallery(true);
+
+  }, [isUsersProfile, galleryImages, galleryVideos])
+
 
   // --------------------
   // Helper functions
@@ -275,6 +317,109 @@ const Profile = (userProfile: any) => {
             setBanDetail(res.data);
         }
       }
+    }
+  };
+
+  /**
+ * Checks if the displayed user is blocked
+ * If so, change the block button to unblock
+ */
+  const isUserBlocked = async () => {
+    const blocklistRequest = await getBlockedUsersById();
+    let blocklist: UserPreview[] = [];
+    let blocklistUserIds: number[] = [];
+
+    //Success
+    if (blocklistRequest.status === 200) {
+      blocklist = blocklistRequest.data;
+      blocklistUserIds = blocklist.map((userPreview) => userPreview.userId);
+    }
+
+    //Internal server error
+    else if (blocklistRequest.status === 500) {
+      const errorType: string = "Internal server error";
+      console.log(`${errorType} on getBlockedUsersById`);
+      console.log(blocklistRequest.error);
+    }
+
+    const blockUserID = displayedProfile?.userId;
+
+    if (displayedProfile?.userId && blocklistUserIds.includes(displayedProfile?.userId)) {
+      return <button
+        className="profile-menu-dropdown-button"
+        id="profile-menu-block"
+        onClick={async () => {
+          //THE PARAMETER IS THE PERSON TO BLOCK
+          const unblockUserRequest = await unblockUser(blockUserID);
+
+          //Success
+          if (unblockUserRequest.status === 204) {
+            window.location.reload();
+          }
+
+          //Bad request
+          else if (unblockUserRequest.status === 400) {
+            const errorType: string = "Bad request";
+            console.log(`${errorType} on unblockUser`);
+            console.log(unblockUserRequest.error);
+          }
+
+          //Conflict
+          else if (unblockUserRequest.status === 409) {
+            const errorType: string = "Conflict";
+            console.log(`${errorType} on unblockUser`);
+            console.log(unblockUserRequest.error);
+          }
+
+          //Internal server error
+          else if (unblockUserRequest.status === 500) {
+            const errorType: string = "Internal server error";
+            console.log(`${errorType} on unblockUser`);
+            console.log(unblockUserRequest.error);
+          }
+        }}
+      >
+        <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
+        Unblock
+      </button>;
+    } else {
+      return <button
+        className="profile-menu-dropdown-button"
+        id="profile-menu-block"
+        onClick={async () => {
+          //THE PARAMETER IS THE PERSON TO BLOCK
+          const blockUserRequest = await blockUser(blockUserID);
+
+          //Success
+          if (blockUserRequest.status === 200) {
+            window.location.reload();
+          }
+
+          //Bad request
+          else if (blockUserRequest.status === 400) {
+            const errorType: string = "Bad request";
+            console.log(`${errorType} on blockUser`);
+            console.log(blockUserRequest.error);
+          }
+
+          //Conflict
+          else if (blockUserRequest.status === 409) {
+            const errorType: string = "Conflict";
+            console.log(`${errorType} on blockUser`);
+            console.log(blockUserRequest.error);
+          }
+
+          //Internal server error
+          else if (blockUserRequest.status === 500) {
+            const errorType: string = "Internal server error";
+            console.log(`${errorType} on blockUser`);
+            console.log(blockUserRequest.error);
+          }
+        }}
+      >
+        <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
+        Block
+      </button>;
     }
   };
 
@@ -810,13 +955,7 @@ const Profile = (userProfile: any) => {
                 <ShareButton />
                 {userID > 0 && (
                   <>
-                    <button
-                      className="profile-menu-dropdown-button"
-                      id="profile-menu-block"
-                    >
-                      <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
-                      Block
-                    </button>
+                    {isUserBlocked()}
                     <Popup>
                       <PopupButton
                         className="project-info-dropdown-option"
@@ -871,6 +1010,100 @@ const Profile = (userProfile: any) => {
     </>
   );
 
+  const fullGallery = useMemo(() => {
+    return [
+      ...galleryVideos.map(v => {
+        const embedUrl = getYouTubeEmbedURL(v.videoUrl); 
+        if (!embedUrl) return null;
+        
+        return (
+          <iframe
+            key={`video-${v.position}`}
+            src={embedUrl}
+            title={v.title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            style={{ width: 'auto', height: '100%', aspectRatio: '16/9', border: 'none', objectFit: 'cover' }}
+          ></iframe>
+        );
+    }).filter(item => item !== null),
+    ...galleryImages.map(i => (
+      <img
+        key={`img-${i.position}`}
+        src={i.image}
+        alt={i.altText}
+        // Click to view the image full-size in the lightbox
+        // style={{ cursor: 'zoom-in' }}
+        // onClick={(e) => setLightboxSrc((e.currentTarget as HTMLImageElement).src)}
+        // onError={(e) => {
+        //   const projectImg = e.target as HTMLImageElement;
+        //   projectImg.src = placeholderThumbnail;
+        // }}
+      />
+    )),
+    ];
+  }, [galleryImages, galleryVideos]);
+
+  const galleryPreviews = useMemo(() => {
+    return [
+      ...galleryVideos.map(v => {
+        const embedID = getYouTubeEmbedID(v.videoUrl);
+
+        return <>
+        <ThemeIcon
+            width={25}
+            height={18}
+            id="youtube"
+            className={"mono-fill"}
+            ariaLabel="youtube"
+          />
+          <img
+            key={`img-${v.position}`}
+            src={`http://img.youtube.com/vi/${embedID}/default.jpg`}
+            alt={v.title}
+          />
+        </>
+      }),
+      ...galleryImages.map(i => (
+        <img
+          key={`img-${i.position}`}
+          src={i.image}
+          alt={i.altText}
+        />
+      )),
+    ];
+  }, [galleryImages, galleryVideos]);
+
+ const userGallery = 
+  <div id="user-gallery">
+    <h1 id="title">Gallery</h1>
+    {fullGallery.length > 0 ?
+      <Carousel
+        dataList={fullGallery}
+      >
+        <div className='gallery-carousel'>
+          <CarouselContent className='gallery-carousel-content' />
+          {fullGallery.length > 1 ?
+          <div className='carousel-row'>
+            <CarouselButton
+              direction='left'
+              className='gallery-carousel-btn'
+              size='small'
+            />
+            <CarouselTabs className='gallery-carousel-tabs'>{galleryPreviews}</CarouselTabs>
+            <CarouselButton 
+              direction='right'
+              className='gallery-carousel-btn'
+              size='small'
+            />
+          </div> : ""}
+        </div>
+      </Carousel> :
+      <label id="emtpy-carousel">
+        No gallery items yet...<br/>Edit your profile and upload your achievments!<br/>(not visible to others while empty)
+      </label>
+    }
+  </div>
   //console.log(followedProjectsIds);
   // --------------------
   // Final component
@@ -1114,6 +1347,8 @@ const Profile = (userProfile: any) => {
               </Popup>
             </div>
           </div> : ""}
+
+          {showGallery ? userGallery : ""}
 
           <div id="profile-extra">
             <div id="contact-and-skills">
