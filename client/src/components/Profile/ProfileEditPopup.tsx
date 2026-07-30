@@ -17,9 +17,10 @@ import { userDataManager } from "../../api/data-managers/user-data-manager";
 import { DeleteAccountButton } from "./DeleteAccountButton";
 import { PendingUserProfile } from "../../../types/types";
 import { MePrivate } from "@looking-for-group/shared";
+import { GalleryTab } from "./tabs/GalleryTab";
 
 // The profile to view is independent upon the site's state changes
-const pageTabs = ["About", "Projects", "Skills", "Links"];
+const pageTabs = ["About", "Projects", "Skills", "Gallery", "Links"];
 //const [dataManager, setDataManager] = useState<Awaited<ReturnType<typeof userDataManager>> | null>(null);
 
 //for editing user profile through buttons near "Skills" and "Contact",
@@ -226,6 +227,13 @@ export const ProfileEditPopup = ({ editSkills = false, editContact = false }: Ed
           />
         );
       case 3:
+        return (
+          <GalleryTab
+            profile={modifiedProfile}
+            dataManager={dataManager}
+          />
+        )
+      case 4:
         return (
           <LinksTab
             profile={modifiedProfile}

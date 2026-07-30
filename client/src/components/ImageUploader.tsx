@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FileImage } from './FileImage';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { Select, SelectButton, SelectOptions } from './Select';
@@ -252,6 +252,10 @@ const ImageUploader = ({
     setCropFile(file);
     setDX(0);
     setDY(0);
+    if ((file.size > 100000 && type === "profile") || file.size > 2000000) {
+      onFileSelected(file);
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -277,6 +281,7 @@ const ImageUploader = ({
         requestAnimationFrame(() => {
           updateCanvas();
         });
+        setLoadingImage(false);
       };
       img.src = result;
     };
@@ -290,6 +295,7 @@ const ImageUploader = ({
 
     const files = input.files;
     if (!files || files.length === 0) return;
+    
 
     // Split the selection into supported images and anything we can't use, so a
     // multi-select of several photos all get queued instead of dropping all but one.
@@ -334,49 +340,57 @@ const ImageUploader = ({
 
   
   // Effect for cleanup if needed; currently just removes event listeners
-useEffect(() => {
-  if (!cropImg) return; // popup is not open, no need to set up canvas
+  useEffect(() => {
+    if (!cropImg) return; // popup is not open, no need to set up canvas
 
-  const c = canvas.current;
-  const img = tempImage.current;
-  if (!c || !img) return;
+    const c = canvas.current;
+    const img = tempImage.current;
+    if (!c || !img) return;
 
-  // Set actual drawing resolution to match CSS size
-  c.width = c.clientWidth;
-  c.height = c.clientHeight;
+    // Set actual drawing resolution to match CSS size
+    c.width = c.clientWidth;
+    c.height = c.clientHeight;
 
-  const w = img.width * (zoom / 100);
-  const h = img.height * (zoom / 100);
+    const w = img.width * (zoom / 100);
+    const h = img.height * (zoom / 100);
 
-  const maxDX = Math.max(0, (w - c.width) / 2);
-  const maxDY = Math.max(0, (h - c.height) / 2);
+    const maxDX = Math.max(0, (w - c.width) / 2);
+    const maxDY = Math.max(0, (h - c.height) / 2);
 
-  // Re-clamp drag offsets whenever zoom changes
-  setDX(prev => Math.min(maxDX, Math.max(-maxDX, prev)));
-  setDY(prev => Math.min(maxDY, Math.max(-maxDY, prev)));
+    // Re-clamp drag offsets whenever zoom changes
+    setDX(prev => Math.min(maxDX, Math.max(-maxDX, prev)));
+    setDY(prev => Math.min(maxDY, Math.max(-maxDY, prev)));
 
-  // Draw AFTER zoom is applied
-  requestAnimationFrame(() => updateCanvas());
+    // Draw AFTER zoom is applied
+    requestAnimationFrame(() => updateCanvas());
 
 
-  fileReader.onerror = () => setCropImg(placeholder);
+    fileReader.onerror = () => setCropImg(placeholder);
 
-  const input = inputRef.current;
-  if (!input) return;
+    const input = inputRef.current;
+    if (!input) return;
 
-  input.addEventListener('change', handleImgChange);
+    input.addEventListener('change', handleImgChange);
 
-  return () => input.removeEventListener('change', handleImgChange);
-}, [handleImgChange, fileReader, placeholder, updateCanvas, inputRef, cropImg, zoom]);
+    return () => input.removeEventListener('change', handleImgChange);
+  }, [handleImgChange, fileReader, placeholder, updateCanvas, inputRef, cropImg, zoom]);
 
 
   useEffect(()=> {
     updateCanvas();
   }, [zoom, dX, dY]);
 
-  const cropPopup = (cropImg !== undefined ?
+  const closePopup = useCallback(() => {
+    if (!loadingImage) {
+      pendingFiles.current = []; 
+      setCropImg(undefined); 
+    }
+  }, [loadingImage, pendingFiles, setCropImg]);
+
+  const cropPopup = useMemo(
+  () => cropImg !== undefined ?
     <Popup startOpen={true}>
-      <PopupContent confirmation={true} callback={() => { pendingFiles.current = []; setCropImg(undefined); }}>
+      <PopupContent confirmation={true} callback={closePopup}>
         <div className="project-crop">
         <label id="project-crop-header">Crop image for thumbnail usage</label>
         <canvas ref={canvas} id="canvas"
@@ -528,12 +542,13 @@ useEffect(() => {
         <div className="confirm-project-crop">
           <PopupButton buttonId="project-crop-save" callback={sendImg} doNotClose={() => true}>Crop Image</PopupButton>
           {/* If the action is canceled, no picture is uploaded */}
-          <PopupButton buttonId="project-crop-cancel" callback={() => { pendingFiles.current = []; setCropImg(undefined); }} className="project-info-buttons" doNotClose={() => true}>Cancel</PopupButton>
+          <PopupButton buttonId="project-crop-cancel" callback={closePopup} className="project-info-buttons" doNotClose={() => true}>Cancel</PopupButton>
         </div>
         </div>
       </PopupContent>
     </Popup>
-  : "");
+  : "",
+  [cropImg, canvas, inputX, inputY, dX, dY, zoom, inputZoom]);
 
   const profileVariant = (
     <>
@@ -649,6 +664,7 @@ useEffect(() => {
           multiple accept=".png, .jpg"
           ref={inputRef}
           onChange={handleImgChange}
+          onClick={() => setLoadingImage(true)}
           disabled={cropImg !== undefined}
           hidden={true}
         />
