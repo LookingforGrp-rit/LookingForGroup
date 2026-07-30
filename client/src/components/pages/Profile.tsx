@@ -908,7 +908,8 @@ const Profile = (/*userProfile: any*/) => {
         const embedUrl = getYouTubeEmbedURL(v.videoUrl); 
         if (!embedUrl) return null;
         
-        return (
+        return ( <>
+          <label>{v.title}</label>
           <iframe
             key={`video-${v.position}`}
             src={embedUrl}
@@ -917,21 +918,24 @@ const Profile = (/*userProfile: any*/) => {
             allowFullScreen
             style={{ width: 'auto', height: '100%', aspectRatio: '16/9', border: 'none', objectFit: 'cover' }}
           ></iframe>
+        </>
         );
     }).filter(item => item !== null),
-    ...galleryImages.map(i => (
-      <img
-        key={`img-${i.position}`}
-        src={i.image}
-        alt={i.altText}
-        // Click to view the image full-size in the lightbox
-        // style={{ cursor: 'zoom-in' }}
-        // onClick={(e) => setLightboxSrc((e.currentTarget as HTMLImageElement).src)}
-        // onError={(e) => {
-        //   const projectImg = e.target as HTMLImageElement;
-        //   projectImg.src = placeholderThumbnail;
-        // }}
-      />
+    ...galleryImages.map(i => ( <>
+        <label>{i.altText}</label>
+        <img
+          key={`img-${i.position}`}
+          src={i.image}
+          alt={i.altText}
+          // Click to view the image full-size in the lightbox
+          // style={{ cursor: 'zoom-in' }}
+          // onClick={(e) => setLightboxSrc((e.currentTarget as HTMLImageElement).src)}
+          // onError={(e) => {
+          //   const projectImg = e.target as HTMLImageElement;
+          //   projectImg.src = placeholderThumbnail;
+          // }}
+        />
+      </>
     )),
     ];
   }, [galleryImages, galleryVideos]);

@@ -14,7 +14,7 @@ interface ImageUploaderProps {
   // If true, only allow image files
   keepImage?: boolean;
   // Callback triggered when the user selects a valid file
-  onFileSelected?: (file: File) => void;
+  onFileSelected?: (file: File, altText: string) => void;
   // Determines styling and behavior
   type?: 'profile' | 'project';
 }
@@ -71,6 +71,7 @@ const ImageUploader = ({
   const inputX = useRef<HTMLInputElement>(null);
   const inputY = useRef<HTMLInputElement>(null);
   const inputZoom = useRef<HTMLInputElement>(null);
+  const inputAlt = useRef<HTMLInputElement>(null);
   const fileReader = new FileReader();
 
   const [aspectRatio, setAspectRatio] = useState<string>('1/1');
@@ -78,6 +79,8 @@ const ImageUploader = ({
   const [labelName, setLabelName] = useState("drop-area");
 
   const [loadingImage, setLoadingImage] = useState(false);
+
+  const [altText, setAltText] = useState("");
 
 //mouse dragging for cropping
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -204,7 +207,7 @@ const ImageUploader = ({
     setDX(0);
     setDY(0);
     if ((file.size > 100000 && type === "profile") || file.size > 2000000) {
-      onFileSelected(file);
+      onFileSelected(file, altText);
       return;
     }
 
@@ -239,7 +242,7 @@ const ImageUploader = ({
     };
     reader.onerror = () => setCropImg(placeholder);
     reader.readAsDataURL(file);
-  }, [updateCanvas]);
+  }, [updateCanvas, altText]);
 
   const handleImgChange = useCallback(async () => {
 
@@ -279,7 +282,7 @@ const ImageUploader = ({
   const sendImg = useCallback(
     () => canvas.current?.toBlob(async(blob) => {
       const newFile = new File([blob as Blob], cropFile?.name as string, {type:cropFile?.type});
-      onFileSelected(newFile);
+      onFileSelected(newFile, inputAlt.current?.value ?? altText);
       if (inputRef.current) inputRef.current.value = "";
 
       // Move on to the next queued image, or close the popup when the batch is done.
@@ -289,7 +292,8 @@ const ImageUploader = ({
       } else {
         setCropImg(undefined);
       }
-  }, cropFile?.type), [onFileSelected, setCropImg, cropFile, canvas, loadFileIntoCrop]);
+    }, cropFile?.type), 
+  [onFileSelected, setCropImg, cropFile, canvas, loadFileIntoCrop, altText]);
 
   
   // Effect for cleanup if needed; currently just removes event listeners
@@ -454,6 +458,17 @@ const ImageUploader = ({
             max={canvas.current ? canvas.current.height : 100}
             defaultValue={dY} />
             <label className="slider-text" htmlFor="yTrans">Ypos</label>
+          </div>
+          <div id='alt-text-input'>
+            <input
+            type='text' ref={inputAlt}
+            placeholder='enter the caption/alt text for the image'
+            onChange={() => {
+              console.log(inputAlt.current?.value)
+              setAltText(inputAlt.current?.value as string)
+            }}
+            >
+            </input>
           </div>
         </div>
         <div className="project-crop-extra-info">
