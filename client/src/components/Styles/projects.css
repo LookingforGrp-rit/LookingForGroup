@@ -711,6 +711,41 @@ Project Creator and Editor Popup style rules
   }
 }
 
+@media only screen and (max-width: 700px){
+  #report-popup{
+    h3 {
+    font-size: 1.25rem;
+    margin: 0;
+    max-width: fit-content;
+  }
+
+   p,
+  button {
+    font-size: 1rem;
+    max-width: fit-content;
+  }
+
+  #bug-report-field {
+    display: flex;
+    align-items: flex-start;
+    align-self: stretch;
+    margin: 10px;
+  }
+
+   #bug-report-field .input-multiline-container {
+    min-width: fit-content;
+    padding-bottom: 5px; 
+ }
+
+}
+
+ .small-popup{
+  padding: 10px 20px;
+ }
+
+}
+
+
 .share-response-popup {
   width: 100%;
   position: absolute;
@@ -5860,7 +5895,7 @@ My projects page style rules
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary-color);
-    margin: 0 0 15px;
+    margin: 0 0 5px;
   }
 
   /* Covering stuff with !important sucks, but it shouldn't
@@ -5887,6 +5922,7 @@ My projects page style rules
   .confirm-deny-btns {
     display: flex;
     flex-direction: row;
+    margin-top: 5px;
   }
 
   .confirm-btn {
