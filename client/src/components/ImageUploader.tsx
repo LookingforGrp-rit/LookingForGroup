@@ -100,71 +100,124 @@ const ImageUploader = ({
     const deltaX = (e.clientX - prevPos.x) * (canvas.current.width / rect.width);
     const deltaY = (e.clientY - prevPos.y) * (canvas.current.height / rect.height);
 
-    // Math to clamp drag movement to image boundaries
-    const effectiveZoom = Math.max(zoom, 100);
-    const w = tempImage.current.width * (effectiveZoom / 100);
-    const h = tempImage.current.height * (effectiveZoom / 100);
+    const rawDX = dX - deltaX;
+    const rawDY = dY -deltaY;
 
-    const canvasWidth = canvas.current.width;
-    const canvasHeight = canvas.current.height;
-
-    const maxDX = (w - canvasWidth) / 2;
-    const maxDY = (h - canvasHeight) / 2;
-
-    let newDX = dX - deltaX;
-    let newDY = dY - deltaY;
-
-    if(newDX > maxDX) newDX = maxDX;
-    if(newDX < -maxDX) newDX = -maxDX;
-    if(newDY > maxDY) newDY = maxDY;
-    if(newDY < -maxDY) newDY = -maxDY;
-    ////
+    const newDX = clampDX(rawDX);
+    const newDY = clampDY(rawDY);
 
     setDX(newDX);
     setDY(newDY);
-
 
     setPrevPos({ x: e.clientX, y: e.clientY });
     updateCanvas();
   };
 
+  //image boundaries clamp
+  const clampDX = (value: number) => {
+    const maxDX = getMaxDX();
+
+    if (value > maxDX) return maxDX;
+    if (value < -maxDX) return -maxDX;
+    return value;
+  };
+  const clampDY = (value: number) => {
+    const maxDY = getMaxDY();
+
+    if (value > maxDY) return maxDY;
+    if (value < -maxDY) return -maxDY;
+    return value;
+  };
+  const getMaxDX = () => {
+    if (!tempImage.current || !canvas.current) return 100; // fallback
+
+    const effectiveZoom = Math.max(zoom, 100);
+    const w = tempImage.current.width * (effectiveZoom / 100);
+    const canvasWidth = canvas.current.width;
+
+    return (w - canvasWidth) / 2;
+  };
+
+  const getMaxDY = () => {
+    if (!tempImage.current || !canvas.current) return 100;
+
+    const effectiveZoom = Math.max(zoom, 100);
+    const h = tempImage.current.height * (effectiveZoom / 100);
+    const canvasHeight = canvas.current.height;
+
+    return (h - canvasHeight) / 2;
+  };
 
   const handleMouseUp = () => {
     setIsDragging(false);
   };
 
 //wheel zooming for cropping
+  // const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
+  //   if(!tempImage.current || !canvas.current) return;
+
+  //   const delta = e.deltaY > 0 ? 0.95 : 1.05;
+  //   const newZoom = zoom * delta;
+
+  //   const minZoom = Math.max(
+  //     (canvas.current?.width! / tempImage.current?.width!) * 100,
+  //     (canvas.current?.height! / tempImage.current?.height!) * 100
+  //   );
+
+  //   const clampedZoom = Math.min(500, Math.max(minZoom, newZoom));
+
+  //   const w = tempImage.current.width * (clampedZoom / 100);
+  //   const h = tempImage.current.height * (clampedZoom / 100);
+
+  //   const cw = canvas.current.width;
+  //   const ch = canvas.current.height;
+
+  //   const maxDX = (w - cw) / 2;
+  //   const maxDY = (h - ch) / 2;
+
+  //   const newDX = Math.min(maxDX, Math.max(-maxDX, dX));
+  //   const newDY = Math.min(maxDY, Math.max(-maxDY, dY));
+
+  //   setDX(newDX);
+  //   setDY(newDY);
+
+  //   setZoom(clampedZoom);
+  //   updateCanvas();
+  // };
+
   const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
-    if(!tempImage.current || !canvas.current) return;
+    if (!tempImage.current || !canvas.current) return;
 
     const delta = e.deltaY > 0 ? 0.95 : 1.05;
     const newZoom = zoom * delta;
 
-    const minZoom = Math.max(
-      (canvas.current?.width! / tempImage.current?.width!) * 100,
-      (canvas.current?.height! / tempImage.current?.height!) * 100
-    );
+    const minZoom = getMinZoom();
+    const maxZoom = getMaxZoom();
 
-    const clampedZoom = Math.min(500, Math.max(minZoom, newZoom));
-
-    const w = tempImage.current.width * (clampedZoom / 100);
-    const h = tempImage.current.height * (clampedZoom / 100);
-
-    const cw = canvas.current.width;
-    const ch = canvas.current.height;
-
-    const maxDX = (w - cw) / 2;
-    const maxDY = (h - ch) / 2;
-
-    const newDX = Math.min(maxDX, Math.max(-maxDX, dX));
-    const newDY = Math.min(maxDY, Math.max(-maxDY, dY));
-
-    setDX(newDX);
-    setDY(newDY);
+    const clampedZoom = Math.min(maxZoom, Math.max(minZoom, newZoom));
 
     setZoom(clampedZoom);
+
+    // Re‑clamp DX/DY after zoom changes
+    setDX(clampDX(dX));
+    setDY(clampDY(dY));
+
     updateCanvas();
   };
+
+  const getMinZoom = () => {
+    if (!tempImage.current || !canvas.current) return 100;
+
+    return Math.max(
+      (canvas.current.width / tempImage.current.width) * 100,
+      (canvas.current.height / tempImage.current.height) * 100
+    );
+  };
+  const getMaxZoom = () => 500;
+
+
+
+
 
   /**
    * updates the canvas element for cropping images
@@ -183,7 +236,6 @@ const ImageUploader = ({
     ctx.imageSmoothingQuality = "high";
     ctx.filter = "none";
 
-
     if (tempImage.current && canvas.current){
       const w = tempImage.current.width * (zoom / 100);
       const h = tempImage.current.height * (zoom / 100);
@@ -197,7 +249,6 @@ const ImageUploader = ({
       );
 
     }
-    
   }, [tempImage, dX, dY, zoom, canvas]);
 
   // Reads one file, draws it on the crop canvas, and opens the crop popup.
@@ -237,7 +288,6 @@ const ImageUploader = ({
         });
         setLoadingImage(false);
       };
-
       img.src = result;
     };
     reader.onerror = () => setCropImg(placeholder);
@@ -245,7 +295,6 @@ const ImageUploader = ({
   }, [updateCanvas, altText]);
 
   const handleImgChange = useCallback(async () => {
-
     const input = inputRef.current;
     if(!input) return;
 
@@ -419,14 +468,34 @@ const ImageUploader = ({
             type="range" ref={inputZoom}
             id="zoom" name="zoom"
             onChange={() => {
-              setZoom(inputZoom.current?.valueAsNumber as number);
+              const raw = inputZoom.current?.valueAsNumber ?? zoom;
+              const minZoom = getMinZoom();
+              const maxZoom = getMaxZoom();
+
+              const clampedZoom = Math.min(maxZoom, Math.max(minZoom, raw));
+              setZoom(clampedZoom);
+
+              // Re‑clamp DX/DY after zoom changes
+              setDX(clampDX(dX));
+              setDY(clampDY(dY));
+              updateCanvas();
             }}
             onInput={() => {
-              setZoom(inputZoom.current?.valueAsNumber as number);
+              const raw = inputZoom.current?.valueAsNumber ?? zoom;
+              const minZoom = getMinZoom();
+              const maxZoom = getMaxZoom();
+
+              const clampedZoom = Math.min(maxZoom, Math.max(minZoom, raw));
+              setZoom(clampedZoom);
+
+              // Re‑clamp DX/DY after zoom changes
+              setDX(clampDX(dX));
+              setDY(clampDY(dY));
+              updateCanvas();
             }}
-            min={0}
-            max={1000}
-            defaultValue={zoom} />
+            min={getMinZoom()}
+            max={getMaxZoom()}
+            value={zoom} />
             <label className="slider-text" htmlFor="zoom">Zoom</label>
           </div>
           <div id="xTrans-row">
@@ -434,29 +503,42 @@ const ImageUploader = ({
             type="range" ref={inputX}
             id="xTrans" name="xTrans"
             onChange={() => {
-              setDX(inputX.current?.valueAsNumber as number);
+              const raw = inputX.current?.valueAsNumber ?? 0;
+              const clamped = clampDX(raw);
+              setDX(clamped);
+              updateCanvas();
             }}
             onInput={() => {
-              setDX(inputX.current?.valueAsNumber as number);
+              const raw = inputX.current?.valueAsNumber ?? 0;
+              const clamped = clampDX(raw);
+              setDX(clamped);
+              updateCanvas();
             }}
-            min={canvas.current ? -canvas.current.width : -100}
-            max={canvas.current ? canvas.current.width : 100}
-            defaultValue={dX} />
-            <label className="slider-text" htmlFor="xtrans">Xpos</label>
+            min={-getMaxDX()}
+            max={getMaxDX()}
+            value={dX} />
+              <label className="slider-text" htmlFor="xtrans">Xpos</label>
           </div>
           <div id="yTrans-row">
             <input
             type="range" ref={inputY}
             id="yTrans" name="yTrans"
             onChange={() => {
-              setDY(inputY.current?.valueAsNumber as number);
+              const raw = inputY.current?.valueAsNumber ?? 0;
+              const clamped = clampDY(raw);
+              setDY(clamped);
+              updateCanvas();
+
             }}
             onInput={() => {
-              setDY(inputY.current?.valueAsNumber as number);
+              const raw = inputY.current?.valueAsNumber ?? 0;
+              const clamped = clampDY(raw);
+              setDY(clamped);
+              updateCanvas();
             }}
-            min={canvas.current ? -canvas.current.height : -100}
-            max={canvas.current ? canvas.current.height : 100}
-            defaultValue={dY} />
+            min={-getMaxDY()}
+            max={getMaxDY()}
+            value={dY} />
             <label className="slider-text" htmlFor="yTrans">Ypos</label>
           </div>
           <div id='alt-text-input'>

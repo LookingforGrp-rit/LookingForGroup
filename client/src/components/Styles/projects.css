@@ -716,6 +716,41 @@ Project Creator and Editor Popup style rules
   }
 }
 
+@media only screen and (max-width: 700px){
+  #report-popup{
+    h3 {
+    font-size: 1.25rem;
+    margin: 0;
+    max-width: fit-content;
+  }
+
+   p,
+  button {
+    font-size: 1rem;
+    max-width: fit-content;
+  }
+
+  #bug-report-field {
+    display: flex;
+    align-items: flex-start;
+    align-self: stretch;
+    margin: 10px;
+  }
+
+   #bug-report-field .input-multiline-container {
+    min-width: fit-content;
+    padding-bottom: 5px; 
+ }
+
+}
+
+ .small-popup{
+  padding: 10px 20px;
+ }
+
+}
+
+
 .share-response-popup {
   width: 100%;
   position: absolute;
@@ -2615,23 +2650,35 @@ button.edit-position-contact .project-member-image {
 
   #zoom-row,
   #xTrans-row,
-  #yTrans-row,
+  #yTrans-row{
+    display: block;
+    width: 100%;
+    max-width: 800px;
+    align-items: center;
+    justify-content: center;
+    label {
+      margin-right: 0.5em;
+      font-size: clamp(1.25rem, 2vw, 1.40rem);
+      white-space: nowrap;
+    }
+  }
+
+  #zoom-row input[type="range"],
+  #xTrans-row input[type="range"],
+  #yTrans-row input[type="range"] {
+    flex: 1; 
+    max-width: 450px;
+  }
+
   #aspect-row {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
-
-    label {
-      margin-right: 0.5em;
-      font-size: clamp(1.15rem, 3vw, 1.25rem);
-    }
   }
-
   #aspect-row .select-container {
     width: 85px;
   }
-
+  
   .project-crop-extra-info {
     margin-top: 20px;
     font-size: 0.75rem;
@@ -3770,8 +3817,14 @@ New Project Page style rules
   }
   #project-editor-team-tabs
   {
-    justify-content: flex-start;
+    /* justify-content: flex-start; */
     gap: 4%;
+    height: 80px;
+
+    button {
+      text-wrap: wrap !important;
+      max-width: 150px;
+    }
   }
   #project-editor-project-members
   {
@@ -5906,7 +5959,7 @@ My projects page style rules
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary-color);
-    margin: 0 0 15px;
+    margin: 0 0 5px;
   }
 
   /* Covering stuff with !important sucks, but it shouldn't
@@ -5933,6 +5986,7 @@ My projects page style rules
   .confirm-deny-btns {
     display: flex;
     flex-direction: row;
+    margin-top: 5px;
   }
 
   .confirm-btn {

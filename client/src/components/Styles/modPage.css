@@ -422,7 +422,7 @@
     width: clamp(45px, 15vw, 75px);
     height: clamp(45px, 15vw, 75px);
     border-radius: 50%;
-    border: 2px solid white;
+    border: 2px solid var(--main-text);
     object-fit: cover;
     margin: auto;
 }
