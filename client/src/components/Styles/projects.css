@@ -184,12 +184,10 @@ Project Panel component style rules
     padding: 10px 20px;
     margin: 0;
     flex-shrink: 0;
-    display: grid;
+    display: flex;
+    flex-direction: column;
     width: 100%;
     box-sizing: border-box;
-    grid-template:
-      'title heart' 1fr
-      'tags tags' auto / minmax(0, 1fr) auto;
     row-gap: 4px;
     /* display: flex;
     flex-direction: row;
@@ -214,15 +212,20 @@ Project Panel component style rules
       text-decoration: underline 3px;
     }
 
+    .project-title-likes {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
     .project-likes {
-      grid-area: heart;
       display: flex;
       flex-direction: row-reverse;
       gap: 8px;
-      align-items: start;
+      align-items: center;
       padding-left: 8px;
       height: 100%;
-      padding-top: 8px;
+      padding-top: 5px;
       margin-bottom: 10px;
 
       .follow-amt {
@@ -230,7 +233,8 @@ Project Panel component style rules
         font-size: 0.875rem;
         font-weight: 400;
         color: var(--primary-color);
-        height: fit-content;
+        height: 100%;
+        padding: 0;
         transition: 0.2s;
         font-variant-numeric: tabular-nums;
         font-feature-settings: "tnum";
@@ -265,10 +269,6 @@ Project Panel component style rules
 
   @media only screen and (max-width: 800px) {
     .project-title-likes-tabs {
-      grid-template:
-        'title heart' 1fr
-        'tags heart' auto / 4fr 1fr;
-
       .project-likes {
 
         a {
@@ -405,13 +405,6 @@ Project Panel component style rules
       z-index: 1;
     }
   }
-
-}
-
-@media only screen and (max-width: 700px) {
-  .projects-banner-outer {
-    display: none;
-  }
 }
 
 @media screen and (max-width: 800px) {
@@ -423,6 +416,36 @@ Project Panel component style rules
   .masonry>*>* {
     padding-left: 0;
     padding-right: 0;
+  }
+}
+
+@media only screen and (max-width: 700px) {
+  .projects-banner-outer {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 550px) {
+  #discover-panel-box {
+    .project-title-likes-tabs {
+      padding: 8px 13px !important;
+
+      h2 {
+        font-size: 1.2rem !important;
+      }
+
+      .project-likes {
+        gap: 5px !important;
+
+        .follow-amt {
+          font-size: .775rem;
+        }
+
+        svg {
+          transform: scale(.8) !important;
+        }
+      }
+    }
   }
 }
 
@@ -465,12 +488,13 @@ Project Creator and Editor Popup style rules
   margin-bottom: 10px;
 }
 
-@media screen and (max-width: 530px){
-  #project-editor-tabs{
-   max-width: 30rem;
+@media screen and (max-width: 530px) {
+  #project-editor-tabs {
+    max-width: 30rem;
   }
 
 }
+
 .project-editor-tab {
   border: none;
   border-radius: 30px;
@@ -1323,8 +1347,8 @@ Project Creator and Editor Popup style rules
   #project-editor-tag-search-tabs {
     flex-direction: row;
   }
-  #project-editor-team-tabs
-  {
+
+  #project-editor-team-tabs {
     height: fit-content;
     overflow-x: auto;
   }
@@ -1648,11 +1672,12 @@ Project Creator and Editor Popup style rules
     grid-column: 2/3;
     grid-row: 1/2;
   }
-  .project-editor-project-member-role
-  {
+
+  .project-editor-project-member-role {
     grid-column: 2/3;
     grid-row: 2/3;
   }
+
   #owner-crown {
     grid-column: 1 / 2;
     grid-row: 1 / 2;
@@ -3765,18 +3790,20 @@ New Project Page style rules
   #project-page-content {
     margin: 0 20px;
   }
+
   #project-editor-team-content {
     flex-direction: column;
   }
-  #project-editor-team-tabs
-  {
+
+  #project-editor-team-tabs {
     justify-content: flex-start;
     gap: 4%;
   }
-  #project-editor-project-members
-  {
+
+  #project-editor-project-members {
     justify-content: center;
   }
+
   #project-editor-merge-team {
     display: flex;
     padding: 12px 15px;
@@ -4930,6 +4957,7 @@ button#positions-popup-list-item-active {
     font-weight: 400;
     color: var(--neutral-gray);
   }
+
   #owner-crown {
     grid-column: 1 / 2;
     grid-row: 1 / 2;
@@ -5058,7 +5086,7 @@ My projects page style rules
   gap: 20px;
 
   #project-info-create {
-    height: 40px;
+    height: 45px;
   }
 
   #my-projects-sort-btn {
@@ -5127,7 +5155,6 @@ My projects page style rules
   .my-projects-action-buttons {
     margin: 0 auto;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
   }
@@ -5293,8 +5320,10 @@ My projects page style rules
 }
 
 .my-projects-grid {
-  width: calc(100% - 80px);
-  margin: 30px auto 60px;
+  width: 100%;
+  margin: 30px auto;
+  padding: 0 20px;
+  margin-bottom: 60px;
   gap: 20px;
   display: flex;
   flex-wrap: wrap;
@@ -5577,6 +5606,99 @@ My projects page style rules
   }
 }
 
+@media only screen and (max-width: 650px) {
+  .my-projects-filters {
+    row-gap: 10px;
+  }
+
+  .my-projects-action-buttons {
+    flex-wrap: wrap;
+  }
+
+  .my-projects-all-projects-button,
+  .my-projects-all-projects-selected,
+  .my-projects-create-btn {
+    font-size: 1rem !important;
+    padding: 4px 12px;
+  }
+
+  .display-switch-option {
+    width: 36px !important;
+    height: 36px !important;
+
+    i {
+      font-size: 1.1rem;
+    }
+  }
+
+  .my-projects-create-btn {
+    padding: 2px 0;
+
+    #project-info-create {
+      height: 36px;
+
+    }
+
+    svg {
+      width: 22px;
+    }
+  }
+
+  .grid-card-title {
+    line-height: normal !important;
+    max-width: fit-content;
+
+  }
+
+  .my-project-grid-card {
+    width: clamp(100px, 200px, 40vw);
+  }
+
+  .grid-card-details {
+    margin-top: 5px;
+    width: 100%;
+
+    #grid-card-options-button svg {
+      width: 20px;
+    }
+  }
+
+  .grid-card-image-button {
+    max-width: 200px;
+    aspect-ratio: 1 / 1;
+    width: clamp(100px, 200px, 40vw);
+    height: clamp(100px, 200px, 40vw);
+  }
+}
+
+@media only screen and (max-width: 350px) {
+  .my-projects-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .grid-card-image {
+    width: 250px;
+    height: 250px;
+  }
+
+  .grid-card-details {
+    max-width: 250px;
+  }
+
+  .grid-card-image-button {
+    max-width: 250px;
+    aspect-ratio: 1 / 1;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .my-project-grid-card {
+    align-items: center;
+    width: 100%;
+  }
+}
+
 /* List View */
 .responsive-table {
   box-sizing: border-box;
@@ -5643,7 +5765,7 @@ My projects page style rules
   .my-projects-list {
     padding-left: 0px;
     padding-right: 0px;
-    margin: 30px 20px 20px;
+    margin: 30px 10px 20px !important;
   }
 
   .list-card-section1 {
@@ -5788,8 +5910,7 @@ My projects page style rules
 
   .my-projects-grid,
   .my-projects-list {
-    padding-left: 0px;
-    padding-right: 0px;
+
     margin: 30px 20px 20px;
   }
 

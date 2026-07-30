@@ -261,6 +261,26 @@ Profile Panel component style rules
   .profile-panel {
     width: 98% !important;
     display: flex;
+
+    h2 {
+      font-size: 1.2rem;
+    }
+
+    h3 {
+      font-size: 1rem;
+    }
+  }
+}
+
+@media screen and (max-width: 555px) {
+  .profile-panel {
+    h2 {
+      font-size: 1.2rem;
+    }
+
+    h3 {
+      font-size: 1rem;
+    }
   }
 }
 
@@ -275,6 +295,16 @@ Profile Panel component style rules
       margin-left: auto !important;
       margin-right: auto !important;
     }
+  }
+}
+
+@media only screen and (max-width: 550px) {
+
+  #quote {
+    font-size: 0.775rem !important;
+    line-height: normal !important;
+    padding-top: 10px !important;
+    padding: 10px 14px !important;
   }
 }
 
@@ -2102,6 +2132,7 @@ New Profile page style rules
     column-gap: 10px;
     row-gap: 10px;
   }
+
   #likes-container {
     height: 70vh;
   }
