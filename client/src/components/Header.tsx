@@ -93,7 +93,7 @@ export const Header: React.FC<HeaderProps> = ({
   const navigate = useNavigate(); // Hook for navigation
 
   // Bug report text, tracked in state so the character counter updates as the user types
-  const BUG_REPORT_MAX = 200;
+  const BUG_REPORT_MAX = 2000;
   const [bugReportText, setBugReportText] = useState('');
 
   // Mirrors the old Input component: the count turns orange/red as it fills up

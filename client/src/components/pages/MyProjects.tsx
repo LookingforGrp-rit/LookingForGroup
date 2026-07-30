@@ -17,6 +17,7 @@ import { getCurrentUsername, getProjectsByUser } from '../../api/users.ts'
 import { MePrivate, ProjectDetail } from '@looking-for-group/shared';
 import { ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import { deleteProject, projectApprovalRequestExists } from '../../api/projects.ts';
+import { Popup } from '../Popup.tsx';
 
 let isSaving = false;
 const setIsSaving = (value: boolean) => {
@@ -83,9 +84,16 @@ const MyProjects = (/*userProfile: any*/) => {
   type ApprovalStatusKey = keyof typeof ApprovalStatus;
   const [approvalStatuses, setApprovalStatuses] = useState<Record<number, ApprovalStatusKey>>({});
 
-  // useEffect(() => {
-  //   console.log(isSaving);
-  // }, [isSaving]);
+  const [saving, setSaving] = useState(false);
+  useEffect(() => {
+    console.log(getIsSaving());
+    if(getIsSaving() == true)
+    {
+      setSaving(true);
+    }
+  }, [isSaving]);
+
+  
   // --------------------
   // Helper functions
   // --------------------
@@ -680,8 +688,7 @@ const MyProjects = (/*userProfile: any*/) => {
 
       {/* Project Grid/List */}
       <main id="main">
-        {(!dataLoaded 
-        //|| isSaving
+        {(!dataLoaded
         ) ? (
           <div
             className='placeholder-spacing'
@@ -696,7 +703,18 @@ const MyProjects = (/*userProfile: any*/) => {
               <p>You have no projects, you're not logged in!</p>
             </div>
           ) : (
-            <ProjectListSection userProjects={projectsToDisplay} />
+            (saving ? 
+              (
+                <div
+                  className='placeholder-spacing'
+                  style={{ justifyContent: 'center' }}
+                >
+                  <div className='spinning-loader'></div>
+                </div>
+              ) : (
+                <ProjectListSection userProjects={projectsToDisplay} />
+              ) 
+            )
           )
         )}
       </main>
