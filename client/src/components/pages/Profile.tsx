@@ -23,14 +23,23 @@ import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import Reporter from "../Reporter";
 import profilePicture from "../../images/lfrog.png";
-import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles } from "../../api/users";
+import {
+  getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing,
+  getJobTitles
+} from "../../api/users";
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
-import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel, UserReport, BanDetail } from '@looking-for-group/shared';
+import {
+  MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail,
+  UserAccessLevel, UserReport, BanDetail
+} from '@looking-for-group/shared';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
-import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification, deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi } from "../../api/mod-tools";
+import {
+  getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification,
+  deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi
+} from "../../api/mod-tools";
 import { DELETE, GET, POST } from "../../api";
 
 type Profile = MeDetail;
@@ -282,9 +291,9 @@ const Profile = (userProfile: any) => {
   };
 
   /**
-   * Checks if the displayed user is blocked
-   * If so, change the block button to unblock
-   */
+ * Checks if the displayed user is blocked
+ * If so, change the block button to unblock
+ */
   const isUserBlocked = async () => {
     const blocklistrequest = await GET(`/me/blocklist`);
     const blocklist: UserPreview[] = blocklistrequest.data;
@@ -642,7 +651,7 @@ const Profile = (userProfile: any) => {
       const notif = await Promise.all(activeReportList.map(r => sendModeratorNotification({
         modUserId: userID,
         receiverId: r.reporterId,
-        subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
+        subjectLine: `Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName} has been dismissed`,
         message: 'Thank you for submitting your report. ' +
           'Our moderation team has completed its review. ' +
           'After carefully reviewing the information provided and any relevant evidence, ' +
@@ -673,7 +682,7 @@ const Profile = (userProfile: any) => {
       const notif = await Promise.all(activeReportList.map(r => sendModeratorNotification({
         modUserId: userID,
         receiverId: r.reporterId,
-        subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
+        subjectLine: `Update on Your Report: ${displayedProfile?.firstName} ${displayedProfile?.lastName} has been warned`,
         message: 'Thank you for submitting your report. ' +
           'Our moderation team has completed its review. ' +
           'After reviewing the information provided, we have taken action on the reported user by requesting changes to their profile. ' +
@@ -711,7 +720,7 @@ const Profile = (userProfile: any) => {
       const notif = await Promise.all(activeReportList.map(r => sendModeratorNotification({
         modUserId: userID,
         receiverId: r.reporterId,
-        subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
+        subjectLine: `Update on Your Report: ${displayedProfile?.firstName} ${displayedProfile?.lastName} has been banned`,
         message: 'Thank you for submitting your report. ' +
           'Our moderation team has completed its review. ' +
           'After reviewing the information provided, we have determined that further action was necessary. ' +
@@ -849,51 +858,55 @@ const Profile = (userProfile: any) => {
                       </PopupContent> : "")}
                   </Popup> : ""}
                 <ShareButton />
-                {isUserBlocked()}
-                <Popup>
-                  <PopupButton
-                    className="project-info-dropdown-option"
-                  >
-                    <ThemeIcon
-                      id={"warning"}
-                      width={27}
-                      height={27}
-                      ariaLabel={"Report"}
-                    />
-                    Report
-                  </PopupButton>
-                  <PopupContent>
-                    <div className="small-popup" id="report-popup">
-                      <h3>Report {displayedProfile?.firstName ?? "User"} {displayedProfile?.lastName ?? ""}</h3>
-                      <p>You are about to report {displayedProfile?.firstName ?? "User"}. Please provide your reasoning below.</p>
-                      <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></textarea>
-                      <div className="confirm-deny-btns">
-                        <PopupButton
-                          buttonId="team-delete-member-cancel-button"
-                          className="button-reset"
-                        >
-                          Cancel
-                        </PopupButton>
-                        {/* The Report Button */}
-                        <Popup>
-                          <PopupButton
-                            className="delete-button"
-                            callback={reportUserPressed}>
-                            Report
-                          </PopupButton>
-                          <PopupContent>
-                            <div className="small-popup">
-                              <p>{reportResponseText}</p>
-                              <PopupButton buttonId="continue-button">
-                                Continue
+                {userID > 0 && (
+                  <>
+                    {isUserBlocked()}
+                    <Popup>
+                      <PopupButton
+                        className="project-info-dropdown-option"
+                      >
+                        <ThemeIcon
+                          id={"warning"}
+                          width={27}
+                          height={27}
+                          ariaLabel={"Report"}
+                        />
+                        Report
+                      </PopupButton>
+                      <PopupContent>
+                        <div className="small-popup" id="report-popup">
+                          <h3>Report {displayedProfile?.firstName ?? "User"} {displayedProfile?.lastName ?? ""}</h3>
+                          <p>You are about to report {displayedProfile?.firstName ?? "User"}. Please provide your reasoning below.</p>
+                          <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></textarea>
+                          <div className="confirm-deny-btns">
+                            <PopupButton
+                              buttonId="team-delete-member-cancel-button"
+                              className="button-reset"
+                            >
+                              Cancel
+                            </PopupButton>
+                            {/* The Report Button */}
+                            <Popup>
+                              <PopupButton
+                                className="delete-button"
+                                callback={reportUserPressed}>
+                                Report
                               </PopupButton>
-                            </div>
-                          </PopupContent>
-                        </Popup>
-                      </div>
-                    </div>
-                  </PopupContent>
-                </Popup>
+                              <PopupContent>
+                                <div className="small-popup">
+                                  <p>{reportResponseText}</p>
+                                  <PopupButton buttonId="continue-button">
+                                    Continue
+                                  </PopupButton>
+                                </div>
+                              </PopupContent>
+                            </Popup>
+                          </div>
+                        </div>
+                      </PopupContent>
+                    </Popup>
+                  </>
+                )}
               </div>
             </DropdownContent>
           </Dropdown>
