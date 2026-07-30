@@ -31,6 +31,7 @@ import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
 import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification, deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi } from "../../api/mod-tools";
+import { DELETE, GET, POST } from "../../api";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -117,6 +118,8 @@ const Profile = (userProfile: any) => {
       return { name: project.title, description: project.hook };
     }
   );
+
+  let blockButton;
 
   // --------------------
   // Page redirect
@@ -275,6 +278,44 @@ const Profile = (userProfile: any) => {
             setBanDetail(res.data);
         }
       }
+    }
+  };
+
+  /**
+   * Checks if the displayed user is blocked
+   * If so, change the block button to unblock
+   */
+  const isUserBlocked = async () => {
+    const blocklistrequest = await GET(`/me/blocklist`);
+    const blocklist: UserPreview[] = blocklistrequest.data;
+    const blocklistUserIds: number[] = blocklist.map((userPreview) => userPreview.userId);
+
+    if (displayedProfile?.userId && blocklistUserIds.includes(displayedProfile?.userId)) {
+      return <button
+        className="profile-menu-dropdown-button"
+        id="profile-menu-block"
+        onClick={() => {
+          //THE PARAMETER IS THE PERSON TO BLOCK
+          DELETE(`/me/blocklist`, { userId: displayedProfile.userId });
+          window.location.reload();
+        }}
+      >
+        <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
+        Unblock
+      </button>;
+    } else {
+      return <button
+        className="profile-menu-dropdown-button"
+        id="profile-menu-block"
+        onClick={() => {
+          //THE PARAMETER IS THE PERSON TO BLOCK
+          POST(`/me/blocklist`, { userId: displayedProfile?.userId });
+          window.location.reload();
+        }}
+      >
+        <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
+        Block
+      </button>;
     }
   };
 
@@ -601,7 +642,7 @@ const Profile = (userProfile: any) => {
       const notif = await Promise.all(activeReportList.map(r => sendModeratorNotification({
         modUserId: userID,
         receiverId: r.reporterId,
-        subjectLine: `Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName} has been dismissed`,
+        subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
         message: 'Thank you for submitting your report. ' +
           'Our moderation team has completed its review. ' +
           'After carefully reviewing the information provided and any relevant evidence, ' +
@@ -632,7 +673,7 @@ const Profile = (userProfile: any) => {
       const notif = await Promise.all(activeReportList.map(r => sendModeratorNotification({
         modUserId: userID,
         receiverId: r.reporterId,
-        subjectLine: `Update on Your Report: ${displayedProfile?.firstName} ${displayedProfile?.lastName} has been warned`,
+        subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
         message: 'Thank you for submitting your report. ' +
           'Our moderation team has completed its review. ' +
           'After reviewing the information provided, we have taken action on the reported user by requesting changes to their profile. ' +
@@ -670,7 +711,7 @@ const Profile = (userProfile: any) => {
       const notif = await Promise.all(activeReportList.map(r => sendModeratorNotification({
         modUserId: userID,
         receiverId: r.reporterId,
-        subjectLine: `Update on Your Report: ${displayedProfile?.firstName} ${displayedProfile?.lastName} has been banned`,
+        subjectLine: `Update on Your Report on ${displayedProfile?.firstName} ${displayedProfile?.lastName}`,
         message: 'Thank you for submitting your report. ' +
           'Our moderation team has completed its review. ' +
           'After reviewing the information provided, we have determined that further action was necessary. ' +
@@ -808,61 +849,51 @@ const Profile = (userProfile: any) => {
                       </PopupContent> : "")}
                   </Popup> : ""}
                 <ShareButton />
-                {userID > 0 && (
-                  <>
-                    <button
-                      className="profile-menu-dropdown-button"
-                      id="profile-menu-block"
-                    >
-                      <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
-                      Block
-                    </button>
-                    <Popup>
-                      <PopupButton
-                        className="project-info-dropdown-option"
-                      >
-                        <ThemeIcon
-                          id={"warning"}
-                          width={27}
-                          height={27}
-                          ariaLabel={"Report"}
-                        />
-                        Report
-                      </PopupButton>
-                      <PopupContent>
-                        <div className="small-popup" id="report-popup">
-                          <h3>Report {displayedProfile?.firstName ?? "User"} {displayedProfile?.lastName ?? ""}</h3>
-                          <p>You are about to report {displayedProfile?.firstName ?? "User"}. Please provide your reasoning below.</p>
-                          <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></textarea>
-                          <div className="confirm-deny-btns">
-                            <PopupButton
-                              buttonId="team-delete-member-cancel-button"
-                              className="button-reset"
-                            >
-                              Cancel
-                            </PopupButton>
-                            {/* The Report Button */}
-                            <Popup>
-                              <PopupButton
-                                className="delete-button"
-                                callback={reportUserPressed}>
-                                Report
+                {isUserBlocked()}
+                <Popup>
+                  <PopupButton
+                    className="project-info-dropdown-option"
+                  >
+                    <ThemeIcon
+                      id={"warning"}
+                      width={27}
+                      height={27}
+                      ariaLabel={"Report"}
+                    />
+                    Report
+                  </PopupButton>
+                  <PopupContent>
+                    <div className="small-popup" id="report-popup">
+                      <h3>Report {displayedProfile?.firstName ?? "User"} {displayedProfile?.lastName ?? ""}</h3>
+                      <p>You are about to report {displayedProfile?.firstName ?? "User"}. Please provide your reasoning below.</p>
+                      <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></textarea>
+                      <div className="confirm-deny-btns">
+                        <PopupButton
+                          buttonId="team-delete-member-cancel-button"
+                          className="button-reset"
+                        >
+                          Cancel
+                        </PopupButton>
+                        {/* The Report Button */}
+                        <Popup>
+                          <PopupButton
+                            className="delete-button"
+                            callback={reportUserPressed}>
+                            Report
+                          </PopupButton>
+                          <PopupContent>
+                            <div className="small-popup">
+                              <p>{reportResponseText}</p>
+                              <PopupButton buttonId="continue-button">
+                                Continue
                               </PopupButton>
-                              <PopupContent>
-                                <div className="small-popup">
-                                  <p>{reportResponseText}</p>
-                                  <PopupButton buttonId="continue-button">
-                                    Continue
-                                  </PopupButton>
-                                </div>
-                              </PopupContent>
-                            </Popup>
-                          </div>
-                        </div>
-                      </PopupContent>
-                    </Popup>
-                  </>
-                )}
+                            </div>
+                          </PopupContent>
+                        </Popup>
+                      </div>
+                    </div>
+                  </PopupContent>
+                </Popup>
               </div>
             </DropdownContent>
           </Dropdown>
