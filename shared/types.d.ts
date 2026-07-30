@@ -890,6 +890,12 @@ export interface GalleryImage {
   userId: number;
 }
 
+export interface PendingGalleryImage {
+  localId: number;
+  image: File;
+  altText: string;
+}
+
 /**
  * Data for viseos added to user gallery
  */
@@ -1470,6 +1476,18 @@ export type AddUserMajorInput = Pick<Major, "majorId">;
 export type UpdateProjectProfileVisibilityInput = {
   profileVisibility: Visibility;
 };
+
+export type AddGalleryImageInput = {
+  file: File;
+  altText: string;
+}
+
+export type AddGalleryVideoInput = {
+  videoUrl: string;
+  title: string;
+}
+
+
 
 /**
  * The full data of a user report

@@ -14,30 +14,46 @@ Styling of Accept Project Invite Page (AcceptInvitation.tsx)
 }
 
 #accept-invite-container {
-    width: 95%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: min(60vh, 525px);
-    max-width: 880px;
+    max-height: 90%;
+    height: fit-content;
+    width: 85%;
+    margin: 20px auto;
+    padding: 0;
+
     background-color: var(--bg-color);
     box-shadow: 0px 0px 10px 0px var(--shadow-color);
     border-radius: 10px;
     color: var(--primary-color);
-    margin: 0 auto;
-    padding: 0;
+
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--liked-section-bg);
+
+    #accept-invite-info {
+        width: 90%;
+        height: 100%;
+        margin: auto;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        text-align: center;
+    }
 
     button {
         width: fit-content;
         height: 40px;
         min-height: fit-content;
         padding: 5px 16px;
+
         font-size: 1.25rem;
+        color: var(--invert-text);
+        font-weight: 700;
         border: none;
         border-radius: 40px;
         background-color: var(--primary-color);
-        color: var(--invert-text);
-        font-weight: 700;
     }
 
     button:hover {
@@ -51,60 +67,206 @@ Styling of Accept Project Invite Page (AcceptInvitation.tsx)
 
     h1 {
         font-size: 1.5rem;
-        margin-top: min(3.46vh, 34px);
-        margin-bottom: min(3.05vh, 30px);
         font-weight: 600;
         color: var(--primary-color);
+
+        margin-top: min(3.46vh, 34px);
+        margin-bottom: min(3.05vh, 30px);
     }
 
     h2 {
         font-size: 1.25rem;
         font-weight: 600;
-        color: var(--primary-color);
+        line-height: 2em;
+
         margin: min(0.2vh, 2px) 0 min(0.51vh, 5px);
     }
 
-    /* project title is slightly larger and capitalized */
-    #project-title {
-        display: block;
-        font-size: 1.5rem;
+    h3 {
+        /* width: fit-content; */
+        margin: 0;
+
+        font-size: 1.2rem;
+        color: var(--primary-color);
     }
 
-    #accept-invite-info {
-        width: 80%;
-        height: 100%;
+    #project-title, #applicant-name {
+        display: block;
+
+        font-size: 1.5rem;
+        color: var(--primary-color);
+    }
+
+    #project-metadata,
+    #user-metadata {
+        width: 100%;
+
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+    }
+
+    #project-image {
+        width: 300px;
+
+        img {
+            width: 100%;
+            display: block;
+        }
+    }
+
+    #project-attributes,
+    #user-attributes {
+        box-sizing: border-box;
+        height: fit-content;
+        padding: 10px 30px;
+
+        background-color: var(--header-color);
+        border-radius: 10px;
+
         display: flex;
         flex-direction: column;
-        align-items: center;
         justify-content: center;
-        text-align: center;
+        align-items: flex-start;
+
+        >div {
+            width: 100%;
+            margin: 8px 0;
+
+            display: flex;
+        }
+
+        p {
+            margin: 0;
+
+            text-align: left;
+            word-break: break-word;
+        }
+
+        .detail-header {
+            flex: 0 0 10ch;
+
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+    }
+
+    #project-tags,
+    #skills-tags {
+        box-sizing: border-box;
+        width: 100%;
+        margin: 20px auto;
+        padding: 15px;
+
+        background-color: var(--header-color);
+        border-radius: 10px;
+
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: baseline;
+    }
+
+    #tags {
+        box-sizing: border-box;
+        width: 100%;
+        margin: 0;
+        padding: 15px 10px;
+        max-height: 100px;
+
+        list-style: none;
+
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-color) var(--header-color);
+        --webkit--mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+        mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+    }
+
+    #skills-tags #tags {
+        max-height: 150px;
+    }
+
+    .tag-label {
+        color: black;
+    }
+
+    #project-detail,
+    #user-detail {
+        width: 100%;
+        margin: 15px 0;
+
+        text-align: left;
+    }
+
+    #profile-image img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 2px solid var(--main-text);
+        object-fit: cover;
+        margin: auto;
+    }
+
+    #role {
+        color: var(--primary-color);
+        font-weight: bold;
     }
 
     #accept-invite-btns {
+        width: fit-content;
+        margin: 50px auto;
+
         display: flex;
         flex-wrap: wrap;
         align-items: center;
         justify-content: center;
         gap: 20px;
-        width: fit-content;
-        margin: 0 auto;
     }
 }
 
-/*
-#accept-invite-modal
-{
-    display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--modal-gradient);
-  background-repeat: no-repeat;
-  z-index: 10;
-  margin: 0 auto;
-}*/
+@media only screen and (max-width: 1000px) {
+    #accept-invite-container {
+        max-height: 80%;
+        margin-bottom: 100px;
+    }
+
+    #project-metadata,
+    #user-metadata {
+        flex-direction: column !important;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+
+    #project-metadata,
+    #user-metadata,
+    #project-attributes,
+    #user-attributes {
+        width: 100% !important;
+    }
+
+    #project-attributes div,
+    #user-attributes div {
+        width: 100% !important;
+        display: block !important;
+
+        p {
+            margin: 3px 0 !important;
+        }
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    #project-image {
+        width: 80% !important;
+    }
+}

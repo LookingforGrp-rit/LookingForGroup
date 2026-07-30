@@ -41,7 +41,9 @@ import {
   JobSkill,
   UpdateMemberRequestInput,
   UpdateTagBlacklistInput,
-  ChangeOwnerInput
+  ChangeOwnerInput,
+  AddGalleryImageInput,
+  AddGalleryVideoInput
 } from "@looking-for-group/shared";
 
 /**
@@ -339,6 +341,10 @@ interface UserChangesCreates {
    * All socials to be created
    */
   socials: CRUDRequest<AddUserSocialInput>[];
+
+  GalleryImages: CRUDRequest<AddGalleryImageInput>[];
+
+  GalleryVideos: CRUDRequest<AddGalleryVideoInput>[];
 }
 
 /**
@@ -390,6 +396,10 @@ interface UserChangesDeletes {
    * All socials to be deleted
    */
   socials: CRUDRequest<null>[];
+
+  GalleryImages: CRUDRequest<null>[];
+
+  GalleryVideos: CRUDRequest<null>[];
 }
 
 /**
