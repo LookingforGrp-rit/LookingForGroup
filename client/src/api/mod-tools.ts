@@ -287,6 +287,18 @@ export const unbanUser = async (userId: number): Promise<ApiResponse> => {
 };
 
 /**
+ * Creates a bug report
+ * @returns ApiResponse from the API call to get bug reports
+ */
+export const reportBug = async (bugReportText: string): Promise<ApiResponse> => {
+    const apiURL = `/me/report-bug`;
+    const response = await POST(apiURL, {reportText: bugReportText});
+
+    if (response.error) console.log(`Error in getBugReports: ${response.error}`);
+    return response;
+};
+
+/**
  * Gets all bug reports
  * @returns ApiResponse from the API call to get bug reports
  */
