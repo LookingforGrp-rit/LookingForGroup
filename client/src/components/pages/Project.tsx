@@ -29,6 +29,7 @@ import { getCurrentAccount } from "../../api/users";
 import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport, takeDownProject, sendModeratorNotification, unapproveProject } from "../../api/mod-tools";
 import { PagePopup } from "../PagePopup";
 import { ApiResponse } from "@looking-for-group/shared";
+import { projectDataManager } from "../../api/data-managers/project-data-manager";
 
 //Main component for the project page
 /**
@@ -723,6 +724,7 @@ const Project = () => {
                 }}
               />
               <div className="project-contributor-info">
+                {displayedProject.owner.userId === memberUser.userId ? <ThemeIcon id={'owner-crown'} width={18} height={18} className={'color-fill'} ariaLabel="Project Owner"/> : ""}
                 <div className="team-member-name">
                   {memberUser.firstName} {memberUser.lastName}
                 </div>
