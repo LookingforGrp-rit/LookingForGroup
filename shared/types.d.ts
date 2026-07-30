@@ -1477,6 +1477,18 @@ export type UpdateProjectProfileVisibilityInput = {
   profileVisibility: Visibility;
 };
 
+export type AddGalleryImageInput = {
+  file: File;
+  altText: string;
+}
+
+export type AddGalleryVideoInput = {
+  videoUrl: string;
+  title: string;
+}
+
+
+
 /**
  * The full data of a user report
  */
@@ -1595,10 +1607,6 @@ export type CreateProjectVideoInput = {
 export type CreateProjectImageInput = Pick<ProjectImage, "altText"> & {
   image: File;
 };
-
-export type CreateGalleryImageInput = Pick<GalleryImage, "altText"> & {
-  file: File;
-}
 
 /**
  * Data required to edit the image or alt text on a project

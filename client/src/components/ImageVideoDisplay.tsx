@@ -31,6 +31,7 @@ interface ImageVideoDisplayProps<Image, Video> {
   imageError: string,
 }
 
+//copied from MediaTab.tsx, now is used in 2 places, both MediaTab.tsx and Profile.tsx
 
 const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | (GalleryImage | PendingGalleryImage), Video extends ProjectVideo | GalleryVideo>({
   thumbnail,
@@ -271,50 +272,51 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
         }
       </div>
 
-      {/* Save button */}
-      <div id="general-save-info">
-        <div className="editor-save-actions">
-          <Popup>
-            {saveable ? "" :
-              <div id="invalid-input-error" className={"save-error-msg-general"}>
-                <p>*{message}*</p>
-              </div>}
-              {isSaving ? 
-                (
-                  // Currently Saving
-                  <div className='spinning-loader'></div>
-                ) : (
-                  // Save is complete or hasn't been pressed
-                  <PopupButton
-                  buttonId="project-editor-save"
-                  callback={() => {
-                    // Incomplete form: still clickable so the save validation runs,
-                    // shows the error, and auto-scrolls to the first missing field.
-                    if (!saveable) saveProject?.();
-                    else setConfirm(true);
-                  }}
-                >
-                  Save Changes
-                </PopupButton>
-              )
-            }
-                        
-            {confirm ?
-              <PopupContent useClose={false} callback={() => setConfirm(false)}>
-                <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
-                <div id="confirm-editor-save">
-                  <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
-                    Confirm
+      {/* Save button */ saveProject ?
+        <div id="general-save-info">
+          <div className="editor-save-actions">
+            <Popup>
+              {saveable ? "" :
+                <div id="invalid-input-error" className={"save-error-msg-general"}>
+                  <p>*{message}*</p>
+                </div>}
+                {isSaving ? 
+                  (
+                    // Currently Saving
+                    <div className='spinning-loader'></div>
+                  ) : (
+                    // Save is complete or hasn't been pressed
+                    <PopupButton
+                    buttonId="project-editor-save"
+                    callback={() => {
+                      // Incomplete form: still clickable so the save validation runs,
+                      // shows the error, and auto-scrolls to the first missing field.
+                      if (!saveable) saveProject();
+                      else setConfirm(true);
+                    }}
+                  >
+                    Save Changes
                   </PopupButton>
-                  <PopupButton buttonId="team-edit-member-cancel-button" >
-                    Cancel
-                  </PopupButton>
-                </div>
-              </PopupContent> : "" 
-            }
-          </Popup>
+                )
+              }
+                          
+              {confirm ?
+                <PopupContent useClose={false} callback={() => setConfirm(false)}>
+                  <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+                  <div id="confirm-editor-save">
+                    <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                      Confirm
+                    </PopupButton>
+                    <PopupButton buttonId="team-edit-member-cancel-button" >
+                      Cancel
+                    </PopupButton>
+                  </div>
+                </PopupContent> : "" 
+              }
+            </Popup>
+          </div>
         </div>
-      </div>
+      : ""}
     </div>
   );
 }

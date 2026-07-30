@@ -9,24 +9,24 @@ import "../Styles/projects.css";
 import "../Styles/settings.css";
 import "../Styles/pages.css";
 
-import { useState, useCallback, useEffect, useRef, useMemo, /*useContext*/ } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo, } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../../constants/routes";
 import { Header, loggedIn } from "../Header";
 import { PanelBox } from "../PanelBox";
 import { ProfileEditPopup } from "../Profile/ProfileEditPopup";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
-import { Popup, PopupButton, PopupContent } from "../Popup";
+import { Popup, PopupButton, PopupContent, } from "../Popup";
 import { Select, SelectButton, SelectOptions } from "../Select";
 import { ThemeIcon } from "../ThemeIcon";
 import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import Reporter from "../Reporter";
 import profilePicture from "../../images/lfrog.png";
-import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles, getGalleryImages, getGalleryVideos, postGalleryImage, postGalleryVideo, deleteGalleryImage, deleteGalleryVideo } from "../../api/users";
+import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles, getGalleryImages, getGalleryVideos, } from "../../api/users";
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
-import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel, UserReport, BanDetail, GalleryImage, GalleryVideo, PendingGalleryImage } from '@looking-for-group/shared';
+import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail, UserAccessLevel, UserReport, BanDetail, GalleryImage, GalleryVideo, } from '@looking-for-group/shared';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
@@ -34,13 +34,10 @@ import { getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, delet
 // import { PopupContext } from "../Popup";
 import { Carousel, CarouselButton, CarouselContent, CarouselTabs } from "../ImageCarousel";
 import { getYouTubeEmbedID, getYouTubeEmbedURL } from "../../functions/parseYoutube";
-import ImageVideoDisplay from "../ImageVideoDisplay";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
 type Project = ProjectPreview;
-
-let localIdIncrement = 1;
 
 // Stores if profile is loaded from server and if it's user's respectively
 // const [profileLoaded, setProfileLoaded] = useState(false);
@@ -79,12 +76,6 @@ const Profile = (/*userProfile: any*/) => {
   const [showGallery, setShowGallery] = useState(false);
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [galleryVideos, setGalleryVideos] = useState<GalleryVideo[]>([]);
-
-  const [newImages, setNewImages] = useState<(PendingGalleryImage)[]>([]);
-  const [newVideos, setNewVideos] = useState<GalleryVideo[]>([]);
-
-  const [deleteImages, setDeleteImages] = useState<GalleryImage[]>([]);
-  const [deleteVideos, setDeleteVideos] = useState<GalleryVideo[]>([]);
 
   // stores all followed users to display on personal user profile
   const [followedProfilesList, setFollowedProfilesList] = useState<UserPreview[]>([]);
@@ -950,11 +941,20 @@ const Profile = (/*userProfile: any*/) => {
       ...galleryVideos.map(v => {
         const embedID = getYouTubeEmbedID(v.videoUrl);
 
-        return <img
-          key={`img-${v.position}`}
-          src={`http://img.youtube.com/vi/${embedID}/default.jpg`}
-          alt={v.title}
-        />
+        return <>
+        <ThemeIcon
+            width={25}
+            height={18}
+            id="youtube"
+            className={"mono-fill"}
+            ariaLabel="youtube"
+          />
+          <img
+            key={`img-${v.position}`}
+            src={`http://img.youtube.com/vi/${embedID}/default.jpg`}
+            alt={v.title}
+          />
+        </>
       }),
       ...galleryImages.map(i => (
         <img
@@ -966,70 +966,36 @@ const Profile = (/*userProfile: any*/) => {
     ];
   }, [galleryImages, galleryVideos]);
 
-  const handleImageDelete = useCallback((image: GalleryImage | PendingGalleryImage) => {
-    if ((image as PendingGalleryImage).localId)
-      setNewImages(newImages.filter(i => i !== image));
-    else
-      setDeleteImages([...deleteImages, (image as GalleryImage)]);
-  }, [newImages, deleteImages]);
-
-  const handleImageUpload = useCallback((image: File) => {
-    //TODO: ADD FILE SIZE CHECKING
-    setNewImages([
-      ...newImages, 
-      { 
-        image: image, 
-        altText: image.name, 
-        localId: localIdIncrement,
-      }
-    ]);
-    localIdIncrement++;
-  }, [newImages, galleryImages]);
-
-  const handleDeleteVideo = useCallback((video: GalleryVideo) => {
-    if (newVideos.includes(video)) 
-      setNewVideos(newVideos.filter(v => v !== video));
-    else
-      setDeleteVideos([...deleteVideos, video]);
-  }, [newVideos, deleteVideos]);
-
-  const handleAddVideo = useCallback((video: GalleryVideo) => {
-    setNewVideos([...newVideos, video]);
-  }, [newVideos]);
-
-  const save = useCallback(async() => {
-    for (let video of newVideos) {
-      let response = await postGalleryVideo(userID, video);
-
-      if (response.data)
-        setGalleryVideos([...galleryVideos, response.data]);
+ const userGallery = 
+  <div id="user-gallery">
+    <h1 id="title">Gallery</h1>
+    {fullGallery.length > 0 ?
+      <Carousel
+        dataList={fullGallery}
+      >
+        <div className='gallery-carousel'>
+          <CarouselContent className='gallery-carousel-content' />
+          {fullGallery.length > 1 ?
+          <div className='carousel-row'>
+            <CarouselButton
+              direction='left'
+              className='gallery-carousel-btn'
+              size='small'
+            />
+            <CarouselTabs className='gallery-carousel-tabs'>{galleryPreviews}</CarouselTabs>
+            <CarouselButton 
+              direction='right'
+              className='gallery-carousel-btn'
+              size='small'
+            />
+          </div> : ""}
+        </div>
+      </Carousel> :
+      <label id="emtpy-carousel">
+        No gallery items yet...<br/>Edit your profile and upload your achievments!<br/>(not visible to others while empty)
+      </label>
     }
-    for (let image of newImages) {
-      let response = await postGalleryImage(userID, {altText: image.altText, file: image.image});
-
-      if (response.data)
-        setGalleryImages([...galleryImages, response.data]);
-    }
-
-    for (let video of deleteVideos) {
-      await deleteGalleryVideo(userID, video.galleryVideoId);
-      
-      setGalleryVideos(galleryVideos.filter(v => v.galleryVideoId !== video.galleryVideoId));
-    }
-    for (let image of deleteImages) {
-      await deleteGalleryImage(userID, image.galleryImageId);
-      
-      setGalleryImages(galleryImages.filter(i => i.galleryImageId !== image.galleryImageId));
-    }
-
-    setNewImages([]);
-    setNewVideos([]);
-    setDeleteImages([]);
-    setDeleteVideos([]);
-
-    // window.location.reload();
-  }, [newVideos, newImages, deleteVideos, deleteImages, userID]);
-
+  </div>
   //console.log(followedProjectsIds);
   // --------------------
   // Final component
@@ -1274,58 +1240,7 @@ const Profile = (/*userProfile: any*/) => {
             </div>
           </div> : ""}
 
-          {showGallery ? <div id="user-gallery">
-            <h1 id="title">Gallery</h1>
-            <Popup>
-              <PopupButton buttonId="edit-gallery" className="">Edit Gallery</PopupButton>
-              <PopupContent>
-                <ImageVideoDisplay<GalleryImage | PendingGalleryImage, GalleryVideo>
-                  images={[
-                    ...galleryImages.filter(image => !deleteImages.includes(image)), 
-                    ...newImages,
-                  ]}
-                  videos={[
-                    ...galleryVideos.filter(video => !deleteVideos.includes(video)),
-                    ...newVideos
-                  ]}
-                  saveable={true}
-                  message=""
-                  handleImageDelete={handleImageDelete}
-                  handleImageUpload={handleImageUpload}
-                  handleDeleteVideo={handleDeleteVideo}
-                  handleAddVideo={handleAddVideo}
-                  saveProject={save}
-                  imageError=""
-                />
-              </PopupContent>
-            </Popup>
-            {fullGallery.length > 0 ?
-              <Carousel
-                dataList={fullGallery}
-              >
-                <div className='gallery-carousel'>
-                  <CarouselContent className='gallery-carousel-content' />
-                  {fullGallery.length > 1 ?
-                  <div className='carousel-row'>
-                    <CarouselButton
-                      direction='left'
-                      className='gallery-carousel-btn'
-                      size='small'
-                    />
-                    <CarouselTabs className='gallery-carousel-tabs'>{galleryPreviews}</CarouselTabs>
-                    <CarouselButton 
-                      direction='right'
-                      className='gallery-carousel-btn'
-                      size='small'
-                    />
-                  </div> : ""}
-                </div>
-              </Carousel> :
-              <label id="emtpy-carousel">
-                No gallery items yet...<br/>Start uploading and show off your achievments!<br/>(not visible to others if it remains empty)
-              </label>
-            }
-          </div> : ""}
+          {showGallery ? userGallery : ""}
 
           <div id="profile-extra">
             <div id="contact-and-skills">

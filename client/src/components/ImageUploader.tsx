@@ -77,6 +77,8 @@ const ImageUploader = ({
 
   const [labelName, setLabelName] = useState("drop-area");
 
+  const [loadingImage, setLoadingImage] = useState(false);
+
 //mouse dragging for cropping
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (e.button === 0 || e.button === 1 || e.button === 2) {
@@ -161,10 +163,6 @@ const ImageUploader = ({
     updateCanvas();
   };
 
-
-
-
-
   /**
    * updates the canvas element for cropping images
    */
@@ -205,6 +203,10 @@ const ImageUploader = ({
     setCropFile(file);
     setDX(0);
     setDY(0);
+    if ((file.size > 100000 && type === "profile") || file.size > 2000000) {
+      onFileSelected(file);
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -230,6 +232,7 @@ const ImageUploader = ({
         requestAnimationFrame(() => {
           updateCanvas();
         });
+        setLoadingImage(false);
       };
 
       img.src = result;
@@ -245,6 +248,7 @@ const ImageUploader = ({
 
     const files = input.files;
     if (!files || files.length === 0) return;
+    
 
     // Split the selection into supported images and anything we can't use, so a
     // multi-select of several photos all get queued instead of dropping all but one.
@@ -329,10 +333,17 @@ const ImageUploader = ({
     updateCanvas();
   }, [zoom, dX, dY]);
 
+  const closePopup = useCallback(() => {
+    if (!loadingImage) {
+      pendingFiles.current = []; 
+      setCropImg(undefined); 
+    }
+  }, [loadingImage, pendingFiles, setCropImg]);
+
   const cropPopup = useMemo(
   () => cropImg !== undefined ?
     <Popup startOpen={true}>
-      <PopupContent confirmation={true} callback={() => { pendingFiles.current = []; setCropImg(undefined); }}>
+      <PopupContent confirmation={true} callback={closePopup}>
         <div className="project-crop">
         <label id="project-crop-header">Crop image for thumbnail usage</label>
         <canvas ref={canvas} id="canvas"
@@ -427,7 +438,7 @@ const ImageUploader = ({
             min={canvas.current ? -canvas.current.width : -100}
             max={canvas.current ? canvas.current.width : 100}
             defaultValue={dX} />
-              <label className="slider-text" htmlFor="xtrans">Xpos</label>
+            <label className="slider-text" htmlFor="xtrans">Xpos</label>
           </div>
           <div id="yTrans-row">
             <input
@@ -451,7 +462,7 @@ const ImageUploader = ({
         <div className="confirm-project-crop">
           <PopupButton buttonId="project-crop-save" callback={sendImg} doNotClose={() => true}>Crop Image</PopupButton>
           {/* If the action is canceled, no picture is uploaded */}
-          <PopupButton buttonId="project-crop-cancel" callback={() => { pendingFiles.current = []; setCropImg(undefined); }} className="project-info-buttons" doNotClose={() => true}>Cancel</PopupButton>
+          <PopupButton buttonId="project-crop-cancel" callback={closePopup} className="project-info-buttons" doNotClose={() => true}>Cancel</PopupButton>
         </div>
         </div>
       </PopupContent>
@@ -573,6 +584,7 @@ const ImageUploader = ({
           multiple accept=".png, .jpg"
           ref={inputRef}
           onChange={handleImgChange}
+          onClick={() => setLoadingImage(true)}
           disabled={cropImg !== undefined}
           hidden={true}
         />

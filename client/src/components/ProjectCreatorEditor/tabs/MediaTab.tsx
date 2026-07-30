@@ -123,6 +123,7 @@ export const MediaTab = ({
 
   useEffect(() => {
     async function fetchVideos() {
+      if(!unmodifiedProject.projectId) return;
       const res = await getVideos(unmodifiedProject.projectId);
       if (res.data) {
         setVideos(res.data);

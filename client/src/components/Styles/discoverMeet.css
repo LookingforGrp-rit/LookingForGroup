@@ -200,12 +200,16 @@ Meet page hero style rules
 }
 
 #user-gallery {
+  margin-top: 20px;
+  background-color: var(--header-color);
+}
+
+#user-gallery,
+#user-gallery-edit {
   display: flex;
   align-items: center;
   flex-direction: column;
   gap: 5px;
-  margin-top: 20px;
-  background-color: var(--header-color);
   border-radius: 10px;
   padding-bottom: 5px;
 
@@ -218,10 +222,6 @@ Meet page hero style rules
     font-size: 1rem;
     font-weight: 600;
     margin-bottom: 5px;
-  }
-
-  #edit-gallery.active {
-    z-index: 10;
   }
 
   #title,
@@ -242,7 +242,7 @@ Meet page hero style rules
 
   #project-editor-media {
     margin-top: 20px;
-    width: 90%;
+    width: 100%;
   }
 
   #emtpy-carousel {
@@ -250,6 +250,12 @@ Meet page hero style rules
     text-align: center;
     margin-bottom: 10px;
     line-height: 22px;
+  }
+
+  .project-crop #project-crop-header {
+    text-align: center;
+    padding: 0;
+    width: 100%;
   }
 
   .gallery-carousel {
@@ -313,7 +319,18 @@ Meet page hero style rules
       padding: 4px;
       height: 50px;
       border-radius: 5px;
+      position: relative;
+      
+      svg {
+        position:absolute;
+        bottom: 29%;
+        left: 29%;
+        background: var(--header-color);
+        border: 1px solid var(--header-color);
+        border-radius: 40px;
+      }
     }
+
     .carousel-tab-active {
       background-color: var(--primary-color);
     }

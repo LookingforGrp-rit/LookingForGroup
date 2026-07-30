@@ -33,8 +33,8 @@ import type {
   UpdateTagBlacklistInput,
   GalleryImage,
   GalleryVideo,
-  CreateProjectImageInput,
-  CreateGalleryImageInput,
+  AddGalleryImageInput,
+  AddGalleryVideoInput,
 } from "@looking-for-group/shared";
 
 //#region USER CRUD/LOGIN
@@ -170,7 +170,7 @@ export const getGalleryVideos = async (userId: number): Promise<ApiResponse<Gall
  * @param image information on the image to be uploaded
  * @returns response
  */
-export const postGalleryImage = async (userId: number, imageData: CreateGalleryImageInput): Promise<ApiResponse<GalleryImage>> => {
+export const postGalleryImage = async (userId: number, imageData: AddGalleryImageInput): Promise<ApiResponse<GalleryImage>> => {
   const apiURL = `/me/gallery/${userId}/images`;
   
   const form = new FormData();
@@ -189,7 +189,7 @@ export const postGalleryImage = async (userId: number, imageData: CreateGalleryI
  * @param video information on the video to be uploaded
  * @returns response
  */
-export const postGalleryVideo = async (userId: number, video: {videoUrl: string, title: string}): Promise<ApiResponse<GalleryVideo>> => {
+export const postGalleryVideo = async (userId: number, video: AddGalleryVideoInput): Promise<ApiResponse<GalleryVideo>> => {
   const apiURL = `/me/gallery/${userId}/videos`;
   const response = await POST(apiURL, video);
 
