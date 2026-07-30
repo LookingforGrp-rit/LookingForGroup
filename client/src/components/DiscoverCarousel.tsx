@@ -6,7 +6,7 @@ import placeholderThumbnail from '../images/project_temp.png';
 import { ProjectWithFollowers } from "@looking-for-group/shared";
 
 import usePreloadedImage from '../functions/imageLoad.tsx';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ImageLightbox } from "./ImageLightbox";
 
 type DiscoverCarouselProps = {
@@ -25,6 +25,8 @@ export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [
 
   // Full-image viewer: holds the src of the image being viewed, or null when closed
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   if (dataList.length === 0) {
     return (
@@ -71,7 +73,7 @@ export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [
             alt={`${project.title} banner`}
           // Click to view the image full-size in the lightbox (navigation lives on the title & "Learn more" links)
             style={{ cursor: 'zoom-in' }}
-            onClick={(e) => setLightboxSrc((e.currentTarget as HTMLImageElement).src)}
+            onClick={() => navigate(`${paths.routes.PROJECT}?projectID=${project.projectId}`)}
           />
         </div>
         <div className='discover-project-about'>
