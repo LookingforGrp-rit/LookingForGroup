@@ -194,6 +194,12 @@ Project Panel component style rules
     justify-content: space-between;
     align-items: center; */
 
+    .project-title-likes {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
     h2 {
       grid-area: title;
       padding: 0;
@@ -210,12 +216,6 @@ Project Panel component style rules
 
     h2:hover {
       text-decoration: underline 3px;
-    }
-
-    .project-title-likes {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 5px;
     }
 
     .project-likes {
@@ -445,6 +445,31 @@ Project Panel component style rules
           transform: scale(.8) !important;
         }
       }
+    }
+  }
+}
+
+@media only screen and (max-width:450px) {
+  #discover-panel-box {
+    .project-title-likes-tabs {
+      padding: 8px 13px !important;
+
+      h2 {
+        font-size: 1.1rem !important;
+      }
+    }
+
+    .tag-button {
+      max-width: 100%;
+    }
+  }
+
+  .project-title-likes {
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    .project-likes {
+      padding-left: 0 !important;
     }
   }
 }
