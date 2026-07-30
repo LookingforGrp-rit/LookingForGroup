@@ -2,23 +2,23 @@
 .about-main {
   display: flex !important;
   align-content: left !important;
-  justify-content: center !important;
 }
 
 .about-header {
   color: var(--primary-color);
   font-size: 2.4rem;
   align-self: left;
-  text-align: center;
   margin-top: 0;
   font-weight: 600;
 }
 
 .about-container {
   padding: 0 !important;
+  left: 10px;
   justify-content: center;
+  margin: 0rem !important;
   margin-top: 40px !important;
-  width: 100% !important;
+  width: 90% !important;
   max-width: none !important;
   padding-left: 0% !important;
   padding-top: 0% !important;
@@ -27,6 +27,7 @@
 .about-section {
   width: 100%;
   margin: 0rem !important;
+  padding-left: 25px !important;
 }
 
 .about-header-two {
@@ -67,9 +68,10 @@
 #about-purpose {
   background-color: var(--header-color);
   margin: 0 auto !important;
-  max-width: 90%;
+  max-width: 1000px;
   border-radius: 10px;
-  margin-bottom: 20px !important;
+  margin-bottom: 50px !important;
+  padding-left: 16px;
 
   h2 {
     text-align: left;
@@ -180,13 +182,13 @@
   #creation-box,
   #profile-box {
     margin-left: auto;
-    margin-right: auto;
+    margin-right: 150px;
   }
 
   #purpose-box,
   #management-box {
     margin-right: auto;
-    margin-left: auto;
+    margin-left: 150px;
   }
 }
 
@@ -297,7 +299,7 @@
     display: grid;
     grid-template-areas:
       "text image";
-    width: auto;
+    width: 100%;
   }
 
   .about-text {
@@ -326,7 +328,7 @@
   }
 
   .about-text-purpose {
-    width: 100%;
+    width: 95%;
   }
 
   #purpose-box {
