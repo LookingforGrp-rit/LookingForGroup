@@ -77,7 +77,7 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
    * adds a new image to the new image array, for uploading after saving
    * @param image the file uploaded by the user
    */
-  const handleImageUpload = useCallback((image: File) => {
+  const handleImageUpload = useCallback((image: File, altText: string) => {
     if (image.size > 2000000) {
       setUploadError("File too large!");
       return;
@@ -89,7 +89,7 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
       ...newImages, 
       { 
         image, 
-        altText: image.name, 
+        altText: altText, 
         localId: localIdIncrement,
       }
     ]);
@@ -100,7 +100,7 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
       },
       data: {
         file: image,
-        altText: image.name
+        altText: altText,
       }
     });
     localIdIncrement++;
