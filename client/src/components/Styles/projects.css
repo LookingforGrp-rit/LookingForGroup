@@ -93,6 +93,7 @@ Project Panel component style rules
   overflow: hidden;
   text-decoration: none;
   margin: 10px 0;
+  max-width: 100%;
 
   .project-panel-meta {
     grid-area: tags;
@@ -184,9 +185,11 @@ Project Panel component style rules
     margin: 0;
     flex-shrink: 0;
     display: grid;
+    width: 100%;
+    box-sizing: border-box;
     grid-template:
       'title heart' 1fr
-      'tags heart' auto / 5fr 1fr;
+      'tags tags' auto / minmax(0, 1fr) auto;
     row-gap: 4px;
     /* display: flex;
     flex-direction: row;
@@ -204,6 +207,7 @@ Project Panel component style rules
       text-align: left;
       overflow-wrap: break-word;
       word-break: break-word;
+      align-self: center;
     }
 
     h2:hover {
@@ -218,7 +222,8 @@ Project Panel component style rules
       align-items: start;
       padding-left: 8px;
       height: 100%;
-      padding-top: 15px;
+      padding-top: 8px;
+      margin-bottom: 10px;
 
       .follow-amt {
         margin: 0;
