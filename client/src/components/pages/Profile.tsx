@@ -304,9 +304,9 @@ const Profile = (userProfile: any) => {
       return <button
         className="profile-menu-dropdown-button"
         id="profile-menu-block"
-        onClick={() => {
+        onClick={async () => {
           //THE PARAMETER IS THE PERSON TO BLOCK
-          unblockUser(blockUserID);
+          await unblockUser(blockUserID);
           window.location.reload();
         }}
       >
@@ -317,9 +317,9 @@ const Profile = (userProfile: any) => {
       return <button
         className="profile-menu-dropdown-button"
         id="profile-menu-block"
-        onClick={() => {
+        onClick={async () => {
           //THE PARAMETER IS THE PERSON TO BLOCK
-          blockUser(blockUserID);
+          await blockUser(blockUserID);
           window.location.reload();
         }}
       >
