@@ -2650,23 +2650,35 @@ button.edit-position-contact .project-member-image {
 
   #zoom-row,
   #xTrans-row,
-  #yTrans-row,
+  #yTrans-row{
+    display: block;
+    width: 100%;
+    max-width: 800px;
+    align-items: center;
+    justify-content: center;
+    label {
+      margin-right: 0.5em;
+      font-size: clamp(1.25rem, 2vw, 1.40rem);
+      white-space: nowrap;
+    }
+  }
+
+  #zoom-row input[type="range"],
+  #xTrans-row input[type="range"],
+  #yTrans-row input[type="range"] {
+    flex: 1; 
+    max-width: 450px;
+  }
+
   #aspect-row {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
-
-    label {
-      margin-right: 0.5em;
-      font-size: clamp(1.15rem, 3vw, 1.25rem);
-    }
   }
-
   #aspect-row .select-container {
     width: 85px;
   }
-
+  
   .project-crop-extra-info {
     margin-top: 20px;
     font-size: 0.75rem;
