@@ -723,8 +723,8 @@ const Project = () => {
                   profileImg.src = profileImage;
                 }}
               />
-              {displayedProject.owner.userId === memberUser.userId ? <ThemeIcon id={'owner-crown'} width={18} height={18} ariaLabel="Project Owner" className={'mono-stroke'}/> : ""}
               <div className="project-contributor-info">
+                {displayedProject.owner.userId === memberUser.userId ? <ThemeIcon id={'owner-crown'} width={18} height={18} className={'color-fill'} ariaLabel="Project Owner"/> : ""}
                 <div className="team-member-name">
                   {memberUser.firstName} {memberUser.lastName}
                 </div>

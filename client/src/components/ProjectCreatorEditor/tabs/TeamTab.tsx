@@ -2061,6 +2061,7 @@ export const TeamTab = ({
 							}}
 						/>
 						<div className="project-editor-project-member-info">
+							{projectAfterTeamChanges.owner.userId === member.user?.userId ? <ThemeIcon id={'owner-crown'} width={18} height={18} className={'color-fill'} ariaLabel="Project Owner"/> : ""}
 							<div className="project-editor-project-member-name">
 								{member.user?.firstName} {member.user?.lastName}
 							</div>

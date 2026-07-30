@@ -1578,7 +1578,7 @@ Project Creator and Editor Popup style rules
   padding: 12px 15px;
   max-width: 204px;
   width: 100%;
-  gap: 10px;
+  gap: 5px;
   flex-direction: row;
   background-color: var(--header-color);
   border-radius: 10px;
@@ -1626,12 +1626,35 @@ Project Creator and Editor Popup style rules
   display: flex;
   flex-direction: column;
   justify-content: center;
-  text-align: center;
   flex: 1;
 }
 
 .project-editor-project-member-info>* {
   align-self: stretch;
+}
+
+.project-editor-project-member-info {
+  text-align: left;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(1fr, 3fr));
+  grid-template-rows: 2fr 1fr;
+
+  .project-editor-project-member-name {
+    grid-column: 2/3;
+    grid-row: 1/2;
+  }
+  .project-editor-project-member-role
+  {
+    grid-column: 2/3;
+    grid-row: 2/3;
+  }
+  #owner-crown {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    align-items: center;
+    justify-content: center;
+    margin: auto 5px;
+  }
 }
 
 .project-editor-project-member-role {
@@ -4878,18 +4901,35 @@ button#positions-popup-list-item-active {
 
 .project-contributor-info {
   margin: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(1fr, 3fr));
+  grid-template-rows: 2fr 1fr;
 
   .team-member-name {
+    align-items: center;
+    justify-content: center;
+    margin: auto 0;
+    grid-column: 2/3;
+    grid-row: 1/2;
     font-weight: 700;
     font-size: 1rem;
     color: var(--primary-color);
   }
 
   .team-member-role {
+    grid-column: 2/3;
+    grid-row: 2/3;
     font-style: italic;
     font-size: clamp(0.625rem, 2vw, 0.875rem);
     font-weight: 400;
     color: var(--neutral-gray);
+  }
+  #owner-crown {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    align-items: center;
+    justify-content: center;
+    margin: auto 5px;
   }
 }
 
