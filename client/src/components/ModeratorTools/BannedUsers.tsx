@@ -33,7 +33,7 @@ const BannedUsers = ({ currentUserId, currentTab, displayMode }: BannedUsersProp
         }
 
         displayBannedUsers();
-    }, [currentTab]);
+    }, [currentTab, bannedUsers]);
 
     // The final component ====================================================
     if (loaded) {

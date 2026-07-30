@@ -61,7 +61,7 @@ const PendingProjects = ({ currentUserId, currentTab, displayMode }: PendingProj
         }
 
         displayPendingProjects();
-    }, [currentTab]);
+    }, [currentTab, pendingProjects]);
 
     // The final component ====================================================
     if (loaded) {
