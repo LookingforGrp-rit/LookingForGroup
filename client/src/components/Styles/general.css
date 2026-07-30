@@ -2087,16 +2087,10 @@ Dropdown style rules
 .notification-clear-all {
   background: none;
   border: none;
-  color: var(--main-text);
+  color: #ff4d4f;
   font-size: 0.85em;
   cursor: pointer;
   opacity: 1;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  i {
-    color: #ff4d4f;
-  }
 }
 
 /* Dynamic state when isClearing is true */
