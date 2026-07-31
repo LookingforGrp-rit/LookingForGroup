@@ -22,7 +22,7 @@ interface UnbanEmailProps {
 const logoUrl = 'https://lookingforgrp.com/api/images/lfg-logo.png';
 
 const UnbanEmail = ({ receiverName }: UnbanEmailProps) => {
-  const previewText = `[DO NOT REPLY] You have been unbanned on Looking For Group`;
+  const previewText = `You have been unbanned on Looking For Group`;
 
   return createElement(
     Html,
