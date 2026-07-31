@@ -2746,6 +2746,24 @@ button.edit-position-contact .project-member-image {
     }
   }
 
+  #alt-text-input {
+    margin: 10px auto 0 auto;
+    width: 85%;
+
+    input {
+      font-size: 0.9375rem;
+      padding-left: 15px;
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      outline: none;
+      resize: none;
+      box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+      flex-grow: 1;
+      height: 40px;
+    }
+  }
+
   .confirm-project-crop {
     display: flex;
     flex-direction: row;

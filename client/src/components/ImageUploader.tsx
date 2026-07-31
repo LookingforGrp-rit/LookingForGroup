@@ -546,7 +546,6 @@ const ImageUploader = ({
             type='text' ref={inputAlt}
             placeholder='enter the caption/alt text for the image'
             onChange={() => {
-              console.log(inputAlt.current?.value)
               setAltText(inputAlt.current?.value as string)
             }}
             >
