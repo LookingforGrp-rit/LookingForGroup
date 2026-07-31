@@ -10,6 +10,7 @@ import { SortableTag } from "./SortableItem";
 import { clampDragWithinContainer } from "./dragModifiers";
 import { PopupButton } from "../../Popup";
 import { ThemeIcon } from "../../ThemeIcon";
+import { Popup, PopupContent } from "../../Popup";
 
 const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
 
@@ -70,7 +71,6 @@ export const JobSkillPopup = ({
 
   const [saved, setSaved] = useState<boolean>();
 
-
   // load skills
   useMemo(() => {
     const fetchSkills = async () => {
@@ -130,7 +130,6 @@ export const JobSkillPopup = ({
     })
   );
 
-
   /**
      * Reorders the selected tags when a drag finishes.
      * Note: tag order is only kept for this edit session — the backend has no
@@ -171,34 +170,33 @@ export const JobSkillPopup = ({
 
       if (!skillToToggle) return;
 
+      /* Toggle off */
       if (isSelected) {
         setModifiedJob({
           ...modifiedJob,
           jobSkills: modifiedJob.jobSkills?.filter((skill) => skill?.skillId !== skillToToggle.skillId) as JobSkill[],
         });
       }
-      else {
-        if ((modifiedJob.jobSkills ? modifiedJob.jobSkills.length : -1) < 5)
+      else { /* Toggle on */
+        if ((modifiedJob.jobSkills ? modifiedJob.jobSkills.length : -1) < skillLimit)
         {
-        const newSkills = modifiedJob.jobSkills;
-        const lengthPreAdd = modifiedJob.jobSkills?.length
-        //limit-imposing if statement
-        if ((newSkills as JobSkill[]).length >= skillLimit) newSkills?.shift();
-
-        newSkills?.push({
-          ...skillToToggle,
-          proficiency: "Novice",
-          position: lengthPreAdd ?? 0,
-          apiUrl: "",
-        })
-        setModifiedJob({
-          ...modifiedJob,
-          jobSkills: newSkills as JobSkill[],
-        });
-        //fix the positions right after they're changed
-        for (let i = 0; i < (newSkills as JobSkill[]).length; i++) {
-          (newSkills as JobSkill[])[i].position = i;
-        }
+          const newSkills = modifiedJob.jobSkills;
+          const lengthPreAdd = modifiedJob.jobSkills?.length
+          
+          newSkills?.push({
+            ...skillToToggle,
+            proficiency: "Novice",
+            position: lengthPreAdd ?? 0,
+            apiUrl: "",
+          })
+          setModifiedJob({
+            ...modifiedJob,
+            jobSkills: newSkills as JobSkill[],
+          });
+          //fix the positions right after they're changed
+          for (let i = 0; i < (newSkills as JobSkill[]).length; i++) {
+            (newSkills as JobSkill[])[i].position = i;
+          }
         }
       }
     },
@@ -209,13 +207,18 @@ export const JobSkillPopup = ({
 
   useEffect(() => {
     let newMessage = "";
-    if ((modifiedJob.jobSkills ? modifiedJob.jobSkills.length : -1)  === 0) {newMessage = `Select up to ${skillLimit} skills for this position`}
-    if ((modifiedJob.jobSkills ? modifiedJob.jobSkills.length : -1)  >= skillLimit) {newMessage = `Maximum of ${skillLimit} selected skills reached!`;}
+    console.log("length" + modifiedJob.jobSkills?.length);
+    if ((modifiedJob.jobSkills ? modifiedJob.jobSkills.length : -1)  >= skillLimit) {
+      newMessage = `Maximum of ${skillLimit} selected skills reached!`;
+    }
+    else if ((modifiedJob.jobSkills ? modifiedJob.jobSkills.length : -1)  == 0) {
+      newMessage = `Select up to ${skillLimit} skills for this position`
+    }
     else {
       newMessage = "";
     }
     setMessage(newMessage);
-  }, [handleSkillToggle, selectedSkills]);
+  }, [modifiedJob.jobSkills?.length]);
 
   /**
    * Renders skill tags as clickable buttons based on the active tab and search results.
@@ -598,14 +601,11 @@ export const JobSkillPopup = ({
           <div className="editor-save-actions">
             <PopupButton
               buttonId="project-editor-save"
+              disabled={(modifiedJob.jobSkills ? modifiedJob.jobSkills.length : -1)  === 0}
               callback={() => {
-                // Incomplete form: still clickable so the save validation runs,
-                // shows the error, and auto-scrolls to the first missing field.
-                if ((modifiedJob.jobSkills ? modifiedJob.jobSkills.length : -1) <= skillLimit) {
                   setSaved(true);
                   updateJob(modifiedJob);
                   return;
-                }
               }}
             >
               Save Changes
