@@ -23,6 +23,7 @@ const ModeratorPage = () => {
     const [currentTab, setCurrentTab] = useState<number>(0);
     const [userId, setUserId] = useState<number>(-1);
     const [error, setError] = useState<string>('');
+    const [loaded, setLoaded] = useState<boolean>(false);
 
     /* Page contents only viewable by mods*/
     const [userIsMod, setUserIsMod] = useState<boolean>(false);
@@ -98,24 +99,24 @@ const ModeratorPage = () => {
                     }
                     break;
                 case 3:
-                        reportedUsersTab.style.opacity = String(.5);
-                        reportedProjectsTab.style.opacity = String(.5);
-                        pendingProjectsTab.style.opacity = String(.5);
-                        reportedBugsTab.style.opacity = String(1);
-                        bannedUsersTab.style.opacity = String(.5);
-                        if (userIsAdmin && allModeratorsTab != null) {
+                    reportedUsersTab.style.opacity = String(.5);
+                    reportedProjectsTab.style.opacity = String(.5);
+                    pendingProjectsTab.style.opacity = String(.5);
+                    reportedBugsTab.style.opacity = String(1);
+                    bannedUsersTab.style.opacity = String(.5);
+                    if (userIsAdmin && allModeratorsTab != null) {
                         allModeratorsTab.style.opacity = String(.5);
-                        }
+                    }
                     break;
                 case 4:
-                        reportedUsersTab.style.opacity = String(.5);
-                        reportedProjectsTab.style.opacity = String(.5);
-                        pendingProjectsTab.style.opacity = String(.5);
-                        reportedBugsTab.style.opacity = String(.5);
-                        bannedUsersTab.style.opacity = String(1);
-                        if (userIsAdmin && allModeratorsTab != null) {
+                    reportedUsersTab.style.opacity = String(.5);
+                    reportedProjectsTab.style.opacity = String(.5);
+                    pendingProjectsTab.style.opacity = String(.5);
+                    reportedBugsTab.style.opacity = String(.5);
+                    bannedUsersTab.style.opacity = String(1);
+                    if (userIsAdmin && allModeratorsTab != null) {
                         allModeratorsTab.style.opacity = String(.5);
-                        }
+                    }
                     break;
                 case 5:
                     if (userIsAdmin && allModeratorsTab != null) {
@@ -164,6 +165,8 @@ const ModeratorPage = () => {
             if (accessLevel.data?.toString() == 'Administrator') {
                 setUserIsAdmin(true);
             }
+
+            setLoaded(true);
         }
         else    /* Redirect to log in if not logged in */ {
             navigate(paths.routes.LOGIN);
@@ -288,8 +291,13 @@ const ModeratorPage = () => {
             <h1 className="page-title">Moderation</h1>
             <p id="mod-page-description">Manage pending project requests, handle user and project reports, and more!</p>
             <main id="main" tabIndex={-1} aria-label='main content'>
-                {userIsMod ? (
-                    <>
+                {!loaded
+                    ? <>
+                        <div className='placeholder-spacing'>
+                            <div className='spinning-loader'></div>
+                        </div>
+                    </> 
+                    : userIsMod ? <>
                         <div id="mod-tools">
                             <div id="mod-actions-block">
                                 <div className="display-switch" onClick={() => toggleDisplayMode()}>
@@ -367,8 +375,7 @@ const ModeratorPage = () => {
                                 </div>
                             </div>
                         </div>
-                    </>
-                ) : "You are not a moderator!"}
+                    </> : "You are not a moderator!"}
             </main>
         </div>
     );

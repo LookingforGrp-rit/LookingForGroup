@@ -140,7 +140,7 @@ export const requestToJoinService = async (
     const email: EmailInput = {
       sender: requester,
       receiver: owner,
-      subject: `Request to join ${project.title}`,
+      subject: `[DO NOT REPLY] Request to join ${project.title}`,
       textBody: text,
       HTMLBody: html,
     };
