@@ -173,7 +173,8 @@ paths:
   # USERS
   /api/users/all/{method}:
     get:
-      summary: Get all users
+      summary: Get all public users
+      description: Returns only public users. Private users are banned and are excluded from the results.
       tags:
         - Users
       parameters:
