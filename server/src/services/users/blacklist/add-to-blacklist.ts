@@ -60,7 +60,7 @@ const addBlacklistService = async (
         lastName: '',
       } as UserEmail,
       receiver: user,
-      subject: `You have been banned from Looking For Group`,
+      subject: `[DO NOT REPLY] You have been banned from Looking For Group`,
       textBody: text,
       HTMLBody: html,
     };
