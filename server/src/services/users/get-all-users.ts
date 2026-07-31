@@ -117,7 +117,10 @@ export const getAllUsersService = async (
     }
 
     const users = await prisma.users.findMany({
-      where: restrictionObject,
+      where: {
+        ...restrictionObject,
+        privacy: 'public',
+      },
       orderBy: orderByInput,
       select: UserDetailSelector,
     });

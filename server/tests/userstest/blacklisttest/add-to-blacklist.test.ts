@@ -13,6 +13,7 @@ vi.mock('#config/prisma.ts', () => ({
     },
     users: {
       findUnique: vi.fn(),
+      update: vi.fn(),
     },
     session: {
       deleteMany: vi.fn(),
@@ -47,12 +48,36 @@ const prismaUser: Users = {
   galleryEnabled: false,
 };
 
+const updatedUser: Users = {
+  userId: 1,
+  googleId: 'u123',
+  username: 'goldleaf',
+  firstName: 'Gold',
+  lastName: 'Leaf',
+  ritEmail: 'goldleaf@rit.edu',
+  profileImage: null,
+  headline: '',
+  pronouns: '',
+  title: '',
+  ritStatus: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  displayPhone: false,
+  location: '',
+  bio: '',
+  privacy: 'private',
+  phoneNumber: null,
+  accessLevel: 'User',
+  galleryEnabled: false,
+};
+
 describe('addBlacklistService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
   it('returns OK if successful', async () => {
     vi.mocked(prisma.users.findUnique).mockResolvedValue(prismaUser);
+    vi.mocked(prisma.users.update).mockResolvedValue(updatedUser);
     const result = await addBlacklistService(1, 'silly');
 
     expect(prisma.userBlacklist.create).toHaveBeenCalled();
@@ -66,6 +91,7 @@ describe('addBlacklistService', async () => {
   });
   it("deletes the banned user's sessions so they get logged out", async () => {
     vi.mocked(prisma.users.findUnique).mockResolvedValue(prismaUser);
+    vi.mocked(prisma.users.update).mockResolvedValue(updatedUser);
     const result = await addBlacklistService(1, 'silly');
 
     expect(prisma.session.deleteMany).toHaveBeenCalledWith({
@@ -77,6 +103,7 @@ describe('addBlacklistService', async () => {
   });
   it('returns INTERNAL_ERROR if the sessions cannot be deleted', async () => {
     vi.mocked(prisma.users.findUnique).mockResolvedValue(prismaUser);
+    vi.mocked(prisma.users.update).mockResolvedValue(updatedUser);
     vi.mocked(prisma.session.deleteMany).mockRejectedValue(new Error('womp womp'));
     const result = await addBlacklistService(1, 'silly');
 
