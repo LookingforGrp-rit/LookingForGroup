@@ -15,6 +15,7 @@ vi.mock('#config/prisma.ts', () => ({
     },
     users: {
       findUnique: vi.fn(),
+      update: vi.fn(),
     },
   },
 }));
