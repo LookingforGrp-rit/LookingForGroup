@@ -765,37 +765,37 @@ Project Creator and Editor Popup style rules
   }
 }
 
-@media only screen and (max-width: 700px){
-  #report-popup{
+@media only screen and (max-width: 700px) {
+  #report-popup {
     h3 {
-    font-size: 1.25rem;
-    margin: 0;
-    max-width: fit-content;
+      font-size: 1.25rem;
+      margin: 0;
+      max-width: fit-content;
+    }
+
+    p,
+    button {
+      font-size: 1rem;
+      max-width: fit-content;
+    }
+
+    #bug-report-field {
+      display: flex;
+      align-items: flex-start;
+      align-self: stretch;
+      margin: 10px;
+    }
+
+    #bug-report-field .input-multiline-container {
+      min-width: fit-content;
+      padding-bottom: 5px;
+    }
+
   }
 
-   p,
-  button {
-    font-size: 1rem;
-    max-width: fit-content;
+  .small-popup {
+    padding: 10px 20px;
   }
-
-  #bug-report-field {
-    display: flex;
-    align-items: flex-start;
-    align-self: stretch;
-    margin: 10px;
-  }
-
-   #bug-report-field .input-multiline-container {
-    min-width: fit-content;
-    padding-bottom: 5px; 
- }
-
-}
-
- .small-popup{
-  padding: 10px 20px;
- }
 
 }
 
@@ -1694,7 +1694,7 @@ Project Creator and Editor Popup style rules
 }
 
 .edit-position-container .project-editor-project-member-info {
-  display: flex;
+  display: flex !important;
   gap: 5px;
   max-height: 40px;
 
@@ -2531,7 +2531,7 @@ Project Creator and Editor Popup style rules
   border: 1px solid var(--border-color);
   border-radius: 10px;
   outline: none;
-  width: 80%;
+  width: 100%;
   box-sizing: border-box;
   resize: none;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
@@ -2558,7 +2558,22 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 @media only screen and (max-width: 520px) {
   #edit-position-details-top .edit-position-container {
     flex-wrap: wrap;
-    justify-content: center;
+  }
+
+  .edit-position-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media only screen and (max-width: 375px) {
+  #positions-popup-list-edit {
+    #edit-position-details {
+      .select-container {
+        max-width: 150px !important;
+        width: 150px !important;
+      }
+    }
   }
 }
 
@@ -2700,12 +2715,13 @@ button.edit-position-contact .project-member-image {
 
   #zoom-row,
   #xTrans-row,
-  #yTrans-row{
+  #yTrans-row {
     display: block;
     width: 100%;
     max-width: 800px;
     align-items: center;
     justify-content: center;
+
     label {
       margin-right: 0.5em;
       font-size: clamp(1.25rem, 2vw, 1.40rem);
@@ -2716,7 +2732,7 @@ button.edit-position-contact .project-member-image {
   #zoom-row input[type="range"],
   #xTrans-row input[type="range"],
   #yTrans-row input[type="range"] {
-    flex: 1; 
+    flex: 1;
     max-width: 450px;
   }
 
@@ -2725,10 +2741,11 @@ button.edit-position-contact .project-member-image {
     flex-direction: row;
     justify-content: center;
   }
+
   #aspect-row .select-container {
     width: 85px;
   }
-  
+
   .project-crop-extra-info {
     margin-top: 20px;
     font-size: 0.75rem;
@@ -3884,8 +3901,8 @@ New Project Page style rules
   #project-editor-team-content {
     flex-direction: column;
   }
-  #project-editor-team-tabs
-  {
+
+  #project-editor-team-tabs {
     /* justify-content: flex-start; */
     gap: 4%;
     height: 80px;
@@ -4510,7 +4527,7 @@ project-team-open-posiions-info: edit/create proj popup
 
   #edit-position-details {
     .select-container {
-      width: fit-content;
+      width: 250px;
     }
   }
 }
@@ -4593,7 +4610,7 @@ button#positions-popup-list-item-active {
     flex-wrap: nowrap;
     gap: 8px;
     justify-content: center;
-    max-width: max-content;
+    width: 100%;
     align-self: center;
   }
 
@@ -4656,12 +4673,7 @@ button#positions-popup-list-item-active {
 @media only screen and (max-width: 1070px) {
   #edit-position-details {
     .select-container {
-      min-width: 250px;
-    }
-
-    label {
-      text-align: right;
-      padding-right: 10px;
+      width: 200px !important;
     }
   }
 }
@@ -4693,7 +4705,7 @@ button#positions-popup-list-item-active {
 
   #edit-position-details {
     .select-container {
-      min-width: 250px;
+      /* min-width: 250px; */
     }
   }
 
