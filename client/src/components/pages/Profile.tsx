@@ -188,11 +188,12 @@ const Profile = (/*userProfile: any*/) => {
   }, [userID, profileID]);
 
   useEffect(() => {
-    if (userID === undefined || userID === -1) return;
+    const id = Number.parseInt(profileID);
+    if (id === undefined || id === -1) return;
 
     const loadGallery = async () => {
-      const imageResponse = await getGalleryImages(userID);
-      const videoResponse = await getGalleryVideos(userID);
+      const imageResponse = await getGalleryImages(id);
+      const videoResponse = await getGalleryVideos(id);
 
       if (imageResponse.data)
         setGalleryImages(imageResponse.data);
@@ -202,7 +203,7 @@ const Profile = (/*userProfile: any*/) => {
     }
 
     loadGallery();
-  }, [userID]);
+  }, [profileID]);
 
   useEffect(() => {
     if (isUsersProfile || galleryImages.length > 0 || galleryVideos.length > 0)

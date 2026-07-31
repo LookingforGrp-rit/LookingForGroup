@@ -80,8 +80,6 @@ export const MediaTab = ({
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
   const [videos, setVideos] = useState<ProjectVideo[]>();
-  const [newVideoTitle, setNewVideoTitle] = useState("");
-  const [newVideoUrl, setNewVideoUrl] = useState("");
 
   projectAfterMediaChanges = structuredClone(projectData);
   const projectId = projectData.projectId!;
@@ -137,7 +135,7 @@ export const MediaTab = ({
   }, [unmodifiedProject.projectId]);
 
   // Checks whether a valid image has been uploaded and modifies modifiedProject
-  const handleImageUpload = useCallback(async (file: File) => {
+  const handleImageUpload = useCallback(async (file: File, altText?: string) => {
     if (!["image/jpeg", "image/png"].includes(file.type)) return;
     else if (file.size > 2000000) {
       setImageError("File too large");
@@ -170,7 +168,7 @@ export const MediaTab = ({
     try {
       const fullImg = {
         image: file,
-        altText: "project image",
+        altText: altText ?? "Project Image",
       } as CreateProjectImageInput;
 
       const localId = ++localIdIncrement;
@@ -224,15 +222,15 @@ export const MediaTab = ({
     }
   }, [dataManager, projectId, updatePendingProject]);
 
-  const handleAddVideo = useCallback(() => {
-    if (!newVideoTitle.trim() || !newVideoUrl.trim()) return;
-    if (!getYouTubeEmbedURL(newVideoUrl)) return;
+  const handleAddVideo = useCallback((newVideo: ProjectVideo) => {
+    if (!newVideo.title.trim() || !newVideo.videoUrl.trim()) return;
+    if (!getYouTubeEmbedURL(newVideo.videoUrl)) return;
 
     const localId = ++localIdIncrement;
 
     const newVideoData: CreateProjectVideoInput = {
-      title: newVideoTitle,
-      videoUrl: newVideoUrl,
+      title: newVideo.title,
+      videoUrl: newVideo.videoUrl,
     };
 
     // Create it
@@ -261,16 +259,14 @@ export const MediaTab = ({
 
     updatePendingProject(projectAfterMediaChanges);
     // Clear inputes
-    setNewVideoTitle("");
-    setNewVideoUrl("");
-  }, [newVideoTitle, newVideoUrl, dataManager, setVideos]);
+  }, [dataManager, setVideos]);
 
-  const handleDeleteVideo = useCallback((video: any) => {
+  const handleDeleteVideo = useCallback((video: ProjectVideo) => {
     // Delete it
     dataManager?.deleteVideo({
       id: {
         value: video.videoId,
-        type: video.isLocal ? "local" : "canon"
+        type: video.apiUrl ? "canon" : "local"
       },
       data: null
     });
