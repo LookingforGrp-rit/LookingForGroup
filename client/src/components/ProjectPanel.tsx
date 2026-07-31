@@ -209,7 +209,12 @@ const ProjectPanelMeta = ({ project }: { project: ProjectWithFollowers }) => {
   const allTags = project.tags ?? [];
 
   const MAX_TAGS_TO_SHOW = 2; // Editor says only two tags appear
-  const shownTags = allTags.slice(0, MAX_TAGS_TO_SHOW);
+
+  const contentWarnings = allTags.filter((tag) => tag.type === 'Content Warning');
+  const otherTags = allTags.filter((tag) => tag.type !== 'Content Warning');
+
+  const shownOtherTags = otherTags.slice(0, Math.max(MAX_TAGS_TO_SHOW - contentWarnings.length, 0));
+  const shownTags = [...contentWarnings, ...shownOtherTags];
   const overflowCount = allTags.length - shownTags.length;
 
   return (

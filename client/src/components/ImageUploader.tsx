@@ -257,8 +257,16 @@ const ImageUploader = ({
     setCropFile(file);
     setDX(0);
     setDY(0);
+
+    // Each image gets its own caption. The popup stays mounted between queued
+    // files, so the previous image's caption has to be cleared off both the
+    // state and the uncontrolled input or it carries over to this one.
+    setAltText("");
+    if (inputAlt.current) inputAlt.current.value = "";
+
     if ((file.size > 100000 && type === "profile") || file.size > 2000000) {
-      onFileSelected(file, altText);
+      // Too large to crop, so there was never a chance to caption this file.
+      onFileSelected(file, "");
       return;
     }
 
@@ -292,7 +300,7 @@ const ImageUploader = ({
     };
     reader.onerror = () => setCropImg(placeholder);
     reader.readAsDataURL(file);
-  }, [updateCanvas, altText]);
+  }, [updateCanvas]);
 
   const handleImgChange = useCallback(async () => {
     const input = inputRef.current;
@@ -388,8 +396,9 @@ const ImageUploader = ({
 
   const closePopup = useCallback(() => {
     if (!loadingImage) {
-      pendingFiles.current = []; 
-      setCropImg(undefined); 
+      pendingFiles.current = [];
+      setCropImg(undefined);
+      setAltText("");
     }
   }, [loadingImage, pendingFiles, setCropImg]);
 
@@ -546,7 +555,6 @@ const ImageUploader = ({
             type='text' ref={inputAlt}
             placeholder='enter the caption/alt text for the image'
             onChange={() => {
-              console.log(inputAlt.current?.value)
               setAltText(inputAlt.current?.value as string)
             }}
             >
