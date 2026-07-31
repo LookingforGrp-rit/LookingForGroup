@@ -1524,7 +1524,7 @@ body.modal-open {
     #match-button,
     .delete-button,
     #primary-btn {
-      min-width: 100px;
+      min-width: 120px;
       font-size: 1rem;
     }
 

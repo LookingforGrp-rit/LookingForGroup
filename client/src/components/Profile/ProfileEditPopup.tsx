@@ -28,13 +28,14 @@ const pageTabs = ["About", "Projects", "Skills", "Gallery", "Links"];
 interface EditProfileProps {
   editSkills?: boolean;
   editContact?: boolean;
+  editGallery?: boolean;
 }
 
 /**
  * Profile Edit button. Handles changing tabs.
  * @returns JSX Element
  */
-export const ProfileEditPopup = ({ editSkills = false, editContact = false }: EditProfileProps) => {
+export const ProfileEditPopup = ({ editSkills = false, editContact = false, editGallery = false }: EditProfileProps) => {
   const [currentTab, setCurrentTab] = useState(0);
   const [errorVisible, setErrorVisible] = useState(false);
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
@@ -58,6 +59,7 @@ export const ProfileEditPopup = ({ editSkills = false, editContact = false }: Ed
    */
   const handleEditorClose = () => {
     if (editSkills) setCurrentTab(2);
+    else if (editGallery) setCurrentTab(3);
     else if (editContact) setCurrentTab(4);
     else setCurrentTab(0);
 
@@ -186,6 +188,7 @@ export const ProfileEditPopup = ({ editSkills = false, editContact = false }: Ed
   //if button clicked apppears in skills or contacts, set starting tab to appropriate value
   const editButtonAppearance = () => {
     if (editSkills) setCurrentTab(2);
+    else if (editGallery) setCurrentTab(3);
     else if (editContact) setCurrentTab(4);
     else setCurrentTab(0);
   }
@@ -265,7 +268,7 @@ export const ProfileEditPopup = ({ editSkills = false, editContact = false }: Ed
   return (
     <Popup>
       <PopupButton buttonId="project-info-edit" callback={editButtonAppearance}>
-        {editSkills || editContact ?
+        {editSkills || editContact || editGallery ?
           <ThemeIcon
             id={"pencil"}
             width={11}

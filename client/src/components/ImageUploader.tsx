@@ -361,8 +361,18 @@ const ImageUploader = ({
     c.width = c.clientWidth;
     c.height = c.clientHeight;
 
-    const w = img.width * (zoom / 100);
-    const h = img.height * (zoom / 100);
+    // Changing the aspect ratio changes the canvas size, which changes the
+    // smallest zoom that still covers it. Without this the image would sit
+    // letterboxed inside the new ratio until the user touched the zoom slider.
+    const minZoom = Math.max(
+      (c.width / img.width) * 100,
+      (c.height / img.height) * 100
+    );
+    const effectiveZoom = Math.max(zoom, minZoom);
+    if (effectiveZoom !== zoom) setZoom(effectiveZoom);
+
+    const w = img.width * (effectiveZoom / 100);
+    const h = img.height * (effectiveZoom / 100);
 
     const maxDX = Math.max(0, (w - c.width) / 2);
     const maxDY = Math.max(0, (h - c.height) / 2);
@@ -383,7 +393,7 @@ const ImageUploader = ({
     input.addEventListener('change', handleImgChange);
 
     return () => input.removeEventListener('change', handleImgChange);
-  }, [handleImgChange, fileReader, placeholder, updateCanvas, inputRef, cropImg, zoom]);
+  }, [handleImgChange, fileReader, placeholder, updateCanvas, inputRef, cropImg, zoom, aspectRatio]);
 
 
   useEffect(()=> {
@@ -440,13 +450,15 @@ const ImageUploader = ({
             searchable={false}
           />
           <SelectOptions
-            callback={async (e) => {
+            callback={(e) => {
             const ratio = (
               e.target as HTMLButtonElement
             ).value;
 
-            await setAspectRatio(ratio);
-            updateCanvas();
+            // Just record the ratio. Resizing the canvas buffer and redrawing
+            // is the effect's job, since it has to wait for the new ratio to
+            // actually render before it can read the new client dimensions.
+            setAspectRatio(ratio);
             }}
             options={
             Object.values(AspectRatios)
@@ -565,7 +577,7 @@ const ImageUploader = ({
       </PopupContent>
     </Popup>
   : "",
-  [cropImg, canvas, inputX, inputY, dX, dY, zoom, inputZoom]);
+  [cropImg, canvas, inputX, inputY, dX, dY, zoom, inputZoom, aspectRatio]);
 
   const profileVariant = (
     <>
