@@ -469,7 +469,9 @@ export const MediaTab = ({
         isSaving={isSaving}
         imageError={imageError as string}
       />
-      {isSaving ?
+      {
+        // Hides the delete project button if the project is currently saving
+        isSaving ?
         (
           // Just here for blank space and to prevent 
           // accidental deletion while a project is saving
