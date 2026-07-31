@@ -1,0 +1,451 @@
+# USERS
+/api/users/all/{method}:
+  get:
+    summary: Get all users
+    tags:
+      - Users
+    parameters:
+      - in: path
+        name: method
+        required: true
+        schema:
+          type: string
+        description: Sorting method (options are "Newest" for newest first and "A-Z" for alphabetical)
+      - in: query
+        name: strictness
+        required: false
+        schema:
+          type: string
+        description: The strictness with which to apply the filters (return if they match either any of the filters or all of them)
+      - in: query
+        name: designer
+        required: false
+        schema:
+          type: boolean
+      - in: query
+        name: developer
+        required: false
+        schema:
+          type: boolean
+      - in: query
+        name: skills
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: majors
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: ritStatus
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: socials
+        required: false
+        schema:
+          type: string
+        description: The filters to apply on users that you wish to get
+    responses:
+      '200':
+        description: A list of users
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 200
+                error:
+                  type: string
+                  nullable: true
+                  example: null
+                data:
+                  type: array
+                  items:
+                    $ref: '../swagger.yaml#/components/schemas/UserPreview'
+      '400':
+        $ref: '../swagger.yaml#/components/responses/BadRequest'
+      '500':
+        $ref: '../swagger.yaml#/components/responses/InternalServerError'
+/api/users:
+  post:
+    summary: Create a user
+    tags:
+      - Users
+    parameters:
+      - in: query
+        name: devFirstName
+        required: false
+        schema:
+          type: string
+        description: The first name to be used as the current first name
+      - in: query
+        name: devLastName
+        required: false
+        schema:
+          type: string
+        description: The last name to be used as the current last name
+      - in: query
+        name: devEmail
+        required: false
+        schema:
+          type: string
+        description: The email to be used as the current email
+      - in: query
+        name: devUID
+        required: false
+        schema:
+          type: string
+        description: The UID to be used as the current UID
+    security:
+      shibbolethAuth: []
+    responses:
+      '201':
+        description: User Created
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 201
+                error:
+                  type: string
+                  nullable: true
+                  example: null
+                data:
+                  $ref: '../swagger.yaml#/components/schemas/MePrivate'
+      '409':
+        $ref: '../swagger.yaml#/components/responses/Conflict'
+      '500':
+        $ref: '../swagger.yaml#/components/responses/InternalServerError'
+/api/users/{id}:
+  get:
+    summary: Get a user by their ID
+    tags:
+      - Users
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        description: The ID of the user to retrieve
+    responses:
+      '200':
+        description: User found successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 200
+                error:
+                  type: string
+                  nullable: true
+                  example: null
+                data:
+                  $ref: '../swagger.yaml#/components/schemas/UserDetail'
+/api/users/search-username/{username}:
+  get:
+    summary: Get user by username
+    tags:
+      - Users
+    parameters:
+      - in: path
+        name: username
+        required: true
+        schema:
+          type: string
+        description: The username of the user to retrieve
+    responses:
+      '200':
+        description: User found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 200
+                error:
+                  type: string
+                  nullable: true
+                  example: null
+                data:
+                  $ref: '../swagger.yaml#/components/schemas/UserPreview'
+      '404':
+        $ref: '../swagger.yaml#/components/responses/NotFound'
+      '500':
+        $ref: '../swagger.yaml#/components/responses/InternalServerError'
+/api/users/search-email/{email}:
+  get:
+    summary: Get user by email
+    tags:
+      - Users
+    parameters:
+      - in: path
+        name: email
+        required: true
+        schema:
+          type: string
+        description: The RIT email of the user to retrieve
+    responses:
+      '200':
+        description: User found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 200
+                error:
+                  type: string
+                  nullable: true
+                  example: null
+                data:
+                  $ref: '../swagger.yaml#/components/schemas/UserPreview'
+      '404':
+        $ref: '../swagger.yaml#/components/responses/NotFound'
+      '500':
+        $ref: '../swagger.yaml#/components/responses/InternalServerError'
+/api/users/search-google/{id}:
+  get:
+    summary: Get user by google ID
+    tags:
+      - Users
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: The Google ID of the user to retrieve
+    responses:
+      '200':
+        description: User found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 200
+                error:
+                  type: string
+                  nullable: true
+                  example: null
+                data:
+                  $ref: '../swagger.yaml#/components/schemas/UserPreview'
+      '404':
+        $ref: '../swagger.yaml#/components/responses/NotFound'
+      '500':
+        $ref: '../swagger.yaml#/components/responses/InternalServerError'
+/api/users/{id}/projects:
+  get:
+    summary: Get another user's projects
+    description: Retrieve projects of a user (not current user)
+    tags:
+      - Users
+    parameters:
+      - name: id
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: integer
+    responses:
+      '200':
+        description: A list of projects for the user
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 200
+                error:
+                  type: string
+                  nullable: true
+                  example: null
+                data:
+                  type: array
+                  items:
+                    $ref: '../swagger.yaml#/components/schemas/ProjectPreview'
+      '400':
+        $ref: '../swagger.yaml#/components/responses/BadRequest'
+      '404':
+        $ref: '../swagger.yaml#/components/responses/NotFound'
+      '500':
+        $ref: '../swagger.yaml#/components/responses/InternalServerError'
+/api/users/{id}/followings/projects:
+  get:
+    summary: Get projects a user is following
+    tags:
+      - Users
+    parameters:
+      - name: id
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: integer
+    responses:
+      '200':
+        description: List of projects the user is following
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 200
+                error:
+                  type: string
+                  nullable: true
+                  example: null
+                data:
+                  $ref: '../swagger.yaml#/components/schemas/ProjectFollowsList'
+      '400':
+        $ref: '../swagger.yaml#/components/responses/BadRequest'
+      '404':
+        $ref: '../swagger.yaml#/components/responses/NotFound'
+      '500':
+        $ref: '../swagger.yaml#/components/responses/InternalServerError'
+/api/users/{id}/followings/people:
+  get:
+    tags:
+      - Users
+    summary: Get list of users that the specified user is following
+    parameters:
+      - name: id
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: integer
+    responses:
+      '200':
+        description: List of users the current user is following
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 200
+                error:
+                  type: string
+                  nullable: true
+                  example: null
+                data:
+                  $ref: '../swagger.yaml#/components/schemas/UserFollowsList'
+      '400':
+        $ref: '../swagger.yaml#/components/responses/BadRequest'
+      '404':
+        $ref: '../swagger.yaml#/components/responses/NotFound'
+      '500':
+        $ref: '../swagger.yaml#/components/responses/InternalServerError'
+/api/users/{id}/followers:
+  get:
+    tags:
+      - Users
+    summary: Get list of users that follow the specified user
+    parameters:
+      - name: id
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: integer
+    responses:
+      '200':
+        description: List of users following current user
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 200
+                error:
+                  type: string
+                  nullable: true
+                  example: null
+                data:
+                  $ref: '../swagger.yaml#/components/schemas/UserFollowsList'
+      '400':
+        $ref: '../swagger.yaml#/components/responses/BadRequest'
+      '500':
+        $ref: '../swagger.yaml#/components/responses/InternalServerError'
+/api/users/blacklist:
+  get:
+    tags:
+      - Users
+    summary: Get list of users that is banned/on the blacklist
+    responses:
+      '200':
+        description: List of users that are banned/on the blacklist
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 200
+                error:
+                  type: string
+                  nullable: true
+                  example: null
+                data:
+                  type: array
+                  items:
+                    $ref: '../swagger.yaml#/components/schemas/UserDetail'
+      '404':
+        $ref: '../swagger.yaml#/components/responses/NotFound'
+      '500':
+        $ref: '../swagger.yaml#/components/responses/InternalServerError'
+/api/users/blacklist/{id}:
+  get:
+    tags:
+      - Users
+    summary: Get details on why the user is banned
+    responses:
+      '200':
+        description: Details on why the user is banned
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 200
+                error:
+                  type: string
+                  nullable: true
+                  example: null
+                data:
+                  allOf:
+                    - type: object
+                    - $ref: '../swagger.yaml#/components/schemas/BanDetail'
+      '404':
+        $ref: '../swagger.yaml#/components/responses/NotFound'
+      '500':
+        $ref: '../swagger.yaml#/components/responses/InternalServerError'

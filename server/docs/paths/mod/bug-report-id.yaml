@@ -1,0 +1,78 @@
+get:
+  summary: Get a bug report
+  tags:
+    - Mod
+  security:
+    - shibbolethAuth: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: ID of the bug report
+      schema:
+        type: integer
+  responses:
+    '200':
+      description: Bug report acquired successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: array
+                items:
+                  $ref: '../../swagger.yaml#/components/schemas/BugReport'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+patch:
+  summary: Update a bug report
+  tags:
+    - Mod
+  security:
+    - shibbolethAuth: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: ID of the bug report
+      schema:
+        type: integer
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../swagger.yaml#/components/schemas/UpdateBugReportInput'
+  responses:
+    '200':
+      description: Bug report updated successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: array
+                items:
+                  $ref: '../../swagger.yaml#/components/schemas/BugReport'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

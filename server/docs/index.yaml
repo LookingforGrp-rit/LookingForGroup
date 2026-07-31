@@ -1,0 +1,38 @@
+# ADMIN
+pathsMerge: &pathsMerge
+  /api/admin/promote:
+    $ref: './paths/admin.yaml#/api/admin/promote'
+  /api/admin/demote:
+    $ref: './paths/admin.yaml#/api/admin/demote'
+  /api/admin/tags:
+    $ref: './paths/admin.yaml#/api/admin/tags'
+  /api/datasets:
+    $ref: './paths/datasets.yaml#/api/datasets'
+  /api/users:
+    $ref: './paths/users.yaml#/api/users'
+  /api/projects:
+    $ref: './paths/projects.yaml#/api/projects'
+
+# # DATASETS
+# /api/datasets:
+#   $ref: './paths/datasets.yaml'
+
+# # IMAGES
+# /api/images:
+#   $ref: './paths/images.yaml'
+
+# # ME
+# /api/me:
+#   $ref: './paths/me.yaml'
+
+# # MOD
+# /api/mod:
+#   $ref: './paths/mod.yaml'
+
+# # PROJECTS
+# /api/projects:
+#   $ref: './paths/projects.yaml'
+
+# # USERS
+# /api/users:
+#   $ref: './paths/users.yaml'
