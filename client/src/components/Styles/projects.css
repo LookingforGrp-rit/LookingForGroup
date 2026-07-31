@@ -4447,6 +4447,13 @@ project-team-open-posiions-info: edit/create proj popup
   }
 }
 
+#job-skills-popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 95%;
+}
+
 /* The two inner sections become lighter sub-boxes within the container. */
 #project-team-open-positions-info>.positions-popup-list {
   background-color: var(--header-color);
