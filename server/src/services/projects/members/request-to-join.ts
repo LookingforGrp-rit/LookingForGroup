@@ -146,21 +146,7 @@ export const requestToJoinService = async (
     };
 
     //send email
-    const emailResult = await sendEmail(email);
-    if (emailResult === 'INTERNAL_ERROR') {
-      // failed to send email -> rollback request
-      try {
-        await prisma.memberRequests.delete({
-          where: {
-            requestId: result.requestId,
-          },
-        });
-      } catch (rollbackError) {
-        console.error('Failed to rollback member request:', rollbackError);
-      }
-
-      return emailResult;
-    }
+    await sendEmail(email);
 
     return 'NO_CONTENT';
   } catch (e) {

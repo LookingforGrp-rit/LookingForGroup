@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FileImage } from './FileImage';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { Select, SelectButton, SelectOptions } from './Select';
@@ -14,7 +14,7 @@ interface ImageUploaderProps {
   // If true, only allow image files
   keepImage?: boolean;
   // Callback triggered when the user selects a valid file
-  onFileSelected?: (file: File) => void;
+  onFileSelected?: (file: File, altText: string) => void;
   // Determines styling and behavior
   type?: 'profile' | 'project';
 }
@@ -71,11 +71,16 @@ const ImageUploader = ({
   const inputX = useRef<HTMLInputElement>(null);
   const inputY = useRef<HTMLInputElement>(null);
   const inputZoom = useRef<HTMLInputElement>(null);
+  const inputAlt = useRef<HTMLInputElement>(null);
   const fileReader = new FileReader();
 
   const [aspectRatio, setAspectRatio] = useState<string>('1/1');
 
   const [labelName, setLabelName] = useState("drop-area");
+
+  const [loadingImage, setLoadingImage] = useState(false);
+
+  const [altText, setAltText] = useState("");
 
 //mouse dragging for cropping
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -95,71 +100,120 @@ const ImageUploader = ({
     const deltaX = (e.clientX - prevPos.x) * (canvas.current.width / rect.width);
     const deltaY = (e.clientY - prevPos.y) * (canvas.current.height / rect.height);
 
-    // Math to clamp drag movement to image boundaries
-    const effectiveZoom = Math.max(zoom, 100);
-    const w = tempImage.current.width * (effectiveZoom / 100);
-    const h = tempImage.current.height * (effectiveZoom / 100);
+    const rawDX = dX - deltaX;
+    const rawDY = dY -deltaY;
 
-    const canvasWidth = canvas.current.width;
-    const canvasHeight = canvas.current.height;
-
-    const maxDX = (w - canvasWidth) / 2;
-    const maxDY = (h - canvasHeight) / 2;
-
-    let newDX = dX - deltaX;
-    let newDY = dY - deltaY;
-
-    if(newDX > maxDX) newDX = maxDX;
-    if(newDX < -maxDX) newDX = -maxDX;
-    if(newDY > maxDY) newDY = maxDY;
-    if(newDY < -maxDY) newDY = -maxDY;
-    ////
+    const newDX = clampDX(rawDX);
+    const newDY = clampDY(rawDY);
 
     setDX(newDX);
     setDY(newDY);
-
 
     setPrevPos({ x: e.clientX, y: e.clientY });
     updateCanvas();
   };
 
+  //image boundaries clamp
+  const clampDX = (value: number) => {
+    const maxDX = getMaxDX();
+
+    if (value > maxDX) return maxDX;
+    if (value < -maxDX) return -maxDX;
+    return value;
+  };
+  const clampDY = (value: number) => {
+    const maxDY = getMaxDY();
+
+    if (value > maxDY) return maxDY;
+    if (value < -maxDY) return -maxDY;
+    return value;
+  };
+  const getMaxDX = () => {
+    if (!tempImage.current || !canvas.current) return 100; // fallback
+
+    const effectiveZoom = Math.max(zoom, 100);
+    const w = tempImage.current.width * (effectiveZoom / 100);
+    const canvasWidth = canvas.current.width;
+
+    return (w - canvasWidth) / 2;
+  };
+
+  const getMaxDY = () => {
+    if (!tempImage.current || !canvas.current) return 100;
+
+    const effectiveZoom = Math.max(zoom, 100);
+    const h = tempImage.current.height * (effectiveZoom / 100);
+    const canvasHeight = canvas.current.height;
+
+    return (h - canvasHeight) / 2;
+  };
 
   const handleMouseUp = () => {
     setIsDragging(false);
   };
 
 //wheel zooming for cropping
+  // const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
+  //   if(!tempImage.current || !canvas.current) return;
+
+  //   const delta = e.deltaY > 0 ? 0.95 : 1.05;
+  //   const newZoom = zoom * delta;
+
+  //   const minZoom = Math.max(
+  //     (canvas.current?.width! / tempImage.current?.width!) * 100,
+  //     (canvas.current?.height! / tempImage.current?.height!) * 100
+  //   );
+
+  //   const clampedZoom = Math.min(500, Math.max(minZoom, newZoom));
+
+  //   const w = tempImage.current.width * (clampedZoom / 100);
+  //   const h = tempImage.current.height * (clampedZoom / 100);
+
+  //   const cw = canvas.current.width;
+  //   const ch = canvas.current.height;
+
+  //   const maxDX = (w - cw) / 2;
+  //   const maxDY = (h - ch) / 2;
+
+  //   const newDX = Math.min(maxDX, Math.max(-maxDX, dX));
+  //   const newDY = Math.min(maxDY, Math.max(-maxDY, dY));
+
+  //   setDX(newDX);
+  //   setDY(newDY);
+
+  //   setZoom(clampedZoom);
+  //   updateCanvas();
+  // };
+
   const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
-    if(!tempImage.current || !canvas.current) return;
+    if (!tempImage.current || !canvas.current) return;
 
     const delta = e.deltaY > 0 ? 0.95 : 1.05;
     const newZoom = zoom * delta;
 
-    const minZoom = Math.max(
-      (canvas.current?.width! / tempImage.current?.width!) * 100,
-      (canvas.current?.height! / tempImage.current?.height!) * 100
-    );
+    const minZoom = getMinZoom();
+    const maxZoom = getMaxZoom();
 
-    const clampedZoom = Math.min(500, Math.max(minZoom, newZoom));
-
-    const w = tempImage.current.width * (clampedZoom / 100);
-    const h = tempImage.current.height * (clampedZoom / 100);
-
-    const cw = canvas.current.width;
-    const ch = canvas.current.height;
-
-    const maxDX = (w - cw) / 2;
-    const maxDY = (h - ch) / 2;
-
-    const newDX = Math.min(maxDX, Math.max(-maxDX, dX));
-    const newDY = Math.min(maxDY, Math.max(-maxDY, dY));
-
-    setDX(newDX);
-    setDY(newDY);
+    const clampedZoom = Math.min(maxZoom, Math.max(minZoom, newZoom));
 
     setZoom(clampedZoom);
+
+    // Re‑clamp DX/DY after zoom changes
+    setDX(clampDX(dX));
+    setDY(clampDY(dY));
+
     updateCanvas();
   };
+
+  const getMinZoom = () => {
+    if (!tempImage.current || !canvas.current) return 100;
+
+    return Math.max(
+      (canvas.current.width / tempImage.current.width) * 100,
+      (canvas.current.height / tempImage.current.height) * 100
+    );
+  };
+  const getMaxZoom = () => 500;
 
 
 
@@ -182,7 +236,6 @@ const ImageUploader = ({
     ctx.imageSmoothingQuality = "high";
     ctx.filter = "none";
 
-
     if (tempImage.current && canvas.current){
       const w = tempImage.current.width * (zoom / 100);
       const h = tempImage.current.height * (zoom / 100);
@@ -196,7 +249,6 @@ const ImageUploader = ({
       );
 
     }
-    
   }, [tempImage, dX, dY, zoom, canvas]);
 
   // Reads one file, draws it on the crop canvas, and opens the crop popup.
@@ -205,6 +257,10 @@ const ImageUploader = ({
     setCropFile(file);
     setDX(0);
     setDY(0);
+    if ((file.size > 100000 && type === "profile") || file.size > 2000000) {
+      onFileSelected(file, altText);
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -230,21 +286,21 @@ const ImageUploader = ({
         requestAnimationFrame(() => {
           updateCanvas();
         });
+        setLoadingImage(false);
       };
-
       img.src = result;
     };
     reader.onerror = () => setCropImg(placeholder);
     reader.readAsDataURL(file);
-  }, [updateCanvas]);
+  }, [updateCanvas, altText]);
 
   const handleImgChange = useCallback(async () => {
-
     const input = inputRef.current;
     if(!input) return;
 
     const files = input.files;
     if (!files || files.length === 0) return;
+    
 
     // Split the selection into supported images and anything we can't use, so a
     // multi-select of several photos all get queued instead of dropping all but one.
@@ -275,7 +331,7 @@ const ImageUploader = ({
   const sendImg = useCallback(
     () => canvas.current?.toBlob(async(blob) => {
       const newFile = new File([blob as Blob], cropFile?.name as string, {type:cropFile?.type});
-      onFileSelected(newFile);
+      onFileSelected(newFile, inputAlt.current?.value ?? altText);
       if (inputRef.current) inputRef.current.value = "";
 
       // Move on to the next queued image, or close the popup when the batch is done.
@@ -285,53 +341,62 @@ const ImageUploader = ({
       } else {
         setCropImg(undefined);
       }
-  }, cropFile?.type), [onFileSelected, setCropImg, cropFile, canvas, loadFileIntoCrop]);
+    }, cropFile?.type), 
+  [onFileSelected, setCropImg, cropFile, canvas, loadFileIntoCrop, altText]);
 
   
   // Effect for cleanup if needed; currently just removes event listeners
-useEffect(() => {
-  if (!cropImg) return; // popup is not open, no need to set up canvas
+  useEffect(() => {
+    if (!cropImg) return; // popup is not open, no need to set up canvas
 
-  const c = canvas.current;
-  const img = tempImage.current;
-  if (!c || !img) return;
+    const c = canvas.current;
+    const img = tempImage.current;
+    if (!c || !img) return;
 
-  // Set actual drawing resolution to match CSS size
-  c.width = c.clientWidth;
-  c.height = c.clientHeight;
+    // Set actual drawing resolution to match CSS size
+    c.width = c.clientWidth;
+    c.height = c.clientHeight;
 
-  const w = img.width * (zoom / 100);
-  const h = img.height * (zoom / 100);
+    const w = img.width * (zoom / 100);
+    const h = img.height * (zoom / 100);
 
-  const maxDX = Math.max(0, (w - c.width) / 2);
-  const maxDY = Math.max(0, (h - c.height) / 2);
+    const maxDX = Math.max(0, (w - c.width) / 2);
+    const maxDY = Math.max(0, (h - c.height) / 2);
 
-  // Re-clamp drag offsets whenever zoom changes
-  setDX(prev => Math.min(maxDX, Math.max(-maxDX, prev)));
-  setDY(prev => Math.min(maxDY, Math.max(-maxDY, prev)));
+    // Re-clamp drag offsets whenever zoom changes
+    setDX(prev => Math.min(maxDX, Math.max(-maxDX, prev)));
+    setDY(prev => Math.min(maxDY, Math.max(-maxDY, prev)));
 
-  // Draw AFTER zoom is applied
-  requestAnimationFrame(() => updateCanvas());
+    // Draw AFTER zoom is applied
+    requestAnimationFrame(() => updateCanvas());
 
 
-  fileReader.onerror = () => setCropImg(placeholder);
+    fileReader.onerror = () => setCropImg(placeholder);
 
-  const input = inputRef.current;
-  if (!input) return;
+    const input = inputRef.current;
+    if (!input) return;
 
-  input.addEventListener('change', handleImgChange);
+    input.addEventListener('change', handleImgChange);
 
-  return () => input.removeEventListener('change', handleImgChange);
-}, [handleImgChange, fileReader, placeholder, updateCanvas, inputRef, cropImg, zoom]);
+    return () => input.removeEventListener('change', handleImgChange);
+  }, [handleImgChange, fileReader, placeholder, updateCanvas, inputRef, cropImg, zoom]);
 
 
   useEffect(()=> {
     updateCanvas();
   }, [zoom, dX, dY]);
 
-  const cropPopup = (cropImg !== undefined ?
+  const closePopup = useCallback(() => {
+    if (!loadingImage) {
+      pendingFiles.current = []; 
+      setCropImg(undefined); 
+    }
+  }, [loadingImage, pendingFiles, setCropImg]);
+
+  const cropPopup = useMemo(
+  () => cropImg !== undefined ?
     <Popup startOpen={true}>
-      <PopupContent confirmation={true} callback={() => { pendingFiles.current = []; setCropImg(undefined); }}>
+      <PopupContent confirmation={true} callback={closePopup}>
         <div className="project-crop">
         <label id="project-crop-header">Crop image for thumbnail usage</label>
         <canvas ref={canvas} id="canvas"
@@ -403,14 +468,34 @@ useEffect(() => {
             type="range" ref={inputZoom}
             id="zoom" name="zoom"
             onChange={() => {
-              setZoom(inputZoom.current?.valueAsNumber as number);
+              const raw = inputZoom.current?.valueAsNumber ?? zoom;
+              const minZoom = getMinZoom();
+              const maxZoom = getMaxZoom();
+
+              const clampedZoom = Math.min(maxZoom, Math.max(minZoom, raw));
+              setZoom(clampedZoom);
+
+              // Re‑clamp DX/DY after zoom changes
+              setDX(clampDX(dX));
+              setDY(clampDY(dY));
+              updateCanvas();
             }}
             onInput={() => {
-              setZoom(inputZoom.current?.valueAsNumber as number);
+              const raw = inputZoom.current?.valueAsNumber ?? zoom;
+              const minZoom = getMinZoom();
+              const maxZoom = getMaxZoom();
+
+              const clampedZoom = Math.min(maxZoom, Math.max(minZoom, raw));
+              setZoom(clampedZoom);
+
+              // Re‑clamp DX/DY after zoom changes
+              setDX(clampDX(dX));
+              setDY(clampDY(dY));
+              updateCanvas();
             }}
-            min={0}
-            max={1000}
-            defaultValue={zoom} />
+            min={getMinZoom()}
+            max={getMaxZoom()}
+            value={zoom} />
             <label className="slider-text" htmlFor="zoom">Zoom</label>
           </div>
           <div id="xTrans-row">
@@ -418,14 +503,20 @@ useEffect(() => {
             type="range" ref={inputX}
             id="xTrans" name="xTrans"
             onChange={() => {
-              setDX(inputX.current?.valueAsNumber as number);
+              const raw = inputX.current?.valueAsNumber ?? 0;
+              const clamped = clampDX(raw);
+              setDX(clamped);
+              updateCanvas();
             }}
             onInput={() => {
-              setDX(inputX.current?.valueAsNumber as number);
+              const raw = inputX.current?.valueAsNumber ?? 0;
+              const clamped = clampDX(raw);
+              setDX(clamped);
+              updateCanvas();
             }}
-            min={canvas.current ? -canvas.current.width : -100}
-            max={canvas.current ? canvas.current.width : 100}
-            defaultValue={dX} />
+            min={-getMaxDX()}
+            max={getMaxDX()}
+            value={dX} />
               <label className="slider-text" htmlFor="xtrans">Xpos</label>
           </div>
           <div id="yTrans-row">
@@ -433,15 +524,33 @@ useEffect(() => {
             type="range" ref={inputY}
             id="yTrans" name="yTrans"
             onChange={() => {
-              setDY(inputY.current?.valueAsNumber as number);
+              const raw = inputY.current?.valueAsNumber ?? 0;
+              const clamped = clampDY(raw);
+              setDY(clamped);
+              updateCanvas();
+
             }}
             onInput={() => {
-              setDY(inputY.current?.valueAsNumber as number);
+              const raw = inputY.current?.valueAsNumber ?? 0;
+              const clamped = clampDY(raw);
+              setDY(clamped);
+              updateCanvas();
             }}
-            min={canvas.current ? -canvas.current.height : -100}
-            max={canvas.current ? canvas.current.height : 100}
-            defaultValue={dY} />
+            min={-getMaxDY()}
+            max={getMaxDY()}
+            value={dY} />
             <label className="slider-text" htmlFor="yTrans">Ypos</label>
+          </div>
+          <div id='alt-text-input'>
+            <input
+            type='text' ref={inputAlt}
+            placeholder='enter the caption/alt text for the image'
+            onChange={() => {
+              console.log(inputAlt.current?.value)
+              setAltText(inputAlt.current?.value as string)
+            }}
+            >
+            </input>
           </div>
         </div>
         <div className="project-crop-extra-info">
@@ -450,12 +559,13 @@ useEffect(() => {
         <div className="confirm-project-crop">
           <PopupButton buttonId="project-crop-save" callback={sendImg} doNotClose={() => true}>Crop Image</PopupButton>
           {/* If the action is canceled, no picture is uploaded */}
-          <PopupButton buttonId="project-crop-cancel" callback={() => { pendingFiles.current = []; setCropImg(undefined); }} className="project-info-buttons" doNotClose={() => true}>Cancel</PopupButton>
+          <PopupButton buttonId="project-crop-cancel" callback={closePopup} className="project-info-buttons" doNotClose={() => true}>Cancel</PopupButton>
         </div>
         </div>
       </PopupContent>
     </Popup>
-  : "");
+  : "",
+  [cropImg, canvas, inputX, inputY, dX, dY, zoom, inputZoom]);
 
   const profileVariant = (
     <>
@@ -571,6 +681,7 @@ useEffect(() => {
           multiple accept=".png, .jpg"
           ref={inputRef}
           onChange={handleImgChange}
+          onClick={() => setLoadingImage(true)}
           disabled={cropImg !== undefined}
           hidden={true}
         />

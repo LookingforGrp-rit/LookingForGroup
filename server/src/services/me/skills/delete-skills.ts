@@ -26,23 +26,6 @@ export const deleteSkillService = async (
       return skills;
     }
 
-    for (let i = 0; i < skills.length; i++) {
-      const currentSkill = skills[i];
-      if (currentSkill.position !== i) {
-        await prisma.userSkills.update({
-          where: {
-            userId_skillId: {
-              userId,
-              skillId: currentSkill.skillId,
-            },
-          },
-          data: {
-            position: i,
-          },
-        });
-      }
-    }
-
     return 'NO_CONTENT';
   } catch (error) {
     console.error('Error in deleteSkillsService:', error);

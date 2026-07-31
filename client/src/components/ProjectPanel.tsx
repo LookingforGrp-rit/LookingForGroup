@@ -163,37 +163,38 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId, onUnf
       </div>
 
       <div className='project-title-likes-tabs'>
-        <h2>{project.title}</h2>
-        <div className='project-likes'>
-          <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
-            {formatFollowCount(followCount)}
-          </p>
-          
-          {isFollowing ? (
-            <ThemeIcon
-              width={28}
-              height={25}
-              id={"heart-filled"}
-              ariaLabel="following"
-              onClick={(e) => {e.stopPropagation(); e.preventDefault(); handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>);}}
-              role='button'
-            />
-          ) : (
-            <ThemeIcon
-              width={28}
-              height={25}
-              id={"heart-empty"}
-              ariaLabel="following"
-              onClick={(e) => {e.stopPropagation(); e.preventDefault(); handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>);}}
-              role='button'
-            />
-          )}
-          
-        </div>
-        <ProjectPanelJob project={project}/>
+        <div className="project-title-likes">
+          <h2>{project.title}</h2>
+          <div className='project-likes'>
+            <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
+              {formatFollowCount(followCount)}
+            </p>
+
+            {isFollowing ? (
+              <ThemeIcon
+                width={28}
+                height={25}
+                id={"heart-filled"}
+                ariaLabel="following"
+                onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>); }}
+                role='button'
+              />
+            ) : (
+              <ThemeIcon
+                width={28}
+                height={25}
+                id={"heart-empty"}
+                ariaLabel="following"
+                onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>); }}
+                role='button'
+              />
+            )}
+
+          </div></div>
+        <ProjectPanelJob project={project} />
         <div>
-          <hr/>
-          <ProjectPanelMeta project={project}/>
+          <hr />
+          <ProjectPanelMeta project={project} />
         </div>
       </div>
     </div>
@@ -206,7 +207,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId, onUnf
  */
 const ProjectPanelMeta = ({ project }: { project: ProjectWithFollowers }) => {
   const allTags = project.tags ?? [];
-  
+
   const MAX_TAGS_TO_SHOW = 2; // Editor says only two tags appear
   const shownTags = allTags.slice(0, MAX_TAGS_TO_SHOW);
   const overflowCount = allTags.length - shownTags.length;
@@ -237,14 +238,14 @@ const ProjectPanelMeta = ({ project }: { project: ProjectWithFollowers }) => {
 
 const ProjectPanelJob = ({ project }: { project: ProjectWithFollowers }) => {
   const jobPositions = project.jobs ?? [];
-  
+
   const MAX_TAGS_TO_SHOW = 9; // Editor says only two tags appear
   const shownJobs = jobPositions.slice(0, MAX_TAGS_TO_SHOW);
   const overflowCount = jobPositions.length - shownJobs.length;
 
   return (
     <div className='project-panel-meta'>
-    
+
       {shownJobs.map((jobs, i) => (
         <TagElement key={i} type="positions" selected={true}>
           <p>{jobs.role.label}</p>

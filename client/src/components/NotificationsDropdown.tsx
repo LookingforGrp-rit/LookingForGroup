@@ -110,7 +110,8 @@ const NotificationsPanel: React.FC<PanelProps> = ({
             onClick={() => void handleClearAll()}
             disabled={isClearing}
           >
-            <i className={`fa-solid fa-trash ${isClearing ? "fa-bounce" : ""}`}></i> {isClearing ? "Clearing..." : "Clear All"}
+            <i className={`fa-solid fa-trash ${isClearing ? "fa-bounce" : ""}`}></i> 
+            {isClearing ? "Clearing..." : "Clear All"}
           </button>
         )}
       </div>

@@ -29,6 +29,7 @@ import { getCurrentAccount } from "../../api/users";
 import { approveProjectRequest, deleteProjectRequest, getReportedProjects, getUserAccessLevel, deleteProjectReport, takeDownProject, sendModeratorNotification, unapproveProject } from "../../api/mod-tools";
 import { PagePopup } from "../PagePopup";
 import { ApiResponse } from "@looking-for-group/shared";
+import { projectDataManager } from "../../api/data-managers/project-data-manager";
 
 //Main component for the project page
 /**
@@ -298,7 +299,7 @@ const Project = () => {
       const notif = await Promise.all(reportList.map(r => sendModeratorNotification({
         modUserId: userID,
         receiverId: r.userId,
-        subjectLine: `Update on Your Report on ${displayedProject?.title}`,
+        subjectLine: `Your Report on ${displayedProject?.title} has been dismissed`,
         message: 'Thank you for submitting your report. ' +
           'Our moderation team has completed its review. ' +
           'After carefully reviewing the information provided and any relevant evidence, ' +
@@ -323,7 +324,7 @@ const Project = () => {
       const notif = await Promise.all(reportList.map(r => sendModeratorNotification({
         modUserId: userID,
         receiverId: r.userId,
-        subjectLine: `Update on Your Report on ${displayedProject?.title}`,
+        subjectLine: `Update on Your Report: ${displayedProject?.title} has been taken down`,
         message: 'Thank you for submitting your report. ' +
           'After reviewing the reported project, ' +
           'our moderation team determined that it violated our community guidelines ' +
@@ -625,7 +626,7 @@ const Project = () => {
                   :
                   <></>
                 }
-                {approvalStatus == 'not-approved' ?
+                {userID > 0 && approvalStatus == 'not-approved' ? (
                 <Popup>
                   <PopupButton
                     className="project-info-dropdown-option"
@@ -670,7 +671,7 @@ const Project = () => {
                       </div>
                     </div>
                   </PopupContent>
-                </Popup> : ""}
+                </Popup> ): ""}
               </div>
             </DropdownContent>
           </Dropdown>
@@ -723,6 +724,7 @@ const Project = () => {
                 }}
               />
               <div className="project-contributor-info">
+                {displayedProject.owner.userId === memberUser.userId ? <ThemeIcon id={'owner-crown'} width={18} height={18} className={'color-fill'} ariaLabel="Project Owner"/> : ""}
                 <div className="team-member-name">
                   {memberUser.firstName} {memberUser.lastName}
                 </div>

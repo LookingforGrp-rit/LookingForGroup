@@ -199,6 +199,171 @@ Meet page hero style rules
   color: var(--primary-color);
 }
 
+#user-gallery {
+  margin-top: 20px;
+  background-color: var(--header-color);
+}
+
+#user-gallery,
+#user-gallery-edit {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 5px;
+  border-radius: 10px;
+  padding-bottom: 5px;
+
+  #edit-gallery {
+    background-color: var(--primary-color);
+    color: var(--invert-text);
+    border: none;
+    border-radius: 20px;
+    padding: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+
+  #title,
+  label {
+    color: var(--primary-color);
+    font-size: clamp(1rem, 8vw, 2rem);
+    font-weight: bold;
+    font-style: normal;
+    text-align: left;
+    margin: 0;
+    width: fit-content;
+    text-wrap: wrap;
+  }
+
+  label {
+    font-size: 1rem;
+  }
+
+  #project-editor-media {
+    margin-top: 20px;
+    width: 100%;
+  }
+
+  #emtpy-carousel {
+    color: var(--main-text);
+    text-align: center;
+    margin-bottom: 10px;
+    line-height: 22px;
+  }
+
+  .project-crop {
+      #project-crop-header {
+      text-align: center;
+      padding: 0;
+      width: 100%;
+    }
+
+    #alt-text-input {
+      input {
+        background-color: var(--header-color);
+        width: 60%;
+        text-align: center;
+        margin-top: 10px;
+        height: 2rem;
+        font-size: large;
+      }
+    }
+  }
+
+  .gallery-carousel {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 0 20px;
+
+    .carousel-contents {
+      width: 100%;
+    }
+
+    /* Button container */
+    .carousel-row {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .gallery-carousel-content {
+      display: flex;
+      flex-direction: column;
+      transition: 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
+      min-width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      
+      label {
+        color: var(--main-text)
+      }
+    }
+
+    .gallery-carousel-btn {
+      background: none;
+      box-shadow: none;
+      border: none;
+      height: fit-content;
+      margin: 0;
+      margin-top: 8px;
+      transform: scale(1);
+    }
+
+    .gallery-carousel-btn:hover {
+      transition-duration: 0.2s;
+      transform: scale(1.2);
+    }
+
+    .carousel-btn-left svg {
+      transform: rotate(90deg);
+    }
+
+    .carousel-btn-right svg {
+      transform: rotate(-90deg);
+    }
+
+    img, iframe {
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .carousel-tab {
+      /* background-color: var(--bg-color); */
+      width: auto;
+      padding: 4px;
+      height: 50px;
+      border-radius: 5px;
+      position: relative;
+      
+      svg {
+        position:absolute;
+        bottom: 29%;
+        left: 29%;
+        background: var(--header-color);
+        border: 1px solid var(--header-color);
+        border-radius: 40px;
+      }
+    }
+
+    .carousel-tab-active {
+      background-color: var(--primary-color);
+    }
+
+    .gallery-carousel-tabs {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+      margin-left: 36px;
+      margin-right: 36px;
+    }
+  }
+}
+
 /*#endregion */
 
 /*
@@ -830,6 +995,14 @@ Filters / Tags Style Rules
   }
 }
 
+@media screen and (max-width: 550px) {
+  .discover-tag-filter {
+    height: 30;
+    padding: 5px 15px;
+    font-size: .925rem;
+  }
+}
+
 .applied-filters {
   width: auto;
   margin: 20px 50px;
@@ -931,8 +1104,7 @@ Filters / Tags Style Rules
   }
 }
 
-.tag-unselected {
-  /*
+/* .tag-unselected {
   p {
     color: var(--tag-text-unselected-red);
   }
@@ -940,8 +1112,7 @@ Filters / Tags Style Rules
   .fa {
     color: var(--tag-text-unselected-red) !important;
   }
-    */
-}
+} */
 
 .tag-red,
 .tag-button-red-selected {
@@ -1314,6 +1485,19 @@ Filters / Tags Style Rules
   transition: 0.2s;
 }
 
+@media screen and (max-width:550px) {
+  .tag-button {
+    font-size: small;
+    gap: 5px;
+    padding: 0 10px;
+    min-height: 22px !important;
+
+    i {
+      padding-top: 2px;
+    }
+  }
+}
+
 /*#endregion tag styles*/
 
 /*Fixing Filter Popup*/
@@ -1341,6 +1525,12 @@ Filters / Tags Style Rules
 @media only screen and (max-width: 800px) {
   .popup:has#filters-popup {
     width: 95vw;
+  }
+}
+
+@media only screen and (max-width: 550px) {
+  .popup {
+    max-width: 85vw !important;
   }
 }
 
@@ -1728,5 +1918,19 @@ Filters / Tags Style Rules
       width: 48%;
     }
   }
+}
 
+@media (max-width:550px) {
+  #filter-tabs>* {
+    font-size: 0.875rem !important;
+  }
+
+  #filters.popup-section {
+    padding: 12px !important;
+    padding-bottom: 0 !important;
+  }
+
+  #selected-section.popup-section {
+    padding-top: 0 !important;
+  }
 }

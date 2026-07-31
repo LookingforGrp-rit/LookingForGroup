@@ -93,6 +93,7 @@ Project Panel component style rules
   overflow: hidden;
   text-decoration: none;
   margin: 10px 0;
+  max-width: 100%;
 
   .project-panel-meta {
     grid-area: tags;
@@ -183,15 +184,21 @@ Project Panel component style rules
     padding: 10px 20px;
     margin: 0;
     flex-shrink: 0;
-    display: grid;
-    grid-template:
-      'title heart' 1fr
-      'tags heart' auto / 5fr 1fr;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
     row-gap: 4px;
     /* display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center; */
+
+    .project-title-likes {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
 
     h2 {
       grid-area: title;
@@ -204,6 +211,7 @@ Project Panel component style rules
       text-align: left;
       overflow-wrap: break-word;
       word-break: break-word;
+      align-self: center;
     }
 
     h2:hover {
@@ -211,21 +219,22 @@ Project Panel component style rules
     }
 
     .project-likes {
-      grid-area: heart;
       display: flex;
       flex-direction: row-reverse;
       gap: 8px;
-      align-items: start;
+      align-items: center;
       padding-left: 8px;
       height: 100%;
-      padding-top: 15px;
+      padding-top: 5px;
+      margin-bottom: 10px;
 
       .follow-amt {
         margin: 0;
         font-size: 0.875rem;
         font-weight: 400;
         color: var(--primary-color);
-        height: fit-content;
+        height: 100%;
+        padding: 0;
         transition: 0.2s;
         font-variant-numeric: tabular-nums;
         font-feature-settings: "tnum";
@@ -260,10 +269,6 @@ Project Panel component style rules
 
   @media only screen and (max-width: 800px) {
     .project-title-likes-tabs {
-      grid-template:
-        'title heart' 1fr
-        'tags heart' auto / 4fr 1fr;
-
       .project-likes {
 
         a {
@@ -400,13 +405,6 @@ Project Panel component style rules
       z-index: 1;
     }
   }
-
-}
-
-@media only screen and (max-width: 700px) {
-  .projects-banner-outer {
-    display: none;
-  }
 }
 
 @media screen and (max-width: 800px) {
@@ -418,6 +416,61 @@ Project Panel component style rules
   .masonry>*>* {
     padding-left: 0;
     padding-right: 0;
+  }
+}
+
+@media only screen and (max-width: 700px) {
+  .projects-banner-outer {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 550px) {
+  #discover-panel-box {
+    .project-title-likes-tabs {
+      padding: 8px 13px !important;
+
+      h2 {
+        font-size: 1.2rem !important;
+      }
+
+      .project-likes {
+        gap: 5px !important;
+
+        .follow-amt {
+          font-size: .775rem;
+        }
+
+        svg {
+          transform: scale(.8) !important;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width:450px) {
+  #discover-panel-box {
+    .project-title-likes-tabs {
+      padding: 8px 13px !important;
+
+      h2 {
+        font-size: 1.1rem !important;
+      }
+    }
+
+    .tag-button {
+      max-width: 100%;
+    }
+  }
+
+  .project-title-likes {
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    .project-likes {
+      padding-left: 0 !important;
+    }
   }
 }
 
@@ -458,6 +511,13 @@ Project Creator and Editor Popup style rules
   flex-wrap: wrap;
   margin-top: 40px;
   margin-bottom: 10px;
+}
+
+@media screen and (max-width: 530px) {
+  #project-editor-tabs {
+    max-width: 30rem;
+  }
+
 }
 
 .project-editor-tab {
@@ -650,6 +710,7 @@ Project Creator and Editor Popup style rules
 
 #report-popup {
   text-align: center;
+
   h3 {
     font-size: 1.25rem;
     font-weight: 700;
@@ -695,13 +756,49 @@ Project Creator and Editor Popup style rules
     font-weight: 700;
   }
 
-  #input-bug-report, #input-bug-report-message {
+  #input-bug-report,
+  #input-bug-report-message {
     margin-bottom: 0;
     resize: vertical;
     /* Leave room for the character count in the bottom-right corner. */
     padding-bottom: 28px;
   }
 }
+
+@media only screen and (max-width: 700px){
+  #report-popup{
+    h3 {
+    font-size: 1.25rem;
+    margin: 0;
+    max-width: fit-content;
+  }
+
+   p,
+  button {
+    font-size: 1rem;
+    max-width: fit-content;
+  }
+
+  #bug-report-field {
+    display: flex;
+    align-items: flex-start;
+    align-self: stretch;
+    margin: 10px;
+  }
+
+   #bug-report-field .input-multiline-container {
+    min-width: fit-content;
+    padding-bottom: 5px; 
+ }
+
+}
+
+ .small-popup{
+  padding: 10px 20px;
+ }
+
+}
+
 
 .share-response-popup {
   width: 100%;
@@ -1030,13 +1127,19 @@ Project Creator and Editor Popup style rules
   }
 }
 
+@media screen and (max-width:550px) {
+  #tag-category-header p {
+    font-size: .875rem !important;
+  }
+}
+
 #project-editor-tag-wrapper {
   display: flex;
   flex-direction: column;
   gap: 0px;
   overflow-x: auto;
   overflow-y: hidden;
-  
+
   scrollbar-color: lightgray var(--bg-color);
 }
 
@@ -1077,8 +1180,8 @@ Project Creator and Editor Popup style rules
 
 .project-editor-image-container {
   position: relative;
-  max-height: 182px;
-  width: 323px;
+  height: 182px;
+  width: fit-content;
   border: 2px solid white;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
@@ -1272,6 +1375,8 @@ Project Creator and Editor Popup style rules
   justify-content: center;
   margin: 20px 0;
   max-width: 100%;
+  text-wrap: nowrap;
+  min-height: fit-content;
 }
 
 #project-editor-tag-search-tabs {
@@ -1301,6 +1406,11 @@ Project Creator and Editor Popup style rules
 @media only screen and (max-width: 799px) {
   #project-editor-tag-search-tabs {
     flex-direction: row;
+  }
+
+  #project-editor-team-tabs {
+    height: fit-content;
+    overflow-x: auto;
   }
 }
 
@@ -1557,7 +1667,7 @@ Project Creator and Editor Popup style rules
   padding: 12px 15px;
   max-width: 204px;
   width: 100%;
-  gap: 10px;
+  gap: 5px;
   flex-direction: row;
   background-color: var(--header-color);
   border-radius: 10px;
@@ -1605,12 +1715,36 @@ Project Creator and Editor Popup style rules
   display: flex;
   flex-direction: column;
   justify-content: center;
-  text-align: center;
   flex: 1;
 }
 
 .project-editor-project-member-info>* {
   align-self: stretch;
+}
+
+.project-editor-project-member-info {
+  text-align: left;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(1fr, 3fr));
+  grid-template-rows: 2fr 1fr;
+
+  .project-editor-project-member-name {
+    grid-column: 2/3;
+    grid-row: 1/2;
+  }
+
+  .project-editor-project-member-role {
+    grid-column: 2/3;
+    grid-row: 2/3;
+  }
+
+  #owner-crown {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    align-items: center;
+    justify-content: center;
+    margin: auto 5px;
+  }
 }
 
 .project-editor-project-member-role {
@@ -1743,7 +1877,6 @@ Project Creator and Editor Popup style rules
 #merge-project-team {
   display: flex;
   justify-content: center;
-  margin: 14px 0 4px;
 }
 
 #project-editor-merge-team {
@@ -1865,6 +1998,12 @@ Project Creator and Editor Popup style rules
   row-gap: 15px;
 }
 
+@media only screen and (max-width: 550px) {
+  .project-editor-tag-search-tab {
+    font-size: .875rem;
+  }
+}
+
 @media only screen and (max-width: 400px) {
   #project-team-add-member-info {
     display: flex;
@@ -1875,10 +2014,6 @@ Project Creator and Editor Popup style rules
 
   #user-search-container>.dropdown-container {
     margin-left: 0px;
-  }
-
-  #project-editor-team-content {
-    flex-direction: column;
   }
 
   #project-editor-project-members {
@@ -2075,7 +2210,7 @@ Project Creator and Editor Popup style rules
 }
 
 .delete-button,
-.save-button{
+.save-button {
   border: none;
   border-radius: 30px;
   padding: 10px 20px;
@@ -2087,12 +2222,13 @@ Project Creator and Editor Popup style rules
   font-weight: 700;
 }
 
-.save-button{
+.save-button {
   background-color: var(--primary-color) !important;
 }
 
 /* .delete-button:hover, save-button:hover { */
-.deny-btn, #cancel-button {
+.deny-btn,
+#cancel-button {
   background: none;
   border: none;
   outline: none;
@@ -2386,7 +2522,7 @@ Project Creator and Editor Popup style rules
 }
 
 #input-job-start,
-#input-job-end{
+#input-job-end {
   min-height: 45px;
   font-size: 0.9375rem;
   padding-left: 10px;
@@ -2410,6 +2546,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-style: solid;
   border-color: gray;
   border-width: 3px;
+}
+
+@media only screen and (max-width: 550px) {
+  .delete-position-button-alt {
+    margin-top: 0em;
+    padding-right: 0;
+  }
 }
 
 @media only screen and (max-width: 520px) {
@@ -2557,23 +2700,35 @@ button.edit-position-contact .project-member-image {
 
   #zoom-row,
   #xTrans-row,
-  #yTrans-row,
+  #yTrans-row{
+    display: block;
+    width: 100%;
+    max-width: 800px;
+    align-items: center;
+    justify-content: center;
+    label {
+      margin-right: 0.5em;
+      font-size: clamp(1.25rem, 2vw, 1.40rem);
+      white-space: nowrap;
+    }
+  }
+
+  #zoom-row input[type="range"],
+  #xTrans-row input[type="range"],
+  #yTrans-row input[type="range"] {
+    flex: 1; 
+    max-width: 450px;
+  }
+
   #aspect-row {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
-
-    label {
-      margin-right: 0.5em;
-      font-size: clamp(1.15rem, 3vw, 1.25rem);
-    }
   }
-
   #aspect-row .select-container {
     width: 85px;
   }
-
+  
   .project-crop-extra-info {
     margin-top: 20px;
     font-size: 0.75rem;
@@ -2585,7 +2740,7 @@ button.edit-position-contact .project-member-image {
     font-size: 0.75rem;
     margin-bottom: 20px;
 
-    p{
+    p {
       margin-top: 0;
       margin-bottom: 0;
     }
@@ -3707,6 +3862,41 @@ New Project Page style rules
   #project-page-content {
     margin: 0 20px;
   }
+
+  #project-editor-team-content {
+    flex-direction: column;
+  }
+  #project-editor-team-tabs
+  {
+    /* justify-content: flex-start; */
+    gap: 4%;
+    height: 80px;
+
+    button {
+      text-wrap: wrap !important;
+      max-width: 150px;
+    }
+  }
+
+  #project-editor-project-members {
+    justify-content: center;
+  }
+
+  #project-editor-merge-team {
+    display: flex;
+    padding: 12px 15px;
+    margin-top: 14px;
+    max-width: 234px;
+    height: 74px;
+    width: 100%;
+    gap: 10px;
+    flex-direction: row;
+    border: none;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-color) !important;
+  }
 }
 
 /* #endregion*/
@@ -3972,6 +4162,7 @@ Project Carousel style rules
   margin-bottom: 5px;
   word-break: break-word;
   hyphens: auto;
+  min-width: 12vw;
 }
 
 #project-info-buttons {
@@ -4394,6 +4585,7 @@ button#positions-popup-list-item-active {
 }
 
 @media only screen and (max-width: 800px) {
+
   #edit-position-details-left,
   #edit-position-details-right {
     flex-wrap: nowrap;
@@ -4607,7 +4799,8 @@ button#positions-popup-list-item-active {
 }
 
 .slider-text {
-  white-space: nowrap; /* prevents label from breaking */
+  white-space: nowrap;
+  /* prevents label from breaking */
 }
 
 
@@ -4819,18 +5012,36 @@ button#positions-popup-list-item-active {
 
 .project-contributor-info {
   margin: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(1fr, 3fr));
+  grid-template-rows: 2fr 1fr;
 
   .team-member-name {
+    align-items: center;
+    justify-content: center;
+    margin: auto 0;
+    grid-column: 2/3;
+    grid-row: 1/2;
     font-weight: 700;
     font-size: 1rem;
     color: var(--primary-color);
   }
 
   .team-member-role {
+    grid-column: 2/3;
+    grid-row: 2/3;
     font-style: italic;
     font-size: clamp(0.625rem, 2vw, 0.875rem);
     font-weight: 400;
     color: var(--neutral-gray);
+  }
+
+  #owner-crown {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    align-items: center;
+    justify-content: center;
+    margin: auto 5px;
   }
 }
 
@@ -4953,7 +5164,7 @@ My projects page style rules
   gap: 20px;
 
   #project-info-create {
-    height: 40px;
+    height: 45px;
   }
 
   #my-projects-sort-btn {
@@ -5022,7 +5233,6 @@ My projects page style rules
   .my-projects-action-buttons {
     margin: 0 auto;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
   }
@@ -5188,8 +5398,10 @@ My projects page style rules
 }
 
 .my-projects-grid {
-  width: calc(100% - 80px);
-  margin: 30px auto 60px;
+  width: 100%;
+  margin: 30px auto;
+  padding: 0 20px;
+  margin-bottom: 60px;
   gap: 20px;
   display: flex;
   flex-wrap: wrap;
@@ -5472,6 +5684,99 @@ My projects page style rules
   }
 }
 
+@media only screen and (max-width: 650px) {
+  .my-projects-filters {
+    row-gap: 10px;
+  }
+
+  .my-projects-action-buttons {
+    flex-wrap: wrap;
+  }
+
+  .my-projects-all-projects-button,
+  .my-projects-all-projects-selected,
+  .my-projects-create-btn {
+    font-size: 1rem !important;
+    padding: 4px 12px;
+  }
+
+  .display-switch-option {
+    width: 36px !important;
+    height: 36px !important;
+
+    i {
+      font-size: 1.1rem;
+    }
+  }
+
+  .my-projects-create-btn {
+    padding: 2px 0;
+
+    #project-info-create {
+      height: 36px;
+
+    }
+
+    svg {
+      width: 22px;
+    }
+  }
+
+  .grid-card-title {
+    line-height: normal !important;
+    max-width: fit-content;
+
+  }
+
+  .my-project-grid-card {
+    width: clamp(100px, 200px, 40vw);
+  }
+
+  .grid-card-details {
+    margin-top: 5px;
+    width: 100%;
+
+    #grid-card-options-button svg {
+      width: 20px;
+    }
+  }
+
+  .grid-card-image-button {
+    max-width: 200px;
+    aspect-ratio: 1 / 1;
+    width: clamp(100px, 200px, 40vw);
+    height: clamp(100px, 200px, 40vw);
+  }
+}
+
+@media only screen and (max-width: 350px) {
+  .my-projects-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .grid-card-image {
+    width: 250px;
+    height: 250px;
+  }
+
+  .grid-card-details {
+    max-width: 250px;
+  }
+
+  .grid-card-image-button {
+    max-width: 250px;
+    aspect-ratio: 1 / 1;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .my-project-grid-card {
+    align-items: center;
+    width: 100%;
+  }
+}
+
 /* List View */
 .responsive-table {
   box-sizing: border-box;
@@ -5538,7 +5843,7 @@ My projects page style rules
   .my-projects-list {
     padding-left: 0px;
     padding-right: 0px;
-    margin: 30px 20px 20px;
+    margin: 30px 10px 20px !important;
   }
 
   .list-card-section1 {
@@ -5683,8 +5988,7 @@ My projects page style rules
 
   .my-projects-grid,
   .my-projects-list {
-    padding-left: 0px;
-    padding-right: 0px;
+
     margin: 30px 20px 20px;
   }
 
@@ -5801,7 +6105,7 @@ My projects page style rules
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary-color);
-    margin: 0 0 15px;
+    margin: 0 0 5px;
   }
 
   /* Covering stuff with !important sucks, but it shouldn't
@@ -5828,6 +6132,7 @@ My projects page style rules
   .confirm-deny-btns {
     display: flex;
     flex-direction: row;
+    margin-top: 5px;
   }
 
   .confirm-btn {

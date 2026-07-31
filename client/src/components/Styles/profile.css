@@ -261,6 +261,26 @@ Profile Panel component style rules
   .profile-panel {
     width: 98% !important;
     display: flex;
+
+    h2 {
+      font-size: 1.2rem;
+    }
+
+    h3 {
+      font-size: 1rem;
+    }
+  }
+}
+
+@media screen and (max-width: 555px) {
+  .profile-panel {
+    h2 {
+      font-size: 1.2rem;
+    }
+
+    h3 {
+      font-size: 1rem;
+    }
   }
 }
 
@@ -275,6 +295,16 @@ Profile Panel component style rules
       margin-left: auto !important;
       margin-right: auto !important;
     }
+  }
+}
+
+@media only screen and (max-width: 550px) {
+
+  #quote {
+    font-size: 0.775rem !important;
+    line-height: normal !important;
+    padding-top: 10px !important;
+    padding: 10px 14px !important;
   }
 }
 
@@ -1474,7 +1504,7 @@ New Profile page style rules
     border-color: var(--liked-section-bg);
     border-style: solid;
     padding: 10px 0px;
-    max-height: 500px;
+    max-height: 75vh;
     overflow-y: scroll;
     overflow-x: hidden;
 
@@ -2103,6 +2133,10 @@ New Profile page style rules
     row-gap: 10px;
   }
 
+  #likes-container {
+    height: 70vh;
+  }
+
   /* Trim the wide horizontal padding so the role select/dropdown has room on
      narrow screens. */
   .small-popup:has(#profile-invite-title) {
@@ -2405,6 +2439,7 @@ New Profile page style rules
   align-items: center;
   gap: 8px;
   margin: 0 0 12px 0;
+  font-size: 1rem;
 }
 
 .profile-delete-confirm {

@@ -2061,6 +2061,7 @@ export const TeamTab = ({
 							}}
 						/>
 						<div className="project-editor-project-member-info">
+							{projectAfterTeamChanges.owner.userId === member.user?.userId ? <ThemeIcon id={'owner-crown'} width={18} height={18} className={'color-fill'} ariaLabel="Project Owner"/> : ""}
 							<div className="project-editor-project-member-name">
 								{member.user?.firstName} {member.user?.lastName}
 							</div>
@@ -2736,8 +2737,9 @@ export const TeamTab = ({
 
 			<div id="project-editor-team-content">
 				{teamTabContent}
-				{/* Merge another project's whole team into this one (invite-based) */}
-				{currentTeamTab === 0 && (
+				{/* Merge another project's whole team into this one (invite-based).
+				    Owner-only: non-owner members can't merge another team into this project. */}
+				{currentTeamTab === 0 && currentUserId === projectAfterTeamChanges.owner?.userId && (
 					<MergeProjectTeam
 						dataManager={dataManager}
 						targetProjectId={projectAfterTeamChanges.projectId as number}

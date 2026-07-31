@@ -31,6 +31,10 @@ import type {
   SessionUserData,
   CreateUserInput,
   UpdateTagBlacklistInput,
+  GalleryImage,
+  GalleryVideo,
+  AddGalleryImageInput,
+  AddGalleryVideoInput,
 } from "@looking-for-group/shared";
 
 //#region USER CRUD/LOGIN
@@ -135,6 +139,93 @@ export const getCurrentAccount = async (): Promise<ApiResponse<MePrivate>> => {
 };
 
 /**
+ * gets the images uploaded to a user's gallery
+ * @param userId the ID of the user with the gallery
+ * @returns an array of all the images from a user gallery
+ */
+export const getGalleryImages = async (userId: number): Promise<ApiResponse<GalleryImage[]>> => {
+  const apiURL = `/me/gallery/${userId}/images`;
+  const response = await GET(apiURL);
+
+  if (response.error) console.log(`Error in addPic: ${response.error}`);
+  return response;
+}
+
+/**
+ * gets the videos uploaded to a user's gallery
+ * @param userId the ID of the user with the gallery
+ * @returns an array of all the videos from a user gallery
+ */
+export const getGalleryVideos = async (userId: number): Promise<ApiResponse<GalleryVideo[]>> => {
+  const apiURL = `/me/gallery/${userId}/videos`;
+  const response = await GET(apiURL);
+
+  if (response.error) console.log(`Error in addPic: ${response.error}`);
+  return response;
+}
+
+/**
+ * adds an image to the user's gallery
+ * @param userId id of the user
+ * @param image information on the image to be uploaded
+ * @returns response
+ */
+export const postGalleryImage = async (userId: number, imageData: AddGalleryImageInput): Promise<ApiResponse<GalleryImage>> => {
+  const apiURL = `/me/gallery/${userId}/images`;
+  
+  const form = new FormData();
+  for (const [name, value] of Object.entries(imageData)) {
+    if (value !== null) form.append(name, value);
+  }
+  const response = await POST(apiURL, form);
+
+  if (response.error) console.log(`Error in addPic: ${response.error}`);
+  return response as ApiResponse<GalleryImage>;
+}
+
+/**
+ * adds a video to the user's gallery
+ * @param userId id of the user
+ * @param video information on the video to be uploaded
+ * @returns response
+ */
+export const postGalleryVideo = async (userId: number, video: AddGalleryVideoInput): Promise<ApiResponse<GalleryVideo>> => {
+  const apiURL = `/me/gallery/${userId}/videos`;
+  const response = await POST(apiURL, video);
+
+  if (response.error) console.log(`Error in addPic: ${response.error}`);
+  return response as ApiResponse<GalleryVideo>;
+}
+
+/**
+ * removes an image from the user's gallery
+ * @param userId id of the user
+ * @param imageId id of the image
+ * @returns response
+ */
+export const deleteGalleryImage = async (userId: number, imageId: number): Promise<ApiResponse<any>> => {
+  const apiURL = `/me/gallery/${userId}/images/${imageId}`;
+  const response = await DELETE(apiURL);
+
+  if (response.error) console.log(`Error in addPic: ${response.error}`);
+  return response;
+}
+
+/**
+ * removes a video from the user's gallery
+ * @param userId id of the user
+ * @param videoId id of the video
+ * @returns response
+ */
+export const deleteGalleryVideo = async (userId: number, videoId: number): Promise<ApiResponse<any>> => {
+  const apiURL = `/me/gallery/${userId}/videos/${videoId}`;
+  const response = await DELETE(apiURL);
+
+  if (response.error) console.log(`Error in addPic: ${response.error}`);
+  return response;
+}
+
+/**
  * Edit information for one user, specified by URL.
  * @param userData - The data to change for the user
  * @returns response data
@@ -168,8 +259,8 @@ export const reportUser = async (
   report: string
 ): Promise<ApiResponse> => {
   const apiURL = `/me/users/report/${userId}`;
-  const response = await POST(apiURL, {reason: report});
-  
+  const response = await POST(apiURL, { reason: report });
+
   if (response.error) console.log(`Error in reportUser: ${response.error}`);
   return response;
 };
@@ -182,6 +273,54 @@ export const deleteUser = async (): Promise<ApiResponse> => {
   //console.log(response);
   return response;
 };
+
+/**
+ * Gets an array of all userIDs the current user has blocked
+ * @returns number[] of all userIDs the current user has blocked
+ */
+export const getBlockedUsersById = async () => {
+  const apiURL = `/me/blocklist`;
+  const response = await GET(apiURL);
+  //console.log(response);
+
+  if (response.error) {
+    console.error(response.error);
+  }
+
+  return response;
+}
+
+/**
+ * Blocks a user by userID
+ * @param blockedUserID The userID of the person to block
+ */
+export const blockUser = async (blockedUserID: number | undefined) => {
+  const apiURL = `/me/blocklist`;
+  const response = await POST(apiURL, { userId: blockedUserID });
+  //console.log(response);
+
+  if (response.error) {
+    console.error(response.error);
+  }
+
+  return response;
+}
+
+/**
+ * Unblocks a user by userID
+ * @param blockedUserID The userID of the person to unblock
+ */
+export const unblockUser = async (blockedUserID: number | undefined) => {
+  const apiURL = `/me/blocklist`;
+  const response = await DELETE(apiURL, { userId: blockedUserID });
+  //console.log(response);
+
+  if (response.error) {
+    console.error(response.error);
+  }
+
+  return response;
+}
 
 /* ACCOUNT INFO/ PASSWORD RESET*/
 
@@ -679,4 +818,10 @@ export default {
   getTags,
   getSocials,
   getCurrentAccount,
+  getGalleryImages,
+  getGalleryVideos,
+  postGalleryImage,
+  postGalleryVideo,
+  deleteGalleryImage,
+  deleteGalleryVideo,
 };
