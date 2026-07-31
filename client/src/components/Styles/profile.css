@@ -1392,7 +1392,8 @@ New Profile page style rules
   }
 }
 
-#profile-extra {
+#profile-extra,
+#user-gallery {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -1557,6 +1558,21 @@ New Profile page style rules
   }
 }
 
+#user-gallery {
+  padding: 10px 10px 10px 20px;
+  box-sizing: border-box;
+
+  #project-info-edit {
+    position: relative;
+    top: 0;
+    right: 0;
+    padding: 4px 10px;
+    height: min-content;
+  }
+
+  .contact-skills-edit-label-btn {}
+}
+
 @media only screen and (min-width: 1101px) {
   #profile-buttons {
     .dropdown {
@@ -1717,6 +1733,28 @@ New Profile page style rules
     #profile-number a {
       min-width: 0;
       overflow-wrap: anywhere;
+    }
+  }
+
+  #profile-extra,
+  #user-gallery {
+    #project-info-edit {
+      padding: 2px 5px !important;
+      height: 20px !important;
+
+      .edit-project-member-icon {
+        width: 10px;
+        height: 10px;
+        margin-bottom: 4px;
+      }
+    }
+
+  }
+
+  #skill-block {
+    .skill-tag-label {
+      font-size: small;
+      padding: 0 10px;
     }
   }
 }

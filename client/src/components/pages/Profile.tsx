@@ -1087,7 +1087,12 @@ const Profile = (/*userProfile: any*/) => {
 
   const userGallery =
     <div id="user-gallery">
-      <h1 id="title">Gallery</h1>
+      <div className="contact-skills-edit-label-btn">
+        <h1 id="title">Gallery</h1>
+        {isUsersProfile
+          ? <ProfileEditPopup editGallery={true} />
+          : ""
+        }</div>
       {fullGallery.length > 0 ?
         <Carousel
           dataList={fullGallery}

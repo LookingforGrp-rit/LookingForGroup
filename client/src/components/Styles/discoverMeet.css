@@ -253,7 +253,7 @@ Meet page hero style rules
   }
 
   .project-crop {
-      #project-crop-header {
+    #project-crop-header {
       text-align: center;
       padding: 0;
       width: 100%;
@@ -284,7 +284,7 @@ Meet page hero style rules
       height: 100%;
       align-items: center;
       justify-content: center;
-      
+
       label {
         color: var(--main-text)
       }
@@ -313,7 +313,8 @@ Meet page hero style rules
       transform: rotate(-90deg);
     }
 
-    img, iframe {
+    img,
+    iframe {
       height: 100%;
       object-fit: cover;
       object-position: center;
@@ -326,9 +327,9 @@ Meet page hero style rules
       height: 50px;
       border-radius: 5px;
       position: relative;
-      
+
       svg {
-        position:absolute;
+        position: absolute;
         bottom: 29%;
         left: 29%;
         background: var(--header-color);
@@ -1475,6 +1476,7 @@ Filters / Tags Style Rules
 }
 
 @media screen and (max-width:550px) {
+
   .tag-button {
     font-size: small;
     gap: 5px;
