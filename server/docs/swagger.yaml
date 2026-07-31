@@ -4476,7 +4476,7 @@ paths:
 
   /api/mod/ban-user/{id}:
     post:
-      summary: Bans a user by adding them to a blacklist
+      summary: Bans a user by adding them to the blacklist, ending their current session, and hiding their account from public view
       tags:
         - Mod
       security:
@@ -4575,7 +4575,7 @@ paths:
 
   /api/mod/unban-user/{id}:
     delete:
-      summary: Unbans a user by removing them from a blacklist
+      summary: Unbans a user by removing them from the blacklist and making it publicly visible
       tags:
         - Mod
       security:
