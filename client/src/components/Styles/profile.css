@@ -1442,9 +1442,29 @@ New Profile page style rules
       overflow-y: auto;
       margin-top: -30px;
       padding: 15px 0;
-      max-height: 160px;
+      max-height: 200px;
       --webkit--mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
       mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+    }
+
+    #profile-number {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 10px;
+
+      .edit {
+        padding: 5px;
+        background-color: var(--primary-color);
+        border-radius: 20px;
+        cursor: pointer;
+      }
+
+      .edit:hover {
+        transform: translateY(-1px);
+      }
     }
 
     #profile-email a,
