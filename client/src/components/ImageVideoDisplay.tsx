@@ -280,7 +280,9 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
                 <div id="invalid-input-error" className={"save-error-msg-general"}>
                   <p>*{message}*</p>
                 </div>}
-                {isSaving ? 
+                {
+                  // Switches out the save button for a loading icon if the project is saving
+                  isSaving ? 
                   (
                     // Currently Saving
                     <div className='spinning-loader'></div>
