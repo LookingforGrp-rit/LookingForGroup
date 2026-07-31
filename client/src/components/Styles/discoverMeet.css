@@ -258,17 +258,6 @@ Meet page hero style rules
       padding: 0;
       width: 100%;
     }
-
-    #alt-text-input {
-      input {
-        background-color: var(--header-color);
-        width: 60%;
-        text-align: center;
-        margin-top: 10px;
-        height: 2rem;
-        font-size: large;
-      }
-    }
   }
 
   .gallery-carousel {

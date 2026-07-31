@@ -14,7 +14,7 @@ interface ImageUploaderProps {
   // If true, only allow image files
   keepImage?: boolean;
   // Callback triggered when the user selects a valid file
-  onFileSelected?: (file: File, altText: string) => void;
+  onFileSelected?: (file: File, altText?: string) => void;
   // Determines styling and behavior
   type?: 'profile' | 'project';
 }
@@ -79,8 +79,6 @@ const ImageUploader = ({
   const [labelName, setLabelName] = useState("drop-area");
 
   const [loadingImage, setLoadingImage] = useState(false);
-
-  const [altText, setAltText] = useState("");
 
 //mouse dragging for cropping
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -261,12 +259,10 @@ const ImageUploader = ({
     // Each image gets its own caption. The popup stays mounted between queued
     // files, so the previous image's caption has to be cleared off both the
     // state and the uncontrolled input or it carries over to this one.
-    setAltText("");
     if (inputAlt.current) inputAlt.current.value = "";
 
     if ((file.size > 100000 && type === "profile") || file.size > 2000000) {
-      // Too large to crop, so there was never a chance to caption this file.
-      onFileSelected(file, "");
+      onFileSelected(file, inputAlt.current?.value);
       return;
     }
 
@@ -300,7 +296,7 @@ const ImageUploader = ({
     };
     reader.onerror = () => setCropImg(placeholder);
     reader.readAsDataURL(file);
-  }, [updateCanvas]);
+  }, [updateCanvas, inputAlt.current]);
 
   const handleImgChange = useCallback(async () => {
     const input = inputRef.current;
@@ -339,7 +335,7 @@ const ImageUploader = ({
   const sendImg = useCallback(
     () => canvas.current?.toBlob(async(blob) => {
       const newFile = new File([blob as Blob], cropFile?.name as string, {type:cropFile?.type});
-      onFileSelected(newFile, inputAlt.current?.value ?? altText);
+      onFileSelected(newFile, inputAlt.current?.value);
       if (inputRef.current) inputRef.current.value = "";
 
       // Move on to the next queued image, or close the popup when the batch is done.
@@ -350,7 +346,7 @@ const ImageUploader = ({
         setCropImg(undefined);
       }
     }, cropFile?.type), 
-  [onFileSelected, setCropImg, cropFile, canvas, loadFileIntoCrop, altText]);
+  [onFileSelected, setCropImg, cropFile, canvas, loadFileIntoCrop, inputAlt.current]);
 
   
   // Effect for cleanup if needed; currently just removes event listeners
@@ -398,7 +394,6 @@ const ImageUploader = ({
     if (!loadingImage) {
       pendingFiles.current = [];
       setCropImg(undefined);
-      setAltText("");
     }
   }, [loadingImage, pendingFiles, setCropImg]);
 
@@ -553,10 +548,7 @@ const ImageUploader = ({
           <div id='alt-text-input'>
             <input
             type='text' ref={inputAlt}
-            placeholder='enter the caption/alt text for the image'
-            onChange={() => {
-              setAltText(inputAlt.current?.value as string)
-            }}
+            placeholder='enter the caption/alt text for the image (optional)'
             >
             </input>
           </div>
