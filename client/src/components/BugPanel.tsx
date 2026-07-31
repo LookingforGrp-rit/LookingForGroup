@@ -135,7 +135,7 @@ export const BugPanel = ({currentUserId, reporterId, reportId }: BugPanelProps) 
                     </div>
                       <div className="mod-options-btns">
                         <PopupButton
-                          buttonId="mod-edit-btn"
+                          buttonId="mod-send-btn"
                           className="button-reset"
                           callback={() => handleUpdateReport()}
                         >
