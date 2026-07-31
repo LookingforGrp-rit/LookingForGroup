@@ -58,7 +58,7 @@ export const ProfileEditPopup = ({ editSkills = false, editContact = false }: Ed
    */
   const handleEditorClose = () => {
     if (editSkills) setCurrentTab(2);
-    else if (editContact) setCurrentTab(3);
+    else if (editContact) setCurrentTab(4);
     else setCurrentTab(0);
 
     isOpening.current = true;
@@ -186,7 +186,7 @@ export const ProfileEditPopup = ({ editSkills = false, editContact = false }: Ed
   //if button clicked apppears in skills or contacts, set starting tab to appropriate value
   const editButtonAppearance = () => {
     if (editSkills) setCurrentTab(2);
-    else if (editContact) setCurrentTab(3);
+    else if (editContact) setCurrentTab(4);
     else setCurrentTab(0);
   }
 

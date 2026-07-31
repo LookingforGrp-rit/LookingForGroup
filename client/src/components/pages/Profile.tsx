@@ -87,7 +87,7 @@ const Profile = (/*userProfile: any*/) => {
   const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
   const [activeReportList, setActiveReportList] = useState<UserReport[]>([]);
   const [inactiveReportList, setInactiveReportList] = useState<UserReport[]>([]);
-  
+
   const [showGallery, setShowGallery] = useState(false);
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [galleryVideos, setGalleryVideos] = useState<GalleryVideo[]>([]);
@@ -1020,10 +1020,10 @@ const Profile = (/*userProfile: any*/) => {
   const fullGallery = useMemo(() => {
     return [
       ...galleryVideos.map(v => {
-        const embedUrl = getYouTubeEmbedURL(v.videoUrl); 
+        const embedUrl = getYouTubeEmbedURL(v.videoUrl);
         if (!embedUrl) return null;
-        
-        return ( <>
+
+        return (<>
           <label>{v.title}</label>
           <iframe
             key={`video-${v.position}`}
@@ -1035,23 +1035,23 @@ const Profile = (/*userProfile: any*/) => {
           ></iframe>
         </>
         );
-    }).filter(item => item !== null),
-    ...galleryImages.map(i => ( <>
+      }).filter(item => item !== null),
+      ...galleryImages.map(i => (<>
         <label>{i.altText}</label>
         <img
           key={`img-${i.position}`}
           src={i.image}
           alt={i.altText}
-          // Click to view the image full-size in the lightbox
-          // style={{ cursor: 'zoom-in' }}
-          // onClick={(e) => setLightboxSrc((e.currentTarget as HTMLImageElement).src)}
-          // onError={(e) => {
-          //   const projectImg = e.target as HTMLImageElement;
-          //   projectImg.src = placeholderThumbnail;
-          // }}
+        // Click to view the image full-size in the lightbox
+        // style={{ cursor: 'zoom-in' }}
+        // onClick={(e) => setLightboxSrc((e.currentTarget as HTMLImageElement).src)}
+        // onError={(e) => {
+        //   const projectImg = e.target as HTMLImageElement;
+        //   projectImg.src = placeholderThumbnail;
+        // }}
         />
       </>
-    )),
+      )),
     ];
   }, [galleryImages, galleryVideos]);
 
@@ -1061,7 +1061,7 @@ const Profile = (/*userProfile: any*/) => {
         const embedID = getYouTubeEmbedID(v.videoUrl);
 
         return <>
-        <ThemeIcon
+          <ThemeIcon
             width={25}
             height={18}
             id="youtube"
@@ -1085,36 +1085,36 @@ const Profile = (/*userProfile: any*/) => {
     ];
   }, [galleryImages, galleryVideos]);
 
- const userGallery = 
-  <div id="user-gallery">
-    <h1 id="title">Gallery</h1>
-    {fullGallery.length > 0 ?
-      <Carousel
-        dataList={fullGallery}
-      >
-        <div className='gallery-carousel'>
-          <CarouselContent className='gallery-carousel-content' />
-          {fullGallery.length > 1 ?
-          <div className='carousel-row'>
-            <CarouselButton
-              direction='left'
-              className='gallery-carousel-btn'
-              size='small'
-            />
-            <CarouselTabs className='gallery-carousel-tabs'>{galleryPreviews}</CarouselTabs>
-            <CarouselButton 
-              direction='right'
-              className='gallery-carousel-btn'
-              size='small'
-            />
-          </div> : ""}
-        </div>
-      </Carousel> :
-      <label id="emtpy-carousel">
-        No gallery items yet...<br/>Edit your profile and upload your achievments!<br/>(not visible to others while empty)
-      </label>
-    }
-  </div>
+  const userGallery =
+    <div id="user-gallery">
+      <h1 id="title">Gallery</h1>
+      {fullGallery.length > 0 ?
+        <Carousel
+          dataList={fullGallery}
+        >
+          <div className='gallery-carousel'>
+            <CarouselContent className='gallery-carousel-content' />
+            {fullGallery.length > 1 ?
+              <div className='carousel-row'>
+                <CarouselButton
+                  direction='left'
+                  className='gallery-carousel-btn'
+                  size='small'
+                />
+                <CarouselTabs className='gallery-carousel-tabs'>{galleryPreviews}</CarouselTabs>
+                <CarouselButton
+                  direction='right'
+                  className='gallery-carousel-btn'
+                  size='small'
+                />
+              </div> : ""}
+          </div>
+        </Carousel> :
+        <label id="emtpy-carousel">
+          No gallery items yet...<br />Edit your profile and upload your achievments!<br />(not visible to others while empty)
+        </label>
+      }
+    </div>
   //console.log(followedProjectsIds);
   // --------------------
   // Final component
@@ -1366,26 +1366,37 @@ const Profile = (/*userProfile: any*/) => {
               <div id="socials">
                 <div className="contact-skills-edit-label-btn">
                   <h1 id="title">Contact Me</h1>
-                  {isUsersProfile ? <ProfileEditPopup editContact={true} />
-                    : ""}</div>
+                </div>
                 <div id="profile-email">
                   {/* TODO: make icon for email and phone */}
-                  {displayedProfile?.username ?
-                    <a href={`mailto:${displayedProfile?.username}@g.rit.edu`}>
+                  {displayedProfile?.username
+                    ? <a href={`mailto:${displayedProfile?.username}@g.rit.edu`}>
                       <ThemeIcon id={'mail'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'} />
                       {displayedProfile?.username}@g.rit.edu</a>
                     : <a><ThemeIcon id={'mail'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'} />no email</a>}
                 </div>
-
                 {/* Show phone number if present */}
-                {displayedProfile?.phoneNumber ? /* no need to also check displayPhone, the number won't be in the request if it's false */
+                {displayedProfile?.phoneNumber
+                  ? /* no need to also check displayPhone, the number won't be in the request if it's false */
                   <div id="profile-number">
-                    <a id="profile-number" href={`sms:${displayedProfile.phoneNumber}`}>
+                    <a href={`sms:${displayedProfile.phoneNumber}`}>
                       <ThemeIcon id={'phone'} width={25} height={25} className={'mono-fill'} ariaLabel={'phone'} />
-                      {displayedProfile.phoneNumber}</a>
+                      {displayedProfile.phoneNumber}
+                    </a>
+                    {isUsersProfile && <ThemeIcon id="pencil" width={12} height={12} className={'black-fill edit'} ariaLabel={'edit'} onClick={() => navigate(paths.routes.SETTINGS)} />}
                   </div>
                   //dead link when no number
-                  : <></>}
+                  : <></>
+                }
+                {displayedProfile?.socials.length !== 0 && (
+                  <div className="contact-skills-edit-label-btn">
+                    <h1 id="title">Links</h1>
+                    {isUsersProfile
+                      ? <ProfileEditPopup editContact={true} />
+                      : ""
+                    }
+                  </div>
+                )}
                 {/* Add social links if present */}
                 <div id="links-and-invite-project">
                   {displayedProfile?.socials && (

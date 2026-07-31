@@ -12,18 +12,17 @@ import {
   Text,
 } from 'react-email';
 
-interface BanEmailProps {
+interface PromotionEmailProps {
   receiverName: {
     firstName: string;
     lastName: string;
   };
-  banReason: string;
 }
 
 const logoUrl = 'https://lookingforgrp.com/api/images/lfg-logo.png';
 
-const BanEmail = ({ receiverName, banReason }: BanEmailProps) => {
-  const previewText = `You have been banned on Looking For Group`;
+const PromotionEmail = ({ receiverName }: PromotionEmailProps) => {
+  const previewText = `You have been promoted to Moderator`;
 
   return createElement(
     Html,
@@ -57,9 +56,7 @@ const BanEmail = ({ receiverName, banReason }: BanEmailProps) => {
             {
               className: 'mx-0 my-[30px] p-0 text-center font-normal text-[24px] text-black',
             },
-            'You Have Been ',
-            createElement('strong', null, `Banned`),
-            ' From Looking For Group ',
+            'Notification From the Administration Team ',
           ),
           createElement(
             Text,
@@ -69,21 +66,19 @@ const BanEmail = ({ receiverName, banReason }: BanEmailProps) => {
           createElement(
             Text,
             { className: 'text-[14px] text-black leading-[24px]' },
-            'You have been banned from LFG. The reason given is:',
-          ),
-          createElement(Text, { className: 'text-[14px] text-black leading-[24px]' }, banReason),
-          createElement(
-            Text,
-            { className: 'text-[14px] text-black leading-[24px]' },
-            'Your account has been frozen, and you will be unable to join or create projects.',
-            ' If you believe this was a mistake, contact us at ',
-            createElement('strong', null, 'lookingforgrp@gmail.com'),
-            '.',
+            `You have been promoted to Moderator.`,
+            `You may now review bugs, reports, and projects, as well as ban users.`,
+            `You have a duty to use this power responsibly. Failing to do so will result in demotion.`,
           ),
           createElement(
             Text,
             { className: 'text-[14px] text-black leading-[24px]' },
-            'We wish you luck on your future endeavors regardless.',
+            `If you have any questions or would like to respond to this notification, reply to lookingforgrp@gmail.com.`,
+          ),
+          createElement(
+            Text,
+            { className: 'text-[14px] text-black leading-[24px]' },
+            'Good luck, and we wish you the best!',
           ),
           createElement(
             'tr',
@@ -128,4 +123,4 @@ const BanEmail = ({ receiverName, banReason }: BanEmailProps) => {
   );
 };
 
-export default BanEmail;
+export default PromotionEmail;
