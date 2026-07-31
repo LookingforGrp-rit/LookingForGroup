@@ -415,7 +415,8 @@ export const TagsTab = ({
         </div>
         <div className="project-editor-extra-info">
           Drag and drop to reorder. The first 3 tags will be displayed on your
-          project's panel on the Projects page.
+          project's panel on the Projects page. Content Warning tags are always
+          shown first, ahead of your other tags, no matter where you place them.
         </div>
         {projectAfterTagsChanges.tags.length === 0 && (
           <div className="error">*At least 1 tag is required</div>
