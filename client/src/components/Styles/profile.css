@@ -1236,12 +1236,11 @@ New Profile page style rules
     gap: 14px;
 
     >#profile-image {
-      width: 280px;
+      width: fit-content;
       height: 280px;
-      object-fit: cover;
+      object-fit: contain;
       border-radius: 10px;
       border: 2px solid white;
-      aspect-ratio: 1 / 1;
     }
 
     >#profile-bio {

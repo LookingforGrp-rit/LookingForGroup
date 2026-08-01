@@ -261,7 +261,7 @@ const ImageUploader = ({
     // state and the uncontrolled input or it carries over to this one.
     if (inputAlt.current) inputAlt.current.value = "";
 
-    if ((file.size > 100000 && type === "profile") || file.size > 2000000) {
+    if ((file.size > 1000000 && type === "profile") || file.size > 2000000) {
       onFileSelected(file, inputAlt.current?.value);
       return;
     }
@@ -557,13 +557,15 @@ const ImageUploader = ({
             value={dY} />
             <label className="slider-text" htmlFor="yTrans">Ypos</label>
           </div>
-          <div id='alt-text-input'>
-            <input
-            type='text' ref={inputAlt}
-            placeholder='enter the caption/alt text for the image (optional)'
-            >
-            </input>
-          </div>
+          {type === "project" ?
+            <div id='alt-text-input'>
+              <input
+              type='text' ref={inputAlt}
+              placeholder='enter the caption/alt text for the image (optional)'
+              >
+              </input>
+            </div> 
+          : "" }
         </div>
         <div className="project-crop-extra-info">
           Crop your image to a set ratio that better matches the site.
