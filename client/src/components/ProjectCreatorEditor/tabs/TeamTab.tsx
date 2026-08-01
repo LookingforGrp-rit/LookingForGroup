@@ -312,8 +312,6 @@ export const TeamTab = ({
 	const isOpenPositionsUnsaved = useMemo(() => {
 		const currentJobs = projectData?.jobs || [];
 		const originalJobs = unmodifiedProject?.jobs || [];
-		console.log(currentJobs);
-		console.log(originalJobs);
 
 		if (currentJobs.length !== originalJobs.length) return true;
 
@@ -945,7 +943,6 @@ export const TeamTab = ({
 			//passing in the associated job's localId to get this to work properly
 			if (currentJob.jobSkills) {
 				for (const skill of currentJob.jobSkills) {
-					console.log(skill)
 
 					dataManager?.addProjectJobSkill({
 						id: {
@@ -973,7 +970,6 @@ export const TeamTab = ({
 			setIsCreatingNewPosition(false);
 			setErrorAddPosition("");
 			setCurrentJob(currentJob);
-			console.log(currentJob)
 			return;
 		} else {
 			const unmodifiedSkills = unmodifiedProject.jobs.find(

@@ -207,7 +207,6 @@ export const JobSkillPopup = ({
 
   useEffect(() => {
     let newMessage = "";
-    console.log("length" + modifiedJob.jobSkills?.length);
     if ((modifiedJob.jobSkills ? modifiedJob.jobSkills.length : -1)  >= skillLimit) {
       newMessage = `Maximum of ${skillLimit} selected skills reached!`;
     }
@@ -473,9 +472,7 @@ export const JobSkillPopup = ({
   // Does Skills match in EXACT order
   const isSkillsUnsaved = useMemo(() => {
     const currentSkills = (modifiedJob.jobSkills as JobSkill[]) || [];
-
-    //console.log(currentSkills.length);
-    //console.log(originalSkillOrder.length);
+    
     if (currentSkills.length !== originalSkillOrder.length) return true;
 
     // Checks if any element shifted index or changed
@@ -612,6 +609,17 @@ export const JobSkillPopup = ({
             </PopupButton>
           </div>
         </div>
+        {isSkillsUnsaved ? <Popup><PopupContent confirmation={true} useClose={false}>
+          <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
+          <div id="confirm-editor-save">
+            <PopupButton doNotClose={() => false} callback={close} buttonId="project-editor-save">
+              Confirm
+            </PopupButton>
+            <PopupButton doNotClose={() => true} callback={() => true} buttonId="team-edit-member-cancel-button" >
+              Cancel
+            </PopupButton>
+          </div>
+        </PopupContent></Popup> : ""}
     </div>
   );
 };
