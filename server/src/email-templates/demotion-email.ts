@@ -12,18 +12,17 @@ import {
   Text,
 } from 'react-email';
 
-interface GeneralEmailProps {
+interface PromotionEmailProps {
   receiverName: {
     firstName: string;
     lastName: string;
   };
-  message: string;
 }
 
 const logoUrl = 'https://lookingforgrp.com/api/images/lfg-logo.png';
 
-const GeneralEmail = ({ receiverName, message }: GeneralEmailProps) => {
-  const previewText = `You have received a notification from the Looking For Group moderation team`;
+const DemotionEmail = ({ receiverName }: PromotionEmailProps) => {
+  const previewText = `You have been demoted from your position as a Moderator`;
 
   return createElement(
     Html,
@@ -57,7 +56,7 @@ const GeneralEmail = ({ receiverName, message }: GeneralEmailProps) => {
             {
               className: 'mx-0 my-[30px] p-0 text-center font-normal text-[24px] text-black',
             },
-            'Notification From the Moderation Team ',
+            'Notification From the Administration Team ',
           ),
           createElement(
             Text,
@@ -67,10 +66,9 @@ const GeneralEmail = ({ receiverName, message }: GeneralEmailProps) => {
           createElement(
             Text,
             { className: 'text-[14px] text-black leading-[24px]' },
-            `A moderator has sent you a notification. `,
-            `Here is the message provided:`,
+            `You have been demoted from your position as a Moderator.`,
+            `You may no longer review bugs, reports, or projects, or ban users.`,
           ),
-          createElement(Text, { className: 'text-[14px] text-black leading-[24px]' }, message),
           createElement(
             Text,
             { className: 'text-[14px] text-black leading-[24px]' },
@@ -124,4 +122,4 @@ const GeneralEmail = ({ receiverName, message }: GeneralEmailProps) => {
   );
 };
 
-export default GeneralEmail;
+export default DemotionEmail;

@@ -38,6 +38,16 @@ const addBlacklistService = async (
 
     if (sessionResult === 'INTERNAL_ERROR') return sessionResult;
 
+    // make banned user's account private
+    await prisma.users.update({
+      where: {
+        userId,
+      },
+      data: {
+        privacy: 'private',
+      },
+    });
+
     //Send email to user
     const html = await pretty(
       await render(
@@ -60,7 +70,7 @@ const addBlacklistService = async (
         lastName: '',
       } as UserEmail,
       receiver: user,
-      subject: `You have been banned from Looking For Group`,
+      subject: `[DO NOT REPLY] You have been banned from Looking For Group`,
       textBody: text,
       HTMLBody: html,
     };

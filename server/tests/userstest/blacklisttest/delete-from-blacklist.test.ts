@@ -15,6 +15,7 @@ vi.mock('#config/prisma.ts', () => ({
     },
     users: {
       findUnique: vi.fn(),
+      update: vi.fn(),
     },
   },
 }));
@@ -24,6 +25,29 @@ vi.mock('#services/mailer.ts', () => ({
 }));
 
 const prismaUser: Users = {
+  userId: 1,
+  googleId: 'u123',
+  username: 'goldleaf',
+  firstName: 'Gold',
+  lastName: 'Leaf',
+  ritEmail: 'goldleaf@rit.edu',
+  profileImage: null,
+  headline: '',
+  pronouns: '',
+  title: '',
+  ritStatus: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  displayPhone: false,
+  location: '',
+  bio: '',
+  privacy: 'private',
+  phoneNumber: null,
+  accessLevel: 'User',
+  galleryEnabled: false,
+};
+
+const updatedUser: Users = {
   userId: 1,
   googleId: 'u123',
   username: 'goldleaf',
@@ -52,13 +76,14 @@ describe('deleteBlacklistService', async () => {
   });
   it('returns OK if successful', async () => {
     vi.mocked(prisma.users.findUnique).mockResolvedValue(prismaUser);
+    vi.mocked(prisma.users.update).mockResolvedValue(updatedUser);
     vi.mocked(sendEmail).mockResolvedValue('NO_CONTENT');
     const result = await deleteBlacklistService(1);
 
     expect(prisma.userBlacklist.delete).toHaveBeenCalled();
     expect(prisma.userBlacklist.delete).toHaveBeenCalledWith({
       where: {
-        googleId: '1',
+        googleId: 'u123',
       },
     });
     expect(result).toBe('OK');

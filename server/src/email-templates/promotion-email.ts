@@ -12,18 +12,17 @@ import {
   Text,
 } from 'react-email';
 
-interface GeneralEmailProps {
+interface PromotionEmailProps {
   receiverName: {
     firstName: string;
     lastName: string;
   };
-  message: string;
 }
 
 const logoUrl = 'https://lookingforgrp.com/api/images/lfg-logo.png';
 
-const GeneralEmail = ({ receiverName, message }: GeneralEmailProps) => {
-  const previewText = `You have received a notification from the Looking For Group moderation team`;
+const PromotionEmail = ({ receiverName }: PromotionEmailProps) => {
+  const previewText = `You have been promoted to Moderator`;
 
   return createElement(
     Html,
@@ -57,7 +56,7 @@ const GeneralEmail = ({ receiverName, message }: GeneralEmailProps) => {
             {
               className: 'mx-0 my-[30px] p-0 text-center font-normal text-[24px] text-black',
             },
-            'Notification From the Moderation Team ',
+            'Notification From the Administration Team ',
           ),
           createElement(
             Text,
@@ -67,10 +66,10 @@ const GeneralEmail = ({ receiverName, message }: GeneralEmailProps) => {
           createElement(
             Text,
             { className: 'text-[14px] text-black leading-[24px]' },
-            `A moderator has sent you a notification. `,
-            `Here is the message provided:`,
+            `You have been promoted to Moderator.`,
+            `You may now review bugs, reports, and projects, as well as ban users.`,
+            `You have a duty to use this power responsibly. Failing to do so will result in demotion.`,
           ),
-          createElement(Text, { className: 'text-[14px] text-black leading-[24px]' }, message),
           createElement(
             Text,
             { className: 'text-[14px] text-black leading-[24px]' },
@@ -79,7 +78,7 @@ const GeneralEmail = ({ receiverName, message }: GeneralEmailProps) => {
           createElement(
             Text,
             { className: 'text-[14px] text-black leading-[24px]' },
-            'We wish you a good day.',
+            'Good luck, and we wish you the best!',
           ),
           createElement(
             'tr',
@@ -124,4 +123,4 @@ const GeneralEmail = ({ receiverName, message }: GeneralEmailProps) => {
   );
 };
 
-export default GeneralEmail;
+export default PromotionEmail;

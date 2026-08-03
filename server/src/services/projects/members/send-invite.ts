@@ -135,7 +135,7 @@ const sendInviteService = async (
     const email: EmailInput = {
       sender: inviter,
       receiver: invitee,
-      subject: `Invitation to join ${project.title}`,
+      subject: `[DO NOT REPLY] Invitation to join ${project.title}`,
       textBody: text,
       HTMLBody: html,
     };

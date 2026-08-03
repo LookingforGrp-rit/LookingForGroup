@@ -28,6 +28,16 @@ const deleteBlacklistService = async (
       },
     });
 
+    // make the user's account public again
+    await prisma.users.update({
+      where: {
+        userId: id,
+      },
+      data: {
+        privacy: 'public',
+      },
+    });
+
     //Send email to user
     const html = await pretty(
       await render(
@@ -49,7 +59,7 @@ const deleteBlacklistService = async (
         lastName: '',
       } as UserEmail,
       receiver: user,
-      subject: `You have been unbanned from Looking For Group`,
+      subject: `[DO NOT REPLY] You have been unbanned from Looking For Group`,
       textBody: text,
       HTMLBody: html,
     };

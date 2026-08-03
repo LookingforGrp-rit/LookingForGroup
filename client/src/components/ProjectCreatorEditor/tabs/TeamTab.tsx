@@ -2760,7 +2760,9 @@ export const TeamTab = ({
 								<p>*{message}*</p>
 							</div>
 						)}
-						{isSaving ?
+						{
+							// Switches out the save button for a loading icon if the project is saving
+							isSaving ?
 							(
 								// Currently Saving
 								<div className='spinning-loader'></div>
@@ -2799,7 +2801,9 @@ export const TeamTab = ({
 						}
 					</Popup>
 
-					{isSaving ?
+					{
+						// Hides the delete project button if the project is currently saving
+						isSaving ?
 						(
 							// Just here for blank space and to prevent 
 							// accidental deletion while a project is saving
