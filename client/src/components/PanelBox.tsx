@@ -12,12 +12,13 @@ interface MasonryContext {
   followedProjectIds?: Set<number>;
   userId: number;
   onUnfollow?: (id: number) => void;
+  onResolved?: (reportId: number) => void;
 }
 
 // This is the actual thing that will be rendered
 // It is defined outside the function so that it doesn't have to keep remounting
 const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryContext }) => {
-  const { category, projectCache, followedProjectIds, userId, onUnfollow } = context;
+  const { category, projectCache, followedProjectIds, userId, onUnfollow, onResolved } = context;
 
   if (category === 'projects') {
     const projectId = (item as ProjectWithFollowers).projectId;
@@ -44,6 +45,7 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
           currentUserId={userId}
           reporterId={reporterId}
           reportId={reportId}
+          onResolved={onResolved}
         />
       </div>);
   }
@@ -69,8 +71,8 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
  * @param itemList - List of items (projects or profiles) to render.
  * @returns The rendered panel box containing the items.
  */
-export const PanelBox = ({ category, itemList, projectCache, followedProjectIds, userId, onUnfollow }:
-  { category: string, itemList: unknown[], projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, onUnfollow?: (id: number) => void }) => {
+export const PanelBox = ({ category, itemList, projectCache, followedProjectIds, userId, onUnfollow, onResolved }:
+  { category: string, itemList: unknown[], projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, onUnfollow?: (id: number) => void, onResolved?: (reportId: number) => void }) => {
   // Test these
   const isMobile = useMediaQuery('(max-width: 500px)');
   const isTablet = useMediaQuery('(max-width: 1000px)');
@@ -107,7 +109,8 @@ export const PanelBox = ({ category, itemList, projectCache, followedProjectIds,
     projectCache,
     followedProjectIds,
     userId,
-    onUnfollow
+    onUnfollow,
+    onResolved,
   };
 
   /* 

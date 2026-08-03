@@ -49,6 +49,9 @@ const ReportedBugs = ({ currentUserId, currentTab }: ReportedBugsProps) => {
                             category={"bugs"}
                             itemList={bugReports ? bugReports : []}
                             userId={currentUserId}
+                            onResolved={(reportId) => {
+                                setBugReports((prev) => prev.filter((bug) => bug.reportId !== reportId));
+                            }}
                         ></PanelBox> : "No reported bugs!"}
                 </div>
             </div>
