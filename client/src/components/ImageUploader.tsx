@@ -56,8 +56,11 @@ const ImageUploader = ({
   const [zoom, setZoom] = useState(100);
   const [dX, setDX] = useState(0);
   const [dY, setDY] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [prevPos, setPrevPos] = useState<{x:number, y:number}>({x:0, y:0});
+
+  //changed to Ref instead of State so that
+  //the changes are read without needing a re-render
+  const isDragging = useRef(false);
+  const prevPos = useRef<{x:number, y:number}>({x:0, y:0});
 
   const [cropFile, setCropFile] = useState<File>();
   const [cropImg, setCropImg] = useState<string>();
@@ -84,19 +87,18 @@ const ImageUploader = ({
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (e.button === 0 || e.button === 1 || e.button === 2) {
       e.preventDefault(); // stop context menu
-      setIsDragging(true);
-      setPrevPos({ x: e.clientX, y: e.clientY });
-
+      isDragging.current = true;
+      prevPos.current = { x: e.clientX, y: e.clientY };
     }
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDragging || !tempImage.current || !canvas.current) return;
+    if (!isDragging.current || !tempImage.current || !canvas.current) return;
 
     const rect = canvas.current.getBoundingClientRect();
 
-    const deltaX = (e.clientX - prevPos.x) * (canvas.current.width / rect.width);
-    const deltaY = (e.clientY - prevPos.y) * (canvas.current.height / rect.height);
+    const deltaX = (e.clientX - prevPos.current.x) * (canvas.current.width / rect.width);
+    const deltaY = (e.clientY - prevPos.current.y) * (canvas.current.height / rect.height);
 
     const rawDX = dX - deltaX;
     const rawDY = dY -deltaY;
@@ -107,7 +109,7 @@ const ImageUploader = ({
     setDX(newDX);
     setDY(newDY);
 
-    setPrevPos({ x: e.clientX, y: e.clientY });
+    prevPos.current = { x: e.clientX, y: e.clientY };
     updateCanvas();
   };
 
@@ -147,7 +149,7 @@ const ImageUploader = ({
   };
 
   const handleMouseUp = () => {
-    setIsDragging(false);
+    isDragging.current = false;
   };
 
 //wheel zooming for cropping
