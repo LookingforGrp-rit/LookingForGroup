@@ -1764,7 +1764,6 @@ Header style rules
   gap: 5px;
 
   #profile-img-icon {
-    width: fit-content;
     height: 32px;
     margin-left: 3px;
   }
@@ -1841,13 +1840,11 @@ Header style rules
 
 #header-profile-dropdown img {
   height: 28px;
-  width: 28px;
 }
 
 #header-profile-dropdown img.rounded {
   border-radius: 10px;
   object-fit: contain;
-  width: fit-content;
   border: 1px solid var(--primary-color);
 }
 

@@ -1236,7 +1236,6 @@ New Profile page style rules
     gap: 14px;
 
     >#profile-image {
-      width: fit-content;
       height: 280px;
       object-fit: contain;
       border-radius: 10px;
