@@ -522,6 +522,26 @@ export const JobSkillPopup = ({
               </div>
             </SortableContext>
           </DndContext>
+          {/*<button
+            type="button"
+            className="delete-tags-btn"
+            hidden={(job.jobSkills as JobSkill[])?.length === 0 || job.jobSkills == undefined}
+            onClick={() => {
+              deletes all skills for the user
+              modifiedJob = {
+                ...modifiedJob,
+                jobSkills: [],
+              }
+
+              re-renders the current popup with 0 skills remaining and updates
+              user profile
+              setSkills((job.jobSkills as JobSkill[]).splice(0));
+              updateJob(modifiedJob);
+            }}
+            title="Remove all selected tags"
+          >
+            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+          </button>*/}
           <div id="clear-all-button-align">
             <button
               type="button"
