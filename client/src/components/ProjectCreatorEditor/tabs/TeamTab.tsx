@@ -173,6 +173,15 @@ export const TeamTab = ({
 	const projectAfterTeamChanges: PendingProject =
 		structuredClone(projectData);
 
+	// Tracks whether the edited position was saved
+	const [positionSaved, setPositionSaved] = useState<boolean>(true);
+
+	const [confirm, setConfirm] = useState(false);
+
+	const [positionConfirm, setPositionConfirm] = useState(false);
+
+	const cancelConfirm = () => setPositionConfirm(false);
+
 	// HTML contents (needed if using commented out block at end of file)
 	// const [teamTabContent, setTeamTabContent] = useState(<></>);
 	// const [positionWindowContent, setPositionWindowContent] = useState(<></>);
@@ -221,8 +230,6 @@ export const TeamTab = ({
 	const [contactName, setContactName] = useState("");
 
 	const [messageText, setMessageText] = useState("");
-
-	const [confirm, setConfirm] = useState(false);
 
 	const [newOwner, setNewOwner] = useState<UserPreview | null>(null);
 	const [ownerChange, setOwnerChange] = useState("");
@@ -708,6 +715,53 @@ export const TeamTab = ({
 		[searchResults]
 	);
 
+	  /**
+   * Runs when the editor popup is closed. Discards any unsaved edits so that
+   * reopening the editor shows the current saved profile instead of stale
+   * in-editor changes. (The component stays mounted while the popup is hidden,
+   * so this state would otherwise persist until a full page refresh.)
+   */
+  const handleEditorClose = () => {
+
+    // Discard unsaved field edits...
+    if (currentJob) setCurrentJob(structuredClone(currentJob));
+    // ...and the pending changes tracked by the data manager, so they can't be
+    // re-applied on a later save.
+    if ((currentJob as ProjectJob).jobId) {
+		//isLocal = false;
+		dataManager?.deleteJob({
+			id: {
+				type: "canon",
+				value: (currentJob as ProjectJob).jobId
+			},
+			data: null
+		});
+	} else if ((currentJob as Pending<ProjectJob>).localId) {
+		dataManager?.deleteJob({
+			id: {
+				type: "local",
+				value:
+					(currentJob as Pending<ProjectJob>).localId ??
+					++localIdIncrement
+			},
+			data: null
+		});
+	}
+    setPositionSaved(true);
+  };
+
+	  // Fires when the popup is closed (X, Escape, or click-outside). With
+  // confirmation={!saved} on the PopupContent below, an unsaved close is
+  // intercepted — the popup stays open and we surface the confirm dialog
+  // instead of discarding the edits.
+  const handlePopupCallback = () => {
+    if (positionSaved) {
+      handleEditorClose();
+    } else {
+      setPositionConfirm(true);
+    }
+  };
+
 	/**
 	 * Handles the selection of a user from search results and prepares them for addition to the team.
 	 * @param selectedUser selected user
@@ -812,6 +866,13 @@ export const TeamTab = ({
 		}
 		setErrorAddPosition("");
 	}, [editMode, isCreatingNewPosition]);
+
+	// User confirmed they want to leave without saving: discard edits and let the
+  	// popup close (the Confirm button has doNotClose=false, so it closes itself).
+  	const confirmExit = () => {
+  	  setPositionConfirm(false);
+  	  handleEditorClose();
+  	};
 
 	/**
 	 * Removes the currently selected position from the project.
@@ -1386,10 +1447,22 @@ export const TeamTab = ({
 							/>
 						</PopupButton>
 						{currentJob ? (
-							<PopupContent>
+							<PopupContent callback={handlePopupCallback} confirmation={!positionSaved}>
+								{confirm ? <PopupContent confirmation={true} useClose={false} callback={() => {console.log("true!")}}>
+        					  	<div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
+        					  	<div id="confirm-editor-save">
+        					  	  <PopupButton doNotClose={() => false} callback={confirmExit} buttonId="project-editor-save">
+        					  	    Confirm
+        					  	  </PopupButton>
+        					  	  <PopupButton doNotClose={() => true} callback={cancelConfirm} buttonId="team-edit-member-cancel-button" >
+        					  	    Cancel
+        					  	  </PopupButton>
+        					  	</div>
+        						</PopupContent> : ""}
 								<JobSkillPopup
 									job={currentJob}
 									updateJob={setCurrentJob}
+									setPositionSaved={setPositionSaved}
 								/>
 							</PopupContent>
 						) : (

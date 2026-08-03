@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, Fragment } from "react";
+import { useState, useEffect, useMemo, useCallback, Fragment, SetStateAction } from "react";
 import { SearchBar } from "../../SearchBar";
 import { getSkills } from "../../../api/users";
 import { Tag } from "../../Tag";
@@ -27,26 +27,27 @@ const skillTabColors: Record<string, string> = {
 interface JobSkillPopupProps {
   job: ProjectJob | Fillable<Pending<ProjectJob>>,
   updateJob: React.Dispatch<React.SetStateAction<ProjectJob | Fillable<Pending<ProjectJob>> | undefined>>,
+  setPositionSaved: React.Dispatch<SetStateAction<boolean>>
 }
 
 /**
  * Job skills popup. Displays selected skill tags with drag and drop instructions.
  * Shows the search bar for filtering skills, category tabs, and the skill tag buttons.
- * @param dataManager Handles data changes to save changes later.
- * @param project Temporary project data.
- * @param updatePendingProject Updates project data.
- * @param unmodifiedProject A copy of the profile before any changes
- * @returns JSX Element
+ * @param job A copy of the unmodified job before changes are made to the Job Skills
+ * @param updateJob Function to update 'job' based on saved changes made in this Popup
+ * @param setPositionSaved Function to update the state of the position as "saved"
+ * @returns 
  */
 export const JobSkillPopup = ({
   job,
   updateJob,
+  setPositionSaved
 }: JobSkillPopupProps) => {
   //editing a copy, rather than the original variable
   const [modifiedJob, setModifiedJob] = useState<ProjectJob | Fillable<Pending<ProjectJob>>>(job);
 
+  // The limit on how many skills can be applied to each open position
   const skillLimit = 5;
-  //the limit imposer (not used as you can see)
 
   const [message, setMessage] = useState<string>("");
 
@@ -68,8 +69,6 @@ export const JobSkillPopup = ({
   /* ONLY used for the deleting tags button. This is needed to re-render
     the selected skills section when reseting tags */
   const [skills, setSkills] = useState<Skill[]>();
-
-  const [saved, setSaved] = useState<boolean>();
 
   // load skills
   useMemo(() => {
@@ -189,18 +188,18 @@ export const JobSkillPopup = ({
             position: lengthPreAdd ?? 0,
             apiUrl: "",
           })
-          setModifiedJob({
-            ...modifiedJob,
-            jobSkills: newSkills as JobSkill[],
-          });
           //fix the positions right after they're changed
           for (let i = 0; i < (newSkills as JobSkill[]).length; i++) {
             (newSkills as JobSkill[])[i].position = i;
           }
+          setModifiedJob({
+            ...modifiedJob,
+            jobSkills: newSkills as JobSkill[],
+          });
         }
       }
     },
-    [allSkills, isSkillSelected, job]
+    [allSkills, isSkillSelected, modifiedJob]
   );
 
   const selectedSkills = modifiedJob.jobSkills ? (modifiedJob.jobSkills as JobSkill[]).sort((a, b) => a.position - b.position) : [];
@@ -580,7 +579,7 @@ export const JobSkillPopup = ({
               buttonId="project-editor-save"
               disabled={(modifiedJob.jobSkills ? modifiedJob.jobSkills.length : -1)  === 0}
               callback={() => {
-                  setSaved(true);
+                  setPositionSaved(true);
                   updateJob(modifiedJob);
                   return;
               }}
@@ -589,17 +588,6 @@ export const JobSkillPopup = ({
             </PopupButton>
           </div>
         </div>
-        {isSkillsUnsaved ? <Popup><PopupContent confirmation={true} useClose={false}>
-          <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
-          <div id="confirm-editor-save">
-            <PopupButton doNotClose={() => false} callback={close} buttonId="project-editor-save">
-              Confirm
-            </PopupButton>
-            <PopupButton doNotClose={() => true} callback={() => true} buttonId="team-edit-member-cancel-button" >
-              Cancel
-            </PopupButton>
-          </div>
-        </PopupContent></Popup> : ""}
     </div>
   );
 };
