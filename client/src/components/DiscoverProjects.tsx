@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo} from 'react';
+import React, { useState, Fragment, useEffect, useRef, useMemo } from 'react';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { tags, projectTabs } from '../constants/tags';
@@ -224,10 +224,10 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     const toggleTag = (id: number, type: string, update?: boolean) => {
         let newActiveTags: Tag[];
         let newExclusionTags: Tag[];
-        let tag; 
-        if (id === -1) 
-            tag = {tagId: id, label: "New", type, category: "Other"} as Tag;
-        else 
+        let tag;
+        if (id === -1)
+            tag = { tagId: id, label: "New", type, category: "Other" } as Tag;
+        else
             tag = allTags.find((tag) => tag.tagId === id && tag.type === type as TagType);
         if (!tag) return;
 
@@ -252,7 +252,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
 
         setActiveTagFilters(newActiveTags);
         setActiveExclusionFilters(newExclusionTags);
-        if (update) applyFilters(newActiveTags, newExclusionTags);
+        if (update) updateItemList(newActiveTags, newExclusionTags, filterMode, sortMode);
     };
 
     /**
@@ -365,32 +365,32 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
 
     const activeTags = useMemo(() => {
         return (
-        [...activeTagFilters.map((tag) => (
-            <TagElement
-                key={tag.type + tag.tagId}
-                type={tag.type.toLowerCase()}
-                onClick={() => {
-                    toggleTag(tag.tagId, tag.type);
-                }}
-                selected={true}
-            >
-                <i className="fa fa-check"></i>
-                <p>{tag.label}</p>
-            </TagElement>
-        )),
-        ...activeExclusionFilters.map((tag) => (
-            <TagElement
-                key={tag.type + tag.tagId}
-                type={tag.type.toLowerCase()}
-                onClick={() => {
-                    toggleTag(tag.tagId, tag.type);
-                }}
-                selected={true}
-            >
-                <i className="fa fa-close"></i>
-                <p>{tag.label}</p>
-            </TagElement>
-        ))]
+            [...activeTagFilters.map((tag) => (
+                <TagElement
+                    key={tag.type + tag.tagId}
+                    type={tag.type.toLowerCase()}
+                    onClick={() => {
+                        toggleTag(tag.tagId, tag.type);
+                    }}
+                    selected={true}
+                >
+                    <i className="fa fa-check"></i>
+                    <p>{tag.label}</p>
+                </TagElement>
+            )),
+            ...activeExclusionFilters.map((tag) => (
+                <TagElement
+                    key={tag.type + tag.tagId}
+                    type={tag.type.toLowerCase()}
+                    onClick={() => {
+                        toggleTag(tag.tagId, tag.type);
+                    }}
+                    selected={true}
+                >
+                    <i className="fa fa-close"></i>
+                    <p>{tag.label}</p>
+                </TagElement>
+            ))]
         );
     }, [activeTagFilters, activeExclusionFilters]);
 
@@ -425,10 +425,10 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                         const tagObj: Tag = { tagId: id ?? 0, label, type, category: "Other" };
                         return (
                             <button key={`${type}-${label}`}
-                                className={"discover-tag-filter" + 
-                                    (activeTagFilters.some(t => t.tagId === tagObj.tagId && t.type === tagObj.type) ? " discover-tag-filter-selected" : 
-                                    activeExclusionFilters.some(t => t.tagId === tagObj.tagId && t.type === tagObj.type) ? " discover-tag-filter-excluded " :
-                                    "")}
+                                className={"discover-tag-filter" +
+                                    (activeTagFilters.some(t => t.tagId === tagObj.tagId && t.type === tagObj.type) ? " discover-tag-filter-selected" :
+                                        activeExclusionFilters.some(t => t.tagId === tagObj.tagId && t.type === tagObj.type) ? " discover-tag-filter-excluded " :
+                                            "")}
                                 data-type={type}
                                 onClick={() => toggleTag(tagObj.tagId, tagObj.type, true)}>
                                 {tagLabel}
@@ -539,6 +539,9 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
 
                                                         //Sets the index to the setActiveId value.
                                                         setActiveTabId(index);
+                                                        if (document.getElementById("filter-tags")) {
+                                                            document.getElementById("filter-tags").scrollTop = 0; //shows error but still works?
+                                                        }
                                                     }}
                                                 >
                                                     {tab.categoryName}
@@ -569,7 +572,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                 <div id="selected-section" className="popup-section">
                                     <h3>Selected</h3>
                                     <h4>Click once to include-<i className='fa fa-check'>
-                                        </i>, twice to exclude-<i className='fa fa-close'></i>, three times to remove.</h4>
+                                    </i>, twice to exclude-<i className='fa fa-close'></i>, three times to remove.</h4>
                                     <div id="selected-filters">
                                         {activeTags}
                                     </div>

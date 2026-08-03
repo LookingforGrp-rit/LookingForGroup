@@ -2431,6 +2431,12 @@ Project Creator and Editor Popup style rules
   gap: 10px;
 }
 
+@media only screen and (max-width:950px){
+  #open-position-details{
+    gap: 50px;
+  }
+}
+
 #open-position-contact {
   display: flex;
   align-items: center;
