@@ -96,7 +96,12 @@ export const PanelBox = ({ category, itemList, projectCache, followedProjectIds,
     if (isMobile) columns = 2; //changed from 1 to 2 
     else if (isTabletProfile) columns = 2;
   }
-  //This is for projects and bugs
+  else if (category == 'bugs')
+  {
+    columns = 2;
+    if (isMobile) columns = 1; //changed from 1 to 2
+  }
+  //This is for projects
   else {
     if (isMobile) columns = 2; //changed from 1 to 2 
     else if (isTablet) columns = 2;
