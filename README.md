@@ -20,7 +20,7 @@ Now, here is a brief explanation of each project.
 
 ### Server
 
-The [server](./server/) project contains the Express API that provides an interface to our database. We use [MySql](https://www.mysql.com/) as our database, and store image files with [Minio](https://min.io/), an [S3](https://aws.amazon.com/s3/) compatible object store.
+The [server](./server/) project contains the Express API that provides an interface to our database. We use [MySql](https://www.mysql.com/) as our database, and store image files with [AWS](https://aws.amazon.com/) (Amazon Web Service).
 
 It has its own [package.json](./server/package.json) file, which manages the packages and scripts that are specifically used by the server. To interact with only the server project and the server package.json, you can add the `--workspace=server` flag to npm commands.
 
@@ -67,37 +67,35 @@ If you really don't want to use the containerized services, you can manually dow
 
 ### Set Environment Variables
 
-Environment files allow for sensitive info to be given to the app without adding it to git. These environment variables are stored in a `.env` file, which should look something like this:
+Environment files allow for sensitive info to be given to the app without adding it to git. These environment variables are stored in a `.env` file in the `root (/)` folder, which should look something like this:
 
 ```sh
 NODE_ENV=development
 PORT=3000
-DB_USER=root
-DB_PASS=<password>
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_NAME=lfg
-S3_USER=app
-S3_PASS=<password>
-S3_HOST=127.0.0.1
-S3_PORT=9000
-S3_CONSOLE_PORT=9001
-S3_BUCKET=lfgrp
+DATABASE_URL=mysql://<user>:<password>@localhost:3306/lfg
+S3_USER=<ask the team lead>
+S3_PASS=<ask the team lead>
+S3_HOST=s3.us-east-2.amazonaws.com
+S3_BUCKET=<ask the team lead>
 ```
 
 - `NODE_ENV` should be `development` when working locally
 - `PORT` can be set to any open port you want, `3000` is standard for development
-- `DB_USER` is `root` because that is the default mysql user for local development
-- `DB_PASS` should have the password value for the root user of your mysql db
-- `DB_HOST` is the ip that hosts the db, `127.0.0.1` for development
-- `DB_PORT` is the port value your mysql is running on, `3306` is MySQL's default
-- `DB_NAME` is the name of the database to access, `lfg` for us
-- `S3_USER` is the username of the s3 account the app uses, `app` is a fine default
-- `S3_PASS` is the password of the s3 account the app uses, must be 8+ characters
-- `S3_HOST` is the ip that hosts the s3 server, `127.0.0.1` for development
-- `S3_PORT` is the port the s3 server is available on, `9000` is minio's default
-- `S3_CONSOLE_PORT` is the port for the s3 dev console, `9001` is the default
-- `S3_BUCKET` is the name of the s3 bucket, this should be `lfgrp` to match the [policy](./containers/services/s3/policies/app-crud-perms.json)
+- `DATABASE_URL` is a combination of your mysql username, password, port, and database name
+- `S3_USER` is the username of the s3 account the app uses, your team lead should have access to the AWS console and can retrieve this for you
+- `S3_PASS` is the password of the s3 account the app uses, your team lead should have access to the AWS console and can retrieve this for you
+- `S3_HOST` is the hostname of the AWS server. Our bucket runs on `us-east-2`
+- `S3_BUCKET` is kind of similar to the folder name where our files are stored. For security purposes, you'll also need to ask your lead for this
+
+We also have a `.env` file for the `client (/client)` folder that holds info for Google authentication. If you want to be able to log in while in development, you'll need that as well. It looks like this:
+
+```sh
+VITE_GOOGLE_CLIENT_ID=596953635459-vsu1ipgmjd9jqvcvj8spv1i076vbdm5s.apps.googleusercontent.com
+VITE_API_BASE=http://localhost:4000
+```
+
+- `VITE_GOOGLE_CLIENT_ID` is our ID issued from Google so that they know what project is being logged into
+- `VITE_API_BASE` is a link to where the API is hosted. The default for development is `http://localhost:4000`
 
 > [!CAUTION]
 > Environment files like `.env` should never be committed to git or any other version control system
