@@ -1010,6 +1010,19 @@ Filters / Tags Style Rules
   }
 }
 
+/* Text button that drops every applied filter at once */
+.applied-filters-clear {
+  color: var(--main-text);
+  text-decoration: underline;
+  font-size: 0.9rem;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.applied-filters-clear:hover {
+  opacity: 1;
+}
+
 
 
 /*tag rules may be used for buttons elsewhere, but will stay here for the time being*/

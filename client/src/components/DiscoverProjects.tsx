@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect, useRef, useMemo} from 'react';
+import React, { useState, useEffect, useRef, useMemo} from 'react';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { tags, projectTabs } from '../constants/tags';
@@ -25,9 +25,10 @@ interface FilterTab {
     categoryTags: Tag[];
 }
 
-interface EnabledFilter {
-    tag: Tag;
-    color: string;
+/** The include/exclude filters currently applied to the project list. */
+interface AppliedFilters {
+    include: Tag[];
+    exclude: Tag[];
 }
 
 enum sortModes {
@@ -63,13 +64,14 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     // --------------------
     // Tags currently filtered via search input
     const [searchedTags, setSearchedTags] = useState<Tag[]>([]);
-    // Filters that have been applied and are displayed under the quick filter tags
-    const [appliedFiltersDisplay, setAppliedFiltersDisplay] = useState<EnabledFilter[]>([]);
     // List of tags currently active for filtering in the parent dataset
     const [activeTagFilters, setActiveTagFilters] = useState<Tag[]>([]);
     const [activeExclusionFilters, setActiveExclusionFilters] = useState<Tag[]>([]);
-    // Whether the "Applied Filters" section should display under the quick tags
-    const [displayFiltersText, setDisplayFiltersText] = useState(false);
+    // Filters actually in effect on the project list, shown in the "Applied
+    // Filters" section under the quick tags. Tracked separately from the two
+    // lists above because selecting a tag inside the popup doesn't filter
+    // anything until "Apply" is pressed.
+    const [appliedFilters, setAppliedFilters] = useState<AppliedFilters>({ include: [], exclude: [] });
     //Keeps track of the currently selected tab in this popup.
     const [activeTabId, setActiveTabId] = useState(0);
     // Whether the popup is active; this effects popup filter arrows visibility
@@ -178,6 +180,42 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     };
 
     /**
+     * Applies a filter set to the parent list and records it for the applied
+     * filters summary. Every path that actually changes the filtering goes
+     * through here, so the summary can't drift from what's being filtered.
+     * @param include tags a project must match
+     * @param exclude tags a project must not match
+     */
+    const applyFilters = (include: Tag[], exclude: Tag[]) => {
+        setAppliedFilters({ include, exclude });
+        updateItemList(include, exclude, filterMode, sortMode);
+    };
+
+    /**
+     * Drops a single filter from the applied set and re-filters immediately.
+     * Unlike toggleTag, which cycles include -> exclude -> off, this removes
+     * the filter outright, since that's what the x on an applied tag implies.
+     * @param tag the tag to stop filtering by
+     */
+    const removeAppliedFilter = (tag: Tag) => {
+        const isTag = (t: Tag) => t.tagId === tag.tagId && t.type === tag.type;
+        const include = appliedFilters.include.filter((t) => !isTag(t));
+        const exclude = appliedFilters.exclude.filter((t) => !isTag(t));
+
+        // Keep the popup's selection in step with what's actually applied
+        setActiveTagFilters(include);
+        setActiveExclusionFilters(exclude);
+        applyFilters(include, exclude);
+    };
+
+    /** Clears every applied filter and re-filters immediately. */
+    const clearAppliedFilters = () => {
+        setActiveTagFilters([]);
+        setActiveExclusionFilters([]);
+        applyFilters([], []);
+    };
+
+    /**
      * Toggles a tag's selection in the horizontal quick filter.
      * Updates visual selection and parent dataset.
      * @param id - id of the tag to be found
@@ -193,14 +231,18 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
             tag = allTags.find((tag) => tag.tagId === id && tag.type === type as TagType);
         if (!tag) return;
 
-        if (activeTagFilters.some(t => t.tagId === id && t.type == type )) {
+        // Matches only this exact tag. Comparing with !== on both fields would
+        // drop every other tag sharing the same type along with it.
+        const isTag = (t: Tag) => t.tagId === id && t.type === type;
+
+        if (activeTagFilters.some(isTag)) {
             // Remove the tag from the active list
-            newActiveTags = activeTagFilters.filter(t => t.tagId !== id && t.type !== type );
+            newActiveTags = activeTagFilters.filter(t => !isTag(t));
             newExclusionTags = [...activeExclusionFilters, tag];
         }
-        else if (activeExclusionFilters.some(t => t.tagId === id && t.type == type )) {
+        else if (activeExclusionFilters.some(isTag)) {
             newActiveTags = activeTagFilters;
-            newExclusionTags = activeExclusionFilters.filter(t => t.tagId !== id && t.type !== type );
+            newExclusionTags = activeExclusionFilters.filter(t => !isTag(t));
         }
         else {
             // Add the tag to the active list
@@ -210,7 +252,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
 
         setActiveTagFilters(newActiveTags);
         setActiveExclusionFilters(newExclusionTags);
-        if (update) updateItemList(newActiveTags, newExclusionTags, filterMode, sortMode); 
+        if (update) applyFilters(newActiveTags, newExclusionTags);
     };
 
     /**
@@ -550,8 +592,9 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                                 discoverFilters[i].classList.remove('discover-tag-filter-excluded');
                                             }
 
-                                            // Sets active filters displayed to "none"
-                                            setAppliedFiltersDisplay([]);
+                                            // The applied filters summary is left alone on purpose:
+                                            // this only clears the selection, and the list stays
+                                            // filtered until "Apply" is pressed.
                                         }}
                                     >
                                         Reset Filters
@@ -585,13 +628,8 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                                 }
                                             });
 
-                                            // Update the project list
-                                            updateItemList(newActiveTags, newExclusionTags, filterMode, sortMode);
-
-                                            //Add "Applied Filters" div if it is missing and if the paragraph exists
-                                            if (newActiveTags.length > 0) {
-                                                setDisplayFiltersText([...newActiveTags, ...newExclusionTags].some(tag => tag.type !== 'Project Type'));
-                                            }
+                                            // Update the project list and the applied filters summary
+                                            applyFilters(newActiveTags, newExclusionTags);
                                         }}
                                     >
                                         Apply
@@ -602,42 +640,35 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                     </Popup>
                 </div>
             </div >
-            {((appliedFiltersDisplay.length > 0) && (displayFiltersText)) ? (
+            {/* Summary of what's currently filtering the list. Each tag drops
+                itself when clicked, so filters can be undone without reopening
+                the popup. */}
+            {(appliedFilters.include.length > 0 || appliedFilters.exclude.length > 0) && (
                 <div className='applied-filters'>
                     <p>Applied Filters:</p>
-                    {appliedFiltersDisplay.map((filter, index) => {
-                        if (filter.tag.type === 'Project Type') {
-                            return <Fragment key={`${filter.tag.type}`} />;
-                        }
-
-                        return (
-                            <button
-                                key={filter.tag.label}
-                                className={`tag-button tag-button-${filter.color}-selected`}
-                                onClick={() => {
-
-                                    // Remove tag from list of enabled filters, re-rendering component
-                                    const tempList = appliedFiltersDisplay.toSpliced(index, 1);
-                                    const newActiveTags = tempList.map((filter) => filter.tag);
-                                    setAppliedFiltersDisplay(tempList);
-                                    setActiveTagFilters(newActiveTags);
-                                    updateItemList(newActiveTags, activeExclusionFilters, filterMode, sortMode);
-
-                                    if (newActiveTags.length === 0 || (newActiveTags.length === 1 && newActiveTags[0].type === 'Project Type')) {
-                                        setDisplayFiltersText(false);
-                                    } else {
-                                        setDisplayFiltersText(true);
-                                    }
-                                }}
-                            >
-                                <i className='fa fa-close'></i>
-                                <p>{filter.tag.label}</p>
-                            </button>
-                        );
-                    })}
+                    {[
+                        ...appliedFilters.include.map((tag) => ({ tag, excluded: false })),
+                        ...appliedFilters.exclude.map((tag) => ({ tag, excluded: true })),
+                    ].map(({ tag, excluded }) => (
+                        <TagElement
+                            key={`${excluded ? 'exclude' : 'include'}-${tag.type}-${tag.tagId}`}
+                            type={tag.type.toLowerCase()}
+                            selected={true}
+                            onClick={() => removeAppliedFilter(tag)}
+                        >
+                            <i className='fa fa-close'></i>
+                            {/* Excluded tags read as "Not Horror" so they aren't
+                                mistaken for something the project must match */}
+                            <p>{excluded ? `Not ${tag.label}` : tag.label}</p>
+                        </TagElement>
+                    ))}
+                    <button
+                        className='applied-filters-clear button-reset'
+                        onClick={clearAppliedFilters}
+                    >
+                        Clear all
+                    </button>
                 </div>
-            ) : (
-                <></>
             )}
         </div>
     );
