@@ -6216,7 +6216,7 @@ My projects page style rules
 #popup-result .small-popup {
   .success-msg {
     font-weight: 700;
-    color: var(--tag-green-selected);
+    color: green;
     font-style: italic;
   }
 
