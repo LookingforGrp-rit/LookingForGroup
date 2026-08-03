@@ -10,16 +10,15 @@ export const getOtherUserProjects = async (req: Request, res: Response): Promise
   const UserId = parseInt(req.params.id as string);
 
   const authenticatedRequest = req as AuthenticatedRequest;
-  const currentUser = authenticatedRequest.currentUser;
 
-  if (!currentUser && req.session?.gid) {
+  if (req.session.gid) {
     const sessionUser = await getUserByGoogleService(req.session.gid);
     if (sessionUser !== 'INTERNAL_ERROR' && sessionUser !== 'NOT_FOUND') {
       authenticatedRequest.currentUser = sessionUser;
     }
   }
 
-  const result = await getUserProjectsService(UserId, authenticatedRequest.currentUser?.userId);
+  const result = await getUserProjectsService(UserId, authenticatedRequest.currentUser.userId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
