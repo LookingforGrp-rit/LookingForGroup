@@ -9,6 +9,7 @@ import { BodyParameterLocation } from '#middleware/validators/parameter-location
 import { ProjectMemberInPathParameterLocation } from '#middleware/validators/parameter-location/project-member-in-path-parameter.ts';
 import { ProjectOwnerInPathParameterLocation } from '#middleware/validators/parameter-location/project-owner-in-path-param-location.ts';
 import { ProjectApprovedNotificationBuilder } from '#notification-templates/project-approved-notification-builder.ts';
+import { ProjectUnapprovedNotificationBuilder } from '#notification-templates/project-unapproved-notification-buildier.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresModerator from '../middleware/authorization/requires-mod.ts';
 import requiresProjectOwner from '../middleware/authorization/requires-project-owner.ts';
@@ -149,6 +150,7 @@ router.patch(
   authenticated(requiresModerator),
   projectExistsAt('path', 'id'),
   authenticated(requiresNotSelf(new Map([[new ProjectOwnerInPathParameterLocation(), 'id']]))),
+  sendNotificationAfterAll(new ProjectUnapprovedNotificationBuilder(), false),
   authenticated(PROJECT.unapproveProject),
 );
 
