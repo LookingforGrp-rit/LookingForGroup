@@ -1764,13 +1764,13 @@ Header style rules
   gap: 5px;
 
   #profile-img-icon {
-    width: 32px;
     height: 32px;
+    margin-left: 3px;
   }
 
   #profile-img-icon.rounded {
-    object-fit: cover;
-    border-radius: 50%;
+    object-fit: contain;
+    border-radius: 10px;
     border: 1px solid var(--primary-color);
   }
 
@@ -1833,19 +1833,18 @@ Header style rules
       font-style: italic;
       font-size: 0.75rem;
       color: var(--main-text);
-      margin: 1px;
+      margin: 1px 1px 1px -3px;
     }
   }
 }
 
 #header-profile-dropdown img {
   height: 28px;
-  width: 28px;
 }
 
 #header-profile-dropdown img.rounded {
-  border-radius: 50%;
-  object-fit: cover;
+  border-radius: 10px;
+  object-fit: contain;
   border: 1px solid var(--primary-color);
 }
 
