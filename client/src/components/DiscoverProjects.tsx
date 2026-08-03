@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { tags, projectTabs } from '../constants/tags';
@@ -539,8 +539,9 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
 
                                                         //Sets the index to the setActiveId value.
                                                         setActiveTabId(index);
-                                                        if (document.getElementById("filter-tags")) {
-                                                            document.getElementById("filter-tags").scrollTop = 0; //shows error but still works?
+                                                        let tags = document.getElementById("filter-tags")
+                                                        if (tags) {
+                                                            tags.scrollTop = 0; //shows error but still works?
                                                         }
                                                     }}
                                                 >
