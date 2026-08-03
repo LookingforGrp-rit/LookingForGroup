@@ -32,11 +32,8 @@ interface JobSkillPopupProps {
 /**
  * Job skills popup. Displays selected skill tags with drag and drop instructions.
  * Shows the search bar for filtering skills, category tabs, and the skill tag buttons.
- * @param dataManager Handles data changes to save changes later.
- * @param project Temporary project data.
- * @param updatePendingProject Updates project data.
- * @param unmodifiedProject A copy of the profile before any changes
- * @returns JSX Element
+ * @param job The original job before skill modifications
+ * @param updateJob Function to update the original job with the new skillset
  */
 export const JobSkillPopup = ({
   job,
@@ -69,7 +66,7 @@ export const JobSkillPopup = ({
     the selected skills section when reseting tags */
   const [skills, setSkills] = useState<Skill[]>();
 
-  const [saved, setSaved] = useState<boolean>();
+  const [saved, setSaved] = useState<boolean>(true);
 
   // load skills
   useMemo(() => {
@@ -109,6 +106,16 @@ export const JobSkillPopup = ({
     const defaultSkills = currentDataSet[0]?.data ?? [];
     setSearchedSkills(defaultSkills);
   }, [currentSkillsTab, currentDataSet]);
+
+  // Discard unsaved changes
+  useEffect(() => {
+    if (!saved)
+    {
+      // Discard unsaved field edits...
+      if (!isSkillsUnsaved) updateJob(structuredClone(job));
+      setSaved(false);
+    }
+  }, [saved]);
 
   /**
    * Finds if a skill is present on the project
@@ -522,26 +529,6 @@ export const JobSkillPopup = ({
               </div>
             </SortableContext>
           </DndContext>
-          {/*<button
-            type="button"
-            className="delete-tags-btn"
-            hidden={(job.jobSkills as JobSkill[])?.length === 0 || job.jobSkills == undefined}
-            onClick={() => {
-              deletes all skills for the user
-              modifiedJob = {
-                ...modifiedJob,
-                jobSkills: [],
-              }
-
-              re-renders the current popup with 0 skills remaining and updates
-              user profile
-              setSkills((job.jobSkills as JobSkill[]).splice(0));
-              updateJob(modifiedJob);
-            }}
-            title="Remove all selected tags"
-          >
-            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
-          </button>*/}
           <div id="clear-all-button-align">
             <button
               type="button"
@@ -609,17 +596,6 @@ export const JobSkillPopup = ({
             </PopupButton>
           </div>
         </div>
-        {isSkillsUnsaved ? <Popup><PopupContent confirmation={true} useClose={false}>
-          <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
-          <div id="confirm-editor-save">
-            <PopupButton doNotClose={() => false} callback={close} buttonId="project-editor-save">
-              Confirm
-            </PopupButton>
-            <PopupButton doNotClose={() => true} callback={() => true} buttonId="team-edit-member-cancel-button" >
-              Cancel
-            </PopupButton>
-          </div>
-        </PopupContent></Popup> : ""}
     </div>
   );
 };
