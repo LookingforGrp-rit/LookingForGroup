@@ -98,11 +98,11 @@ export interface BaseUrlValidation { //a surprise tool that'll help us later
 }
 
 export enum AspectRatios {
-  '16/9',
-  '4/3',
-  '1/1',
-  '2/3',
-  '6/13',
+  '16:9' = '16/9',
+  '4:3' = '4/3',
+  '1:1' = '1/1',
+  '2:3' = '2/3',
+  '6:13' = '6/13',
 }
 
 export enum ProjectApprovalStatus {
