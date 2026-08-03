@@ -1234,6 +1234,7 @@ New Profile page style rules
     display: flex;
     flex-direction: column;
     gap: 14px;
+    width: fit-content;
 
     >#profile-image {
       width: fit-content;

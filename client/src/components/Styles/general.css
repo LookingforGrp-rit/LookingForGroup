@@ -1773,6 +1773,7 @@ Header style rules
     object-fit: contain;
     border-radius: 10px;
     border: 1px solid var(--primary-color);
+    width: fit-content;
   }
 
   #dropdown-arrow {
