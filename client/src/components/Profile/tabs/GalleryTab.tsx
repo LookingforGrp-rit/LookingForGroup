@@ -79,7 +79,7 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
    */
   const handleImageUpload = useCallback((image: File, altText?: string) => {
     if (image.size > 2000000) {
-      setUploadError("File too large!");
+      setUploadError("File too large! (max: 2mb)");
       return;
     }
     else {

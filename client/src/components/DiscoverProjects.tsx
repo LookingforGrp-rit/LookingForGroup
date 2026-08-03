@@ -379,7 +379,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     tagLabel;
                         const type = 'Project Type';
                         const id = label === "New" ? -1 :
-                            allTags.find(tag => tag.label == label)?.tagId;
+                            allTags.find(tag => tag.label == label && tag.type === "Project Type")?.tagId; 
                         const tagObj: Tag = { tagId: id ?? 0, label, type, category: "Other" };
                         return (
                             <button key={`${type}-${label}`}

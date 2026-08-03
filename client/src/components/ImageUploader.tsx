@@ -413,6 +413,9 @@ const ImageUploader = ({
       <PopupContent confirmation={true} callback={closePopup}>
         <div className="project-crop">
         <label id="project-crop-header">Crop image for thumbnail usage</label>
+        <div className="project-crop-extra-info">
+          Crop your image to a set ratio that better matches the site.
+        </div>
         <canvas ref={canvas} id="canvas"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
@@ -437,6 +440,9 @@ const ImageUploader = ({
 
           style={{aspectRatio:aspectRatio}}
         ></canvas>
+        <div className="project-crop-mouse-instructions">
+          <p>You can also drag the image around the view using the mouse,<br/>and zoom in and out with the scroll wheel.</p>
+        </div>
 
         {/* <img ref={tempImage} id="refImage" src={cropImg} alt={cropImg} /> */}
         <div id="aspect-row">
@@ -474,9 +480,6 @@ const ImageUploader = ({
             )}
           />
           </Select>
-        </div>
-        <div className="project-crop-mouse-instructions">
-          <p>You can also drag the image around the view using the mouse, and zoom in and out with the scroll wheel.</p>
         </div>
         <div id="hide-range-rows">  
           <div id="zoom-row">
@@ -564,9 +567,6 @@ const ImageUploader = ({
             >
             </input>
           </div>
-        </div>
-        <div className="project-crop-extra-info">
-          Crop your image to a set ratio that better matches the site.
         </div>
         <div className="confirm-project-crop">
           <PopupButton buttonId="project-crop-save" callback={sendImg} doNotClose={() => true}>Crop Image</PopupButton>

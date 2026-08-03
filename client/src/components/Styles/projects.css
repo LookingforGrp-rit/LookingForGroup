@@ -2684,20 +2684,19 @@ button.edit-position-contact .project-member-image {
 }
 
 .project-crop {
-  width: 100%;
+  width: 700px;
   text-align: center;
-  height: 1100px;
-  margin: 20px 20px;
+  height: 100%;
+  padding: 20px;
 
   #project-crop-header {
     display: block;
-    padding-top: 1em;
   }
 
   #canvas {
     border: 3px solid var(--primary-color);
     border-radius: 10px;
-    margin: 1vw 0;
+    margin-top: 10px;
     object-fit: cover;
     max-width: 95%;
     max-height: 400px;
@@ -2747,15 +2746,13 @@ button.edit-position-contact .project-member-image {
   }
 
   .project-crop-extra-info {
-    margin-top: 20px;
     font-size: 0.75rem;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
 
   .project-crop-mouse-instructions {
-    margin-top: 20px;
     font-size: 0.75rem;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 
     p {
       margin-top: 0;
@@ -2764,7 +2761,7 @@ button.edit-position-contact .project-member-image {
   }
 
   #alt-text-input {
-    margin: 10px auto 0 auto;
+    margin: 10px auto ;
     width: 85%;
 
     input {
@@ -2786,7 +2783,6 @@ button.edit-position-contact .project-member-image {
     flex-direction: row;
     gap: 20px;
     padding-top: 10px;
-    padding-bottom: 20px;
     width: 100%;
     justify-content: center;
   }
