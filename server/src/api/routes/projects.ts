@@ -8,6 +8,7 @@ import { isUserBlocked } from '#middleware/validators/is-user-blocked.ts';
 import { BodyParameterLocation } from '#middleware/validators/parameter-location/body-param-location.ts';
 import { ProjectMemberInPathParameterLocation } from '#middleware/validators/parameter-location/project-member-in-path-parameter.ts';
 import { ProjectOwnerInPathParameterLocation } from '#middleware/validators/parameter-location/project-owner-in-path-param-location.ts';
+import { InviteReceivedNotificationBuilder } from '#notification-templates/invite-received-notification-builder.ts';
 import { ProjectApprovedNotificationBuilder } from '#notification-templates/project-approved-notification-builder.ts';
 import { ProjectRejectedNotificationBuilder } from '#notification-templates/project-rejected-notification-builder.ts';
 import { ProjectUnapprovedNotificationBuilder } from '#notification-templates/project-unapproved-notification-buildier.ts';
@@ -344,6 +345,7 @@ router.post(
     new BodyParameterLocation(),
     'ownerUserId',
   ),
+  sendNotificationAfterAll(new InviteReceivedNotificationBuilder(), false),
   PROJECT.sendInvite,
 );
 
