@@ -91,7 +91,7 @@
         border-style: solid;
         /* Need big padding in the bottom to fit the tooltip */
         padding: 10px 10px 30px;
-        max-height: 500px;
+        max-height: 60vh;
         overflow-y: auto;
         overflow-x: hidden;
     }
@@ -307,7 +307,9 @@
 
 /* Bug Panel */
 .bug-panel {
-    width: 100%;
+    width: calc(100% - 20px);
+    min-width: fit-content;
+    padding: 10px;
     height: auto;
     border: none;
     border-radius: 10px;
@@ -335,6 +337,8 @@
         display: flex;
         flex-direction: row;
         gap: 10px;
+        justify-content: center;
+        align-items: center;
     }
 
     .bug-reporter-profile {
@@ -681,6 +685,18 @@
             #mod-dismiss-btn {
                 font-size: 1em;
             }
+        }
+    }
+    .bug-panel {
+        width: calc(100% - 20px);       /* accounts for padding + a little extra room */
+        h2 {
+            font-size: 1rem;
+        }
+        #see-details-btn {
+            font-size: 1.5ch;
+        }
+        .bug-reporter-info {
+            width: fit-content;
         }
     }
 }
