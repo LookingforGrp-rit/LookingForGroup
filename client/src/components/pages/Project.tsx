@@ -418,47 +418,47 @@ const Project = () => {
         />
 
         {approvalStatus == 'not-approved' ?
-                <Popup>
-                  {/* Request Review button */}
-                  <PopupButton buttonId='project-info-request'>
-                    {/* <ThemeIcon
+          <Popup>
+            {/* Request Review button */}
+            <PopupButton buttonId='project-info-request'>
+              {/* <ThemeIcon
                       id={"request-review"}
                       width={27}
                       height={27}
                       ariaLabel={"request-Review"}
                       className="mono-fill"
                     /> */}
-                    Request Review
-                  </PopupButton>
-                  <PopupContent>
-                    <div className="small-popup">
-                      <div id="project-request-review">
-                        <label id="project-request-label">
-                          Would you like to submit your project for review?
-                        </label>
-                        <div id="project-request-info">
-                          Submiting a request will make your project visible to moderators who will choose to either
-                          accept and make your project visible to all, request changes for you to make,
-                          or reject it for various reasons. <br />
-                          <strong>(moderators are not capable of directly altering or deleting your projects)</strong>
-                        </div>
-                        <div id="project-request-buttons">
-                          <PopupButton buttonId="request-confirm-button"
-                            callback={() => {
-                              if (displayedProject) requestProjectReview(projectID);
-                              setApprovalStatus("under-review");
-                            }}
-                          >
-                            Request Review
-                          </PopupButton>
-                          <PopupButton buttonId="request-cancel-button">
-                            Cancel
-                          </PopupButton>
-                        </div>
-                      </div>
-                    </div>
-                  </PopupContent>
-                </Popup> : ""}
+              Request Review
+            </PopupButton>
+            <PopupContent>
+              <div className="small-popup">
+                <div id="project-request-review">
+                  <label id="project-request-label">
+                    Would you like to submit your project for review?
+                  </label>
+                  <div id="project-request-info">
+                    Submiting a request will make your project visible to moderators who will choose to either
+                    accept and make your project visible to all, request changes for you to make,
+                    or reject it for various reasons. <br />
+                    <strong>(moderators are not capable of directly altering or deleting your projects)</strong>
+                  </div>
+                  <div id="project-request-buttons">
+                    <PopupButton buttonId="request-confirm-button"
+                      callback={() => {
+                        if (displayedProject) requestProjectReview(projectID);
+                        setApprovalStatus("under-review");
+                      }}
+                    >
+                      Request Review
+                    </PopupButton>
+                    <PopupButton buttonId="request-cancel-button">
+                      Cancel
+                    </PopupButton>
+                  </div>
+                </div>
+              </div>
+            </PopupContent>
+          </Popup> : ""}
 
         {/* Owner options: leave or delete the project */}
         <Dropdown>
@@ -501,7 +501,7 @@ const Project = () => {
                     <div className="confirm-deny-btns">
                       <PopupButton
                         className="confirm-btn"
-                        callback={() => {handleLeaveProject();}}
+                        callback={() => { handleLeaveProject(); }}
                       >
                         Leave
                       </PopupButton>
@@ -614,7 +614,7 @@ const Project = () => {
                         <div className="confirm-deny-btns">
                           <PopupButton
                             className="confirm-btn"
-                            callback={() => {handleLeaveProject()}}
+                            callback={() => { handleLeaveProject() }}
                           >
                             Leave
                           </PopupButton>
@@ -627,51 +627,51 @@ const Project = () => {
                   <></>
                 }
                 {userID > 0 && approvalStatus == 'not-approved' ? (
-                <Popup>
-                  <PopupButton
-                    className="project-info-dropdown-option"
-                  >
-                    <ThemeIcon
-                      id={"warning"}
-                      width={27}
-                      height={27}
-                      ariaLabel={"Report"}
-                    />
-                    Report
-                  </PopupButton>
-                  <PopupContent>
-                    <div className="small-popup" id="report-popup">
-                      <h3>Report {displayedProject?.title ?? "Project"}</h3>
-                      <p>You are about to report {displayedProject?.title ?? "Project"}. Please provide your reasoning below.</p>
-                      <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></textarea>
-                      <div className="confirm-deny-btns">
-                        <PopupButton
-                          buttonId="team-delete-member-cancel-button"
-                          className="button-reset"
-                        >
-                          Cancel
-                        </PopupButton>
-                        {/* The Report Button */}
-                        <Popup>
+                  <Popup>
+                    <PopupButton
+                      className="project-info-dropdown-option"
+                    >
+                      <ThemeIcon
+                        id={"warning"}
+                        width={27}
+                        height={27}
+                        ariaLabel={"Report"}
+                      />
+                      Report
+                    </PopupButton>
+                    <PopupContent>
+                      <div className="small-popup" id="report-popup">
+                        <h3>Report {displayedProject?.title ?? "Project"}</h3>
+                        <p>You are about to report {displayedProject?.title ?? "Project"}. Please provide your reasoning below.</p>
+                        <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></textarea>
+                        <div className="confirm-deny-btns">
                           <PopupButton
-                            className="delete-button"
-                            callback={reportProjectPressed}
-                            closeParent={() => true}> {/* doesnt work*/}
-                            Report
+                            buttonId="team-delete-member-cancel-button"
+                            className="button-reset"
+                          >
+                            Cancel
                           </PopupButton>
-                          <PopupContent>
-                            <div className="small-popup">
-                              <p>{reportResponseText}</p>
-                              <PopupButton buttonId="continue-button" closeParent={() => true}>
-                                Continue
-                              </PopupButton>
-                            </div>
-                          </PopupContent>
-                        </Popup>
+                          {/* The Report Button */}
+                          <Popup>
+                            <PopupButton
+                              className="delete-button"
+                              callback={reportProjectPressed}
+                              closeParent={() => true}> {/* doesnt work*/}
+                              Report
+                            </PopupButton>
+                            <PopupContent>
+                              <div className="small-popup">
+                                <p>{reportResponseText}</p>
+                                <PopupButton buttonId="continue-button" closeParent={() => true}>
+                                  Continue
+                                </PopupButton>
+                              </div>
+                            </PopupContent>
+                          </Popup>
+                        </div>
                       </div>
-                    </div>
-                  </PopupContent>
-                </Popup> ): ""}
+                    </PopupContent>
+                  </Popup>) : ""}
               </div>
             </DropdownContent>
           </Dropdown>
@@ -724,7 +724,7 @@ const Project = () => {
                 }}
               />
               <div className="project-contributor-info">
-                {displayedProject.owner.userId === memberUser.userId ? <ThemeIcon id={'owner-crown'} width={18} height={18} className={'color-fill'} ariaLabel="Project Owner"/> : ""}
+                {displayedProject.owner.userId === memberUser.userId ? <ThemeIcon id={'owner-crown'} width={18} height={18} className={'color-fill'} ariaLabel="Project Owner" /> : ""}
                 <div className="team-member-name">
                   {memberUser.firstName} {memberUser.lastName}
                 </div>
@@ -867,7 +867,7 @@ const Project = () => {
                   </p>
                 </div>
                 <div id="project-creation">
-                  Created by:{" "}
+                  Owned by:{" "}
                   <span className="project-info-highlight">
                     <a href={`${paths.routes.PROFILE}?userID=${projectLead?.userId}`}>
                       {projectLead?.firstName} {projectLead?.lastName}
@@ -1093,7 +1093,7 @@ const Project = () => {
         zIndex={16} //keep at 16 so success msg appears over all popups, including dropdown
         show={showResult}
         setShow={setShowResult}
-        onClose={() => {if (resultObj.status === 200) {navigate(paths.routes.MYPROJECTS);} reloadProjects()}}
+        onClose={() => { if (resultObj.status === 200) { navigate(paths.routes.MYPROJECTS); } reloadProjects() }}
       >
         <div className="small-popup">
           {resultObj.status === 200 ? (

@@ -14,7 +14,7 @@ interface ImageUploaderProps {
   // If true, only allow image files
   keepImage?: boolean;
   // Callback triggered when the user selects a valid file
-  onFileSelected?: (file: File, altText: string) => void;
+  onFileSelected?: (file: File, altText?: string) => void;
   // Determines styling and behavior
   type?: 'profile' | 'project';
 }
@@ -79,8 +79,6 @@ const ImageUploader = ({
   const [labelName, setLabelName] = useState("drop-area");
 
   const [loadingImage, setLoadingImage] = useState(false);
-
-  const [altText, setAltText] = useState("");
 
 //mouse dragging for cropping
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -257,8 +255,14 @@ const ImageUploader = ({
     setCropFile(file);
     setDX(0);
     setDY(0);
+
+    // Each image gets its own caption. The popup stays mounted between queued
+    // files, so the previous image's caption has to be cleared off both the
+    // state and the uncontrolled input or it carries over to this one.
+    if (inputAlt.current) inputAlt.current.value = "";
+
     if ((file.size > 100000 && type === "profile") || file.size > 2000000) {
-      onFileSelected(file, altText);
+      onFileSelected(file, inputAlt.current?.value);
       return;
     }
 
@@ -292,7 +296,7 @@ const ImageUploader = ({
     };
     reader.onerror = () => setCropImg(placeholder);
     reader.readAsDataURL(file);
-  }, [updateCanvas, altText]);
+  }, [updateCanvas, inputAlt.current]);
 
   const handleImgChange = useCallback(async () => {
     const input = inputRef.current;
@@ -331,7 +335,7 @@ const ImageUploader = ({
   const sendImg = useCallback(
     () => canvas.current?.toBlob(async(blob) => {
       const newFile = new File([blob as Blob], cropFile?.name as string, {type:cropFile?.type});
-      onFileSelected(newFile, inputAlt.current?.value ?? altText);
+      onFileSelected(newFile, inputAlt.current?.value);
       if (inputRef.current) inputRef.current.value = "";
 
       // Move on to the next queued image, or close the popup when the batch is done.
@@ -342,7 +346,7 @@ const ImageUploader = ({
         setCropImg(undefined);
       }
     }, cropFile?.type), 
-  [onFileSelected, setCropImg, cropFile, canvas, loadFileIntoCrop, altText]);
+  [onFileSelected, setCropImg, cropFile, canvas, loadFileIntoCrop, inputAlt.current]);
 
   
   // Effect for cleanup if needed; currently just removes event listeners
@@ -357,8 +361,18 @@ const ImageUploader = ({
     c.width = c.clientWidth;
     c.height = c.clientHeight;
 
-    const w = img.width * (zoom / 100);
-    const h = img.height * (zoom / 100);
+    // Changing the aspect ratio changes the canvas size, which changes the
+    // smallest zoom that still covers it. Without this the image would sit
+    // letterboxed inside the new ratio until the user touched the zoom slider.
+    const minZoom = Math.max(
+      (c.width / img.width) * 100,
+      (c.height / img.height) * 100
+    );
+    const effectiveZoom = Math.max(zoom, minZoom);
+    if (effectiveZoom !== zoom) setZoom(effectiveZoom);
+
+    const w = img.width * (effectiveZoom / 100);
+    const h = img.height * (effectiveZoom / 100);
 
     const maxDX = Math.max(0, (w - c.width) / 2);
     const maxDY = Math.max(0, (h - c.height) / 2);
@@ -379,7 +393,7 @@ const ImageUploader = ({
     input.addEventListener('change', handleImgChange);
 
     return () => input.removeEventListener('change', handleImgChange);
-  }, [handleImgChange, fileReader, placeholder, updateCanvas, inputRef, cropImg, zoom]);
+  }, [handleImgChange, fileReader, placeholder, updateCanvas, inputRef, cropImg, zoom, aspectRatio]);
 
 
   useEffect(()=> {
@@ -388,8 +402,8 @@ const ImageUploader = ({
 
   const closePopup = useCallback(() => {
     if (!loadingImage) {
-      pendingFiles.current = []; 
-      setCropImg(undefined); 
+      pendingFiles.current = [];
+      setCropImg(undefined);
     }
   }, [loadingImage, pendingFiles, setCropImg]);
 
@@ -436,13 +450,15 @@ const ImageUploader = ({
             searchable={false}
           />
           <SelectOptions
-            callback={async (e) => {
+            callback={(e) => {
             const ratio = (
               e.target as HTMLButtonElement
             ).value;
 
-            await setAspectRatio(ratio);
-            updateCanvas();
+            // Just record the ratio. Resizing the canvas buffer and redrawing
+            // is the effect's job, since it has to wait for the new ratio to
+            // actually render before it can read the new client dimensions.
+            setAspectRatio(ratio);
             }}
             options={
             Object.values(AspectRatios)
@@ -544,10 +560,7 @@ const ImageUploader = ({
           <div id='alt-text-input'>
             <input
             type='text' ref={inputAlt}
-            placeholder='enter the caption/alt text for the image'
-            onChange={() => {
-              setAltText(inputAlt.current?.value as string)
-            }}
+            placeholder='enter the caption/alt text for the image (optional)'
             >
             </input>
           </div>
@@ -564,7 +577,7 @@ const ImageUploader = ({
       </PopupContent>
     </Popup>
   : "",
-  [cropImg, canvas, inputX, inputY, dX, dY, zoom, inputZoom]);
+  [cropImg, canvas, inputX, inputY, dX, dY, zoom, inputZoom, aspectRatio]);
 
   const profileVariant = (
     <>

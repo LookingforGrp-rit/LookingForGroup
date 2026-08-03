@@ -22,7 +22,7 @@ interface UnbanEmailProps {
 const logoUrl = 'https://lookingforgrp.com/api/images/lfg-logo.png';
 
 const UnbanEmail = ({ receiverName }: UnbanEmailProps) => {
-  const previewText = `[DO NOT REPLY] You have been unbanned on Looking For Group`;
+  const previewText = `You have been unbanned on Looking For Group`;
 
   return createElement(
     Html,
@@ -69,7 +69,7 @@ const UnbanEmail = ({ receiverName }: UnbanEmailProps) => {
             Text,
             { className: 'text-[14px] text-black leading-[24px]' },
             'You have been unbanned from LFG. ',
-            'Your account has been unfrozen, and you will be able to join or create projects again.',
+            'Your account has been unfrozen and is now visible to the public. You can once again create and join projects.',
           ),
           createElement(
             Text,

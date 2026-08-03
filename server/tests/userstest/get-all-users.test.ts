@@ -107,6 +107,7 @@ describe('test getAllUsersService', () => {
               },
             },
           ],
+          privacy: 'public',
         },
       }),
     );
@@ -135,6 +136,7 @@ describe('test getAllUsersService', () => {
               },
             },
           ],
+          privacy: 'public',
         },
       }),
     );
@@ -180,6 +182,7 @@ describe('test getAllUsersService', () => {
               },
             },
           ],
+          privacy: 'public',
         },
       }),
     );
@@ -209,6 +212,7 @@ describe('test getAllUsersService', () => {
               },
             },
           ],
+          privacy: 'public',
         },
       }),
     );

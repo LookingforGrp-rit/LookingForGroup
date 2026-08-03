@@ -172,6 +172,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const fastUpdateMessage = (updatedPendingProject: PendingProject) => {
     let newMessage = "";
     if (updatedPendingProject.title !== null && updatedPendingProject.title !== undefined) { getUniqueProjectTitle(updatedPendingProject?.title, projectID); }
+    
+    // Checks to see if the project is saving before updating the message
+    // If it is it'll display a special message, otherwise it uses the main messages
     if(getIsSaving())
     {
         newMessage = "Project is saving! Please wait a moment!"
@@ -210,13 +213,14 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     setSaved(true);
     setConfirm(false);
 
+    // Checks to see if the project is being saved to change the message
+    // Mainly here as a backup incase the other check doesn't work
     if(getIsSaving())
     {
       setMessage("Project is saving! Please wait a moment!");
     }
     else
     {
-        
       setMessage("Project is missing a Short Description!");
     }
 

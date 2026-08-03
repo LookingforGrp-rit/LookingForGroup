@@ -23,7 +23,7 @@ interface BanEmailProps {
 const logoUrl = 'https://lookingforgrp.com/api/images/lfg-logo.png';
 
 const BanEmail = ({ receiverName, banReason }: BanEmailProps) => {
-  const previewText = `[DO NOT REPLY] You have been banned on Looking For Group`;
+  const previewText = `You have been banned on Looking For Group`;
 
   return createElement(
     Html,
@@ -75,7 +75,7 @@ const BanEmail = ({ receiverName, banReason }: BanEmailProps) => {
           createElement(
             Text,
             { className: 'text-[14px] text-black leading-[24px]' },
-            'Your account has been frozen, and you will be unable to join or create projects.',
+            'Your account has been frozen and hidden from public view. You can no longer create or join projects.',
             ' If you believe this was a mistake, contact us at ',
             createElement('strong', null, 'lookingforgrp@gmail.com'),
             '.',
