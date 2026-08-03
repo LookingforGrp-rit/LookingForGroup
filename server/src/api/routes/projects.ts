@@ -9,6 +9,7 @@ import { BodyParameterLocation } from '#middleware/validators/parameter-location
 import { ProjectMemberInPathParameterLocation } from '#middleware/validators/parameter-location/project-member-in-path-parameter.ts';
 import { ProjectOwnerInPathParameterLocation } from '#middleware/validators/parameter-location/project-owner-in-path-param-location.ts';
 import { InviteReceivedNotificationBuilder } from '#notification-templates/invite-received-notification-builder.ts';
+import { MemberRequestUpdatedNotificationBuilder } from '#notification-templates/member-request-updated.ts';
 import { ProjectApprovedNotificationBuilder } from '#notification-templates/project-approved-notification-builder.ts';
 import { ProjectRejectedNotificationBuilder } from '#notification-templates/project-rejected-notification-builder.ts';
 import { ProjectUnapprovedNotificationBuilder } from '#notification-templates/project-unapproved-notification-buildier.ts';
@@ -78,6 +79,7 @@ router.patch(
   '/members/requests/:id',
   requiresLogin,
   injectCurrentUser,
+  sendNotificationAfterAll(new MemberRequestUpdatedNotificationBuilder(), false),
   authenticated(PROJECT.updateMemberRequest),
 );
 //#endregion
