@@ -148,7 +148,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	// Loads and utilizes an imported function for setting a profile picture
 	const handleUploadPfp = (file: File) => {
 		if (file.size > 1000000) {
-			setError("File too large!");
+			setError("File too large (max: 1mb)");
 			return;
 		}
 		console.log("uploading pfp");

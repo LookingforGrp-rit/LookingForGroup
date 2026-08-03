@@ -138,7 +138,7 @@ export const MediaTab = ({
   const handleImageUpload = useCallback(async (file: File, altText?: string) => {
     if (!["image/jpeg", "image/png"].includes(file.type)) return;
     else if (file.size > 2000000) {
-      setImageError("File too large");
+      setImageError("File too large! (max: 2mb)");
       return;
     }
 

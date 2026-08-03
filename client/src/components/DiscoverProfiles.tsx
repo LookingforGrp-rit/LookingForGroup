@@ -409,8 +409,9 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
 
                               //Sets the index to the setActiveId value.
                               setActiveTabId(index);
-                              if (document.getElementById("filter-tags")) {
-                                document.getElementById("filter-tags").scrollTop = 0; //shows error but still works?
+                              let tags = document.getElementById("filter-tags")
+                              if (tags) {
+                                tags.scrollTop = 0; //shows error but still works?
                               }
                             }}
                           >
