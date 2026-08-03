@@ -11,6 +11,7 @@ import { ProjectOwnerInPathParameterLocation } from '#middleware/validators/para
 import { ProjectApprovedNotificationBuilder } from '#notification-templates/project-approved-notification-builder.ts';
 import { ProjectRejectedNotificationBuilder } from '#notification-templates/project-rejected-notification-builder.ts';
 import { ProjectUnapprovedNotificationBuilder } from '#notification-templates/project-unapproved-notification-buildier.ts';
+import { RequestToJoinNotificationBuilder } from '#notification-templates/request-to-join-notification-builder.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresModerator from '../middleware/authorization/requires-mod.ts';
 import requiresProjectOwner from '../middleware/authorization/requires-project-owner.ts';
@@ -361,6 +362,7 @@ router.post(
     new BodyParameterLocation(),
     'prospectiveMemberId',
   ),
+  sendNotificationAfterAll(new RequestToJoinNotificationBuilder(), false),
   PROJECT.requestToJoin,
 );
 
