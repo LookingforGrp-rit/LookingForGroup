@@ -78,6 +78,26 @@ describe('getuserProjectsService', () => {
     //expect(result).toEqual(mockPreviews);
   });
 
+  it('allows unapproved projects to be visible to the creator or members only', async () => {
+    vi.mocked(prisma.projects.findMany).mockResolvedValue(mockProjects as any);
+    vi.mocked(prisma.users.findUnique).mockResolvedValue(mockUser as any);
+
+    await getUserProjectsService(42, 99);
+
+    expect(prisma.projects.findMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({
+        members: expect.objectContaining({
+          some: expect.objectContaining({ userId: 42, profileVisibility: 'public' }),
+        }),
+        OR: expect.arrayContaining([
+          expect.objectContaining({ approved: true }),
+          expect.objectContaining({ userId: 99 }),
+          expect.objectContaining({ members: expect.objectContaining({ some: expect.objectContaining({ userId: 99 }) }) }),
+        ]),
+      }),
+    }));
+  });
+
   it("returns NOT_FOUND when user doesn't exist", async () => {
     vi.mocked(prisma.projects.findMany).mockResolvedValue([]);
     vi.mocked(prisma.users.findUnique).mockResolvedValue(null);

@@ -1,5 +1,6 @@
-import type { ApiResponse } from '@looking-for-group/shared';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
+import { getUserByGoogleService } from '#services/me/get-user-google.ts';
 import { getUserProjectsService } from '#services/users/get-user-proj.ts';
 
 //GET api/users/{id}/projects
@@ -8,7 +9,17 @@ export const getOtherUserProjects = async (req: Request, res: Response): Promise
   //current user ID
   const UserId = parseInt(req.params.id as string);
 
-  const result = await getUserProjectsService(UserId);
+  const authenticatedRequest = req as AuthenticatedRequest;
+  const currentUser = authenticatedRequest.currentUser;
+
+  if (!currentUser && req.session?.gid) {
+    const sessionUser = await getUserByGoogleService(req.session.gid);
+    if (sessionUser !== 'INTERNAL_ERROR' && sessionUser !== 'NOT_FOUND') {
+      authenticatedRequest.currentUser = sessionUser;
+    }
+  }
+
+  const result = await getUserProjectsService(UserId, authenticatedRequest.currentUser?.userId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

@@ -9,6 +9,7 @@ type GetProjectsError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 //gets projects of other uses to view
 export const getUserProjectsService = async (
   userId: number,
+  viewerId?: number,
 ): Promise<ProjectPreview[] | GetProjectsError> => {
   try {
     //check that user exists
@@ -19,6 +20,20 @@ export const getUserProjectsService = async (
     });
     if (user === null) return 'NOT_FOUND';
 
+    const approvalVisibilityFilter = viewerId
+      ? [
+          { approved: true },
+          { userId: viewerId },
+          {
+            members: {
+              some: {
+                userId: viewerId,
+              },
+            },
+          },
+        ]
+      : [{ approved: true }];
+
     //get projects that a user is publicly a member of
     const projects = await prisma.projects.findMany({
       where: {
@@ -28,6 +43,7 @@ export const getUserProjectsService = async (
             profileVisibility: 'public',
           },
         },
+        OR: approvalVisibilityFilter,
       },
       orderBy: { createdAt: 'desc' },
       select: ProjectPreviewSelector,
