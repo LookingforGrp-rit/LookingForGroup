@@ -655,6 +655,7 @@ const ImageUploader = ({
             </svg>
             <p className="project-editor-extra-info">Drop your image here, or <span id="browse-link">browse</span></p>
             <span className="project-editor-extra-info">Supports: JPG/JPEG, PNG</span>
+            <p className="project-editor-extra-info">Upload one image at a time</p>
           </div>
         }
       </label>
@@ -709,6 +710,7 @@ const ImageUploader = ({
           </svg>
           <p className="project-editor-extra-info">Drop your image here, or <span id="browse-link">browse</span></p>
           <p className="project-editor-extra-info">Supports: JPG/JPEG, PNG</p>
+          <p className="project-editor-extra-info">Upload one image at a time</p>
         </div>
       </label>
     </>
