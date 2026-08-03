@@ -4654,7 +4654,6 @@ button#positions-popup-list-item-active {
 #position-contact {
   margin: 20px;
   margin-left: auto;
-  padding-left: 20px;
   max-width: 100%;
   height: fit-content;
   display: flex;
@@ -4798,8 +4797,11 @@ button#positions-popup-list-item-active {
 
 #position-apply {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 5px;
+  width: fit-content;
 }
 
 #position-contact-link {
