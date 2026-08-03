@@ -211,6 +211,12 @@ export const TeamTab = ({
 	const [errorAddPosition, setErrorAddPosition] = useState("");
 	const [successAddMember, setSuccessAddMember] = useState(false);
 
+	// The selected job's date range, mirrored into state so each date input can
+	// bound the other. The inputs used to be uncontrolled, so nothing stopped a
+	// position from ending before it started.
+	const [jobStartInput, setJobStartInput] = useState("");
+	const [jobEndInput, setJobEndInput] = useState("");
+
 	// tracking search input & dropdown selections
 	const [searchQuery, setSearchQuery] = useState("");
 	const [searchBarKey, setSearchBarKey] = useState(0);
@@ -899,6 +905,15 @@ export const TeamTab = ({
 			return;
 		}
 
+		// The inputs bound each other, but a date can still be typed straight
+		// into the field, so the range gets re-checked before anything is saved.
+		const startTime = dateTimestamp(currentJob.jobStart);
+		const endTime = dateTimestamp(currentJob.jobEnd);
+		if (startTime !== null && endTime !== null && endTime < startTime) {
+			setErrorAddPosition("Job end date cannot be before the job start date");
+			return;
+		}
+
 		// job hasn't been created yet, this is a new job
 		if (isCreatingNewPosition) {
 			if (
@@ -1080,6 +1095,28 @@ export const TeamTab = ({
 
 		return `${date}`;
 	}
+
+	// Converts a stored date into the yyyy-mm-dd string a date input expects.
+	// "No date" (unset, invalid, or the 1900-01-01 placeholder) becomes "",
+	// which is how a date input represents an empty value.
+	const toDateInputValue = (value: Date | string | null | undefined) => {
+		const date = safeDate(value);
+		return date === "None" ? "" : date;
+	}
+
+	// The date's timestamp for comparison, or null when there is no real date
+	// set. Keeps the 1900-01-01 placeholder from being treated as a date.
+	const dateTimestamp = (value: Date | string | null | undefined) => {
+		const date = toDateInputValue(value);
+		return date === "" ? null : new Date(date).getTime();
+	}
+
+	// Load the selected position's dates into the inputs whenever the position
+	// being edited changes, so the range constraints apply to existing jobs too.
+	useEffect(() => {
+		setJobStartInput(toDateInputValue(currentJob?.jobStart));
+		setJobEndInput(toDateInputValue(currentJob?.jobEnd));
+	}, [currentJob]);
 
 	// --- Content variables ---
 	// JSX content for viewing position details.
@@ -1451,8 +1488,11 @@ export const TeamTab = ({
 								id="input-job-start"
 								name="job-start"
 								min="1000-01-01"
-								max="9999-12-31"
+								// A job can't start after it ends
+								max={jobEndInput || "9999-12-31"}
+								value={jobStartInput}
 								onChange={(e) => {
+									setJobStartInput(e.currentTarget.value);
 									if (currentJob) {
 										currentJob.jobStart = e.currentTarget.valueAsDate;
 									} else {
@@ -1467,9 +1507,12 @@ export const TeamTab = ({
 								type="date"
 								id="input-job-end"
 								name="job-end"
-								min="1000-01-01"
+								// A job can't end before it starts
+								min={jobStartInput || "1000-01-01"}
 								max="9999-12-31"
+								value={jobEndInput}
 								onChange={(e) => {
+									setJobEndInput(e.currentTarget.value);
 									if (currentJob) {
 										currentJob.jobEnd = e.currentTarget.valueAsDate;
 									} else {
