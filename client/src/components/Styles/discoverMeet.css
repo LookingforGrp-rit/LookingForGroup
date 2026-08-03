@@ -142,8 +142,8 @@ Meet page hero style rules
   grid-area: blurb2;
   position: relative;
 
-  width: 120%;
-  height: 21vw;
+  width: 100%;
+  height: 19vw;
 
   .panel-text {
     width: 95%;
