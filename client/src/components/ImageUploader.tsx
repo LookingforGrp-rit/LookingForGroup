@@ -305,8 +305,9 @@ const ImageUploader = ({
     const files = input.files;
     if (!files || files.length === 0) return;
     
+    // allow only one image per upload
     if (files.length > 1) {
-      alert("Too many files uploaded. Only ONE image file per upload.");
+      alert("Only one image can be uploaded at a time.");
       return;
     }
 
