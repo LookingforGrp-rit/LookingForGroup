@@ -37,7 +37,7 @@ const ReportedBugs = ({ currentUserId, currentTab }: ReportedBugsProps) => {
         }
 
         displayReportedBugs();
-    }, [currentTab, bugReports]);
+    }, [currentTab]);
 
     // The final component ====================================================
     if (loaded) {
@@ -45,11 +45,11 @@ const ReportedBugs = ({ currentUserId, currentTab }: ReportedBugsProps) => {
             <div className="mod-tool">
                 <div className="bug-reports">
                     {bugReports.length >= 1 ?
-                    <PanelBox
-                        category={"bugs"}
-                        itemList={bugReports ? bugReports : []}
-                        userId={currentUserId}
-                    ></PanelBox> : "No reported bugs!"}
+                        <PanelBox
+                            category={"bugs"}
+                            itemList={bugReports ? bugReports : []}
+                            userId={currentUserId}
+                        ></PanelBox> : "No reported bugs!"}
                 </div>
             </div>
         );
