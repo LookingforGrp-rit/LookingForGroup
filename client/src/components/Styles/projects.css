@@ -1452,9 +1452,7 @@ Project Creator and Editor Popup style rules
 
 /* Project Editor/Creator Team Tab */
 .project-editor-team-tab {
-  padding: 1%;
-  padding-left: 3%;
-  padding-right: 3%;
+  padding: 1% 2%;
   max-width: 100%;
   color: var(--neutral-gray);
   font-size: 2ch;
@@ -1897,6 +1895,76 @@ Project Creator and Editor Popup style rules
   font-weight: 700;
   color: var(--header-color);
   font-size: 1.6ch;
+}
+
+#project-editor-change-owner {
+  background-color: var(--bg-color);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-align: center;
+  gap: 100px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 1141px;
+  height: fit-content;
+  
+  .project-editor-owner-info {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--header-color);
+    border-radius: 10px;
+
+    img {
+      height: 320px;
+      margin: 20px;
+      border-radius: 10px;
+      object-fit: contain;
+      border: 3px solid var(--primary-color);
+    }
+
+    .project-editor-project-owner-extra {
+      padding-top: 10px;
+
+      #owner-name {
+        color: var(--primary-color);
+        text-align: center;
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  #project-editor-owner-options {
+    margin: auto 0;
+    width: 40%;
+
+    .select-container {
+      margin: 0 auto;
+      width: 80%;
+    }
+
+    #project-editor-owner-confirm {
+      display: flex;
+      flex-direction: column;
+      margin-top: 40px;
+      gap: 20px;
+
+      #change-owner-confirm {
+        margin: 0 auto;
+        width: min-content;
+        padding: 10px 5px;
+        border: none;
+        border-radius: 20px;
+        background-color: var(--primary-color);
+        color: var(--invert-text);
+        font-weight: 800;
+      }
+    }
+  }
 }
 
 /* Merge popup: a comfortable content-sized box instead of the nested-popup
@@ -2690,20 +2758,19 @@ button.edit-position-contact .project-member-image {
 }
 
 .project-crop {
-  width: 100%;
+  width: 700px;
   text-align: center;
-  height: 1100px;
-  margin: 20px 20px;
+  height: 100%;
+  padding: 20px;
 
   #project-crop-header {
     display: block;
-    padding-top: 1em;
   }
 
   #canvas {
     border: 3px solid var(--primary-color);
     border-radius: 10px;
-    margin: 1vw 0;
+    margin-top: 10px;
     object-fit: cover;
     max-width: 95%;
     max-height: 400px;
@@ -2753,15 +2820,13 @@ button.edit-position-contact .project-member-image {
   }
 
   .project-crop-extra-info {
-    margin-top: 20px;
     font-size: 0.75rem;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
 
   .project-crop-mouse-instructions {
-    margin-top: 20px;
     font-size: 0.75rem;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 
     p {
       margin-top: 0;
@@ -2770,7 +2835,7 @@ button.edit-position-contact .project-member-image {
   }
 
   #alt-text-input {
-    margin: 10px auto 0 auto;
+    margin: 10px auto ;
     width: 85%;
 
     input {
@@ -2792,7 +2857,6 @@ button.edit-position-contact .project-member-image {
     flex-direction: row;
     gap: 20px;
     padding-top: 10px;
-    padding-bottom: 20px;
     width: 100%;
     justify-content: center;
   }

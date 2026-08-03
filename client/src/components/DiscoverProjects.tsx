@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { tags, projectTabs } from '../constants/tags';
@@ -421,7 +421,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     tagLabel;
                         const type = 'Project Type';
                         const id = label === "New" ? -1 :
-                            allTags.find(tag => tag.label == label)?.tagId;
+                            allTags.find(tag => tag.label == label && tag.type === "Project Type")?.tagId; 
                         const tagObj: Tag = { tagId: id ?? 0, label, type, category: "Other" };
                         return (
                             <button key={`${type}-${label}`}
@@ -539,8 +539,9 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
 
                                                         //Sets the index to the setActiveId value.
                                                         setActiveTabId(index);
-                                                        if (document.getElementById("filter-tags")) {
-                                                            document.getElementById("filter-tags").scrollTop = 0; //shows error but still works?
+                                                        let tags = document.getElementById("filter-tags")
+                                                        if (tags) {
+                                                            tags.scrollTop = 0; //shows error but still works?
                                                         }
                                                     }}
                                                 >

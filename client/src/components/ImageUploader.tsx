@@ -56,8 +56,11 @@ const ImageUploader = ({
   const [zoom, setZoom] = useState(100);
   const [dX, setDX] = useState(0);
   const [dY, setDY] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [prevPos, setPrevPos] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
+
+  //changed to Ref instead of State so that
+  //the changes are read without needing a re-render
+  const isDragging = useRef(false);
+  const prevPos = useRef<{ x: number, y: number }>({ x: 0, y: 0 });
 
   const [cropFile, setCropFile] = useState<File>();
   const [cropImg, setCropImg] = useState<string>();
@@ -107,19 +110,18 @@ const ImageUploader = ({
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (e.button === 0 || e.button === 1 || e.button === 2) {
       e.preventDefault(); // stop context menu
-      setIsDragging(true);
-      setPrevPos({ x: e.clientX, y: e.clientY });
-
+      isDragging.current = true;
+      prevPos.current = { x: e.clientX, y: e.clientY };
     }
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDragging || !tempImage.current || !canvas.current) return;
+    if (!isDragging.current || !tempImage.current || !canvas.current) return;
 
     const rect = canvas.current.getBoundingClientRect();
 
-    const deltaX = (e.clientX - prevPos.x) * (canvas.current.width / rect.width);
-    const deltaY = (e.clientY - prevPos.y) * (canvas.current.height / rect.height);
+    const deltaX = (e.clientX - prevPos.current.x) * (canvas.current.width / rect.width);
+    const deltaY = (e.clientY - prevPos.current.y) * (canvas.current.height / rect.height);
 
     const rawDX = dX - deltaX;
     const rawDY = dY - deltaY;
@@ -130,7 +132,7 @@ const ImageUploader = ({
     setDX(newDX);
     setDY(newDY);
 
-    setPrevPos({ x: e.clientX, y: e.clientY });
+    prevPos.current = { x: e.clientX, y: e.clientY };
     updateCanvas();
   };
 
@@ -170,7 +172,7 @@ const ImageUploader = ({
   };
 
   const handleMouseUp = () => {
-    setIsDragging(false);
+    isDragging.current = false;
   };
 
   //wheel zooming for cropping
@@ -437,18 +439,21 @@ const ImageUploader = ({
   }, [loadingImage, pendingFiles, setCropImg]);
 
   const cropPopup = useMemo(
-    () => cropImg !== undefined ?
-      <Popup startOpen={true}>
-        <PopupContent confirmation={true} callback={closePopup}>
-          <div className="project-crop">
-            <label id="project-crop-header">Crop image for thumbnail usage</label>
-            <canvas ref={canvas} id="canvas"
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-              onWheel={handleWheel}
-              onContextMenu={(e) => e.preventDefault()}
+  () => cropImg !== undefined ?
+    <Popup startOpen={true}>
+      <PopupContent confirmation={true} callback={closePopup}>
+        <div className="project-crop">
+        <label id="project-crop-header">Crop image for thumbnail usage</label>
+        <div className="project-crop-extra-info">
+          Crop your image to a set ratio that better matches the site.
+        </div>
+        <canvas ref={canvas} id="canvas"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onWheel={handleWheel}
+          onContextMenu={(e) => e.preventDefault()}
 
               width={getCanvasDimensions(aspectRatio).width}
               height={getCanvasDimensions(aspectRatio).height}
@@ -490,7 +495,7 @@ const ImageUploader = ({
               </Select>
             </div>
             <div className="project-crop-mouse-instructions">
-              <p>You can also drag the image around the view using the mouse, and zoom in and out with the scroll wheel.</p>
+              <p>You can also drag the image around the view using the mouse,<br/>and zoom in and out with the scroll wheel.</p>
             </div>
             <div id="hide-range-rows">
               <div id="zoom-row">
@@ -580,9 +585,6 @@ const ImageUploader = ({
                   </input>
                 </div>
                 : ""}
-            </div>
-            <div className="project-crop-extra-info">
-              Crop your image to a set ratio that better matches the site.
             </div>
             <div className="confirm-project-crop">
               <PopupButton buttonId="project-crop-save" callback={sendImg} doNotClose={() => true}>Crop Image</PopupButton>
