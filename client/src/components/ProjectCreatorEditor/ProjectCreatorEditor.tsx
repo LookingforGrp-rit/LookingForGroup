@@ -23,6 +23,7 @@ import { Pending, PendingProject, PendingProjectMember } from "../../../types/ty
 import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectContext, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, MemberRequests, ApiResponse, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 import { setIsSaving, getIsSaving } from "../pages/MyProjects";
+import { NEW_PROJECT_NOTICE_KEY } from "../NewProjectReviewNotice";
 
 type ApprovalStatusKey = keyof typeof ApprovalStatus;
 
@@ -725,9 +726,14 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           }
 
           await dataManager.saveChanges();
+
+          // Creating a project doesn't put it under review, which isn't obvious
+          // from the editor. Leave a flag for NewProjectReviewNotice to explain
+          // that, since the reload below wipes this component's state.
+          sessionStorage.setItem(NEW_PROJECT_NOTICE_KEY, modifiedProject?.title ?? "");
         }
       }
-      
+
       // Mark project as saved so cleanup won't delete it
       setSaved(true);
       setProjectData(dataManager.getSavedProject());
