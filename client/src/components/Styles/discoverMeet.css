@@ -614,6 +614,7 @@ as it's misleading*/
 @media screen and (max-width: 1020px) {
   .carousel-contents {
     height: auto;
+    width: 100%;
   }
 
   .carousel-row:first-child {
@@ -626,10 +627,12 @@ as it's misleading*/
   }
 
   .discover-project-image {
+    width: 100%;
     min-width: 100%;
-    height: auto;
-    max-height: 325px;
-    border-radius: 0;
+    max-width: 100%;
+    height: 260px;
+    max-height: none;
+    border-radius: 10px 10px 0 0;
   }
 
   .discover-project-about {

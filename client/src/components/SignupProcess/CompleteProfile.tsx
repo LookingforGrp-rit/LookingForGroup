@@ -9,11 +9,11 @@ import { MouseEventHandler, useMemo, useState } from "react";
 import LabelInputBox from "../LabelInputBox";
 import { Select, SelectButton, SelectOptions } from "../Select";
 import { getMajors, getJobTitles } from "../../api/users";
-import placeholder from "../../images/lfrog.png";
+// import placeholder from "../../images/lfrog.png";
 //why do these 2 things have the same name??
 import { RitStatus as RitStatuses, } from "@looking-for-group/shared/enums";
 import { ProfileImageUploader } from "../ImageUploader";
-import arrow from '../../../public/images/icons/s-arrow.png';
+// import arrow from '../../../public/images/icons/s-arrow.png';
 
 
 interface CompleteProfileProps {
@@ -73,15 +73,15 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	onNext,
 	onBack,
 	// avatarImage,
-	userInfo,
-	selectedSkills,
+	// userInfo,
+	// selectedSkills,
 	bio,
 	pronouns,
 	headline,
 	phoneNumber,
 	title,
 	location,
-	funFact,
+	// funFact,
 	major,
 	profileImage,
 	ritStatus,
@@ -90,15 +90,12 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	setPhoneNumber,
 	setTitle,
 	setLocation,
-	setFunFact,
+	// setFunFact,
 	setMajor,
 	setRitStatus,
 	setPronouns,
 	setProfileImage
 }) => {
-	// make each skill tag a different color
-	// matches the colors in the design/background
-	const tagColors = ["#9FACFF", "#97E5AB", "#99E6EA", "#F18067", "#239EF7"];
 
 	const [allMajors, setAllMajors] = useState<Major[]>([]);
 	const [roles, setRoles] = useState<Role[]>();
@@ -150,6 +147,10 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 
 	// Loads and utilizes an imported function for setting a profile picture
 	const handleUploadPfp = (file: File) => {
+		if (file.size > 1000000) {
+			setError("File too large!");
+			return;
+		}
 		console.log("uploading pfp");
 		const reader = new FileReader();
 		reader.onload = (event) => {

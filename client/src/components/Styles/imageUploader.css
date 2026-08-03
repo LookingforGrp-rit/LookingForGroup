@@ -46,10 +46,14 @@
 }
 
 .drop-area {
-    height: 100%;
-    width: 100%;
+    height: fit-content;
+    width: fit-content;
+    max-width: 100%;
+    max-height: 100%;
     cursor: pointer;
     background: none;
+    border: 2px dashed #424242;
+    border-radius: 10px;
 }
 .drop-area-drag-over {
     height: 100%;
@@ -77,7 +81,7 @@
 
 /* hide when on touchscreen */
 @media (hover: hover) and (pointer: fine) {
-  #hide-range-rows {
+  /* #hide-range-rows {
     
-  }
+  } */
 }
