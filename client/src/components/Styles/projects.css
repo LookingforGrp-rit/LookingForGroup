@@ -2499,6 +2499,12 @@ Project Creator and Editor Popup style rules
   gap: 10px;
 }
 
+@media only screen and (max-width:950px){
+  #open-position-details{
+    gap: 50px;
+  }
+}
+
 #open-position-contact {
   display: flex;
   align-items: center;
@@ -4712,7 +4718,6 @@ button#positions-popup-list-item-active {
 #position-contact {
   margin: 20px;
   margin-left: auto;
-  padding-left: 20px;
   max-width: 100%;
   height: fit-content;
   display: flex;
@@ -4856,8 +4861,11 @@ button#positions-popup-list-item-active {
 
 #position-apply {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 5px;
+  width: fit-content;
 }
 
 #position-contact-link {
@@ -6272,7 +6280,7 @@ My projects page style rules
 #popup-result .small-popup {
   .success-msg {
     font-weight: 700;
-    color: var(--tag-green-selected);
+    color: green;
     font-style: italic;
   }
 
