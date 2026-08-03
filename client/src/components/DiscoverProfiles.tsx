@@ -157,18 +157,18 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
     if (update) updateItemList(newActiveSkills, newExcludeSkills, filterMode, sortMode);
   };
 
-    /**
-    * Checks the scroll position and container width to determine if 
-    * there is more content to the left or right.
-    */
-    const checkScrollVisibility = () => {
-      if (skillFiltersRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = skillFiltersRef.current;
+  /**
+  * Checks the scroll position and container width to determine if 
+  * there is more content to the left or right.
+  */
+  const checkScrollVisibility = () => {
+    if (skillFiltersRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = skillFiltersRef.current;
 
-        setShowLeftArrow(scrollLeft > 0);
-        setShowRightArrow(Math.ceil(scrollLeft + clientWidth) < scrollWidth - 1);
-      }
-    };
+      setShowLeftArrow(scrollLeft > 0);
+      setShowRightArrow(Math.ceil(scrollLeft + clientWidth) < scrollWidth - 1);
+    }
+  };
 
   /**
   * === For Popup Filters ===
@@ -411,6 +411,9 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
 
                               //Sets the index to the setActiveId value.
                               setActiveTabId(index);
+                              if (document.getElementById("filter-tags")) {
+                                document.getElementById("filter-tags").scrollTop = 0; //shows error but still works?
+                              }
                             }}
                           >
                             {tab.categoryName}
