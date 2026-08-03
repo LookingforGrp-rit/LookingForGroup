@@ -1,31 +1,34 @@
-post:
-  summary: Bans a user by adding them to a blacklist
+delete:
+  summary: Add a new video to a project
+  description: Creates a new video entry associated with a specific project.
   tags:
-    - Mod
+    - Projects
   security:
     - shibbolethAuth: []
   parameters:
     - name: id
       in: path
+      description: The ID of the project to delete a video from
       required: true
-      description: User ID of the user to be banned
       schema:
-        type: string
+        type: integer
+        example: 5
+    - name: videoId
+      in: path
+      description: The ID of the video
+      required: true
+      schema:
+        type: integer
+        example: 42
     - in: query
       name: devId
       schema:
         type: integer
       required: false
       description: The user ID to be used as the current user
-  requestBody:
-    required: true
-    content:
-      application/json:
-        schema:
-          $ref: '../../swagger.yaml#/components/schemas/BanUserInput'
   responses:
     '200':
-      description: User banned successfully
+      description: Video deleted successfully
       content:
         application/json:
           schema:
@@ -39,12 +42,12 @@ post:
                 nullable: true
                 example: null
               data:
-                type: object
-                nullabe: true
+                type: string
+                nullable: true
                 example: null
+    '403':
+      $ref: '../../swagger.yaml#/components/responses/Forbidden'
     '404':
       $ref: '../../swagger.yaml#/components/responses/NotFound'
-    '409':
-      $ref: '../../swagger.yaml#/components/responses/Conflict'
     '500':
       $ref: '../../swagger.yaml#/components/responses/InternalServerError'

@@ -1,16 +1,17 @@
 post:
-  summary: Bans a user by adding them to a blacklist
+  summary: Request to join from a prospective member
+  description: Sends a request to join a project
   tags:
-    - Mod
+    - Projects Members
   security:
     - shibbolethAuth: []
   parameters:
-    - name: id
-      in: path
-      required: true
-      description: User ID of the user to be banned
+    - in: path
+      name: id
       schema:
-        type: string
+        type: integer
+      required: true
+      description: The ID of the project
     - in: query
       name: devId
       schema:
@@ -22,10 +23,10 @@ post:
     content:
       application/json:
         schema:
-          $ref: '../../swagger.yaml#/components/schemas/BanUserInput'
+          $ref: '../../../swagger.yaml#/components/schemas/CreateMemberRequestInput'
   responses:
-    '200':
-      description: User banned successfully
+    '201':
+      description: Request Successful
       content:
         application/json:
           schema:
@@ -33,18 +34,18 @@ post:
             properties:
               status:
                 type: integer
-                example: 200
+                example: 201
               error:
                 type: string
                 nullable: true
                 example: null
               data:
-                type: object
-                nullabe: true
+                type: string
+                nullable: true
                 example: null
     '404':
-      $ref: '../../swagger.yaml#/components/responses/NotFound'
+      $ref: '../../../swagger.yaml#/components/responses/NotFound'
     '409':
-      $ref: '../../swagger.yaml#/components/responses/Conflict'
+      $ref: '../../../swagger.yaml#/components/responses/Conflict'
     '500':
-      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'

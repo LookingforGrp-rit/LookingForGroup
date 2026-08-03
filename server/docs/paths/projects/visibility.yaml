@@ -1,31 +1,35 @@
-post:
-  summary: Bans a user by adding them to a blacklist
+patch:
+  summary: Changes the visibility of a project.
   tags:
-    - Mod
-  security:
-    - shibbolethAuth: []
+    - Projects
   parameters:
     - name: id
       in: path
+      description: The ID of the project to change visibility
       required: true
-      description: User ID of the user to be banned
-      schema:
-        type: string
-    - in: query
-      name: devId
       schema:
         type: integer
-      required: false
-      description: The user ID to be used as the current user
+        example: 42
+    - name: devId
+      in: query
+      description: The ID to be used as 'me'
+      required: true
+      schema:
+        type: integer
+        example: 4
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          $ref: '../../swagger.yaml#/components/schemas/BanUserInput'
+          type: object
+          properties:
+            visibility:
+              type: strubg
+              enum: [public, private]
   responses:
     '200':
-      description: User banned successfully
+      description: Project visibility updated successfully
       content:
         application/json:
           schema:
@@ -39,12 +43,12 @@ post:
                 nullable: true
                 example: null
               data:
-                type: object
-                nullabe: true
+                type: string
+                nullable: true
                 example: null
+    '403':
+      $ref: '../../swagger.yaml#/components/responses/Forbidden'
     '404':
       $ref: '../../swagger.yaml#/components/responses/NotFound'
-    '409':
-      $ref: '../../swagger.yaml#/components/responses/Conflict'
     '500':
       $ref: '../../swagger.yaml#/components/responses/InternalServerError'

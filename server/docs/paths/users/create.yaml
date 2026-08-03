@@ -1,0 +1,52 @@
+post:
+  summary: Create a user
+  tags:
+    - Users
+  parameters:
+    - in: query
+      name: devFirstName
+      required: false
+      schema:
+        type: string
+      description: The first name to be used as the current first name
+    - in: query
+      name: devLastName
+      required: false
+      schema:
+        type: string
+      description: The last name to be used as the current last name
+    - in: query
+      name: devEmail
+      required: false
+      schema:
+        type: string
+      description: The email to be used as the current email
+    - in: query
+      name: devUID
+      required: false
+      schema:
+        type: string
+      description: The UID to be used as the current UID
+  security:
+    shibbolethAuth: []
+  responses:
+    '201':
+      description: User Created
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 201
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                $ref: '../../swagger.yaml#/components/schemas/MePrivate'
+    '409':
+      $ref: '../../swagger.yaml#/components/responses/Conflict'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

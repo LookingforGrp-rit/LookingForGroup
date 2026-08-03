@@ -1,0 +1,32 @@
+get:
+  summary: Get user by email
+  tags:
+    - Users
+  parameters:
+    - in: path
+      name: email
+      required: true
+      schema:
+        type: string
+      description: The RIT email of the user to retrieve
+  responses:
+    '200':
+      description: User found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                $ref: '../../swagger.yaml#/components/schemas/UserPreview'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

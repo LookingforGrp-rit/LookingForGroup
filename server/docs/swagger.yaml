@@ -69,6 +69,100 @@ paths:
   /api/mod/clear-profile/{id}:
     $ref: './paths/mod/clear-profile.yaml'
 
+  # PROJECTS
+  # /api/projects:
+  #   $ref: './paths/projects/projects.yaml'
+  # /api/projects/paginated/{count}/{id}/{method}:
+  #   $ref: './paths/projects/paginated.yaml'
+  # /api/projects/{id}:
+  #   $ref: './paths/projects/project.yaml'
+  # /api/projects/{id}/thumbnail:
+  #   $ref: './paths/projects/thumbnail.yaml'
+  /api/projects/{id}/images:
+    $ref: './paths/projects/images.yaml'
+  /api/projects/{id}/images/{imageId}:
+    $ref: './paths/projects/imageId.yaml'
+  /api/projects/{id}/images/reorder:
+    $ref: './paths/projects/reorder-images.yaml'
+  /api/projects/{id}/members:
+    $ref: './paths/projects/members/members.yaml'
+  /api/projects/{id}/members/send-invite:
+    $ref: './paths/projects/members/send-invite.yaml'
+  /api/projects/{id}/members/request-to-join:
+    $ref: './paths/projects/members/request-join.yaml'
+  /api/projects/{id}/members/applications:
+    $ref: './paths/projects/members/applications.yaml'
+  /api/projects/members/invitations:
+    $ref: './paths/projects/members/invitations.yaml'
+  /api/projects/members/requests:
+    $ref: './paths/projects/members/member-request.yaml'
+  /api/projects/members/requests/{id}:
+    $ref: './paths/projects/members/member-request-id.yaml'
+  /api/projects/{id}/members/{userId}:
+    $ref: './paths/projects/members/membersId.yaml'
+  /api/projects/{id}/change-owner/{userId}:
+    $ref: './paths/projects/members/change-owner.yaml'
+  /api/projects/{id}/members/{userId}/invite:
+    $ref: './paths/projects/members/member-invite.yaml'
+  /api/projects/{id}/socials:
+    $ref: './paths/projects/socials.yaml'
+  /api/projects/{id}/socials/{socialId}:
+    $ref: './paths/projects/socialId.yaml'
+  /api/projects/{id}/tags:
+    $ref: './paths/projects/tags.yaml'
+  /api/projects/{id}/tags/{tagId}:
+    $ref: './paths/projects/tagId.yaml'
+  /api/projects/{id}/mediums:
+    $ref: './paths/projects/mediums.yaml'
+  /api/projects/{id}/mediums/{mediumId}:
+    $ref: './paths/projects/mediumId.yaml'
+  /api/projects/{id}/jobs:
+    $ref: './paths/projects/jobs.yaml'
+  /api/projects/{id}/jobs/{jobId}:
+    $ref: './paths/projects/jobId.yaml'
+  /api/projects/{id}/followers:
+    $ref: './paths/projects/followers.yaml'
+  /api/projects/{id}/videos:
+    $ref: './paths/projects/videos.yaml'
+  /api/projects/{id}/videos/{videoId}:
+    $ref: './paths/projects/videoId.yaml'
+  /api/projects/{id}/visibility:
+    $ref: './paths/projects/visibility.yaml'
+  /api/projects/unapproved:
+    $ref: './paths/projects/approval/unapproved.yaml'
+  /api/projects/unapproved/{id}:
+    $ref: './paths/projects/approval/unapproved-id.yaml'
+  /api/projects/{id}/approve:
+    $ref: './paths/projects/approval/approve.yaml'
+  /api/projects/{id}/unapprove:
+    $ref: './paths/projects/approval/unapprove.yaml'
+
+  # USERS
+  /api/users/all/{method}:
+    $ref: './paths/users/get-all.yaml'
+  /api/users:
+    $ref: './paths/users/create.yaml'
+  /api/users/{id}:
+    $ref: './paths/users/get-id.yaml'
+  /api/users/search-username/{username}:
+    $ref: './paths/users/search-username.yaml'
+  /api/users/search-email/{email}:
+    $ref: './paths/users/search-email.yaml'
+  /api/users/search-google/{id}:
+    $ref: './paths/users/search-google.yaml'
+  /api/users/{id}/projects:
+    $ref: './paths/users/projects.yaml'
+  /api/users/{id}/followings/projects:
+    $ref: './paths/users/followings-projects.yaml'
+  /api/users/{id}/followings/people:
+    $ref: './paths/users/followings-people.yaml'
+  /api/users/{id}/followers:
+    $ref: './paths/users/followers.yaml'
+  /api/users/blacklist:
+    $ref: './paths/users/blacklist.yaml'
+  /api/users/blacklist/{id}:
+    $ref: './paths/users/blacklist-id.yaml'
+
 # COMPONENTS
 components:
   securitySchemes:

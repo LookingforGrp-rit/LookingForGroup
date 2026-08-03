@@ -1,0 +1,90 @@
+post:
+  summary: Add a new video to a project
+  description: Creates a new video entry associated with a specific project.
+  tags:
+    - Projects
+  security:
+    - shibbolethAuth: []
+  parameters:
+    - name: id
+      in: path
+      description: The ID of the project to add a video to
+      required: true
+      schema:
+        type: integer
+        example: 42
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../swagger.yaml#/components/schemas/CreateProjectVideoInput'
+  responses:
+    '201':
+      description: Video added successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 201
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: string
+                nullable: true
+                example: null
+    '403':
+      $ref: '../../swagger.yaml#/components/responses/Forbidden'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+get:
+  summary: Gets all videos for a project
+  description: Gets all videos for a project associated with a specific project.
+  tags:
+    - Projects
+  security:
+    - shibbolethAuth: []
+  parameters:
+    - name: id
+      in: path
+      description: The ID of the project to add a video to
+      required: true
+      schema:
+        type: integer
+        example: 42
+  responses:
+    '200':
+      description: Videos gotten successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: array
+                items:
+                  $ref: '../../swagger.yaml#/components/schemas/ProjectVideo'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
