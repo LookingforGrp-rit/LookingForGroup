@@ -70,6 +70,7 @@ const Profile = (/*userProfile: any*/) => {
 
   // Get URL parameters to tell what user we're looking for and store it
   const urlParams = new URLSearchParams(window.location.search);
+
   // User ID of profile being viewed
   const profileID: string = urlParams.get("userID")!;
 
@@ -200,7 +201,7 @@ const Profile = (/*userProfile: any*/) => {
 
       if (videoResponse.data)
         setGalleryVideos(videoResponse.data);
-    }
+    };
 
     loadGallery();
   }, [profileID]);
@@ -763,7 +764,6 @@ const Profile = (/*userProfile: any*/) => {
       })));
 
       if (res?.every(r => r.status === 200) && notif.every(r => r.status === 201)) {
-        setModActionComplete(true);
         navigate(paths.routes.MODERATION);
       };
 
@@ -795,7 +795,6 @@ const Profile = (/*userProfile: any*/) => {
       if (warnRes.status === 201
         && deactivateRes?.every(r => r.status === 200)
         && notif.every(r => r.status === 201)) {
-        setModActionComplete(true);
         navigate(paths.routes.MODERATION);
       }
     } else if (action === 'ban') {

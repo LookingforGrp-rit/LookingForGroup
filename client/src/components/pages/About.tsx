@@ -277,7 +277,7 @@ const AboutPage = () => {
                             </ul>
                         </div>
                         <div>
-                            <h3 className="about-header-three">Ai Content</h3>
+                            <h3 className="about-header-three">AI Content</h3>
                             <ul>
                                 <li className="about-text">Projects must disclose use of AI</li>
                                 <li className="about-text">AI used maliciously to violate copyright laws is strictly prohibited and will result in the project taken down and potential bans.</li>

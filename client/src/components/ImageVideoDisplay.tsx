@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { GalleryImage, GalleryVideo, PendingGalleryImage, ProjectImage, ProjectVideo } from "@looking-for-group/shared";
-import { PendingProjectImage } from "../../types/types";
+import { GalleryImage, GalleryVideo, PendingGalleryImage, ProjectDetail, ProjectImage, ProjectVideo } from "@looking-for-group/shared";
+import { PendingProject, PendingProjectImage } from "../../types/types";
 import placeholder from "../../src/images/lfrog.png";
 import { FileImage } from "./FileImage";
 import { ThemeIcon } from "./ThemeIcon";
 import { ProjectImageUploader } from "./ImageUploader";
 import { getYouTubeEmbedURL } from "../functions/parseYoutube";
 import { Popup, PopupButton, PopupContent } from "./Popup";
+import { DeleteProjectButton } from "./ProjectCreatorEditor/DeleteProjectButton";
 
 interface ImageVideoDisplayProps<Image, Video> {
   thumbnail?: ProjectImage | PendingProjectImage,
@@ -29,6 +30,8 @@ interface ImageVideoDisplayProps<Image, Video> {
   saveProject?: () => void,
   isSaving?: boolean,
   imageError: string,
+
+  project?: PendingProject | ProjectDetail;
 }
 
 //copied from MediaTab.tsx, now is used in 2 places, both MediaTab.tsx and Profile.tsx
@@ -53,6 +56,7 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
   saveProject,
   isSaving,
   imageError,
+  project
 }: ImageVideoDisplayProps<Image, Video>) => {
 
   const [videoPopupOpen, setVideoPopupOpen] = useState(false);
@@ -280,7 +284,9 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
                 <div id="invalid-input-error" className={"save-error-msg-general"}>
                   <p>*{message}*</p>
                 </div>}
-                {isSaving ? 
+                {
+                  // Switches out the save button for a loading icon if the project is saving
+                  isSaving ? 
                   (
                     // Currently Saving
                     <div className='spinning-loader'></div>
@@ -314,6 +320,20 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
                 </PopupContent> : "" 
               }
             </Popup>
+            {
+            // Hides the delete project button if the project is currently saving
+            isSaving ?
+            (
+              // Just here for blank space and to prevent 
+              // accidental deletion while a project is saving
+              ""
+            ) : (
+              <DeleteProjectButton
+                projectID={project?.projectId}
+                projectTitle={project?.title}
+              />
+            )
+            }
           </div>
         </div>
       : ""}

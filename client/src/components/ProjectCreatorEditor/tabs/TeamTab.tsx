@@ -26,7 +26,6 @@ import {
 } from "../../../api/users";
 import {
 	getMemberRequestByProjectID,
-	changeOwner,
 } from "../../../api/projects"
 import {
 	ProjectJob,
@@ -211,6 +210,12 @@ export const TeamTab = ({
 	const [errorAddPosition, setErrorAddPosition] = useState("");
 	const [successAddMember, setSuccessAddMember] = useState(false);
 
+	// The selected job's date range, mirrored into state so each date input can
+	// bound the other. The inputs used to be uncontrolled, so nothing stopped a
+	// position from ending before it started.
+	const [jobStartInput, setJobStartInput] = useState("");
+	const [jobEndInput, setJobEndInput] = useState("");
+
 	// tracking search input & dropdown selections
 	const [searchQuery, setSearchQuery] = useState("");
 	const [searchBarKey, setSearchBarKey] = useState(0);
@@ -225,7 +230,6 @@ export const TeamTab = ({
 	const [confirm, setConfirm] = useState(false);
 
 	const [newOwner, setNewOwner] = useState<UserPreview | null>(null);
-	const [ownerChange, setOwnerChange] = useState("");
 	/**
 	 * Handles invitation request in local and data manager
 	 */
@@ -899,6 +903,15 @@ export const TeamTab = ({
 			return;
 		}
 
+		// The inputs bound each other, but a date can still be typed straight
+		// into the field, so the range gets re-checked before anything is saved.
+		const startTime = dateTimestamp(currentJob.jobStart);
+		const endTime = dateTimestamp(currentJob.jobEnd);
+		if (startTime !== null && endTime !== null && endTime < startTime) {
+			setErrorAddPosition("Job end date cannot be before the job start date");
+			return;
+		}
+
 		// job hasn't been created yet, this is a new job
 		if (isCreatingNewPosition) {
 			if (
@@ -1080,6 +1093,28 @@ export const TeamTab = ({
 
 		return `${date}`;
 	}
+
+	// Converts a stored date into the yyyy-mm-dd string a date input expects.
+	// "No date" (unset, invalid, or the 1900-01-01 placeholder) becomes "",
+	// which is how a date input represents an empty value.
+	const toDateInputValue = (value: Date | string | null | undefined) => {
+		const date = safeDate(value);
+		return date === "None" ? "" : date;
+	}
+
+	// The date's timestamp for comparison, or null when there is no real date
+	// set. Keeps the 1900-01-01 placeholder from being treated as a date.
+	const dateTimestamp = (value: Date | string | null | undefined) => {
+		const date = toDateInputValue(value);
+		return date === "" ? null : new Date(date).getTime();
+	}
+
+	// Load the selected position's dates into the inputs whenever the position
+	// being edited changes, so the range constraints apply to existing jobs too.
+	useEffect(() => {
+		setJobStartInput(toDateInputValue(currentJob?.jobStart));
+		setJobEndInput(toDateInputValue(currentJob?.jobEnd));
+	}, [currentJob]);
 
 	// --- Content variables ---
 	// JSX content for viewing position details.
@@ -1451,8 +1486,11 @@ export const TeamTab = ({
 								id="input-job-start"
 								name="job-start"
 								min="1000-01-01"
-								max="9999-12-31"
+								// A job can't start after it ends
+								max={jobEndInput || "9999-12-31"}
+								value={jobStartInput}
 								onChange={(e) => {
+									setJobStartInput(e.currentTarget.value);
 									if (currentJob) {
 										currentJob.jobStart = e.currentTarget.valueAsDate;
 									} else {
@@ -1467,9 +1505,12 @@ export const TeamTab = ({
 								type="date"
 								id="input-job-end"
 								name="job-end"
-								min="1000-01-01"
+								// A job can't end before it starts
+								min={jobStartInput || "1000-01-01"}
 								max="9999-12-31"
+								value={jobEndInput}
 								onChange={(e) => {
+									setJobEndInput(e.currentTarget.value);
 									if (currentJob) {
 										currentJob.jobEnd = e.currentTarget.valueAsDate;
 									} else {
@@ -2159,64 +2200,6 @@ export const TeamTab = ({
 											/>
 										</Select>
 									</div>
-									{projectAfterTeamChanges.owner.userId === currentMember?.user?.userId
-										&& currentMember.role?.label.toLowerCase() !== "owner" ?
-										<div id="project-team-change-owner">
-											<label>Choose a member to take ownership of the project</label>
-											<div id="user-search-container">
-												<Dropdown>
-													<DropdownButton buttonId="user-search-dropdown-button">
-														<SearchBar
-															key={searchBarKey}
-															value={ownerChange}
-															onChange={(e) =>
-																setOwnerChange(e.target.value)
-															}
-															dataSets={[
-																{ data: projectAfterTeamChanges.members }
-															]}
-															onSearch={(results) => {
-																handleSearch(
-																	results as UserPreview[][]
-																);
-															}}
-															placeholderText='Search Members'>
-														</SearchBar>
-													</DropdownButton>
-													<DropdownContent>
-														<div id="user-search-results">
-															{projectAfterTeamChanges.members.map(
-																(user, index) => (
-																	<DropdownButton
-																		key={user.user?.userId}
-																		className={`user-search-item
-																		${index === 0 ? "top" : ""}
-																		${index === searchResults.length - 1 ? "bottom" : ""}`}
-																		callback={() => {
-																			setNewOwner(user.user);
-																			setOwnerChange(`${user.user?.firstName} ${user.user?.lastName} (${user.user?.username})`)
-																			if (errorAddMember === "To relinquish ownership, you must select a new owner.")
-																				setErrorAddMember("");
-																		}
-																		}
-																	>
-																		<p className="user-search-name">
-																			{user.user?.firstName}{" "}
-																			{user.user?.lastName}
-																		</p>
-																		<p className="user-search-username">
-																			{user.user?.username}
-																		</p>
-																	</DropdownButton>
-																)
-															)}
-														</div>
-													</DropdownContent>
-												</Dropdown>
-											</div>
-										</div> :
-										""
-									}
 									{errorAddMember !== "" ?
 										<div>
 											{errorAddMember}
@@ -2230,8 +2213,7 @@ export const TeamTab = ({
 											doNotClose={() =>
 												!currentMember ||
 												!currentMember.user ||
-												!currentMember.user.userId ||
-												(currentMember.user.userId === projectAfterTeamChanges.owner?.userId && !newOwner)
+												!currentMember.user.userId
 											}
 											callback={() => {
 												if (!currentMember) {
@@ -2241,53 +2223,9 @@ export const TeamTab = ({
 												if (!currentMember.user || !currentMember.user.userId) {
 													setErrorAddMember("Member is missing user information.");
 													return;
-												} // cant edit owner role
-												if (currentMember.user.userId === projectAfterTeamChanges.owner?.userId && !newOwner) {
-													setErrorAddMember("To relinquish ownership, you must select a new owner.");
-													return;
 												}
 												//if (isNullOrUndefined(currentMember.user)) return;
 
-												if (newOwner) {
-													dataManager?.swapOwner({
-														id: {
-															type: "canon",
-															value: newOwner.userId,
-														},
-														data: newOwner.userId,
-													});
-													dataManager?.updateMember({
-														id: {
-															type: "canon",
-															value: newOwner.userId,
-														},
-														data: {
-															roleId: 77,
-															profileVisibility: "public"
-														}
-													})
-													let newMembers = structuredClone(projectAfterTeamChanges.members).map(
-														(member) => {
-															// if this member matches the updated member
-															if (
-																newOwner
-																	.userId ===
-																member.user
-																	?.userId
-															) {
-																// update role
-																return {
-																	...member,
-																	role: { label: "Owner", roleId: 77 }
-																} as PendingProjectMember;
-															} else {
-																// if it doesn't match, do nothing to the member
-																return member;
-															}
-														}
-													);
-													projectAfterTeamChanges.members = newMembers;
-												}
 												// update member in data manager
 												try {
 													dataManager?.updateMember({
@@ -2338,6 +2276,7 @@ export const TeamTab = ({
 												updatePendingProject(
 													projectAfterTeamChanges
 												);
+                        setErrorAddMember("");
 											}}>
 											Save
 										</PopupButton>
@@ -2685,6 +2624,93 @@ export const TeamTab = ({
 		]
 	);
 
+  const projectOwnershipContent: JSX.Element = useMemo(() => 
+    <div id="project-editor-change-owner">
+      <div
+        key={projectAfterTeamChanges.owner.userId}
+        className="project-editor-owner-info"
+      >
+        <label>Current Owner</label>
+        <div className="project-editor-project-owner-extra">
+          <div id="owner-name">
+            {projectAfterTeamChanges.owner.firstName} {projectAfterTeamChanges.owner.lastName}
+          </div>
+          <div id="owner-user">
+            {projectAfterTeamChanges.owner.username}
+          </div>
+        </div>
+        <img
+          className="project-owner-image"
+          src={projectAfterTeamChanges.owner.profileImage ?? profileImage}
+          alt="profile image"
+          title={"Profile picture"}
+          // Cannot use usePreloadedImage function because this is in a callback
+          onError={(e) => {
+            const profileImg = e.target as HTMLImageElement;
+            profileImg.src = profileImage;
+          }}
+        />
+      </div>
+      {unmodifiedProject.owner.userId === currentUserId ? 
+        <div id="project-editor-owner-options">
+          <label>change owner</label>
+            <Select>
+              <SelectButton
+                placeholder="Select"
+                initialVal=""
+                type="input"
+                searchable={true}
+              />
+              <SelectOptions
+                callback={(e) => {
+                  setNewOwner(allUsers.find(user => user.userId === Number.parseInt((e.target as HTMLButtonElement).value)) ?? null)
+                }}
+                options={
+                projectAfterTeamChanges.members
+                .filter(m => m.user?.userId !== projectAfterTeamChanges.owner.userId)
+                .map((member) => {
+                  return {
+                    markup: <>
+                      <p className="user-search-name">
+                        {member.user?.firstName}{" "}
+                        {member.user?.lastName}
+                      </p>
+                      <p className="user-search-username">
+                        {member.user?.username}
+                      </p></>,
+                    value: member.user?.userId + "",
+                    disabled: false
+                  };
+                })}
+              />
+            </Select>
+          {newOwner?.userId !== projectAfterTeamChanges.owner.userId ? 
+            <div id="project-editor-owner-confirm">
+              <label>confirm</label>
+              <button id="change-owner-confirm"
+              onClick={() => {
+                if (newOwner) {
+                  dataManager?.swapOwner({
+                    id: {
+                      type: "canon",
+                      value: newOwner.userId,
+                    },
+                    data: newOwner.userId,
+                  });
+                  projectAfterTeamChanges.owner = newOwner;
+                  updatePendingProject(projectAfterTeamChanges);
+                }
+              }}
+              >
+                Change Ownership
+              </button>
+            </div> 
+          : <></>}
+        </div>
+      : <></>}
+    </div>
+  , [projectAfterTeamChanges, currentUserId, searchBarKey, newOwner, searchResults]);
+
 	// Set content depending on what tab is selected
 	const teamTabContent =
 		currentTeamTab === 0 ? (
@@ -2693,7 +2719,9 @@ export const TeamTab = ({
 			currentRequestsContent
 		) : currentTeamTab === 2 ? (
 			openPositionsContent
-		) : (
+		) : currentTeamTab === 3 ? (
+      projectOwnershipContent
+    ) : (
 			<></>
 		);
 
@@ -2733,6 +2761,18 @@ export const TeamTab = ({
 						<span className="unsaved-indicator">(Unsaved)</span>
 					)}
 				</button>
+				<button
+					onClick={() => {
+						setCurrentTeamTab(
+							3
+						); /*setTeamTabContent(openPositionsContent);*/
+					}}
+					className={`button-reset project-editor-team-tab ${currentTeamTab === 3 ? "team-tab-active" : ""}`}>
+					Project Ownership{" "}
+					{isOpenPositionsUnsaved && (
+						<span className="unsaved-indicator">(Unsaved)</span>
+					)}
+				</button>
 			</div>
 
 			<div id="project-editor-team-content">
@@ -2764,7 +2804,9 @@ export const TeamTab = ({
 								<p>*{message}*</p>
 							</div>
 						)}
-						{isSaving ?
+						{
+							// Switches out the save button for a loading icon if the project is saving
+							isSaving ?
 							(
 								// Currently Saving
 								<div className='spinning-loader'></div>
@@ -2803,7 +2845,9 @@ export const TeamTab = ({
 						}
 					</Popup>
 
-					{isSaving ?
+					{
+						// Hides the delete project button if the project is currently saving
+						isSaving ?
 						(
 							// Just here for blank space and to prevent 
 							// accidental deletion while a project is saving

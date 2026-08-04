@@ -104,7 +104,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ show, onBack, onNext })
                </li>
             </ul>
 
-            <h3>Ai Content</h3>
+            <h3>AI Content</h3>
             <ul>
                <li>Projects must disclose use of AI</li>
                <li>AI used maliciously to violate copyright laws is strictly prohibited

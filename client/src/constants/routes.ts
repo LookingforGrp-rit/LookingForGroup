@@ -21,6 +21,6 @@ export const routes = {
   CREDITS: '/credits',
   ABOUT: '/about',
   ACCOUNTACTIVATE: '/activation/:token',
-  NOTFOUND: '/*',
-  MODERATION: '/moderation'
+  MODERATION: '/moderation',
+  NOTFOUND: '*'
 };
