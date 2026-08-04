@@ -2653,7 +2653,7 @@ export const TeamTab = ({
       </div>
       {unmodifiedProject.owner.userId === currentUserId ? 
         <div id="project-editor-owner-options">
-          <label>change owner</label>
+          <label>Change Owner To...</label>
             <Select>
               <SelectButton
                 placeholder="Select"
@@ -2686,7 +2686,7 @@ export const TeamTab = ({
             </Select>
           {newOwner?.userId !== projectAfterTeamChanges.owner.userId ? 
             <div id="project-editor-owner-confirm">
-              <label>confirm</label>
+              <label>Confirm</label>
               <button id="change-owner-confirm"
               onClick={() => {
                 if (newOwner) {

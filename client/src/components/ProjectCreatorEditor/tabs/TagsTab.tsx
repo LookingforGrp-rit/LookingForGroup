@@ -504,8 +504,9 @@ export const TagsTab = ({
                 <button
                   onClick={() => {
                     setCurrentTagsTab(index);
-                    if (document.getElementById("project-editor-tag-search-container")) {
-                      document.getElementById("project-editor-tag-search-container").scrollTop = 0; //shows error but still works?
+                    let container = document.getElementById("project-editor-tag-search-container");
+                    if (container) {
+                      container.scrollTop = 0; //shows error but still works?
                     }
                   }}
                   className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${tagTabColors[type as string] ?? 'grey'} ${currentTagsTab === index && searchValue === "" ? "tag-search-tab-active" : ""}`}>
@@ -522,10 +523,10 @@ export const TagsTab = ({
         </div>
         <div id="project-editor-tag-search-container">
           <TagDisplay
-            selected={[[
+            selected={[
               ...tagToTagOrSkill(projectAfterTagsChanges.tags),
               ...mediumToTagOrSkill(projectAfterTagsChanges.mediums)
-            ], []]}
+            ]}
             toggleTag={handleTagSelect}
             tabs={tagTabs}
             tabId={currentTagsTab}

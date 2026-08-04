@@ -487,7 +487,7 @@ export const Header: React.FC<HeaderProps> = ({
                   <span className="success-msg">Success:</span>
                   &nbsp;
                   {requestType === "bug-report"
-                    ? "Your report was sent! Your request will be processed and receive an update shortly."
+                    ? "Your report was sent! Your submission will be processed by our moderators. They will reach out if they need more information."
                     : "Uh oh! Something went wrong when submitting your report!"}
                 </p>
               ) : (

@@ -3,6 +3,8 @@ import UserAccessLevel = require("@looking-for-group/shared/enums");
 import type { Request } from "express";
 
 // Enums for better typing
+export type MembershipRequestResponseType =
+  'REQUEST-ACCEPTED' | 'REQUEST-REJECTED' | 'INVITE-ACCEPTED' | 'INVITE-REJECTED';
 export type SkillType = "Developer" | "Designer" | "Engineer" | "Soft" | "Audio" | "Role" | "Major" | "Other";
 export type TagType =
   | "Other"
