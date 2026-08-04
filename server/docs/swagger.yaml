@@ -37,11 +37,63 @@ paths:
   /api/datasets/tags/:
     $ref: './paths/datasets/tags.yaml'
 
-  # Images
+  # IMAGES
   /api/images/{image}::
     $ref: './paths/images.yaml'
 
   # ME
+  /api/me:
+    $ref: './paths/me/me.yaml'
+  /api/me/get-username:
+    $ref: './paths/me/get-username.yaml'
+  /api/me/projects:
+    $ref: './paths/me/projects.yaml'
+  /api/me/projects/{id}/leave:
+    $ref: './paths/me/leave-proj.yaml'
+  /api/me/projects/{id}/visibility:
+    $ref: './paths/me/proj-visibility.yaml'
+  /api/me/tag-blacklist:
+    $ref: './paths/me/tag-blacklist.yaml'
+  /api/me/blocklist:
+    $ref: './paths/me/blocklist.yaml'
+  /api/me/notifications/{id}/read:
+    $ref: './paths/me/notification-read.yaml'
+  /api/me/socials:
+    $ref: './paths/me/socials.yaml'
+  /api/me/socials/{id}:
+    $ref: './paths/me/socials-id.yaml'
+  /api/me/majors:
+    $ref: './paths/me/majors.yaml'
+  /api/me/majors/{id}:
+    $ref: './paths/me/majors-id.yaml'
+  /api/me/skills:
+    $ref: './paths/me/skills.yaml'
+  /api/me/skills/{id}:
+    $ref: './paths/me/skills-id.yaml'
+
+  # FOLLOWINGS
+  /api/me/followings/people/{id}:
+    $ref: './paths/me/followings/follow-proj.yaml'
+  /api/me/followings/projects/{id}:
+    $ref: './paths/me/followings/follow-user.yaml'
+
+  # REPORTS
+  /api/me/report-bug:
+    $ref: './paths/me/reports/report-bug.yaml'
+  /api/me/users/report/{id}:
+    $ref: './paths/me/reports/report-user.yaml'
+  /api/me/projects/report/{id}:
+    $ref: './paths/me/reports/report-project.yaml'
+
+  # GALLERY
+  /api/me/gallery/{userId}/images:
+    $ref: './paths/me/gallery/images.yaml'
+  /api/me/gallery/{userId}/images/{imageId}:
+    $ref: './paths/me/gallery/image-id.yaml'
+  /api/me/gallery/{userId}/videos:
+    $ref: './paths/me/gallery/videos.yaml'
+  /api/me/gallery/{userId}/videos/{videoId}:
+    $ref: './paths/me/gallery/video-id.yaml'
 
   # MOD
   /api/mod/user-report/{id}:
