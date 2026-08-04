@@ -70,20 +70,48 @@ paths:
     $ref: './paths/mod/clear-profile.yaml'
 
   # PROJECTS
-  # /api/projects:
-  #   $ref: './paths/projects/projects.yaml'
-  # /api/projects/paginated/{count}/{id}/{method}:
-  #   $ref: './paths/projects/paginated.yaml'
-  # /api/projects/{id}:
-  #   $ref: './paths/projects/project.yaml'
-  # /api/projects/{id}/thumbnail:
-  #   $ref: './paths/projects/thumbnail.yaml'
+  /api/projects:
+    $ref: './paths/projects/projects.yaml'
+  /api/projects/paginated/{count}/{id}/{method}:
+    $ref: './paths/projects/paginated.yaml'
+  /api/projects/{id}:
+    $ref: './paths/projects/projects-id.yaml'
+  /api/projects/{id}/socials:
+    $ref: './paths/projects/socials.yaml'
+  /api/projects/{id}/socials/{socialId}:
+    $ref: './paths/projects/socialId.yaml'
+  /api/projects/{id}/tags:
+    $ref: './paths/projects/tags.yaml'
+  /api/projects/{id}/tags/{tagId}:
+    $ref: './paths/projects/tagId.yaml'
+  /api/projects/{id}/mediums:
+    $ref: './paths/projects/mediums.yaml'
+  /api/projects/{id}/mediums/{mediumId}:
+    $ref: './paths/projects/mediumId.yaml'
+  /api/projects/{id}/jobs:
+    $ref: './paths/projects/jobs.yaml'
+  /api/projects/{id}/jobs/{jobId}:
+    $ref: './paths/projects/jobId.yaml'
+  /api/projects/{id}/followers:
+    $ref: './paths/projects/followers.yaml'
+  /api/projects/{id}/visibility:
+    $ref: './paths/projects/visibility.yaml'
+
+  # MEDIA
+  /api/projects/{id}/thumbnail:
+    $ref: './paths/projects/media/thumbnail.yaml'
   /api/projects/{id}/images:
-    $ref: './paths/projects/images.yaml'
+    $ref: './paths/projects/media/images.yaml'
   /api/projects/{id}/images/{imageId}:
-    $ref: './paths/projects/imageId.yaml'
+    $ref: './paths/projects/media/imageId.yaml'
   /api/projects/{id}/images/reorder:
-    $ref: './paths/projects/reorder-images.yaml'
+    $ref: './paths/projects/media/reorder-images.yaml'
+  /api/projects/{id}/videos:
+    $ref: './paths/projects/media/videos.yaml'
+  /api/projects/{id}/videos/{videoId}:
+    $ref: './paths/projects/media/videoId.yaml'
+
+  # MEMBERS
   /api/projects/{id}/members:
     $ref: './paths/projects/members/members.yaml'
   /api/projects/{id}/members/send-invite:
@@ -104,30 +132,8 @@ paths:
     $ref: './paths/projects/members/change-owner.yaml'
   /api/projects/{id}/members/{userId}/invite:
     $ref: './paths/projects/members/member-invite.yaml'
-  /api/projects/{id}/socials:
-    $ref: './paths/projects/socials.yaml'
-  /api/projects/{id}/socials/{socialId}:
-    $ref: './paths/projects/socialId.yaml'
-  /api/projects/{id}/tags:
-    $ref: './paths/projects/tags.yaml'
-  /api/projects/{id}/tags/{tagId}:
-    $ref: './paths/projects/tagId.yaml'
-  /api/projects/{id}/mediums:
-    $ref: './paths/projects/mediums.yaml'
-  /api/projects/{id}/mediums/{mediumId}:
-    $ref: './paths/projects/mediumId.yaml'
-  /api/projects/{id}/jobs:
-    $ref: './paths/projects/jobs.yaml'
-  /api/projects/{id}/jobs/{jobId}:
-    $ref: './paths/projects/jobId.yaml'
-  /api/projects/{id}/followers:
-    $ref: './paths/projects/followers.yaml'
-  /api/projects/{id}/videos:
-    $ref: './paths/projects/videos.yaml'
-  /api/projects/{id}/videos/{videoId}:
-    $ref: './paths/projects/videoId.yaml'
-  /api/projects/{id}/visibility:
-    $ref: './paths/projects/visibility.yaml'
+
+  # APPROVAL
   /api/projects/unapproved:
     $ref: './paths/projects/approval/unapproved.yaml'
   /api/projects/unapproved/{id}:

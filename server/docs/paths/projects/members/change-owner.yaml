@@ -3,7 +3,7 @@ patch:
   security:
     - shibbolethAuth: []
   tags:
-    - Projects Members
+    - Project Members
   description: Changes the owner of a project.
   parameters:
     - in: path

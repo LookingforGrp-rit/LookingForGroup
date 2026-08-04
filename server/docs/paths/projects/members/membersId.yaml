@@ -3,7 +3,7 @@ patch:
   security:
     - shibbolethAuth: []
   tags:
-    - Projects Members
+    - Project Members
   description: Updates the role or other properties of a member in a project.
   parameters:
     - in: path

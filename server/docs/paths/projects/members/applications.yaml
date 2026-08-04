@@ -2,7 +2,7 @@ get:
   summary: Gets all member request applications to a project
   description: Gets all applications to a project
   tags:
-    - Projects Members
+    - Project Members
   security:
     - shibbolethAuth: []
   parameters:

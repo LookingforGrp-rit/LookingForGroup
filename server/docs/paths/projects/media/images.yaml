@@ -1,20 +1,19 @@
 get:
-  summary: Get a project's members
-  description: Returns the list of members on the specified project
+  summary: Get project pictures by ID
   tags:
-    - Project Members
-  security:
-    - shibbolethAuth: []
+    - Project Images & Videos
+  description: |
+    Gets all images that are with a specific project by the project ID
   parameters:
     - in: path
       name: id
+      required: true
       schema:
         type: integer
-      required: true
-      description: The ID of the project
+      description: Project ID
   responses:
     '200':
-      description: List of members the current project has
+      description: A list of images with the project
       content:
         application/json:
           schema:
@@ -30,21 +29,28 @@ get:
               data:
                 type: array
                 items:
-                  $ref: '../../../swagger.yaml#/components/schemas/ProjectMember'
+                  $ref: '../../../swagger.yaml#/components/schemas/ProjectImage'
+    '400':
+      $ref: '../../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'
 post:
-  summary: Add a member to a project
+  summary: Add a new picture to a project
+  description: Creates a new picture entry associated with a specific project.
   tags:
-    - Project Members
+    - Project Images & Videos
   security:
     - shibbolethAuth: []
-  description: Adds a new member to a project using the project ID.
   parameters:
-    - in: path
-      name: id
+    - name: id
+      in: path
+      description: The ID of the project to add a picture to
       required: true
       schema:
         type: integer
-      description: Project ID to add the member to
+        example: 42
     - in: query
       name: devId
       schema:
@@ -54,12 +60,12 @@ post:
   requestBody:
     required: true
     content:
-      application/json:
+      multipart/form-data:
         schema:
-          $ref: '../../../swagger.yaml#/components/schemas/CreateProjectMemberInput'
+          $ref: '../../../swagger.yaml#/components/schemas/CreateProjectImageInput'
   responses:
     '201':
-      description: Member added successfully
+      description: Picture added successfully
       content:
         application/json:
           schema:
@@ -74,6 +80,6 @@ post:
                 example: null
               data:
                 type: object
-                $ref: '../../../swagger.yaml#/components/schemas/ProjectMember'
+                $ref: '../../../swagger.yaml#/components/schemas/ProjectImage'
     '500':
       $ref: '../../../swagger.yaml#/components/responses/InternalServerError'

@@ -2,7 +2,7 @@ post:
   summary: Send an invite to a prospective member
   description: Sends an invitation to a prospective member
   tags:
-    - Projects Members
+    - Project Members
   security:
     - shibbolethAuth: []
   parameters:

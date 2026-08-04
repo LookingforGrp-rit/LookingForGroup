@@ -2,7 +2,7 @@ post:
   summary: Add a new video to a project
   description: Creates a new video entry associated with a specific project.
   tags:
-    - Projects
+    - Project Images & Videos
   security:
     - shibbolethAuth: []
   parameters:
@@ -24,7 +24,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: '../../swagger.yaml#/components/schemas/CreateProjectVideoInput'
+          $ref: '../../../swagger.yaml#/components/schemas/CreateProjectVideoInput'
   responses:
     '201':
       description: Video added successfully
@@ -45,16 +45,16 @@ post:
                 nullable: true
                 example: null
     '403':
-      $ref: '../../swagger.yaml#/components/responses/Forbidden'
+      $ref: '../../../swagger.yaml#/components/responses/Forbidden'
     '404':
-      $ref: '../../swagger.yaml#/components/responses/NotFound'
+      $ref: '../../../swagger.yaml#/components/responses/NotFound'
     '500':
-      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'
 get:
   summary: Gets all videos for a project
   description: Gets all videos for a project associated with a specific project.
   tags:
-    - Projects
+    - Project Images & Videos
   security:
     - shibbolethAuth: []
   parameters:
@@ -83,8 +83,8 @@ get:
               data:
                 type: array
                 items:
-                  $ref: '../../swagger.yaml#/components/schemas/ProjectVideo'
+                  $ref: '../../../swagger.yaml#/components/schemas/ProjectVideo'
     '404':
-      $ref: '../../swagger.yaml#/components/responses/NotFound'
+      $ref: '../../../swagger.yaml#/components/responses/NotFound'
     '500':
-      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'

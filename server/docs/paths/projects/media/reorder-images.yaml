@@ -4,7 +4,7 @@ put:
   security:
     - shibbolethAuth: []
   tags:
-    - Projects
+    - Project Images & Videos
   parameters:
     - in: query
       name: devId
@@ -23,7 +23,7 @@ put:
     content:
       application/json:
         schema:
-          $ref: '../../swagger.yaml#/components/schemas/ReorderProjectImagesInput'
+          $ref: '../../../swagger.yaml#/components/schemas/ReorderProjectImagesInput'
   responses:
     '200':
       description: Images reordered successfully
@@ -42,14 +42,14 @@ put:
               data:
                 type: array
                 items:
-                  $ref: '../../swagger.yaml#/components/schemas/ProjectImage'
+                  $ref: '../../../swagger.yaml#/components/schemas/ProjectImage'
     '400':
-      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+      $ref: '../../../swagger.yaml#/components/responses/BadRequest'
     '404':
-      $ref: '../../swagger.yaml#/components/responses/NotFound'
+      $ref: '../../../swagger.yaml#/components/responses/NotFound'
     '401':
-      $ref: '../../swagger.yaml#/components/responses/Unauthorized'
+      $ref: '../../../swagger.yaml#/components/responses/Unauthorized'
     '409':
-      $ref: '../../swagger.yaml#/components/responses/Conflict'
+      $ref: '../../../swagger.yaml#/components/responses/Conflict'
     '500':
-      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'

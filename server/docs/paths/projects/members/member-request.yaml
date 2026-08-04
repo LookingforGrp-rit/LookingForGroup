@@ -2,7 +2,7 @@ get:
   summary: Gets a member request
   description: Gets the member request associated to the id and data in query
   tags:
-    - Projects Members
+    - Project Members
   security:
     - shibbolethAuth: []
   parameters:
@@ -62,7 +62,7 @@ patch:
   summary: Updates a member request
   description: Checks that the user is the receiver of the request, then updates it if it is
   tags:
-    - Projects
+    - Project Members
   security:
     - shibbolethAuth: []
   parameters:
@@ -125,7 +125,7 @@ delete:
   summary: Deletes a member request
   description: Checks that the user is the sender of the request, then deletes it if it is
   tags:
-    - Projects
+    - Project Members
   security:
     - shibbolethAuth: []
   parameters:

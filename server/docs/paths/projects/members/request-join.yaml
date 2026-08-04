@@ -2,7 +2,7 @@ post:
   summary: Request to join from a prospective member
   description: Sends a request to join a project
   tags:
-    - Projects Members
+    - Project Members
   security:
     - shibbolethAuth: []
   parameters:

@@ -2,7 +2,7 @@ get:
   summary: Gets all member request invitations for a user
   description: Gets all invitations for a user
   tags:
-    - Projects Members
+    - Project Members
   security:
     - shibbolethAuth: []
   parameters:

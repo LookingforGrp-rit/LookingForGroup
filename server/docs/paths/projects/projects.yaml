@@ -1,19 +1,11 @@
 get:
-  summary: Get project pictures by ID
+  summary: Get all projects
   tags:
     - Projects
-  description: |
-    Gets all images that are with a specific project by the project ID
-  parameters:
-    - in: path
-      name: id
-      required: true
-      schema:
-        type: integer
-      description: Project ID
+  description: Retrieves a list of all projects.
   responses:
     '200':
-      description: A list of images with the project
+      description: A list of projects
       content:
         application/json:
           schema:
@@ -29,28 +21,17 @@ get:
               data:
                 type: array
                 items:
-                  $ref: '../../swagger.yaml#/components/schemas/ProjectImage'
-    '400':
-      $ref: '../../swagger.yaml#/components/responses/BadRequest'
-    '404':
-      $ref: '../../swagger.yaml#/components/responses/NotFound'
+                  $ref: '../../swagger.yaml#/components/schemas/ProjectPreview'
     '500':
       $ref: '../../swagger.yaml#/components/responses/InternalServerError'
 post:
-  summary: Add a new picture to a project
-  description: Creates a new picture entry associated with a specific project.
+  summary: Create a new project
+  description: Creates a new project using the request body
   tags:
     - Projects
   security:
     - shibbolethAuth: []
   parameters:
-    - name: id
-      in: path
-      description: The ID of the project to add a picture to
-      required: true
-      schema:
-        type: integer
-        example: 42
     - in: query
       name: devId
       schema:
@@ -62,10 +43,10 @@ post:
     content:
       multipart/form-data:
         schema:
-          $ref: '../../swagger.yaml#/components/schemas/CreateProjectImageInput'
+          $ref: '../../swagger.yaml#/components/schemas/CreateProjectInput'
   responses:
     '201':
-      description: Picture added successfully
+      description: Project created successfully
       content:
         application/json:
           schema:
@@ -79,7 +60,6 @@ post:
                 nullable: true
                 example: null
               data:
-                type: object
-                $ref: '../../swagger.yaml#/components/schemas/ProjectImage'
+                $ref: '../../swagger.yaml#/components/schemas/ProjectDetail'
     '500':
       $ref: '../../swagger.yaml#/components/responses/InternalServerError'

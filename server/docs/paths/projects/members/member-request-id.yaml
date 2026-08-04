@@ -2,7 +2,7 @@ get:
   summary: Gets member requests
   description: Gets the member requests associated to the project id
   tags:
-    - Projects Members
+    - Project Members
   security:
     - shibbolethAuth: []
   parameters:

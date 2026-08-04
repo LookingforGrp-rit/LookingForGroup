@@ -1,25 +1,51 @@
+get:
+  summary: Get project by ID
+  tags:
+    - Projects
+  description: Gets information about a single project by its project ID.
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+      description: Project ID
+  responses:
+    '200':
+      description: Project found and returned
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                $ref: '../../swagger.yaml#/components/schemas/ProjectWithFollowers'
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
 patch:
-  summary: Update a pictures for a project
-  description: Updates fields of an existing project picture by image ID.
+  summary: Updates project information
   tags:
     - Projects
   security:
     - shibbolethAuth: []
   parameters:
-    - name: id
-      in: path
-      description: The ID of the project
+    - in: path
+      name: id
       required: true
       schema:
         type: integer
-        example: 1
-    - name: imageId
-      in: path
-      description: ID of the picture to update
-      required: true
-      schema:
-        type: integer
-        example: 1
+      description: The project ID
     - in: query
       name: devId
       schema:
@@ -31,10 +57,53 @@ patch:
     content:
       multipart/form-data:
         schema:
-          $ref: '../../swagger.yaml#/components/schemas/UpdateProjectImageInput'
+          $ref: '../../swagger.yaml#/components/schemas/UpdateProjectInput'
   responses:
     '200':
-      description: Image updated successfully
+      description: Update a single project
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                $ref: '../../swagger.yaml#/components/schemas/ProjectDetail'
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+delete:
+  summary: Delete a project by ID
+  description: Deletes a project by its ID.
+  tags:
+    - Projects
+  security:
+    - shibbolethAuth: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: The ID of the project to delete
+      schema:
+        type: integer
+    - name: devId
+      in: query
+      required: false
+      description: The ID to be used as the current user
+      schema:
+        type: integer
+  responses:
+    '200':
+      description: Project deleted successfully
       content:
         application/json:
           schema:
@@ -49,60 +118,8 @@ patch:
                 example: null
               data:
                 type: object
-                $ref: '../../swagger.yaml#/components/schemas/ProjectImage'
-    '400':
-      $ref: '../../swagger.yaml#/components/responses/BadRequest'
-    '404':
-      $ref: '../../swagger.yaml#/components/responses/NotFound'
-    '500':
-      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
-delete:
-  summary: Remove a picture from a project
-  tags:
-    - Projects
-  description: Removes a picture from a project by picture ID
-  security:
-    - shibbolethAuth: []
-  parameters:
-    - in: path
-      name: id
-      required: true
-      schema:
-        type: integer
-      description: Project ID
-    - name: imageId
-      in: path
-      required: true
-      schema:
-        type: integer
-      description: Picture ID to remove
-    - in: query
-      name: devId
-      schema:
-        type: integer
-      required: false
-      description: The user ID to be used as the current user
-  responses:
-    '200':
-      description: Picture removed successfully
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              status:
-                type: integer
-                example: 201
-              error:
-                type: string
-                nullable: true
+                nullable:
                 example: null
-              data:
-                type: object
-                nullable: true
-                example: null
-    '400':
-      $ref: '../../swagger.yaml#/components/responses/BadRequest'
     '404':
       $ref: '../../swagger.yaml#/components/responses/NotFound'
     '500':
