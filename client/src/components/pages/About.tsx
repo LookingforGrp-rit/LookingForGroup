@@ -248,7 +248,7 @@ const AboutPage = () => {
                             <h3 className="about-header-three">Copyright</h3>
                             <ul>
                                 <li className="about-text">
-                                    Users are responsible for following general U.S. copyright law (found <a href="https://www.copyright.gov/title17/">here</a>)
+                                    Users are responsible for following general U.S. copyright law (found <a href="https://www.copyright.gov/title17/" target="_blank">here</a>)
                                 </li>
                                 <li className="about-text">
                                     <strong>Theft Is Not Tolerated. </strong>Projects found using stolen material will be taken down and should be reported.
@@ -257,7 +257,7 @@ const AboutPage = () => {
                                     </ul>
                                 </li>
                                 <li className="about-text">
-                                    Projects falling under Fair Use Guidelines (<a href="https://www.copyright.gov/fair-use/">U.S. Copyright Office Fair Use Index</a>) will not be taken down, however, Fair Use is never guaranteed in every case.
+                                    Projects falling under Fair Use Guidelines (<a href="https://www.copyright.gov/fair-use/" target="_blank">U.S. Copyright Office Fair Use Index</a>) will not be taken down, however, Fair Use is never guaranteed in every case.
                                 </li>
                             </ul>
                         </div>
@@ -277,7 +277,7 @@ const AboutPage = () => {
                             </ul>
                         </div>
                         <div>
-                            <h3 className="about-header-three">Ai Content</h3>
+                            <h3 className="about-header-three">AI Content</h3>
                             <ul>
                                 <li className="about-text">Projects must disclose use of AI</li>
                                 <li className="about-text">AI used maliciously to violate copyright laws is strictly prohibited and will result in the project taken down and potential bans.</li>

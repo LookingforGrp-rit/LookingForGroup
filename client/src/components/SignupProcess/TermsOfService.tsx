@@ -72,7 +72,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ show, onBack, onNext })
             <h3>Copyright</h3>
             <ul>
             <li>
-                Users are responsible for following general U.S. copyright law (found <a href="https://www.copyright.gov/title17/">here</a>)
+                Users are responsible for following general U.S. copyright law (found <a href="https://www.copyright.gov/title17/" target="_blank">here</a>)
             </li>
             <li>
                 <strong>Theft Is Not Tolerated. </strong>Projects found using stolen material will be taken down and should be reported.
@@ -82,7 +82,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ show, onBack, onNext })
                 </ul>
             </li>
             <li>
-                Projects falling under Fair Use Guidelines (<a href="https://www.copyright.gov/fair-use/">U.S. Copyright Office Fair Use Index</a>)
+                Projects falling under Fair Use Guidelines (<a href="https://www.copyright.gov/fair-use/" target="_blank">U.S. Copyright Office Fair Use Index</a>)
                 will not be taken down, however, Fair Use is never guaranteed in every case.
             </li>
             </ul>
@@ -104,7 +104,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ show, onBack, onNext })
                </li>
             </ul>
 
-            <h3>Ai Content</h3>
+            <h3>AI Content</h3>
             <ul>
                <li>Projects must disclose use of AI</li>
                <li>AI used maliciously to violate copyright laws is strictly prohibited

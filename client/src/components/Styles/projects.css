@@ -144,7 +144,7 @@ Project Panel component style rules
   .project-link-overlay {
     position: absolute;
     inset: 0;
-    z-index: 1;
+    z-index: 2;
   }
 
   hr {
@@ -282,7 +282,7 @@ Project Panel component style rules
     visibility: hidden;
     opacity: 0;
     transition: visibility 0.2s, opacity 0.2s;
-    z-index: 15;
+    z-index: 1;
   }
 }
 
@@ -1452,9 +1452,7 @@ Project Creator and Editor Popup style rules
 
 /* Project Editor/Creator Team Tab */
 .project-editor-team-tab {
-  padding: 1%;
-  padding-left: 3%;
-  padding-right: 3%;
+  padding: 1% 2%;
   max-width: 100%;
   color: var(--neutral-gray);
   font-size: 2ch;
@@ -1897,6 +1895,100 @@ Project Creator and Editor Popup style rules
   font-weight: 700;
   color: var(--header-color);
   font-size: 1.6ch;
+}
+
+#project-editor-change-owner {
+  background-color: var(--bg-color);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-align: center;
+  gap: 100px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 1141px;
+  height: fit-content;
+  
+  .project-editor-owner-info {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--header-color);
+    border-radius: 10px;
+
+    label{
+      margin-top: 0.5em;
+      font-size: 1.5rem;
+    }
+
+    img {
+      height: 320px;
+      margin: 20px;
+      border-radius: 10px;
+      object-fit: contain;
+      border: 3px solid var(--primary-color);
+    }
+
+    .project-editor-project-owner-extra {
+      padding-top: 10px;
+
+      #owner-name {
+        color: var(--primary-color);
+        text-align: center;
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  #project-editor-owner-options {
+    margin: auto 0;
+    width: 40%;
+
+    label{
+      margin-bottom: 0.5em;
+    }
+
+    .select-container {
+      margin: 0 auto;
+      margin-top: 0.5em;
+      width: 80%;
+    }
+
+    #project-editor-owner-confirm {
+      display: flex;
+      flex-direction: column;
+      margin-top: 40px;
+
+      #change-owner-confirm {
+        margin: 0 auto;
+        width: min-content;
+        padding: 10px 10px;
+        border: none;
+        border-radius: 20px;
+        background-color: var(--primary-color);
+        color: var(--invert-text);
+        font-weight: 800;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 799px){
+  #project-editor-change-owner{
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  #project-editor-owner-options{
+    width: 100% !important;
+  }
+
+  #project-editor-owner-confirm{
+    margin-top: 1em !important;
+  }
 }
 
 /* Merge popup: a comfortable content-sized box instead of the nested-popup
@@ -2431,6 +2523,12 @@ Project Creator and Editor Popup style rules
   gap: 10px;
 }
 
+@media only screen and (max-width:950px){
+  #open-position-details{
+    gap: 50px;
+  }
+}
+
 #open-position-contact {
   display: flex;
   align-items: center;
@@ -2684,20 +2782,19 @@ button.edit-position-contact .project-member-image {
 }
 
 .project-crop {
-  width: 100%;
+  width: 700px;
   text-align: center;
-  height: 1100px;
-  margin: 20px 20px;
+  height: 100%;
+  padding: 20px;
 
   #project-crop-header {
     display: block;
-    padding-top: 1em;
   }
 
   #canvas {
     border: 3px solid var(--primary-color);
     border-radius: 10px;
-    margin: 1vw 0;
+    margin-top: 10px;
     object-fit: cover;
     max-width: 95%;
     max-height: 400px;
@@ -2747,15 +2844,13 @@ button.edit-position-contact .project-member-image {
   }
 
   .project-crop-extra-info {
-    margin-top: 20px;
     font-size: 0.75rem;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
 
   .project-crop-mouse-instructions {
-    margin-top: 20px;
     font-size: 0.75rem;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 
     p {
       margin-top: 0;
@@ -2764,7 +2859,7 @@ button.edit-position-contact .project-member-image {
   }
 
   #alt-text-input {
-    margin: 10px auto 0 auto;
+    margin: 10px auto ;
     width: 85%;
 
     input {
@@ -2786,7 +2881,6 @@ button.edit-position-contact .project-member-image {
     flex-direction: row;
     gap: 20px;
     padding-top: 10px;
-    padding-bottom: 20px;
     width: 100%;
     justify-content: center;
   }
@@ -4146,18 +4240,12 @@ Project Carousel style rules
 
 @media only screen and (max-width: 1200px) {
   #project-info-panel {
-    max-width: calc(100vw - 80px);
+    max-width: 100%;
   }
 
   .mod-project-options,
   .mod-user-options {
     max-width: calc(100vw - 80px);
-  }
-}
-
-@media only screen and (max-width: 800px) {
-  #project-info-panel {
-    max-width: 100%;
   }
 }
 
@@ -4648,7 +4736,6 @@ button#positions-popup-list-item-active {
 #position-contact {
   margin: 20px;
   margin-left: auto;
-  padding-left: 20px;
   max-width: 100%;
   height: fit-content;
   display: flex;
@@ -4792,8 +4879,11 @@ button#positions-popup-list-item-active {
 
 #position-apply {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 5px;
+  width: fit-content;
 }
 
 #position-contact-link {
@@ -6208,7 +6298,7 @@ My projects page style rules
 #popup-result .small-popup {
   .success-msg {
     font-weight: 700;
-    color: var(--tag-green-selected);
+    color: green;
     font-style: italic;
   }
 

@@ -328,7 +328,7 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
     </div>
 
     <PopupButton buttonId="positions-popup-close">
-      Close
+      Back
     </PopupButton>
   </div>
 }

@@ -72,6 +72,7 @@ export const requestToJoinService = async (
       sentFromProject: boolean;
       requestStatus: MemberRequestStatus;
     };
+
     // if there was a request exist before, update that
     if (req) {
       result = await prisma.memberRequests.update({
@@ -140,7 +141,7 @@ export const requestToJoinService = async (
     const email: EmailInput = {
       sender: requester,
       receiver: owner,
-      subject: `Request to join ${project.title}`,
+      subject: `[DO NOT REPLY] Request to join ${project.title}`,
       textBody: text,
       HTMLBody: html,
     };

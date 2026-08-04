@@ -632,11 +632,22 @@ Signup process modal style rules
   justify-content: center;
   align-items: center;
   align-self: center;
-  border: 2px dashed #424242;
-  border-radius: 10px;
   width: min(50vw, 250px);
   height: min(50vw, 250px);
   aspect-ratio: 1 / 1;
+
+  #profile-image-label{
+    color: var(--primary-color);
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+
+  #profile-image-uploader{
+    max-width: 85%;
+    max-height: 85%;
+  }
 }
 
 #profile-pic {
@@ -851,6 +862,13 @@ Signup process modal style rules
 
   div {
     width: 100%;
+  }
+
+  #img-view {
+    width: fit-content;
+
+    height: 100%;
+    max-width: 100%;
   }
 }
 

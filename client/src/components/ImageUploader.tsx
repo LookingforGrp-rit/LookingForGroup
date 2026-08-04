@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { FileImage } from './FileImage';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { Select, SelectButton, SelectOptions } from './Select';
@@ -14,7 +14,7 @@ interface ImageUploaderProps {
   // If true, only allow image files
   keepImage?: boolean;
   // Callback triggered when the user selects a valid file
-  onFileSelected?: (file: File, altText: string) => void;
+  onFileSelected?: (file: File, altText?: string) => void;
   // Determines styling and behavior
   type?: 'profile' | 'project';
 }
@@ -47,17 +47,28 @@ const ImageUploader = ({
   initialImageUrl = '',
   initialImageFile,
   keepImage = true,
-  onFileSelected = () => {},
+  onFileSelected = () => { },
   type
 }: ImageUploaderProps) => {
   // Ref for reading selected files
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+  // Unique per instance. This used to be a hard-coded "image-uploader" on both
+  // variants, so whenever two uploaders were mounted at once the ids collided
+  // and the label's htmlFor resolved to whichever input came first in the DOM.
+  // Clicking this label then opened a *different* uploader's file dialog, and
+  // the chosen file was handed to that other instance. Dropping a file was
+  // unaffected, because the drop handler writes straight to inputRef.
+  const inputId = useId();
+
   const [zoom, setZoom] = useState(100);
   const [dX, setDX] = useState(0);
   const [dY, setDY] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [prevPos, setPrevPos] = useState<{x:number, y:number}>({x:0, y:0});
+
+  //changed to Ref instead of State so that
+  //the changes are read without needing a re-render
+  const isDragging = useRef(false);
+  const prevPos = useRef<{ x: number, y: number }>({ x: 0, y: 0 });
 
   const [cropFile, setCropFile] = useState<File>();
   const [cropImg, setCropImg] = useState<string>();
@@ -74,34 +85,54 @@ const ImageUploader = ({
   const inputAlt = useRef<HTMLInputElement>(null);
   const fileReader = new FileReader();
 
-  const [aspectRatio, setAspectRatio] = useState<string>('1/1');
+  type AspectRatioKeys = keyof typeof AspectRatios;
+  const [aspectRatio, setAspectRatio] = useState<AspectRatioKeys>('1:1');
 
   const [labelName, setLabelName] = useState("drop-area");
 
   const [loadingImage, setLoadingImage] = useState(false);
 
-  const [altText, setAltText] = useState("");
+  /**
+   * Returns the canvas dimensions based on the selected aspect ratio.
+   * @param ratio The selected aspect ratio key
+   * @returns An object containing the width and height for the canvas
+   */
+  const getCanvasDimensions = (ratio: AspectRatioKeys) => {
+    switch (AspectRatios[ratio]) {
+      case '16/9':
+        return { width: 1600, height: 900 };
+      case '4/3':
+        return { width: 800, height: 600 };
+      case '1/1':
+        return { width: 800, height: 800 };
+      case '2/3':
+        return { width: 600, height: 900 };
+      case '6/13':
+        return { width: 600, height: 1300 };
+      default:
+        return { width: 800, height: 800 };
+    }
+  };
 
-//mouse dragging for cropping
+  //mouse dragging for cropping
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (e.button === 0 || e.button === 1 || e.button === 2) {
       e.preventDefault(); // stop context menu
-      setIsDragging(true);
-      setPrevPos({ x: e.clientX, y: e.clientY });
-
+      isDragging.current = true;
+      prevPos.current = { x: e.clientX, y: e.clientY };
     }
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDragging || !tempImage.current || !canvas.current) return;
+    if (!isDragging.current || !tempImage.current || !canvas.current) return;
 
     const rect = canvas.current.getBoundingClientRect();
 
-    const deltaX = (e.clientX - prevPos.x) * (canvas.current.width / rect.width);
-    const deltaY = (e.clientY - prevPos.y) * (canvas.current.height / rect.height);
+    const deltaX = (e.clientX - prevPos.current.x) * (canvas.current.width / rect.width);
+    const deltaY = (e.clientY - prevPos.current.y) * (canvas.current.height / rect.height);
 
     const rawDX = dX - deltaX;
-    const rawDY = dY -deltaY;
+    const rawDY = dY - deltaY;
 
     const newDX = clampDX(rawDX);
     const newDY = clampDY(rawDY);
@@ -109,7 +140,7 @@ const ImageUploader = ({
     setDX(newDX);
     setDY(newDY);
 
-    setPrevPos({ x: e.clientX, y: e.clientY });
+    prevPos.current = { x: e.clientX, y: e.clientY };
     updateCanvas();
   };
 
@@ -149,10 +180,10 @@ const ImageUploader = ({
   };
 
   const handleMouseUp = () => {
-    setIsDragging(false);
+    isDragging.current = false;
   };
 
-//wheel zooming for cropping
+  //wheel zooming for cropping
   // const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
   //   if(!tempImage.current || !canvas.current) return;
 
@@ -224,10 +255,10 @@ const ImageUploader = ({
    */
   const updateCanvas = useCallback(() => {
     const tempCtx = canvas.current;
-    if(!tempCtx || !tempImage.current) return;
+    if (!tempCtx || !tempImage.current) return;
 
     const ctx = tempCtx.getContext("2d");
-    if(!ctx) return;
+    if (!ctx) return;
 
     ctx?.clearRect(0, 0, canvas.current?.width as number, canvas.current?.height as number);
 
@@ -236,7 +267,7 @@ const ImageUploader = ({
     ctx.imageSmoothingQuality = "high";
     ctx.filter = "none";
 
-    if (tempImage.current && canvas.current){
+    if (tempImage.current && canvas.current) {
       const w = tempImage.current.width * (zoom / 100);
       const h = tempImage.current.height * (zoom / 100);
 
@@ -261,12 +292,10 @@ const ImageUploader = ({
     // Each image gets its own caption. The popup stays mounted between queued
     // files, so the previous image's caption has to be cleared off both the
     // state and the uncontrolled input or it carries over to this one.
-    setAltText("");
     if (inputAlt.current) inputAlt.current.value = "";
 
-    if ((file.size > 100000 && type === "profile") || file.size > 2000000) {
-      // Too large to crop, so there was never a chance to caption this file.
-      onFileSelected(file, "");
+    if ((file.size > 1000000 && type === "profile") || file.size > 2000000) {
+      onFileSelected(file, inputAlt.current?.value);
       return;
     }
 
@@ -300,15 +329,24 @@ const ImageUploader = ({
     };
     reader.onerror = () => setCropImg(placeholder);
     reader.readAsDataURL(file);
-  }, [updateCanvas]);
+  }, [updateCanvas, inputAlt.current]);
 
   const handleImgChange = useCallback(async () => {
     const input = inputRef.current;
-    if(!input) return;
+    if (!input) return;
 
     const files = input.files;
     if (!files || files.length === 0) return;
-    
+
+    // allow only one image per upload
+    if (files.length > 1) {
+      // Cleared before bailing out, otherwise the input keeps this selection
+      // and picking the exact same files again fires no change event at all,
+      // so the second attempt silently does nothing.
+      input.value = "";
+      alert("Only one image can be uploaded at a time.");
+      return;
+    }
 
     // Split the selection into supported images and anything we can't use, so a
     // multi-select of several photos all get queued instead of dropping all but one.
@@ -326,7 +364,7 @@ const ImageUploader = ({
     input.value = "";
 
     if (hadUnsupported) {
-      alert("File type not supported: Please use .PNG or .JPG");
+      alert("File type not supported: Please use .PNG, .JPG, or .JPEG");
     }
     if (supported.length === 0) return;
 
@@ -337,9 +375,9 @@ const ImageUploader = ({
   }, [keepImage, loadFileIntoCrop]);
 
   const sendImg = useCallback(
-    () => canvas.current?.toBlob(async(blob) => {
-      const newFile = new File([blob as Blob], cropFile?.name as string, {type:cropFile?.type});
-      onFileSelected(newFile, inputAlt.current?.value ?? altText);
+    () => canvas.current?.toBlob(async (blob) => {
+      const newFile = new File([blob as Blob], cropFile?.name as string, { type: cropFile?.type });
+      onFileSelected(newFile, inputAlt.current?.value);
       if (inputRef.current) inputRef.current.value = "";
 
       // Move on to the next queued image, or close the popup when the batch is done.
@@ -349,10 +387,10 @@ const ImageUploader = ({
       } else {
         setCropImg(undefined);
       }
-    }, cropFile?.type), 
-  [onFileSelected, setCropImg, cropFile, canvas, loadFileIntoCrop, altText]);
+    }, cropFile?.type),
+    [onFileSelected, setCropImg, cropFile, canvas, loadFileIntoCrop, inputAlt.current]);
 
-  
+
   // Effect for cleanup if needed; currently just removes event listeners
   useEffect(() => {
     if (!cropImg) return; // popup is not open, no need to set up canvas
@@ -361,15 +399,26 @@ const ImageUploader = ({
     const img = tempImage.current;
     if (!c || !img) return;
 
-    // Set actual drawing resolution to match CSS size
-    c.width = c.clientWidth;
-    c.height = c.clientHeight;
+    // Set the canvas size to match the selected aspect ratio.
+    const dimensions = getCanvasDimensions(aspectRatio);
+    c.width = dimensions.width;
+    c.height = dimensions.height;
 
-    const w = img.width * (zoom / 100);
-    const h = img.height * (zoom / 100);
+    // Changing the aspect ratio changes the canvas size, which changes the
+    // smallest zoom that still covers it. Without this the image would sit
+    // letterboxed inside the new ratio until the user touched the zoom slider.
+    const minZoom = Math.max(
+      (dimensions.width / img.width) * 100,
+      (dimensions.height / img.height) * 100
+    );
+    const effectiveZoom = Math.max(zoom, minZoom);
+    if (effectiveZoom !== zoom) setZoom(effectiveZoom);
 
-    const maxDX = Math.max(0, (w - c.width) / 2);
-    const maxDY = Math.max(0, (h - c.height) / 2);
+    const w = img.width * (effectiveZoom / 100);
+    const h = img.height * (effectiveZoom / 100);
+
+    const maxDX = Math.max(0, (w - dimensions.width) / 2);
+    const maxDY = Math.max(0, (h - dimensions.height) / 2);
 
     // Re-clamp drag offsets whenever zoom changes
     setDX(prev => Math.min(maxDX, Math.max(-maxDX, prev)));
@@ -387,10 +436,10 @@ const ImageUploader = ({
     input.addEventListener('change', handleImgChange);
 
     return () => input.removeEventListener('change', handleImgChange);
-  }, [handleImgChange, fileReader, placeholder, updateCanvas, inputRef, cropImg, zoom]);
+  }, [handleImgChange, fileReader, placeholder, updateCanvas, inputRef, cropImg, zoom, aspectRatio]);
 
 
-  useEffect(()=> {
+  useEffect(() => {
     updateCanvas();
   }, [zoom, dX, dY]);
 
@@ -398,7 +447,6 @@ const ImageUploader = ({
     if (!loadingImage) {
       pendingFiles.current = [];
       setCropImg(undefined);
-      setAltText("");
     }
   }, [loadingImage, pendingFiles, setCropImg]);
 
@@ -408,6 +456,9 @@ const ImageUploader = ({
       <PopupContent confirmation={true} callback={closePopup}>
         <div className="project-crop">
         <label id="project-crop-header">Crop image for thumbnail usage</label>
+        <div className="project-crop-extra-info">
+          Crop your image to a set ratio that better matches the site.
+        </div>
         <canvas ref={canvas} id="canvas"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
@@ -416,200 +467,187 @@ const ImageUploader = ({
           onWheel={handleWheel}
           onContextMenu={(e) => e.preventDefault()}
 
-          width={
-          aspectRatio === "16/9" ? 1600 :
-          aspectRatio === "4/3" ? 800 :
-          aspectRatio === "1/1" ? 800 :
-          aspectRatio === "2/3" ? 600 :
-          600}
+              width={getCanvasDimensions(aspectRatio).width}
+              height={getCanvasDimensions(aspectRatio).height}
+              style={{ aspectRatio: AspectRatios[aspectRatio] }}
+            ></canvas>
 
-          height={
-          aspectRatio === "16/9" ? 900 :
-          aspectRatio === "4/3" ? 600 :
-          aspectRatio === "1/1" ? 800 :
-          aspectRatio === "2/3" ? 900 :
-          1300}
+            {/* <img ref={tempImage} id="refImage" src={cropImg} alt={cropImg} /> */}
+            <div id="aspect-row">
+              <Select>
+                <SelectButton
+                  placeholder={"Select an aspect Ratio"}
+                  initialVal={aspectRatio}
+                  callback={(e) => e.preventDefault()}
+                  buttonId="aspect-input"
+                  type={"input"}
+                  searchable={false}
+                />
+                <SelectOptions
+                  callback={(e) => {
+                    const ratio = (
+                      e.target as HTMLButtonElement
+                    ).value as AspectRatioKeys;
 
-          style={{aspectRatio:aspectRatio}}
-        ></canvas>
+                    // Just record the ratio. Resizing the canvas buffer and redrawing
+                    // is the effect's job, since it has to wait for the new ratio to
+                    // actually render before it can read the new client dimensions.
+                    setAspectRatio(ratio);
+                  }}
+                  options={Object.keys(AspectRatios).map(
+                    (ratio) => {
+                      return {
+                        value: ratio,
+                        markup: <>{ratio}</>,
+                        disabled: false
+                      };
+                    }
+                  )}
+                />
+              </Select>
+            </div>
+            <div className="project-crop-mouse-instructions">
+              <p>You can also drag the image around the view using the mouse,<br/>and zoom in and out with the scroll wheel.</p>
+            </div>
+            <div id="hide-range-rows">
+              <div id="zoom-row">
+                <input
+                  type="range" ref={inputZoom}
+                  id="zoom" name="zoom"
+                  onChange={() => {
+                    const raw = inputZoom.current?.valueAsNumber ?? zoom;
+                    const minZoom = getMinZoom();
+                    const maxZoom = getMaxZoom();
 
-        {/* <img ref={tempImage} id="refImage" src={cropImg} alt={cropImg} /> */}
-        <div id="aspect-row">
-          <Select>
-          <SelectButton
-            placeholder={"Select an aspect Ratio"}
-            initialVal={aspectRatio}
-            callback={(e) => e.preventDefault()}
-            buttonId="aspect-input"
-            type={"input"}
-            searchable={false}
-          />
-          <SelectOptions
-            callback={async (e) => {
-            const ratio = (
-              e.target as HTMLButtonElement
-            ).value;
+                    const clampedZoom = Math.min(maxZoom, Math.max(minZoom, raw));
+                    setZoom(clampedZoom);
 
-            await setAspectRatio(ratio);
-            updateCanvas();
-            }}
-            options={
-            Object.values(AspectRatios)
-            .filter((ratio) => ratio !== 0 && ratio !== 1 && ratio !== 2 && ratio !== 3 && ratio !== 4)
-            .map(
-            (ratio) => {
-              return {
-              value: ratio,
-              markup: <>{ratio}</>,
-              disabled: false
-              };
-            }
-            )}
-          />
-          </Select>
-        </div>
-        <div className="project-crop-mouse-instructions">
-          <p>You can also drag the image around the view using the mouse, and zoom in and out with the scroll wheel.</p>
-        </div>
-        <div id="hide-range-rows">  
-          <div id="zoom-row">
-            <input
-            type="range" ref={inputZoom}
-            id="zoom" name="zoom"
-            onChange={() => {
-              const raw = inputZoom.current?.valueAsNumber ?? zoom;
-              const minZoom = getMinZoom();
-              const maxZoom = getMaxZoom();
+                    // Re‑clamp DX/DY after zoom changes
+                    setDX(clampDX(dX));
+                    setDY(clampDY(dY));
+                    updateCanvas();
+                  }}
+                  onInput={() => {
+                    const raw = inputZoom.current?.valueAsNumber ?? zoom;
+                    const minZoom = getMinZoom();
+                    const maxZoom = getMaxZoom();
 
-              const clampedZoom = Math.min(maxZoom, Math.max(minZoom, raw));
-              setZoom(clampedZoom);
+                    const clampedZoom = Math.min(maxZoom, Math.max(minZoom, raw));
+                    setZoom(clampedZoom);
 
-              // Re‑clamp DX/DY after zoom changes
-              setDX(clampDX(dX));
-              setDY(clampDY(dY));
-              updateCanvas();
-            }}
-            onInput={() => {
-              const raw = inputZoom.current?.valueAsNumber ?? zoom;
-              const minZoom = getMinZoom();
-              const maxZoom = getMaxZoom();
+                    // Re‑clamp DX/DY after zoom changes
+                    setDX(clampDX(dX));
+                    setDY(clampDY(dY));
+                    updateCanvas();
+                  }}
+                  min={getMinZoom()}
+                  max={getMaxZoom()}
+                  value={zoom} />
+                <label className="slider-text" htmlFor="zoom">Zoom</label>
+              </div>
+              <div id="xTrans-row">
+                <input
+                  type="range" ref={inputX}
+                  id="xTrans" name="xTrans"
+                  onChange={() => {
+                    const raw = inputX.current?.valueAsNumber ?? 0;
+                    const clamped = clampDX(raw);
+                    setDX(clamped);
+                    updateCanvas();
+                  }}
+                  onInput={() => {
+                    const raw = inputX.current?.valueAsNumber ?? 0;
+                    const clamped = clampDX(raw);
+                    setDX(clamped);
+                    updateCanvas();
+                  }}
+                  min={-getMaxDX()}
+                  max={getMaxDX()}
+                  value={dX} />
+                <label className="slider-text" htmlFor="xtrans">Xpos</label>
+              </div>
+              <div id="yTrans-row">
+                <input
+                  type="range" ref={inputY}
+                  id="yTrans" name="yTrans"
+                  onChange={() => {
+                    const raw = inputY.current?.valueAsNumber ?? 0;
+                    const clamped = clampDY(raw);
+                    setDY(clamped);
+                    updateCanvas();
 
-              const clampedZoom = Math.min(maxZoom, Math.max(minZoom, raw));
-              setZoom(clampedZoom);
-
-              // Re‑clamp DX/DY after zoom changes
-              setDX(clampDX(dX));
-              setDY(clampDY(dY));
-              updateCanvas();
-            }}
-            min={getMinZoom()}
-            max={getMaxZoom()}
-            value={zoom} />
-            <label className="slider-text" htmlFor="zoom">Zoom</label>
+                  }}
+                  onInput={() => {
+                    const raw = inputY.current?.valueAsNumber ?? 0;
+                    const clamped = clampDY(raw);
+                    setDY(clamped);
+                    updateCanvas();
+                  }}
+                  min={-getMaxDY()}
+                  max={getMaxDY()}
+                  value={dY} />
+                <label className="slider-text" htmlFor="yTrans">Ypos</label>
+              </div>
+              {type === "project" ?
+                <div id='alt-text-input'>
+                  <input
+                    type='text' ref={inputAlt}
+                    placeholder='enter the caption/alt text for the image (optional)'
+                  >
+                  </input>
+                </div>
+                : ""}
+            </div>
+            <div className="confirm-project-crop">
+              <PopupButton buttonId="project-crop-save" callback={sendImg} doNotClose={() => true}>Crop Image</PopupButton>
+              {/* If the action is canceled, no picture is uploaded */}
+              <PopupButton buttonId="project-crop-cancel" callback={closePopup} className="project-info-buttons" doNotClose={() => true}>Cancel</PopupButton>
+            </div>
           </div>
-          <div id="xTrans-row">
-            <input
-            type="range" ref={inputX}
-            id="xTrans" name="xTrans"
-            onChange={() => {
-              const raw = inputX.current?.valueAsNumber ?? 0;
-              const clamped = clampDX(raw);
-              setDX(clamped);
-              updateCanvas();
-            }}
-            onInput={() => {
-              const raw = inputX.current?.valueAsNumber ?? 0;
-              const clamped = clampDX(raw);
-              setDX(clamped);
-              updateCanvas();
-            }}
-            min={-getMaxDX()}
-            max={getMaxDX()}
-            value={dX} />
-              <label className="slider-text" htmlFor="xtrans">Xpos</label>
-          </div>
-          <div id="yTrans-row">
-            <input
-            type="range" ref={inputY}
-            id="yTrans" name="yTrans"
-            onChange={() => {
-              const raw = inputY.current?.valueAsNumber ?? 0;
-              const clamped = clampDY(raw);
-              setDY(clamped);
-              updateCanvas();
-
-            }}
-            onInput={() => {
-              const raw = inputY.current?.valueAsNumber ?? 0;
-              const clamped = clampDY(raw);
-              setDY(clamped);
-              updateCanvas();
-            }}
-            min={-getMaxDY()}
-            max={getMaxDY()}
-            value={dY} />
-            <label className="slider-text" htmlFor="yTrans">Ypos</label>
-          </div>
-          <div id='alt-text-input'>
-            <input
-            type='text' ref={inputAlt}
-            placeholder='enter the caption/alt text for the image'
-            onChange={() => {
-              setAltText(inputAlt.current?.value as string)
-            }}
-            >
-            </input>
-          </div>
-        </div>
-        <div className="project-crop-extra-info">
-          Crop your image to a set ratio that better matches the site.
-        </div>
-        <div className="confirm-project-crop">
-          <PopupButton buttonId="project-crop-save" callback={sendImg} doNotClose={() => true}>Crop Image</PopupButton>
-          {/* If the action is canceled, no picture is uploaded */}
-          <PopupButton buttonId="project-crop-cancel" callback={closePopup} className="project-info-buttons" doNotClose={() => true}>Cancel</PopupButton>
-        </div>
-        </div>
-      </PopupContent>
-    </Popup>
-  : "",
-  [cropImg, canvas, inputX, inputY, dX, dY, zoom, inputZoom]);
+        </PopupContent>
+      </Popup>
+      : "",
+    [cropImg, canvas, inputX, inputY, dX, dY, zoom, inputZoom, aspectRatio]);
 
   const profileVariant = (
     <>
       {cropPopup}
-        <label htmlFor="image-uploader" id="profile-image-uploader" className={labelName}
-          onDragEnter={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
-          onDragLeave={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setLabelName("drop-area");
-          }}
-          onDragOver={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setLabelName("drop-area-drag-over");
-          }}
-          onDrop={async (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setLabelName("drop-area");
+      <label htmlFor={inputId} id="profile-image-uploader" className={labelName}
+        onDragEnter={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+        onDragLeave={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setLabelName("drop-area");
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setLabelName("drop-area-drag-over");
+        }}
+        onDrop={async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setLabelName("drop-area");
 
-            const data = e.dataTransfer;
-            if(data.files && inputRef.current) {
-              // TODO: allow drag and drop from other web images
-              inputRef.current.files = data.files;
-              handleImgChange();
-            }
-          }}>
+          const data = e.dataTransfer;
+          if (data.files && inputRef.current) {
+            // TODO: allow drag and drop from other web images
+            inputRef.current.files = data.files;
+            handleImgChange();
+          }
+        }}>
         <input
           type="file"
           name="image"
-          id="image-uploader"
-          accept=".png, .jpg"
+          id={inputId}
+          // Filter by MIME type, not extension, so the browse dialog accepts
+          // exactly what handleImgChange accepts. An extension list rejects
+          // .jfif/.jpe/extensionless files that are still image/jpeg, and those
+          // drag in fine, so browsing appears broken for a file that works.
+          accept="image/png, image/jpeg"
           ref={inputRef}
           onChange={handleImgChange}
           disabled={cropImg !== undefined}
@@ -628,25 +666,26 @@ const ImageUploader = ({
             />
           </div> :
           initialImageUrl ?
-          <div id="img-view">
-            <img
-              src={initialImageUrl}
-              alt="profile picture"
-            />
-            <img
-              src="/assets/upload_image.png"
-              alt="upload image"
-              className="camera-button"
-            />
-          </div> :
-          <div id="img-view">
-            {/* Color style of SVG handled by fill property */}
-            <svg width="39" height="38" viewBox="0 0 39 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fillRule="evenodd" clipRule="evenodd" d="M19.7139 0.25C20.0322 0.250195 20.3464 0.320501 20.6333 0.455724C20.9202 0.590947 21.1724 0.787632 21.3714 1.03125L29.8714 11.4479C30.0562 11.6601 30.1957 11.9066 30.2815 12.1727C30.3673 12.4388 30.3977 12.719 30.3709 12.9969C30.3441 13.2747 30.2607 13.5444 30.1255 13.79C29.9904 14.0356 29.8063 14.2521 29.5841 14.4266C29.362 14.6011 29.1064 14.73 28.8324 14.8058C28.5585 14.8816 28.2718 14.9026 27.9894 14.8677C27.707 14.8328 27.4346 14.7426 27.1884 14.6025C26.9423 14.4624 26.7273 14.2752 26.5564 14.0521L21.8389 8.27083V23.1667C21.8389 23.7192 21.615 24.2491 21.2165 24.6398C20.818 25.0305 20.2775 25.25 19.7139 25.25C19.1503 25.25 18.6098 25.0305 18.2113 24.6398C17.8128 24.2491 17.5889 23.7192 17.5889 23.1667V8.27083L12.8714 14.0542C12.7004 14.2773 12.4855 14.4645 12.2393 14.6046C11.9931 14.7447 11.7208 14.8349 11.4383 14.8698C11.1559 14.9047 10.8693 14.8837 10.5953 14.8079C10.3214 14.7321 10.0657 14.6031 9.8436 14.4286C9.62147 14.2541 9.43736 14.0377 9.30221 13.7921C9.16705 13.5465 9.0836 13.2768 9.05681 12.9989C9.03002 12.7211 9.06043 12.4408 9.14625 12.1748C9.23206 11.9087 9.37153 11.6622 9.55637 11.45L18.0564 1.03333C18.2551 0.789333 18.5073 0.592252 18.7942 0.456663C19.0811 0.321074 19.3954 0.250445 19.7139 0.25ZM13.3389 23.1667V21.0833H4.83887C3.7117 21.0833 2.63069 21.5223 1.83366 22.3037C1.03663 23.0851 0.588867 24.1449 0.588867 25.25V33.5833C0.588867 34.6884 1.03663 35.7482 1.83366 36.5296C2.63069 37.311 3.7117 37.75 4.83887 37.75H34.5889C35.716 37.75 36.797 37.311 37.5941 36.5296C38.3911 35.7482 38.8389 34.6884 38.8389 33.5833V25.25C38.8389 24.1449 38.3911 23.0851 37.5941 22.3037C36.797 21.5223 35.716 21.0833 34.5889 21.0833H26.0889V23.1667C26.0889 24.8243 25.4172 26.414 24.2217 27.5861C23.0261 28.7582 21.4046 29.4167 19.7139 29.4167C18.0231 29.4167 16.4016 28.7582 15.2061 27.5861C14.0105 26.414 13.3389 24.8243 13.3389 23.1667ZM30.3389 27.3333C29.7753 27.3333 29.2348 27.5528 28.8363 27.9435C28.4377 28.3342 28.2139 28.8641 28.2139 29.4167C28.2139 29.9692 28.4377 30.4991 28.8363 30.8898C29.2348 31.2805 29.7753 31.5 30.3389 31.5H30.3601C30.9237 31.5 31.4642 31.2805 31.8627 30.8898C32.2612 30.4991 32.4851 29.9692 32.4851 29.4167C32.4851 28.8641 32.2612 28.3342 31.8627 27.9435C31.4642 27.5528 30.9237 27.3333 30.3601 27.3333H30.3389Z" fill='var(--neutral-gray)'/>
-            </svg>
-            <p className="project-editor-extra-info">Drop your image here, or <span id="browse-link">browse</span></p>
-            <span className="project-editor-extra-info">Supports: JPEG, PNG</span>
-          </div>
+            <div id="img-view">
+              <img
+                src={initialImageUrl}
+                alt="profile picture"
+              />
+              <img
+                src="/assets/upload_image.png"
+                alt="upload image"
+                className="camera-button"
+              />
+            </div> :
+            <div id="img-view">
+              {/* Color style of SVG handled by fill property */}
+              <svg width="39" height="38" viewBox="0 0 39 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd" clipRule="evenodd" d="M19.7139 0.25C20.0322 0.250195 20.3464 0.320501 20.6333 0.455724C20.9202 0.590947 21.1724 0.787632 21.3714 1.03125L29.8714 11.4479C30.0562 11.6601 30.1957 11.9066 30.2815 12.1727C30.3673 12.4388 30.3977 12.719 30.3709 12.9969C30.3441 13.2747 30.2607 13.5444 30.1255 13.79C29.9904 14.0356 29.8063 14.2521 29.5841 14.4266C29.362 14.6011 29.1064 14.73 28.8324 14.8058C28.5585 14.8816 28.2718 14.9026 27.9894 14.8677C27.707 14.8328 27.4346 14.7426 27.1884 14.6025C26.9423 14.4624 26.7273 14.2752 26.5564 14.0521L21.8389 8.27083V23.1667C21.8389 23.7192 21.615 24.2491 21.2165 24.6398C20.818 25.0305 20.2775 25.25 19.7139 25.25C19.1503 25.25 18.6098 25.0305 18.2113 24.6398C17.8128 24.2491 17.5889 23.7192 17.5889 23.1667V8.27083L12.8714 14.0542C12.7004 14.2773 12.4855 14.4645 12.2393 14.6046C11.9931 14.7447 11.7208 14.8349 11.4383 14.8698C11.1559 14.9047 10.8693 14.8837 10.5953 14.8079C10.3214 14.7321 10.0657 14.6031 9.8436 14.4286C9.62147 14.2541 9.43736 14.0377 9.30221 13.7921C9.16705 13.5465 9.0836 13.2768 9.05681 12.9989C9.03002 12.7211 9.06043 12.4408 9.14625 12.1748C9.23206 11.9087 9.37153 11.6622 9.55637 11.45L18.0564 1.03333C18.2551 0.789333 18.5073 0.592252 18.7942 0.456663C19.0811 0.321074 19.3954 0.250445 19.7139 0.25ZM13.3389 23.1667V21.0833H4.83887C3.7117 21.0833 2.63069 21.5223 1.83366 22.3037C1.03663 23.0851 0.588867 24.1449 0.588867 25.25V33.5833C0.588867 34.6884 1.03663 35.7482 1.83366 36.5296C2.63069 37.311 3.7117 37.75 4.83887 37.75H34.5889C35.716 37.75 36.797 37.311 37.5941 36.5296C38.3911 35.7482 38.8389 34.6884 38.8389 33.5833V25.25C38.8389 24.1449 38.3911 23.0851 37.5941 22.3037C36.797 21.5223 35.716 21.0833 34.5889 21.0833H26.0889V23.1667C26.0889 24.8243 25.4172 26.414 24.2217 27.5861C23.0261 28.7582 21.4046 29.4167 19.7139 29.4167C18.0231 29.4167 16.4016 28.7582 15.2061 27.5861C14.0105 26.414 13.3389 24.8243 13.3389 23.1667ZM30.3389 27.3333C29.7753 27.3333 29.2348 27.5528 28.8363 27.9435C28.4377 28.3342 28.2139 28.8641 28.2139 29.4167C28.2139 29.9692 28.4377 30.4991 28.8363 30.8898C29.2348 31.2805 29.7753 31.5 30.3389 31.5H30.3601C30.9237 31.5 31.4642 31.2805 31.8627 30.8898C32.2612 30.4991 32.4851 29.9692 32.4851 29.4167C32.4851 28.8641 32.2612 28.3342 31.8627 27.9435C31.4642 27.5528 30.9237 27.3333 30.3601 27.3333H30.3389Z" fill='var(--neutral-gray)' />
+              </svg>
+              <p className="project-editor-extra-info">Drop your image here, or <span id="browse-link">browse</span></p>
+              <span className="project-editor-extra-info">Supports: JPG/JPEG, PNG</span>
+              <p className="project-editor-extra-info">Upload one image at a time</p>
+            </div>
         }
       </label>
     </>
@@ -655,38 +694,42 @@ const ImageUploader = ({
   const projectVariant = (
     <>
       {cropPopup}
-      <label htmlFor="image-uploader" id="project-image-uploader" className={labelName}
-          onDragEnter={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
-          onDragLeave={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setLabelName("drop-area");
-          }}
-          onDragOver={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setLabelName("drop-area-drag-over");
-          }}
-          onDrop={async (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setLabelName("drop-area");
+      <label htmlFor={inputId} id="project-image-uploader" className={labelName}
+        onDragEnter={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+        onDragLeave={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setLabelName("drop-area");
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setLabelName("drop-area-drag-over");
+        }}
+        onDrop={async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setLabelName("drop-area");
 
-            const data = e.dataTransfer;
-            if(data.files && inputRef.current) {
-              // TODO: allow drag and drop from other web images
-              inputRef.current.files = data.files;
-              handleImgChange();
-            }
-          }}>
+          const data = e.dataTransfer;
+          if (data.files && inputRef.current) {
+            // TODO: allow drag and drop from other web images
+            inputRef.current.files = data.files;
+            handleImgChange();
+          }
+        }}>
         <input
           type="file"
           name="image"
-          id="image-uploader"
-          multiple accept=".png, .jpg"
+          id={inputId}
+          // Filter by MIME type, not extension, so the browse dialog accepts
+          // exactly what handleImgChange accepts. An extension list rejects
+          // .jfif/.jpe/extensionless files that are still image/jpeg, and those
+          // drag in fine, so browsing appears broken for a file that works.
+          multiple accept="image/png, image/jpeg"
           ref={inputRef}
           onChange={handleImgChange}
           onClick={() => setLoadingImage(true)}
@@ -696,10 +739,11 @@ const ImageUploader = ({
         <div id="img-view" className="project-uploader">
           {/* Color style of SVG handled by fill property */}
           <svg width="39" height="38" viewBox="0 0 39 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M19.7139 0.25C20.0322 0.250195 20.3464 0.320501 20.6333 0.455724C20.9202 0.590947 21.1724 0.787632 21.3714 1.03125L29.8714 11.4479C30.0562 11.6601 30.1957 11.9066 30.2815 12.1727C30.3673 12.4388 30.3977 12.719 30.3709 12.9969C30.3441 13.2747 30.2607 13.5444 30.1255 13.79C29.9904 14.0356 29.8063 14.2521 29.5841 14.4266C29.362 14.6011 29.1064 14.73 28.8324 14.8058C28.5585 14.8816 28.2718 14.9026 27.9894 14.8677C27.707 14.8328 27.4346 14.7426 27.1884 14.6025C26.9423 14.4624 26.7273 14.2752 26.5564 14.0521L21.8389 8.27083V23.1667C21.8389 23.7192 21.615 24.2491 21.2165 24.6398C20.818 25.0305 20.2775 25.25 19.7139 25.25C19.1503 25.25 18.6098 25.0305 18.2113 24.6398C17.8128 24.2491 17.5889 23.7192 17.5889 23.1667V8.27083L12.8714 14.0542C12.7004 14.2773 12.4855 14.4645 12.2393 14.6046C11.9931 14.7447 11.7208 14.8349 11.4383 14.8698C11.1559 14.9047 10.8693 14.8837 10.5953 14.8079C10.3214 14.7321 10.0657 14.6031 9.8436 14.4286C9.62147 14.2541 9.43736 14.0377 9.30221 13.7921C9.16705 13.5465 9.0836 13.2768 9.05681 12.9989C9.03002 12.7211 9.06043 12.4408 9.14625 12.1748C9.23206 11.9087 9.37153 11.6622 9.55637 11.45L18.0564 1.03333C18.2551 0.789333 18.5073 0.592252 18.7942 0.456663C19.0811 0.321074 19.3954 0.250445 19.7139 0.25ZM13.3389 23.1667V21.0833H4.83887C3.7117 21.0833 2.63069 21.5223 1.83366 22.3037C1.03663 23.0851 0.588867 24.1449 0.588867 25.25V33.5833C0.588867 34.6884 1.03663 35.7482 1.83366 36.5296C2.63069 37.311 3.7117 37.75 4.83887 37.75H34.5889C35.716 37.75 36.797 37.311 37.5941 36.5296C38.3911 35.7482 38.8389 34.6884 38.8389 33.5833V25.25C38.8389 24.1449 38.3911 23.0851 37.5941 22.3037C36.797 21.5223 35.716 21.0833 34.5889 21.0833H26.0889V23.1667C26.0889 24.8243 25.4172 26.414 24.2217 27.5861C23.0261 28.7582 21.4046 29.4167 19.7139 29.4167C18.0231 29.4167 16.4016 28.7582 15.2061 27.5861C14.0105 26.414 13.3389 24.8243 13.3389 23.1667ZM30.3389 27.3333C29.7753 27.3333 29.2348 27.5528 28.8363 27.9435C28.4377 28.3342 28.2139 28.8641 28.2139 29.4167C28.2139 29.9692 28.4377 30.4991 28.8363 30.8898C29.2348 31.2805 29.7753 31.5 30.3389 31.5H30.3601C30.9237 31.5 31.4642 31.2805 31.8627 30.8898C32.2612 30.4991 32.4851 29.9692 32.4851 29.4167C32.4851 28.8641 32.2612 28.3342 31.8627 27.9435C31.4642 27.5528 30.9237 27.3333 30.3601 27.3333H30.3389Z" fill='var(--neutral-gray)'/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M19.7139 0.25C20.0322 0.250195 20.3464 0.320501 20.6333 0.455724C20.9202 0.590947 21.1724 0.787632 21.3714 1.03125L29.8714 11.4479C30.0562 11.6601 30.1957 11.9066 30.2815 12.1727C30.3673 12.4388 30.3977 12.719 30.3709 12.9969C30.3441 13.2747 30.2607 13.5444 30.1255 13.79C29.9904 14.0356 29.8063 14.2521 29.5841 14.4266C29.362 14.6011 29.1064 14.73 28.8324 14.8058C28.5585 14.8816 28.2718 14.9026 27.9894 14.8677C27.707 14.8328 27.4346 14.7426 27.1884 14.6025C26.9423 14.4624 26.7273 14.2752 26.5564 14.0521L21.8389 8.27083V23.1667C21.8389 23.7192 21.615 24.2491 21.2165 24.6398C20.818 25.0305 20.2775 25.25 19.7139 25.25C19.1503 25.25 18.6098 25.0305 18.2113 24.6398C17.8128 24.2491 17.5889 23.7192 17.5889 23.1667V8.27083L12.8714 14.0542C12.7004 14.2773 12.4855 14.4645 12.2393 14.6046C11.9931 14.7447 11.7208 14.8349 11.4383 14.8698C11.1559 14.9047 10.8693 14.8837 10.5953 14.8079C10.3214 14.7321 10.0657 14.6031 9.8436 14.4286C9.62147 14.2541 9.43736 14.0377 9.30221 13.7921C9.16705 13.5465 9.0836 13.2768 9.05681 12.9989C9.03002 12.7211 9.06043 12.4408 9.14625 12.1748C9.23206 11.9087 9.37153 11.6622 9.55637 11.45L18.0564 1.03333C18.2551 0.789333 18.5073 0.592252 18.7942 0.456663C19.0811 0.321074 19.3954 0.250445 19.7139 0.25ZM13.3389 23.1667V21.0833H4.83887C3.7117 21.0833 2.63069 21.5223 1.83366 22.3037C1.03663 23.0851 0.588867 24.1449 0.588867 25.25V33.5833C0.588867 34.6884 1.03663 35.7482 1.83366 36.5296C2.63069 37.311 3.7117 37.75 4.83887 37.75H34.5889C35.716 37.75 36.797 37.311 37.5941 36.5296C38.3911 35.7482 38.8389 34.6884 38.8389 33.5833V25.25C38.8389 24.1449 38.3911 23.0851 37.5941 22.3037C36.797 21.5223 35.716 21.0833 34.5889 21.0833H26.0889V23.1667C26.0889 24.8243 25.4172 26.414 24.2217 27.5861C23.0261 28.7582 21.4046 29.4167 19.7139 29.4167C18.0231 29.4167 16.4016 28.7582 15.2061 27.5861C14.0105 26.414 13.3389 24.8243 13.3389 23.1667ZM30.3389 27.3333C29.7753 27.3333 29.2348 27.5528 28.8363 27.9435C28.4377 28.3342 28.2139 28.8641 28.2139 29.4167C28.2139 29.9692 28.4377 30.4991 28.8363 30.8898C29.2348 31.2805 29.7753 31.5 30.3389 31.5H30.3601C30.9237 31.5 31.4642 31.2805 31.8627 30.8898C32.2612 30.4991 32.4851 29.9692 32.4851 29.4167C32.4851 28.8641 32.2612 28.3342 31.8627 27.9435C31.4642 27.5528 30.9237 27.3333 30.3601 27.3333H30.3389Z" fill='var(--neutral-gray)' />
           </svg>
           <p className="project-editor-extra-info">Drop your image here, or <span id="browse-link">browse</span></p>
-          <p className="project-editor-extra-info">Supports: JPEG, PNG</p>
+          <p className="project-editor-extra-info">Supports: JPG/JPEG, PNG</p>
+          <p className="project-editor-extra-info">Upload one image at a time</p>
         </div>
       </label>
     </>

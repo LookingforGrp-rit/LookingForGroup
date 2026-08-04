@@ -27,6 +27,7 @@ import AboutPage from './components/pages/About';
 
 import { useLocalStorage } from 'usehooks-ts';
 import ModeratorPage from './components/pages/ModeratorPage';
+import NewProjectReviewNotice from './components/NewProjectReviewNotice';
 
 function App() {
   //const [avatarImage, setAvatarImage] = useState('/images/tempProfilePic.png'); -- Commented in clean up 26-20-01 
@@ -93,13 +94,17 @@ function App() {
           <Route path={paths.routes.ACCEPTINVITATION} element={<AcceptInvitation />} />
           <Route path={paths.routes.ACCEPTAPPLICATION} element={<AcceptApplication />} />
           <Route path={paths.routes.SETTINGS} element={<NewSettings  />} />
+          <Route path={paths.routes.MODERATION} element={<ModeratorPage />}/>
           <Route path={paths.routes.NOTFOUND} element={<NotFound />} />
           {/* <Route path={paths.routes.MESSAGEHISTORY} element={<MessageHistory />} /> */}
           <Route path={paths.routes.CREDITS} element={<Credits />} />
           <Route path={paths.routes.ABOUT} element={<AboutPage />} />
           <Route path={paths.routes.ACCOUNTACTIVATE} element={<AccountActivation />} />
-          <Route path={paths.routes.MODERATION} element={<ModeratorPage />}/>
         </Routes>
+        {/* Shown once after a project is created, wherever the editor's reload
+            lands. Mounted here so it works from the sidebar's create button too,
+            not just the My Projects page. */}
+        <NewProjectReviewNotice />
       </div>
     </ThemeContext.Provider>
   );
