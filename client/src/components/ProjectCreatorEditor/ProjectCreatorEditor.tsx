@@ -119,7 +119,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   // Tracks details on the current user, used when creating a project, not when editing
   const [currentUser, setCurrentUser] = useState<UserDetail>();
 
-  
+
   // Check if the current project can be saved
   let valid = false;
   if ((modifiedProject?.title != "" && modifiedProject?.title != undefined && modifiedProject?.title != null)
@@ -144,7 +144,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       dataManager = await projectDataManager(projectID);
 
       const data = dataManager.getSavedProject();
-      
+
       setProjectData(data);
       setModifiedProject(data);
     } catch (err) {
@@ -173,15 +173,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const fastUpdateMessage = (updatedPendingProject: PendingProject) => {
     let newMessage = "";
     if (updatedPendingProject.title !== null && updatedPendingProject.title !== undefined) { getUniqueProjectTitle(updatedPendingProject?.title, projectID); }
-    
+
     // Checks to see if the project is saving before updating the message
     // If it is it'll display a special message, otherwise it uses the main messages
-    if(getIsSaving())
-    {
-        newMessage = "Project is saving! Please wait a moment!"
+    if (getIsSaving()) {
+      newMessage = "Project is saving! Please wait a moment!"
     }
-    else
-    {
+    else {
       newMessage = "Project cannot have same title as existing project!"; //for some reason, the initial newMessage value pops up if you've met all the requirements *and then* change title to a duplicate name. so, default value is now the duplicate title error text
       if (updatedPendingProject.title === "" || updatedPendingProject.title === undefined) newMessage = "Project is missing a title!";
       else if (!isUniqueTitle) newMessage = "Project cannot have same title as existing project!";
@@ -216,12 +214,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
     // Checks to see if the project is being saved to change the message
     // Mainly here as a backup incase the other check doesn't work
-    if(getIsSaving())
-    {
+    if (getIsSaving()) {
       setMessage("Project is saving! Please wait a moment!");
     }
-    else
-    {
+    else {
       setMessage("Project is missing a Short Description!");
     }
 
@@ -253,7 +249,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         tags: [] as Tag[],
         mediums: [] as Medium[],
         approved: false,
-        owner: {...currentUser ?? (await getCurrentAccount()).data}
+        owner: { ...currentUser ?? (await getCurrentAccount()).data }
       } as ProjectWithFollowers;
 
       setProjectData(newData);
@@ -497,7 +493,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
    * @returns Promise<void>
    */
   const saveProject = async () => {
-    
+
     // default to no errors
     setFailCheck(false);
 
@@ -747,7 +743,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     } catch (err) {
       console.error(err);
     }
-    
+
   };
 
   const updatePendingProject = (updatedPendingProject: PendingProject) => {
@@ -841,15 +837,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             >
               General{generalTabInvalid && <span className="invalid-tab-alert" aria-hidden="true">*</span>}
             </button>
-            <button
-              id="media-tab"
-              onClick={() => {
-                setCurrentTab(1);
-              }}
-              className={`project-editor-tab ${currentTab === 1 ? "project-editor-tab-active" : ""}`}
-            >
-              Media
-            </button>
+
             <button
               id="tags-tab"
               onClick={() => {
@@ -858,6 +846,15 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
               className={`project-editor-tab ${currentTab === 2 ? "project-editor-tab-active" : ""}`}
             >
               Tags{tagsTabInvalid && <span className="invalid-tab-alert" aria-hidden="true">*</span>}
+            </button>
+            <button
+              id="media-tab"
+              onClick={() => {
+                setCurrentTab(1);
+              }}
+              className={`project-editor-tab ${currentTab === 1 ? "project-editor-tab-active" : ""}`}
+            >
+              Media
             </button>
             <button
               id="team-tab"
