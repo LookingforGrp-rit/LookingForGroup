@@ -227,7 +227,7 @@ export const banUser = async (
  * @returns Returns an api response, data should be ProjectPreview[]
  */
 export const getBannedUsersProjects = async (userId: number | undefined): Promise<ApiResponse> => {
-    const URL = `users/${userId}/projects`;
+    const URL = `/users/${userId}/projects`;
     const res = await GET(URL);
 
     if (res.error) {
@@ -243,7 +243,7 @@ export const getBannedUsersProjects = async (userId: number | undefined): Promis
  * @returns Returns an api response, data should be ProjectMember[]
  */
 export const getProjectsMembers = async (projectId: number | undefined): Promise<ApiResponse> => {
-    const URL = `projects/${projectId}/members`;
+    const URL = `/projects/${projectId}/members`;
     const res = await GET(URL);
 
     if (res.error) {
@@ -257,13 +257,15 @@ export const getProjectsMembers = async (projectId: number | undefined): Promise
  * Changes a project's owner
  * @param projectId The projectID of the project
  * @param newOwnerId The userID of the new owner
+ * @param devID Mod/Admin ID
  * @returns Returns an api response, data should be ProjectMember
  */
-export const patchProjectOwner = async (projectId: number | undefined, newOwnerId: number | undefined) => {
-    const URL = `projects/${projectId}/change-owner/${newOwnerId}`;
+export const patchProjectOwner = async (projectId: number | undefined, newOwnerId: number | undefined, devID: number) => {
+    const URL = `/projects/${projectId}/change-owner/${newOwnerId}`;
     const res = await PATCH(URL, {
         id: projectId,
-        userId: newOwnerId
+        userId: newOwnerId,
+        devId: devID
     });
 
     if (res.error) {

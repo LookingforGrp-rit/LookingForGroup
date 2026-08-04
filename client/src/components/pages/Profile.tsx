@@ -298,8 +298,8 @@ const Profile = (/*userProfile: any*/) => {
     return undefined;
   }
 
-  const changeProjectOwner = async (projectId: number | undefined, newOwnerId: number | undefined) => {
-    const changeProjectOwnerRes = await patchProjectOwner(projectId, newOwnerId);
+  const changeProjectOwner = async (projectId: number | undefined, newOwnerId: number | undefined, devId: number) => {
+    const changeProjectOwnerRes = await patchProjectOwner(projectId, newOwnerId, devId);
     let newProjectOwner: ProjectMember | undefined;
 
     //Success
@@ -953,7 +953,7 @@ const Profile = (/*userProfile: any*/) => {
           //I don't think we do anything special if the banned user is the only member
           //If we do we should do it here
           //Might need newProjectOwner for debugging
-          const newProjectOwner = await changeProjectOwner(bannedUsersProjects[i].projectId, oldestMember?.user.userId);
+          const newProjectOwner = await changeProjectOwner(bannedUsersProjects[i].projectId, oldestMember?.user.userId, userID);
           const projectMembers = await getAllProjectMembers(bannedUsersProjects[i].projectId);
 
 
@@ -965,6 +965,7 @@ const Profile = (/*userProfile: any*/) => {
             message: `The previous owner of this project has been banned. ` +
               `Therefore, the Looking For Group moderation team has given ownership to 
                 ${newProjectOwner?.user.firstName} ${newProjectOwner?.user.lastName}. ` +
+              `If the team believes there is a more suitable owner, the new owner can transfer ownership to them` +
               `Additionally, this project has been unapproved and requires re-approval. `,
             type: 'General',
           })));
