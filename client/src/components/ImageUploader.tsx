@@ -114,14 +114,16 @@ const ImageUploader = ({
       prevPos.current = { x: e.clientX, y: e.clientY };
     }
   };
-
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDragging.current || !tempImage.current || !canvas.current) return;
 
-    const rect = canvas.current.getBoundingClientRect();
+    // const rect = canvas.current.getBoundingClientRect();
 
-    const deltaX = (e.clientX - prevPos.current.x) * (canvas.current.width / rect.width);
-    const deltaY = (e.clientY - prevPos.current.y) * (canvas.current.height / rect.height);
+    // const deltaX = (e.clientX - prevPos.current.x) * (canvas.current.width / rect.width);
+    // const deltaY = (e.clientY - prevPos.current.y) * (canvas.current.height / rect.height);
+    const speed = 5; // increase to make dragging faster
+    const deltaX = (e.clientX - prevPos.current.x) * speed;
+    const deltaY = (e.clientY - prevPos.current.y) * speed;
 
     const rawDX = dX - deltaX;
     const rawDY = dY - deltaY;
@@ -175,39 +177,6 @@ const ImageUploader = ({
     isDragging.current = false;
   };
 
-  //wheel zooming for cropping
-  // const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
-  //   if(!tempImage.current || !canvas.current) return;
-
-  //   const delta = e.deltaY > 0 ? 0.95 : 1.05;
-  //   const newZoom = zoom * delta;
-
-  //   const minZoom = Math.max(
-  //     (canvas.current?.width! / tempImage.current?.width!) * 100,
-  //     (canvas.current?.height! / tempImage.current?.height!) * 100
-  //   );
-
-  //   const clampedZoom = Math.min(500, Math.max(minZoom, newZoom));
-
-  //   const w = tempImage.current.width * (clampedZoom / 100);
-  //   const h = tempImage.current.height * (clampedZoom / 100);
-
-  //   const cw = canvas.current.width;
-  //   const ch = canvas.current.height;
-
-  //   const maxDX = (w - cw) / 2;
-  //   const maxDY = (h - ch) / 2;
-
-  //   const newDX = Math.min(maxDX, Math.max(-maxDX, dX));
-  //   const newDY = Math.min(maxDY, Math.max(-maxDY, dY));
-
-  //   setDX(newDX);
-  //   setDY(newDY);
-
-  //   setZoom(clampedZoom);
-  //   updateCanvas();
-  // };
-
   const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
     if (!tempImage.current || !canvas.current) return;
 
@@ -236,11 +205,7 @@ const ImageUploader = ({
       (canvas.current.height / tempImage.current.height) * 100
     );
   };
-  const getMaxZoom = () => 500;
-
-
-
-
+  const getMaxZoom = () => 1000;
 
   /**
    * updates the canvas element for cropping images
@@ -712,7 +677,7 @@ const ImageUploader = ({
           multiple accept=".png, .jpg, .jpeg"
           ref={inputRef}
           onChange={handleImgChange}
-          onClick={() => setLoadingImage(true)}
+          // onClick={() => setLoadingImage(true)} //causing #2511 issues
           disabled={cropImg !== undefined}
           hidden={true}
         />
