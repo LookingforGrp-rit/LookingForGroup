@@ -944,8 +944,8 @@ Filters / Tags Style Rules
 }
 
 #discover-more-filters {
-  height: 40px;
-  width: 150px;
+  height: 50px;
+  width: 170px;
   padding: 5px;
   background: none;
   border: none;
@@ -962,7 +962,7 @@ Filters / Tags Style Rules
   #more-filters-text {
     color: var(--primary-color);
     margin: 0;
-    font-size: 1rem;
+    font-size: 1.125rem;
     font-weight: 500;
   }
 
