@@ -89,7 +89,6 @@ const Project = () => {
   const [reportResponseText, setReportResponseText] = useState<string>("");
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
-  const { setOpen } = useContext(PopupContext);
 
 
   /**
