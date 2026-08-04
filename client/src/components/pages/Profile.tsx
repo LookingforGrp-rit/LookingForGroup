@@ -942,6 +942,7 @@ const Profile = (/*userProfile: any*/) => {
       //The current plan is to transfer ownership to the oldest member, then notify the entire team about what happened, 
       // and unapprove the project
       const bannedUsersProjects = await checkBannedUserForProjects();
+      let projectOwnerBannedNotif;
 
       //Don't need to do anything if the banned user doesn't own any projects
       if (bannedUsersProjects.length !== 0) {
@@ -957,14 +958,14 @@ const Profile = (/*userProfile: any*/) => {
 
 
           //Send notification
-          const projectOwnerBannedNotif = await Promise.all(projectMembers.map((member) => sendModeratorNotification({
+          projectOwnerBannedNotif = await Promise.all(projectMembers.map((member) => sendModeratorNotification({
             modUserId: userID,
             receiverId: member.user.userId,
-            subjectLine: `Update on Your Report: ${displayedProfile?.firstName} ${displayedProfile?.lastName} has been banned`,
-            message: 'Thank you for submitting your report. ' +
-              'Our moderation team has completed its review. ' +
-              'After reviewing the information provided, we have determined that further action was necessary. ' +
-              'The reported user has been banned from Looking For Group.',
+            subjectLine: `Change in ownership of ${bannedUsersProjects[i].title}`,
+            message: `The previous owner of this project has been banned. ` +
+              `Therefore, the Looking For Group moderation team has given ownership to 
+                ${newProjectOwner?.user.firstName} ${newProjectOwner?.user.lastName}. ` +
+              `Additionally, this project has been unapproved and requires re-approval. `,
             type: 'General',
           })));
         }
@@ -972,7 +973,8 @@ const Profile = (/*userProfile: any*/) => {
 
       if (banRes.status === 200 &&
         deactivateRes.every(r => r.status === 200) &&
-        notif.every(r => r.status === 201)) {
+        notif.every(r => r.status === 201) &&
+        projectOwnerBannedNotif?.every(r => r.status === 201)) {
         setModActionComplete(true);
         setBanned(true);
       }
