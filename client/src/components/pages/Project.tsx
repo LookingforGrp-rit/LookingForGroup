@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { ProjectCreatorEditor } from "../ProjectCreatorEditor/ProjectCreatorEditor";
-import { Popup, PopupButton, PopupContent } from "../Popup";
+import { Popup, PopupButton, PopupContent, PopupContext } from "../Popup";
 import profileImage from "../../images/lfrog.png";
 import { ProjectCarousel } from "../ProjectCarousel";
 import * as paths from "../../constants/routes";
@@ -47,6 +47,9 @@ const Project = () => {
   // State variable for displaying output of API request, whether success or failure
   const [showResult, setShowResult] = useState(false);
 
+  //for closing report project popup after confirmation button is displayed
+  const [reportResult, setReportResult] = useState(false);
+
   // Context providing project ID, ownership status, and reload function
   const { projId, isOwner, reloadProjects, removeProject } = useContext(LeaveDeleteContext);
   const [requestType, setRequestType] = useState<"delete" | "leave">("delete");
@@ -84,6 +87,9 @@ const Project = () => {
   const declineMessage = useRef<HTMLTextAreaElement>(null);
   const takeDownMessage = useRef<HTMLTextAreaElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>("");
+
+  const { setOpen: closeOuterPopup } = useContext(PopupContext);
+
 
   /**
    * Checks mod permissions for the user on render (in useEffect)
@@ -403,6 +409,7 @@ const Project = () => {
       responseText = "Uh oh! Something went wrong with your report!";
     }
     setReportResponseText(responseText);
+    setReportResult(true);
   };
 
   //HTML elements containing buttons used in the info panel
@@ -627,7 +634,7 @@ const Project = () => {
                   <></>
                 }
                 {userID > 0 && approvalStatus == 'not-approved' ? (
-                  <Popup>
+                  <>  <Popup>
                     <PopupButton
                       className="project-info-dropdown-option"
                     >
@@ -656,22 +663,36 @@ const Project = () => {
                             <PopupButton
                               className="delete-button"
                               callback={reportProjectPressed}
-                              closeParent={() => true}> {/* doesnt work*/}
+                              closeParent={closeOuterPopup}> {/* doesnt work*/}
                               Report
                             </PopupButton>
-                            <PopupContent>
+                            {/* <PopupContent>
                               <div className="small-popup">
                                 <p>{reportResponseText}</p>
-                                <PopupButton buttonId="continue-button" closeParent={() => true}>
+                                <PopupButton buttonId="continue-button" closeParent={closeOuterPopup}>
                                   Continue
                                 </PopupButton>
                               </div>
-                            </PopupContent>
+                            </PopupContent> */}
                           </Popup>
                         </div>
                       </div>
                     </PopupContent>
-                  </Popup>) : ""}
+                  </Popup>
+                    <PagePopup
+                      width={"fit-content"}
+                      height={"fit-content"}
+                      popupId={"result"}
+                      zIndex={21} //keep at 21 so success msg appears over all popups
+                      show={reportResult}
+                      setShow={setReportResult}
+                    >
+                      <div className="small-popup">
+                        <p>{reportResponseText}</p>
+                      </div>
+                    </PagePopup>
+                  </>)
+                  : ""}
               </div>
             </DropdownContent>
           </Dropdown>
