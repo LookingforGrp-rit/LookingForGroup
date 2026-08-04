@@ -14,6 +14,7 @@ import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import { addUserSkill, createNewUser, getCurrentUsername, googleLogin, editUser, addUserMajor } from '../../api/users';
 import { RitStatus, CreateUserInput, Major, SessionUserData, Skill } from '@looking-for-group/shared';
 import { ThemeContext } from '../../contexts/ThemeContext';
+import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEditor';
 
 interface SignUpProps {
   profileImage: File;
@@ -350,7 +351,10 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
   //Create user and send them to appropriate location
   const createProjectButton = async () => {
     await createUser();
-    navigate(paths.routes.MYPROJECTS);
+    navigate({
+      pathname: paths.routes.MYPROJECTS,
+      search: '?create=1'
+    });
   }
 
   const joinProjectButton = async () => {
