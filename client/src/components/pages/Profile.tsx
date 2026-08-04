@@ -1158,6 +1158,11 @@ const Profile = (/*userProfile: any*/) => {
                   <div id="profile-names">
                     <h1 id="profile-fullname">
                       {displayedProfile?.firstName} {displayedProfile?.lastName}
+                      {displayedProfileAccessLevel === 'Administrator' || displayedProfileAccessLevel === 'Moderator' 
+                      ? <span className="tooltip">
+                          <ThemeIcon id={'mod-badge'} width={35} height={35} className={"color-fill mono-stroke-invert"}
+                        ariaLabel={displayedProfileAccessLevel === 'Administrator' ? "Administrator" : "Moderator"}/>
+                          <span className="tooltip-text">{displayedProfileAccessLevel === 'Administrator' ? "Administrator" : "Moderator"}</span></span> : ""}
                     </h1>
                     <h2 id="profile-username">
                       @{displayedProfile?.username}
