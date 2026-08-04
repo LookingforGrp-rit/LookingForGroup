@@ -106,7 +106,7 @@ export const getBannedUsers = async (): Promise<ApiResponse<UserDetail[]>> => {
     const response = await GET(apiURL);
 
     if (response.error) console.log(`Error in getBannedUsers: ${response.error}`);
-    return response; 
+    return response;
 }
 
 /**
@@ -118,7 +118,7 @@ export const getBanDetail = async (userId: number): Promise<ApiResponse<BanDetai
     const response = await GET(apiURL);
 
     if (response.error) console.log(`Error in getBanDetail: ${response.error}`);
-    return response; 
+    return response;
 }
 
 /**
@@ -222,6 +222,58 @@ export const banUser = async (
 };
 
 /**
+ * Gets a banned user's projects
+ * @param userId The userId of the banned user
+ * @returns Returns an api response, data should be ProjectPreview[]
+ */
+export const getBannedUsersProjects = async (userId: number | undefined): Promise<ApiResponse> => {
+    const URL = `users/${userId}/projects`;
+    const res = await GET(URL);
+
+    if (res.error) {
+        console.log(`Error in getBannedUsersProjects: ${res.error}`);
+    }
+
+    return res;
+}
+
+/**
+ * Get's a project's members
+ * @param projectId The ID of the project
+ * @returns Returns an api response, data should be ProjectMember[]
+ */
+export const getProjectsMembers = async (projectId: number | undefined): Promise<ApiResponse> => {
+    const URL = `projects/${projectId}/members`;
+    const res = await GET(URL);
+
+    if (res.error) {
+        console.log(`Error in getProjectsMembers: ${res.error}`);
+    }
+
+    return res;
+}
+
+/**
+ * Changes a project's owner
+ * @param projectId The projectID of the project
+ * @param newOwnerId The userID of the new owner
+ * @returns Returns an api response, data should be ProjectMember
+ */
+export const patchProjectOwner = async (projectId: number | undefined, newOwnerId: number | undefined) => {
+    const URL = `projects/${projectId}/change-owner/${newOwnerId}`;
+    const res = await PATCH(URL, {
+        id: projectId,
+        userId: newOwnerId
+    });
+
+    if (res.error) {
+        console.log(`Error in changeProjectOwner: ${res.error}`);
+    }
+
+    return res;
+}
+
+/**
  * Deletes a project report
  * @param reportId The id of the report to delete
  */
@@ -292,7 +344,7 @@ export const unbanUser = async (userId: number): Promise<ApiResponse> => {
  */
 export const reportBug = async (bugReportText: string): Promise<ApiResponse> => {
     const apiURL = `/me/report-bug`;
-    const response = await POST(apiURL, {reportText: bugReportText});
+    const response = await POST(apiURL, { reportText: bugReportText });
 
     if (response.error) console.log(`Error in getBugReports: ${response.error}`);
     return response;

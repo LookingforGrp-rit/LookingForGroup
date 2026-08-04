@@ -38,14 +38,18 @@ import {
   MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail,
   UserAccessLevel, UserReport, BanDetail,
   GalleryImage,
-  GalleryVideo
+  GalleryVideo,
+  ProjectMember
 } from '@looking-for-group/shared';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
 import {
   getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification,
-  deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi
+  deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi,
+  getBannedUsersProjects,
+  getProjectsMembers,
+  patchProjectOwner
 } from "../../api/mod-tools";
 import { getYouTubeEmbedID, getYouTubeEmbedURL } from "../../functions/parseYoutube";
 import { Carousel, CarouselButton, CarouselContent, CarouselTabs } from "../ImageCarousel";
@@ -216,6 +220,82 @@ const Profile = (/*userProfile: any*/) => {
   // --------------------
   // Helper functions
   // --------------------
+
+  /**
+   * Checks if the banned user owns projects and returns them
+   * @returns projects that the banned user owns
+   */
+  const checkBannedUserForProjects = async () => {
+    //Check if the banned user owns projects and put them into an array if they do
+    const bannedUsersProjectsRes = await getBannedUsersProjects(displayedProfile?.userId);
+    let bannedUsersProjects: ProjectPreview[] = [];
+
+    //Success
+    if (bannedUsersProjectsRes.status === 200) {
+      bannedUsersProjects = bannedUsersProjectsRes.data;
+    }
+
+    //Bad request
+    else if (bannedUsersProjectsRes.status === 400) {
+      console.log(`Bad request on bannedUsersProjectsRes: ${bannedUsersProjectsRes}`);
+    }
+
+    //Not found
+    else if (bannedUsersProjectsRes.status === 404) {
+      console.log(`bannedUsersProjectsRes not found: ${bannedUsersProjectsRes}`);
+    }
+
+    //Server error
+    else if (bannedUsersProjectsRes.status === 500) {
+      console.log(`Internal server error on bannedUsersProjectsRes: ${bannedUsersProjectsRes}`);
+    }
+
+    return bannedUsersProjects;
+  }
+
+  const getOldestMember = async (projectId: number | undefined): Promise<ProjectMember | undefined> => {
+    const getProjectMembers = await getProjectsMembers(projectId);
+    let projectMembers: ProjectMember[] = [];
+
+    //Success
+    if (getProjectMembers.status === 200) {
+      projectMembers = getProjectMembers.data;
+
+      //Return undefined if it's empty or error
+      if (projectMembers.length >= 2) {
+        const projectMembersSorted: ProjectMember[] = projectMembers.sort(
+          (member1, member2) => member1.memberSince.valueOf() - member2.memberSince.valueOf());
+
+        //I think this is correct?
+        console.log(projectMembersSorted);
+        return projectMembersSorted[0];
+      } else if (projectMembers.length === 1) {
+        return projectMembers[0];
+      }
+    }
+
+    //Bad request
+    else if (getProjectMembers.status === 400) {
+      console.log(`Bad request on getProjectMembers: ${getProjectMembers}`);
+    }
+
+    //Not found
+    else if (getProjectMembers.status === 404) {
+      console.log(`getProjectMembers not found: ${getProjectMembers}`);
+    }
+
+    //Server error
+    else if (getProjectMembers.status === 500) {
+      console.log(`Internal server error on getProjectMembers: ${getProjectMembers}`);
+    }
+
+    return undefined;
+  }
+
+  const changeProjectOwner = async (projectId: number | undefined, newOwnerId: number | undefined) => {
+    const changeProjectOwnerRes = await patchProjectOwner(projectId, newOwnerId);
+  }
+
   /**
    * Checks if the user is following this user
    * @returns true if following
@@ -829,6 +909,23 @@ const Profile = (/*userProfile: any*/) => {
         type: 'General',
       })));
 
+      //If the banned owner owns projects
+      //The current plan is to transfer ownership to the oldest member, then notify the entire team about what happened, 
+      // and unapprove the project
+      const bannedUsersProjects = await checkBannedUserForProjects();
+
+      //Don't need to do anything if the banned user doesn't own any projects
+      if (bannedUsersProjects.length !== 0) {
+
+        for (let i = 0; i < bannedUsersProjects.length; i++) {
+          const oldestMember = await getOldestMember(bannedUsersProjects[i].projectId);
+
+          //I don't think we do anything special if the banned user is the only member
+          //If we do we should do it here
+          const changeProjectOwnerRes = await changeProjectOwner(bannedUsersProjects[i].projectId, oldestMember?.user.userId);
+        }
+      }
+
       if (banRes.status === 200 &&
         deactivateRes.every(r => r.status === 200) &&
         notif.every(r => r.status === 201)) {
@@ -1322,7 +1419,8 @@ const Profile = (/*userProfile: any*/) => {
                   <div className="small-popup" id="report-popup">
                     <h3>Ban {displayedProfile?.firstName} {displayedProfile?.lastName} from LookingForGroup</h3>
                     <p>Why are you banning this user?</p>
-                    <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={banMessage}></textarea>
+                    <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={banMessage}>
+                    </textarea>
                     <div className="confirm-deny-btns">
                       <PopupButton
                         buttonId="ban-cancel-button"
@@ -1336,7 +1434,13 @@ const Profile = (/*userProfile: any*/) => {
                         Cancel
                       </PopupButton>
                       <Popup>
-                        <PopupButton buttonId="mod-submit-ban-btn" className="confirm-btn" callback={() => resolveReport('ban')}>Submit</PopupButton>
+                        <PopupButton
+                          buttonId="mod-submit-ban-btn"
+                          className="confirm-btn"
+                          callback={() => resolveReport('ban')}
+                        >
+                          Submit
+                        </PopupButton>
                         <PopupContent>
                           <div className="small-popup">
                             {modActionComplete
