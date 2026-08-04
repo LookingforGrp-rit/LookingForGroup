@@ -764,8 +764,7 @@ const Profile = (/*userProfile: any*/) => {
       })));
 
       if (res?.every(r => r.status === 200) && notif.every(r => r.status === 201)) {
-        setModActionComplete(true);
-        window.location.assign(paths.routes.MODERATION);
+        navigate(paths.routes.MODERATION);
       };
 
     } else if (action === 'warn') {
@@ -796,8 +795,7 @@ const Profile = (/*userProfile: any*/) => {
       if (warnRes.status === 201
         && deactivateRes?.every(r => r.status === 200)
         && notif.every(r => r.status === 201)) {
-        setModActionComplete(true);
-        window.location.assign(paths.routes.MODERATION);
+        navigate(paths.routes.MODERATION);
       }
     } else if (action === 'ban') {
       if (!banMessage?.current?.value) {
