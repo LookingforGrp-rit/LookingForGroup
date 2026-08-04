@@ -253,25 +253,13 @@ const Profile = (/*userProfile: any*/) => {
     return bannedUsersProjects;
   }
 
-  const getOldestMember = async (projectId: number | undefined): Promise<ProjectMember | undefined> => {
+  const getAllProjectMembers = async (projectId: number | undefined): Promise<ProjectMember[]> => {
     const getProjectMembers = await getProjectsMembers(projectId);
     let projectMembers: ProjectMember[] = [];
 
     //Success
     if (getProjectMembers.status === 200) {
       projectMembers = getProjectMembers.data;
-
-      //Return undefined if it's empty or error
-      if (projectMembers.length >= 2) {
-        const projectMembersSorted: ProjectMember[] = projectMembers.sort(
-          (member1, member2) => member1.memberSince.valueOf() - member2.memberSince.valueOf());
-
-        //I think this is correct?
-        console.log(projectMembersSorted);
-        return projectMembersSorted[0];
-      } else if (projectMembers.length === 1) {
-        return projectMembers[0];
-      }
     }
 
     //Bad request
@@ -289,11 +277,52 @@ const Profile = (/*userProfile: any*/) => {
       console.log(`Internal server error on getProjectMembers: ${getProjectMembers}`);
     }
 
+    return projectMembers;
+  }
+
+  const getOldestMember = async (projectId: number | undefined): Promise<ProjectMember | undefined> => {
+    const projectMembers = await getAllProjectMembers(projectId);
+
+    //Return undefined if it's empty
+    if (projectMembers.length >= 2) {
+      const projectMembersSorted: ProjectMember[] = projectMembers.sort(
+        (member1, member2) => member1.memberSince.valueOf() - member2.memberSince.valueOf());
+
+      //I think this is correct?
+      console.log(projectMembersSorted);
+      return projectMembersSorted[0];
+    } else if (projectMembers.length === 1) {
+      return projectMembers[0];
+    }
+
     return undefined;
   }
 
   const changeProjectOwner = async (projectId: number | undefined, newOwnerId: number | undefined) => {
     const changeProjectOwnerRes = await patchProjectOwner(projectId, newOwnerId);
+    let newProjectOwner: ProjectMember | undefined;
+
+    //Success
+    if (changeProjectOwnerRes.status === 200) {
+      newProjectOwner = changeProjectOwnerRes.data as ProjectMember;
+    }
+
+    //Bad request
+    else if (changeProjectOwnerRes.status === 400) {
+      console.log(`Bad request on changeProjectOwnerRes: ${changeProjectOwnerRes}`);
+    }
+
+    //Not found
+    else if (changeProjectOwnerRes.status === 404) {
+      console.log(`changeProjectOwnerRes not found: ${changeProjectOwnerRes}`);
+    }
+
+    //Server error
+    else if (changeProjectOwnerRes.status === 500) {
+      console.log(`Internal server error on changeProjectOwnerRes: ${changeProjectOwnerRes}`);
+    }
+
+    return newProjectOwner;
   }
 
   /**
@@ -922,7 +951,22 @@ const Profile = (/*userProfile: any*/) => {
 
           //I don't think we do anything special if the banned user is the only member
           //If we do we should do it here
-          const changeProjectOwnerRes = await changeProjectOwner(bannedUsersProjects[i].projectId, oldestMember?.user.userId);
+          //Might need newProjectOwner for debugging
+          const newProjectOwner = await changeProjectOwner(bannedUsersProjects[i].projectId, oldestMember?.user.userId);
+          const projectMembers = await getAllProjectMembers(bannedUsersProjects[i].projectId);
+
+
+          //Send notification
+          const projectOwnerBannedNotif = await Promise.all(projectMembers.map((member) => sendModeratorNotification({
+            modUserId: userID,
+            receiverId: member.user.userId,
+            subjectLine: `Update on Your Report: ${displayedProfile?.firstName} ${displayedProfile?.lastName} has been banned`,
+            message: 'Thank you for submitting your report. ' +
+              'Our moderation team has completed its review. ' +
+              'After reviewing the information provided, we have determined that further action was necessary. ' +
+              'The reported user has been banned from Looking For Group.',
+            type: 'General',
+          })));
         }
       }
 
