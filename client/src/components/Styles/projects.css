@@ -1976,7 +1976,7 @@ Project Creator and Editor Popup style rules
   }
 }
 
-@media only screen and (max-width: 1024px){
+@media only screen and (max-width: 799px){
   #project-editor-change-owner{
     flex-direction: column;
     gap: 20px;
