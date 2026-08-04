@@ -399,7 +399,7 @@ const Project = () => {
     const response = await reportProject(projectID, message);
     let responseText = response.error;
     if (responseText === null || responseText === undefined) {
-      responseText = "Your report was sent! Your request will be processed and receive an update shortly.";
+      responseText = "Your report was sent! Your submission will be processed by our moderators. They will reach out if they need more information.";
     }
     /* A report on the project already exists */
     else if (response.status === 409) {

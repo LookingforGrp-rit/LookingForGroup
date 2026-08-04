@@ -220,6 +220,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							<div
 								id="complete-profile-add-image"
 								className="edit-profile-image">
+								<p id="profile-image-label">Profile Image</p>
 								<ProfileImageUploader
 									onFileSelected={handleUploadPfp}
 									initialImageFile={profileImage}
