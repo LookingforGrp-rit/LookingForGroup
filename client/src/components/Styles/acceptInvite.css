@@ -90,7 +90,8 @@ Styling of Accept Project Invite Page (AcceptInvitation.tsx)
         color: var(--primary-color);
     }
 
-    #project-title, #applicant-name {
+    #project-title,
+    #applicant-name {
         display: block;
 
         font-size: 1.5rem;
@@ -134,15 +135,13 @@ Styling of Accept Project Invite Page (AcceptInvitation.tsx)
         >div {
             width: 100%;
             margin: 8px 0;
-
             display: flex;
         }
 
         p {
+            min-width: 10ch;
             margin: 0;
-
             text-align: left;
-            word-break: break-word;
         }
 
         .detail-header {
