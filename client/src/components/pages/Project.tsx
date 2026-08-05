@@ -1104,6 +1104,21 @@ const Project = () => {
                 >
                   The Team
                 </div>
+                
+                {user && displayedProject?.owner.userId === user.userId ?
+                (
+                  <div>
+                    <ProjectCreatorEditor
+                      mobileView={false} //error being caused by this prop not being passed in, but it also isn't used in the component at all, sooooo
+                      newProject={false}
+                      updateDisplayedProject={setDisplayedProject}
+                      defaultTab={3}
+                      buttonName={"Edit Jobs"}
+                      /*permissions={userPerms}*/
+                    />
+                </div>
+                ) : ""}
+
                 {/* If contributors are added as a site feature, use the commented code below */}
                 {/* <button className={`project-people-tab ${displayedPeople === 'Contributors' ? 'project-people-tab-active' : ''}`} onClick={(e) => setDisplayedPeople('Contributors')}>Contributors</button> */}
               </div>

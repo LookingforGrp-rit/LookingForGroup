@@ -5168,7 +5168,7 @@ button#positions-popup-list-item-active {
 }
 
 #project-people-tabs {
-  display: flex;
+  display: grid;
   justify-content: center;
   gap: 10px;
 }
