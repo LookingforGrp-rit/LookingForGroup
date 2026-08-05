@@ -29,7 +29,7 @@ const changeOwnerService = async (
 
     return transformProjectMember(member.projectId, member);
   } catch (e) {
-    console.error('Error in updateMemberService:', e);
+    console.error('Error in changeOwnerService:', e);
     return 'INTERNAL_ERROR';
   }
 };
