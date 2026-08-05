@@ -6,7 +6,7 @@ const MoreFiltersButton = () => {
         <>
             <div id="more-filters-button">
                 <p id="more-filters-text">More Filters</p>
-                <ThemeIcon id={'filter'} width={30} height={30} className={'color-fill color-stroke'} ariaLabel={'more filters'} />
+                <ThemeIcon id={'filter'} width={30} height={30} className={'color-fill'} ariaLabel={'more filters'} />
             </div></>)
 }
 

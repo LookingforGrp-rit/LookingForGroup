@@ -1298,6 +1298,19 @@ New Profile page style rules
             margin: 0;
             width: fit-content;
             text-wrap: wrap;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+
+            .tooltip-text {
+              width: fit-content;
+              font-size: 0.5em;
+              padding: 10px;
+              
+              top: 100%;
+              right: 20%;
+              left: auto;
+            }
           }
 
           >#profile-username {
@@ -2481,6 +2494,10 @@ New Profile page style rules
       color: var(--primary-color);
     }
   }
+}
+
+#mod-badge {
+  stroke-width: 4;
 }
 
 /* Delete-account confirmation popup in the profile editor. The shared
