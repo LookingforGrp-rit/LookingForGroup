@@ -1,0 +1,95 @@
+get:
+  summary: Get a project's mediums
+  description: Returns the list of mediums associated with the specified project
+  tags:
+    - Projects
+  security:
+    - shibbolethAuth: []
+  parameters:
+    - in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: The ID of the project
+  responses:
+    '200':
+      description: List of mediums the current project has
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: array
+                items:
+                  $ref: '../../swagger.yaml#/components/schemas/ProjectMedium'
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '401':
+      $ref: '../../swagger.yaml#/components/responses/Unauthorized'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+post:
+  summary: Adds multiple project mediums
+  description: Adds an amount of mediums to the specified project
+  security:
+    - shibbolethAuth: []
+  tags:
+    - Projects
+  parameters:
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+    - in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: The ID of the project
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../swagger.yaml#/components/schemas/AddProjectMediumsInput'
+  responses:
+    '200':
+      description: Mediums created successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: object
+                $ref: '../../swagger.yaml#/components/schemas/ProjectMedium'
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '401':
+      $ref: '../../swagger.yaml#/components/responses/Unauthorized'
+    '409':
+      $ref: '../../swagger.yaml#/components/responses/Conflict'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

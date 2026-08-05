@@ -1,0 +1,54 @@
+patch:
+  summary: Update a member in a project
+  security:
+    - shibbolethAuth: []
+  tags:
+    - Project Members
+  description: Updates the role or other properties of a member in a project.
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+      description: Project ID
+    - in: path
+      name: userId
+      required: true
+      schema:
+        type: integer
+      description: The ID of the member to update
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../../swagger.yaml#/components/schemas/UpdateProjectMemberInput'
+  responses:
+    '200':
+      description: Member updated successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: object
+                $ref: '../../../swagger.yaml#/components/schemas/ProjectMember'
+    '400':
+      $ref: '../../../swagger.yaml#/components/responses/BadRequest'
+    '500':
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'

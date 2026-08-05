@@ -1,0 +1,96 @@
+patch:
+  summary: Updates a project social
+  description: Updates one of the project socials specified
+  security:
+    - shibbolethAuth: []
+  tags:
+    - Projects
+  parameters:
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+    - in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: The ID of the project
+    - name: socialId
+      in: path
+      required: true
+      description: ID of the social to be deleted
+      schema:
+        type: integer
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../swagger.yaml#/components/schemas/UpdateProjectSocialInput'
+  responses:
+    '200':
+      description: Social created successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: object
+                $ref: '../../swagger.yaml#/components/schemas/ProjectSocial'
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+delete:
+  summary: Delete one of the specified project's socials
+  security:
+    - shibbolethAuth: []
+  tags:
+    - Projects
+  parameters:
+    - name: socialId
+      in: path
+      required: true
+      description: ID of the social to be deleted
+      schema:
+        type: integer
+    - in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: The ID of the project
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  responses:
+    '200':
+      description: Social deleted successfully
+      content:
+        application/json:
+          example:
+            status: 200
+            error: null
+            data: null
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

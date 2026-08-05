@@ -1,0 +1,118 @@
+get:
+  summary: Gets all gallery videos for the current user.
+  tags:
+    - Me Gallery
+  security:
+    - shibbolethAuth: []
+  description: Retrieves all videos stored in the user's gallery.
+  parameters:
+    - in: path
+      name: userId
+      required: true
+      schema:
+        type: integer
+      description: ID of the current user.
+  responses:
+    '200':
+      description: Gallery videos retrieved successfully.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                nullable: true
+                example: null
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    galleryVideoId:
+                      type: integer
+                      example: 5
+                    videoUrl:
+                      type: string
+                      example: 'https://youtube.com/watch?v=abc123'
+                    title:
+                      type: string
+                      example: 'My gallery video'
+                    position:
+                      type: integer
+                      example: 1
+                    userId:
+                      type: integer
+                      example: 42
+    '404':
+      $ref: '../../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'
+post:
+  summary: Adds a video to the current user's gallery.
+  tags:
+    - Me Gallery
+  security:
+    - shibbolethAuth: []
+  description: Adds a video URL and title to the user's gallery.
+  parameters:
+    - in: path
+      name: userId
+      required: true
+      schema:
+        type: integer
+      description: ID of the current user.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            videoUrl:
+              type: string
+              description: URL of the video.
+            title:
+              type: string
+              description: Title describing the video.
+          required:
+            - videoUrl
+            - title
+  responses:
+    '201':
+      description: Video added to gallery.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 201
+              error:
+                nullable: true
+                example: null
+              data:
+                type: object
+                properties:
+                  galleryVideoId:
+                    type: integer
+                    example: 1
+                  videoUrl:
+                    type: string
+                    example: 'https://youtube.com/watch?v=abc123'
+                  title:
+                    type: string
+                    example: 'My gallery video'
+                  position:
+                    type: integer
+                    example: 0
+                  userId:
+                    type: integer
+                    example: 42
+    '404':
+      $ref: '../../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'
