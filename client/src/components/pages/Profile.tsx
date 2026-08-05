@@ -963,7 +963,7 @@ const Profile = (/*userProfile: any*/) => {
             subjectLine: `Change in ownership of ${bannedUsersProjects[i].title}`,
             message: `The previous owner of this project has been banned. ` +
               `Therefore, the Looking For Group moderation team has changed the ownership of this project 
-                to another member on the team. ` +
+                to another member of the project. ` +
               `If the team believes there is a more suitable owner, the new owner can transfer ownership to them` +
               `Additionally, this project has been unapproved and requires re-approval. `,
             type: 'General',
