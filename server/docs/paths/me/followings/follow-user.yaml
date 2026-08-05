@@ -1,7 +1,7 @@
 post:
   summary: Follow another user
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Me Followings
   parameters:

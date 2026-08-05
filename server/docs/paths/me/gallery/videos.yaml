@@ -55,7 +55,7 @@ post:
   tags:
     - Me Gallery
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   description: Adds a video URL and title to the user's gallery.
   parameters:
     - in: path

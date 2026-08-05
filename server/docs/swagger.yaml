@@ -225,10 +225,9 @@ paths:
 components:
   securitySchemes:
     googleAuth:
-      #Filler values need to be changed
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+      type: apiKey
+      scheme: cookie
+      name: connect.sid
   schemas:
     Role:
       $ref: 'schemas/datasets.yaml#/components/schemas/Role'
