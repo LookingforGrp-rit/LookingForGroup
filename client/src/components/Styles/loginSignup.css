@@ -319,9 +319,6 @@ Login and Signup page style rules
 }
 
 @media screen and (max-width:500px) and (max-height:900px) {
-  .login-signup-container {
-    margin-bottom: 200px;
-  }
 
   .signup-form {
     padding: 0 25px;
