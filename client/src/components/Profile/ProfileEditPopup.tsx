@@ -272,7 +272,7 @@ export const ProfileEditPopup = ({ editSkills = false, editContact = false, edit
           <ThemeIcon
             id={"pencil"}
             width={11}
-            height={12}
+            height={11}
             className={"gradient-color-fill edit-project-member-icon"}
             ariaLabel={"edit"} />
           : "Edit Profile"}

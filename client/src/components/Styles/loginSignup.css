@@ -635,6 +635,19 @@ Signup process modal style rules
   width: min(50vw, 250px);
   height: min(50vw, 250px);
   aspect-ratio: 1 / 1;
+
+  #profile-image-label{
+    color: var(--primary-color);
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+
+  #profile-image-uploader{
+    max-width: 85%;
+    max-height: 85%;
+  }
 }
 
 #profile-pic {
@@ -921,6 +934,24 @@ Signup process modal style rules
     background-color: var(--header-color);
 
     max-height: 570%;
+  }
+
+  .tooltip-text {
+    visibility: hidden;
+    width: 250px;
+    background-color: var(--bg-color);
+    color: var(--main-text);
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    top: -40px;
+    left: 0;
+  }
+
+  .tooltip:hover .tooltip-text {
+    visibility: visible;
   }
 }
 

@@ -1,0 +1,89 @@
+post:
+  summary: Follow a project
+  security:
+    - shibbolethAuth: []
+  tags:
+    - Me Followings
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: ID of the project to follow
+      schema:
+        type: integer
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  responses:
+    '201':
+      description: Project followed successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 201
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: object
+                $ref: '../../../swagger.yaml#/components/schemas/MyProjectFollowing'
+    '400':
+      $ref: '../../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../../swagger.yaml#/components/responses/NotFound'
+    '409':
+      $ref: '../../../swagger.yaml#/components/responses/Conflict'
+    '500':
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'
+delete:
+  summary: Unfollow a project
+  security:
+    - shibbolethAuth: []
+  tags:
+    - Me Followings
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: ID of the project to unfollow
+      schema:
+        type: integer
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  responses:
+    '200':
+      description: Project unfollowed successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: object
+                nullable: true
+                example: null
+    '400':
+      $ref: '../../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'

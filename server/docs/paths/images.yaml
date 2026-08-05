@@ -1,0 +1,26 @@
+# IMAGES
+get:
+  summary: Gets an image by file name
+  tags:
+    - Images
+  description: Retrieves an image from the database by its unique file name.
+  parameters:
+    - in: path
+      name: image
+      required: true
+      schema:
+        type: string
+      description: Image URL
+  responses:
+    '200':
+      description: Image found
+      content:
+        image/png:
+          type: string
+          format: binary
+    '400':
+      $ref: '../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../swagger.yaml#/components/responses/InternalServerError'

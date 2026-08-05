@@ -1,0 +1,83 @@
+get:
+  summary: Get a specific project report
+  tags:
+    - Mod
+  security:
+    - shibbolethAuth: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: ID of report to get
+      schema:
+        type: integer
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  responses:
+    '200':
+      description: Project report acquired successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: object
+                $ref: '../../swagger.yaml#/components/schemas/ProjectReport'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+delete:
+  summary: Removes a project report
+  tags:
+    - Mod
+  security:
+    - shibbolethAuth: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: ID of report to delete
+      schema:
+        type: integer
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  responses:
+    '200':
+      description: Project report deleted successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: string
+                nullabe: true
+                example: NO_CONTENT
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

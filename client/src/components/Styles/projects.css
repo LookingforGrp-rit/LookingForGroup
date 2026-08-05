@@ -680,6 +680,7 @@ Project Creator and Editor Popup style rules
   font-size: 1rem;
   background: none;
   display: flex;
+  gap: 3px;
   position: relative;
 
   border-radius: 10px;
@@ -1834,9 +1835,6 @@ Project Creator and Editor Popup style rules
   height: 24px;
 }
 
-#profile-extra #project-info-edit {
-  margin-bottom: 6px;
-}
 
 .project-editor-project-member>.edit-project-member-button {
   top: 6px;
@@ -1919,6 +1917,11 @@ Project Creator and Editor Popup style rules
     background-color: var(--header-color);
     border-radius: 10px;
 
+    label{
+      margin-top: 0.5em;
+      font-size: 1.5rem;
+    }
+
     img {
       height: 320px;
       margin: 20px;
@@ -1942,8 +1945,13 @@ Project Creator and Editor Popup style rules
     margin: auto 0;
     width: 40%;
 
+    label{
+      margin-bottom: 0.5em;
+    }
+
     .select-container {
       margin: 0 auto;
+      margin-top: 0.5em;
       width: 80%;
     }
 
@@ -1951,12 +1959,11 @@ Project Creator and Editor Popup style rules
       display: flex;
       flex-direction: column;
       margin-top: 40px;
-      gap: 20px;
 
       #change-owner-confirm {
         margin: 0 auto;
         width: min-content;
-        padding: 10px 5px;
+        padding: 10px 10px;
         border: none;
         border-radius: 20px;
         background-color: var(--primary-color);
@@ -1964,6 +1971,21 @@ Project Creator and Editor Popup style rules
         font-weight: 800;
       }
     }
+  }
+}
+
+@media only screen and (max-width: 799px){
+  #project-editor-change-owner{
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  #project-editor-owner-options{
+    width: 100% !important;
+  }
+
+  #project-editor-owner-confirm{
+    margin-top: 1em !important;
   }
 }
 
@@ -3973,7 +3995,7 @@ New Project Page style rules
   }
 
   #project-editor-team-tabs {
-    /* justify-content: flex-start; */
+    justify-content: flex-start;
     gap: 4%;
     height: 80px;
 
@@ -3981,6 +4003,10 @@ New Project Page style rules
       text-wrap: wrap !important;
       max-width: 150px;
     }
+  }
+
+  #project-editor-team-tabs::-webkit-scrollbar-thumb {
+      background-color: rgb(113, 114, 118);
   }
 
   #project-editor-project-members {

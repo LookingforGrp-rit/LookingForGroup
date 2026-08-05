@@ -177,8 +177,9 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 					type="button"
 					onClick={() => {
 						setCurrentSkillsTab(i)
-						if (document.getElementById("project-editor-tag-search-container")) {
-							document.getElementById("project-editor-tag-search-container").scrollTop = 0; //shows error but still works?
+						let container = document.getElementById("project-editor-tag-search-container");
+						if (container) {
+							container.scrollTop = 0; //shows error but still works?
 						}
 					}}
 					className={`button-reset project-editor-tag-search-tab filter-tab-${skillTabColors[skill as string] ?? "grey"} ${currentSkillsTab === i ? "tag-search-tab-active" : ""}`}
@@ -276,7 +277,7 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 							</div>
 							<div id="project-editor-tag-search-container">
 								<TagDisplay
-									selected={[skillToTagOrSkill(selectedSkills), []]}
+									selected={skillToTagOrSkill(selectedSkills)}
 									toggleTag={handleSkillToggle}
 									tabs={skillTabs}
 									tabId={currentSkillsTab}

@@ -1,0 +1,47 @@
+patch:
+  summary: Demotes a moderator.
+  tags:
+    - Admin
+  description: Changes a user's access level from 'Moderator' to 'User'
+  parameters:
+    - in: query
+      name: devId
+      required: true
+      schema:
+        type: integer
+      description: Id to be used as administrator.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            userId:
+              type: number
+              example: 1865
+  responses:
+    '200':
+      description: Moderator demoted successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                nullable: true
+                example: null
+              data:
+                type: string
+                example:
+    '403':
+      $ref: '../../swagger.yaml#/components/responses/Forbidden'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '409':
+      $ref: '../../swagger.yaml#/components/responses/Conflict'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
