@@ -245,11 +245,17 @@ Meet page hero style rules
     width: 100%;
   }
 
-  #emtpy-carousel {
+  #empty-carousel {
     color: var(--main-text);
     text-align: center;
     margin-bottom: 10px;
     line-height: 22px;
+    font-weight: 400;
+
+    span{
+      font-weight: bold;
+      font-style: italic;
+    }
   }
 
   .project-crop {

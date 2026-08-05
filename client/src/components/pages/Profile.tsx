@@ -1201,8 +1201,8 @@ const Profile = (/*userProfile: any*/) => {
               </div> : ""}
           </div>
         </Carousel> :
-        <label id="emtpy-carousel">
-          No gallery items yet...<br />Edit your profile and upload your achievments!<br />(not visible to others while empty)
+        <label id="empty-carousel">
+          No gallery items yet...<br />Edit your profile and upload your achievements!<br /><span>(not visible to others while empty)</span>
         </label>
       }
     </div>
