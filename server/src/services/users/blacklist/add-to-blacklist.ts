@@ -6,6 +6,7 @@ import BanEmail from '#email-templates/ban-email.ts';
 import type { Prisma } from '#prisma-models/index.js';
 import deleteSessionsByGoogleService from '#services/authentication/delete-sessions-by-google.ts';
 import { sendEmail } from '#services/mailer.ts';
+import { unapproveProjectService } from '#services/projects/approval/unapprove-project.ts';
 import changeOwnerService from '#services/projects/members/change-owner.ts';
 import getMembersService from '#services/projects/members/get-members.ts';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
@@ -59,6 +60,7 @@ const addBlacklistService = async (
             };
 
             await changeOwnerService(projectId_userId);
+            await unapproveProjectService(projects[i].projectId);
           }
         }
       }
