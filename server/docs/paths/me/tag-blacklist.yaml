@@ -1,0 +1,92 @@
+get:
+  summary: Get current user's tag blacklist
+  description: Returns the list of tags that the user has chosen to exclude from all their viewed content
+  tags:
+    - Me
+  security:
+    - shibbolethAuth: []
+  parameters:
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  responses:
+    '200':
+      description: List of socials the current user has
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: array
+                items:
+                  $ref: '../../swagger.yaml#/components/schemas/Tag'
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+patch:
+  summary: Updates a user's tag blacklist
+  description: Updates the list of tags a user would like to exclude from their viewed content.
+  security:
+    - shibbolethAuth: []
+  tags:
+    - Me
+  parameters:
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            tagBlacklist:
+              type: array
+              items:
+                $ref: '../../swagger.yaml#/components/schemas/TagWithIdInput'
+  responses:
+    '201':
+      description: Tags created successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: object
+                $ref: '../../swagger.yaml#/components/schemas/Tag'
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '401':
+      $ref: '../../swagger.yaml#/components/responses/Unauthorized'
+    '409':
+      $ref: '../../swagger.yaml#/components/responses/Conflict'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

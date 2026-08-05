@@ -105,19 +105,25 @@ components:
     ProjectMemberRequest:
       type: object
       properties:
-        requestId: integer
-        prospectiveMemberId: integer
-        projectId: integer
-        roleId: integer
-        sentFromProject: boolean
-        requestStatus: 'enums.yaml#/components/schemas/MemberRequestStatus'
+        requestId:
+          type: integer
+        prospectiveMemberId:
+          type: integer
+        projectId:
+          type: integer
+        roleId:
+          type: integer
+        sentFromProject:
+          type: boolean
+        requestStatus:
+          $ref: 'enums.yaml#/components/schemas/MemberRequestStatus'
       example:
         requestId: 1
         prospectiveMemberId: 2
         projectId: 1
         roleId: 3
         sentFromProject: true
-        requestStatus: 'Pending'
+        requestStatus: Pending
 
     ProjectSocial:
       allOf:

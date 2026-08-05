@@ -1,0 +1,52 @@
+post:
+  summary: Report a user
+  security:
+    - shibbolethAuth: []
+  tags:
+    - Me Reports
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: ID of the user to report
+      schema:
+        type: integer
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../../swagger.yaml#/components/schemas/AddUserReportInput'
+  responses:
+    '200':
+      description: User reported successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: object
+                nullable: true
+                example: null
+    '400':
+      $ref: '../../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../../swagger.yaml#/components/responses/NotFound'
+    '409':
+      $ref: '../../../swagger.yaml#/components/responses/Conflict'
+    '500':
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'
