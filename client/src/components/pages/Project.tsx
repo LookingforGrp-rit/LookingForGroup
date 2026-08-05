@@ -178,7 +178,7 @@ const Project = () => {
     getUserPermissions();
   }, [])
 
-  // Fetch attached videos and check approval status (for now)
+  // Fetch attached videos
   useEffect(() => {
     async function fetchVideos() {
       const res = await getVideos(projectID);
@@ -187,6 +187,11 @@ const Project = () => {
       }
     }
 
+    fetchVideos();
+  }, [projectID]);
+
+  // Resolve the project's approval status
+  useEffect(() => {
     const checkApprovalRequest = async () => {
       try {
         const result = await projectApprovalRequestExists(projectID);
@@ -211,13 +216,14 @@ const Project = () => {
       }
     };
 
-    fetchVideos();
+   
+    if (!displayedProject) return;
 
     if (isMember || isUserAdmin) {
       checkApprovalRequest();
     }
 
-  }, [projectID, isMember, isUserAdmin]);
+  }, [projectID, isMember, isUserAdmin, displayedProject]);
 
   // Approve a project request
   const handleApproveRequest = async () => {

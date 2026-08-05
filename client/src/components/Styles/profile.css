@@ -1298,6 +1298,19 @@ New Profile page style rules
             margin: 0;
             width: fit-content;
             text-wrap: wrap;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+
+            .tooltip-text {
+              width: fit-content;
+              font-size: 0.5em;
+              padding: 10px;
+              
+              top: 100%;
+              right: 20%;
+              left: auto;
+            }
           }
 
           >#profile-username {
@@ -1431,7 +1444,6 @@ New Profile page style rules
       margin: 0;
       width: fit-content;
       text-wrap: wrap;
-      margin-bottom: 5px;
     }
 
     #skill-block {
@@ -1736,15 +1748,9 @@ New Profile page style rules
   #user-gallery {
     #project-info-edit {
       padding: 2px 5px !important;
-      height: 20px !important;
-
-      .edit-project-member-icon {
-        width: 10px;
-        height: 10px;
-        margin-bottom: 4px;
-      }
+      width: 30px !important;
+      height: 30px !important;
     }
-
   }
 
   #skill-block {
@@ -2481,6 +2487,13 @@ New Profile page style rules
       color: var(--primary-color);
     }
   }
+}
+
+.tooltip:has(#mod-badge) {    /* Mod badge tooltip */
+  height: 35px;
+}
+#mod-badge {
+  stroke-width: 6;
 }
 
 /* Delete-account confirmation popup in the profile editor. The shared

@@ -224,39 +224,28 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     const toggleTag = (id: number, type: string, update?: boolean) => {
         let newActiveTags: Tag[];
         let newExclusionTags: Tag[];
-        let tag;
-        if (id === -1)
-            tag = { tagId: id, label: "New", type, category: "Other" } as Tag;
-        else
-            tag = allTags.find((tag) => tag.tagId === id && tag.type === type as TagType);
+        const tag = id === -1 
+            ? ({ tagId: id, label: "New", type, category: "Other" } as Tag)
+            : allTags.find((t) => t.tagId === id && t.type === type as TagType);
+
         if (!tag) return;
 
-        // Matches only this exact tag. Comparing with !== on both fields would
-        // drop every other tag sharing the same type along with it.
         const isTag = (t: Tag) => t.tagId === id && t.type === type;
+        const isIncluded = activeTagFilters.some(isTag);
+        const isExcluded = activeExclusionFilters.some(isTag);
 
-        if (tag.type === "Content Warning") {
-            if (activeExclusionFilters.some(isTag)) {
-                newActiveTags = activeTagFilters;
-                newExclusionTags = activeExclusionFilters.filter(t => !isTag(t));
-            }
-            else {
-                // Add the tag to the active list
-                newActiveTags = activeTagFilters;
-                newExclusionTags = [...activeExclusionFilters, tag];
-            }
-        }
-        else {
-            if (activeTagFilters.some(isTag)) {
-                // Remove the tag from the active list
-                newActiveTags = activeTagFilters.filter(t => !isTag(t));
-                newExclusionTags = activeExclusionFilters;
-            }
-            else {
-                // Add the tag to the active list
-                newActiveTags = [...activeTagFilters, tag];
-                newExclusionTags = activeExclusionFilters;
-            }
+        if (isIncluded) {
+            // 1. Included -> Excluded: Remove from active, append to exclusion
+            newActiveTags = activeTagFilters.filter(t => !isTag(t));
+            newExclusionTags = [...activeExclusionFilters.filter(t => !isTag(t)), tag];
+        } else if (isExcluded) {
+            // 2. Excluded -> Unselected: Remove from exclusion
+            newActiveTags = activeTagFilters;
+            newExclusionTags = activeExclusionFilters.filter(t => !isTag(t));
+        } else {
+            // 3. Unselected -> Included: Append to active
+            newActiveTags = [...activeTagFilters.filter(t => !isTag(t)), tag];
+            newExclusionTags = activeExclusionFilters.filter(t => !isTag(t));
         }
 
         setActiveTagFilters(newActiveTags);
@@ -662,7 +651,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                             <i className='fa fa-close'></i>
                             {/* Excluded tags read as "Not Horror" so they aren't
                                 mistaken for something the project must match */}
-                            <p>{excluded ? `Not ${tag.label}` : tag.label}</p>
+                            <p>{excluded ? `${tag.label} Excluded` : tag.label}</p>
                         </TagElement>
                     ))}
                     <button
