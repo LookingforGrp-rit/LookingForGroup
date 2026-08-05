@@ -5520,7 +5520,7 @@ My projects page style rules
 }
 
 .my-projects-grid {
-  width: 100%;
+  width: calc(100% - 35px);
   margin: 30px auto;
   padding: 0 20px;
   margin-bottom: 60px;
@@ -5903,7 +5903,7 @@ My projects page style rules
 .responsive-table {
   box-sizing: border-box;
   width: 100%;
-  max-width: calc(100% - 60px);
+  max-width: calc(100% - 80px);
   border-collapse: separate;
   border-spacing: 0 10px;
 }
