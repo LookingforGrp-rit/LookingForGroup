@@ -24,7 +24,7 @@ const addGalleryImageService = async (
 
     return newImage;
   } catch (e) {
-    console.error('Error in addImageService:', e);
+    console.error('Error in addGalleryImageService:', e);
     return 'INTERNAL_ERROR';
   }
 };

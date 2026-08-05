@@ -18,6 +18,7 @@ const addImageService = async (
       data,
       select: { ...ProjectImageSelector, projectId: true },
     });
+
     //find project for the approval stuff
     const proj = await prisma.projects.findUnique({
       where: {

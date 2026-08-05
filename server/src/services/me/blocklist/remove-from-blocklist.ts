@@ -31,7 +31,7 @@ export const removeFromBlocklistService = async (
 
     return 'OK';
   } catch (e) {
-    console.error('There was an error in addToBlocklistService: ', e);
+    console.error('There was an error in removeFromBlocklistService: ', e);
     return 'INTERNAL_ERROR';
   }
 };
