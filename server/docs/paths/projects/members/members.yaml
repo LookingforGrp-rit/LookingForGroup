@@ -4,7 +4,7 @@ get:
   tags:
     - Project Members
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - in: path
       name: id
@@ -36,7 +36,7 @@ post:
   tags:
     - Project Members
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   description: Adds a new member to a project using the project ID.
   parameters:
     - in: path

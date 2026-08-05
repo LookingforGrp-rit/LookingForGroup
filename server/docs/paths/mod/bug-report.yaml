@@ -3,7 +3,7 @@ get:
   tags:
     - Mod
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   responses:
     '200':
       description: Bug reports acquired successfully

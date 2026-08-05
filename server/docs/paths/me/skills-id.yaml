@@ -2,7 +2,7 @@ patch:
   summary: Updates a user skill
   description: Updates all of the skills specified for the current user
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Me
   parameters:
@@ -72,7 +72,7 @@ patch:
 delete:
   summary: Delete a user skill
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Me
   parameters:

@@ -1,7 +1,7 @@
 delete:
   summary: Deletes many of the specified project's mediums
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Projects
   parameters:

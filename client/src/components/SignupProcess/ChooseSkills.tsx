@@ -7,6 +7,8 @@ import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSo
 import { SortableTag } from "../ProjectCreatorEditor/tabs/SortableItem";
 import TagDisplay, { skillToTagOrSkill } from "../TagDisplay";
 import { ThemeIcon } from "../ThemeIcon";
+import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
 
@@ -63,6 +65,9 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 	const [searchedSkills, setSearchedSkills] = useState<Skill[]>([]);
 
 	const [searchValue, setSearchValue] = useState("");
+
+	// Used for ChooseSkills
+	const isMobile = useMediaQuery('(max-width: 1000px)');
 
 	mode;
 	/**
@@ -206,60 +211,126 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 					</h1>
 					<p id="signupProcess-subTitle">You can edit them later</p>
 					<div id="profile-editor-tags">
-						<div id="project-editor-selected-tags">
-							<div className="project-editor-section-header">
-								Selected Skills
-							</div>
-							<div className="project-editor-extra-info">
-								Drag and drop to reorder
-							</div>
-							<DndContext
-								sensors={sensors}
-								collisionDetection={closestCenter}
-								onDragEnd={handleDragEnd}
-							>
-								<SortableContext
-									items={selectedSkills.map((t) => t.skillId)}
-									strategy={verticalListSortingStrategy}
-								>
-									<div id="project-editor-selected-tags-container">
-										{selectedSkills.map((skill) => (
-											<Fragment key={skill.skillId}>
-												<SortableTag
-													id={skill.skillId}
-													tag={skill}
-													onRemove={handleSkillToggle}
+						{isMobile ?
+						<Dropdown>
+							<DropdownButton buttonId="choose-skills-select-dropdown">
+								<div className="project-editor-section-header">
+										Selected Skills
+								</div>
+								<ThemeIcon
+              						id={'dropdown-arrow'}
+              						width={15}
+              						height={12}
+              						className={`color-fill select-button-arrow`}
+              						ariaLabel={'dropdown arrow'}/>
+							</DropdownButton>
+							<DropdownContent>
+								<div id="project-editor-selected-tags">
+									<div className="project-editor-extra-info">
+										{selectedSkills.length <= 0 ? 'Skills that you select will appear here' : 'Drag and drop to reorder'}
+									</div>
+									<DndContext
+										sensors={sensors}
+										collisionDetection={closestCenter}
+										onDragEnd={handleDragEnd}
+									>
+										<SortableContext
+											items={selectedSkills.map((t) => t.skillId)}
+											strategy={verticalListSortingStrategy}
+										>
+											<div id="project-editor-selected-tags-container">
+												{selectedSkills.map((skill) => (
+													<Fragment key={skill.skillId}>
+														<SortableTag
+															id={skill.skillId}
+															tag={skill}
+															onRemove={handleSkillToggle}
+														/>
+													</Fragment>
+												))}
+											</div>
+										</SortableContext>
+									</DndContext>
+
+
+									<div id="clear-all-button-align">
+										<button
+											type="button"
+											className="delete-position-button-alt button-reset"
+											onClick={() => {
+												setSelectedSkills([]);
+												setSelectedSkillIds([]);
+											}}
+
+											title="Remove all selected tags"
+										>
+											<div id="clear-all-trash-row">
+												<p id="clear-all-trash-text">Clear All</p>
+												<ThemeIcon
+													id="trash"
+													width={18}
+													height={18}
+													ariaLabel="Delete position"
 												/>
-											</Fragment>
-										))}
+											</div>
+										</button>
 									</div>
-								</SortableContext>
-							</DndContext>
-
-
-							<div id="clear-all-button-align">
-								<button
-									type="button"
-									className="delete-position-button-alt button-reset"
-									onClick={() => {
-										setSelectedSkills([]);
-										setSelectedSkillIds([]);
-									}}
-
-									title="Remove all selected tags"
+								</div>
+							</DropdownContent>
+						</Dropdown> :
+							<div id="project-editor-selected-tags">
+								<div className="project-editor-section-header">
+									Selected Skills
+								</div>
+								<div className="project-editor-extra-info">
+									{selectedSkills.length <= 0 ? 'Skills that you select will appear here' : 'Drag and drop to reorder'}
+								</div>
+								<DndContext
+									sensors={sensors}
+									collisionDetection={closestCenter}
+									onDragEnd={handleDragEnd}
 								>
-									<div id="clear-all-trash-row">
-										<p id="clear-all-trash-text">Clear All</p>
-										<ThemeIcon
-											id="trash"
-											width={18}
-											height={18}
-											ariaLabel="Delete position"
-										/>
-									</div>
-								</button>
-							</div>
-						</div>
+									<SortableContext
+										items={selectedSkills.map((t) => t.skillId)}
+										strategy={verticalListSortingStrategy}
+									>
+										<div id="project-editor-selected-tags-container">
+											{selectedSkills.map((skill) => (
+												<Fragment key={skill.skillId}>
+													<SortableTag
+														id={skill.skillId}
+														tag={skill}
+														onRemove={handleSkillToggle}
+													/>
+												</Fragment>
+											))}
+										</div>
+									</SortableContext>
+								</DndContext>
+
+								<div id="clear-all-button-align">
+									<button
+										type="button"
+										className="delete-position-button-alt button-reset"
+										onClick={() => {
+											setSelectedSkills([]);
+											setSelectedSkillIds([]);
+										}}
+
+										title="Remove all selected tags"
+									>
+										<div id="clear-all-trash-row">
+											<p id="clear-all-trash-text">Clear All</p>
+											<ThemeIcon
+												id="trash"
+												width={18}
+												height={18}
+												ariaLabel="Delete position"
+											/>
+										</div>
+									</button>
+								</div>
+							</div>}
 						<div id="project-editor-tag-search">
 							<SearchBar
 								key={currentSkillsTab}

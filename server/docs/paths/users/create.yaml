@@ -28,7 +28,7 @@ post:
         type: string
       description: The UID to be used as the current UID
   security:
-    shibbolethAuth: []
+    googleOAuth: []
   responses:
     '201':
       description: User Created

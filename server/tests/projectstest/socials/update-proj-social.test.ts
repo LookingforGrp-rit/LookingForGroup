@@ -1,6 +1,7 @@
-import type { ProjectSocial } from '@looking-for-group/shared';
+import type { ProjectSocial, ProjectStatus, Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
+import { unapproveProjectService } from '#services/projects/approval/unapprove-project.ts';
 import { updateProjectSocialService } from '#services/projects/socials/update-proj-social.ts';
 import { transformProjectSocial } from '#services/transformers/projects/parts/project-social.ts';
 
@@ -14,11 +15,18 @@ vi.mock('#config/prisma.ts', () => ({
       findUnique: vi.fn(),
       update: vi.fn(),
     },
+    projects: {
+      findUnique: vi.fn(),
+    },
   },
 }));
 
 vi.mock('#services/transformers/projects/parts/project-social.ts', () => ({
   transformProjectSocial: vi.fn(),
+}));
+
+vi.mock('#services/projects/approval/unapprove-project.ts', () => ({
+  unapproveProjectService: vi.fn(),
 }));
 
 const transformedSocial: ProjectSocial = {
@@ -38,6 +46,22 @@ const testSocial = {
   alias: 'Click here to ban test',
 };
 
+const prismaProject = {
+  projectId: 1,
+  title: 'Test Project',
+  hook: 'Test Hook',
+  description: 'Test Description',
+  thumbnailId: null,
+  context: null,
+  status: 'Planning' as ProjectStatus,
+  audience: 'Human' as const,
+  userId: 2,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  globalVisibility: 'Public' as Visibility,
+  approved: true,
+};
+
 describe('getProjectSocialsService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -45,6 +69,8 @@ describe('getProjectSocialsService', async () => {
   it('returns the social when update is successful', async () => {
     vi.mocked(prisma.projectSocials.findUnique).mockResolvedValue(testSocial);
     vi.mocked(prisma.projectSocials.update).mockResolvedValue(testSocial);
+    vi.mocked(prisma.projects.findUnique).mockResolvedValue(prismaProject);
+    vi.mocked(unapproveProjectService).mockResolvedValue('OK');
     vi.mocked(transformProjectSocial).mockReturnValue(transformedSocial);
     const result = await updateProjectSocialService(
       {

@@ -38,7 +38,7 @@ put:
   tags:
     - Project Images & Videos
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - in: path
       name: id
@@ -89,7 +89,7 @@ delete:
   tags:
     - Project Images & Videos
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - name: id
       in: path

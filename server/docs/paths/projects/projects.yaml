@@ -30,7 +30,7 @@ post:
   tags:
     - Projects
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - in: query
       name: devId

@@ -2,7 +2,7 @@ patch:
   summary: Updates a project social
   description: Updates one of the project socials specified
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Projects
   parameters:
@@ -57,7 +57,7 @@ patch:
 delete:
   summary: Delete one of the specified project's socials
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Projects
   parameters:

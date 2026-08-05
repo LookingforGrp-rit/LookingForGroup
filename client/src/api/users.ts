@@ -77,7 +77,7 @@ export const testLogin = async (): Promise<ApiResponse<SessionUserData>> => {
 }
 
 /**
- * Checks if the user is logged in (shibboleth) and returns username if they are
+ * Checks if the user is logged in (googleAuth) and returns username if they are
  * @returns ApiResponse with username is logged in, 404 if guest
  */
 export const getCurrentUsername = async (): Promise<UsernameResponse> => {
@@ -403,7 +403,7 @@ export const addUserFollowing = async (
 };
 
 /**
- * Unfollow person for a user. Unauthorized until shibboleth.
+ * Unfollow person for a user. Unauthorized until googleAuth.
  * @param {number} userId - ID of the user being followed
  */
 export const deleteUserFollowing = async (id: number) => {
@@ -477,7 +477,7 @@ export const getVisibleProjects = async (
 };
 
 /**
- * Update project visibility for a project a user is a member of. Invalid until shibboleth
+ * Update project visibility for a project a user is a member of. Invalid until googleAuth
  * @param projectID - ID of the project
  * @param _visibility - either "public" or "private", set visibility
  * @return 201 if successful, 400 if not

@@ -358,6 +358,40 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     buttonCallback(false);
   }, []);
 
+  // Installed by TeamTab. Answers, synchronously, whether an open position is
+  // being edited with changes that haven't been saved to the project yet.
+  // Used from click handlers, where it's guaranteed current even if a field
+  // was written straight onto the job without triggering a re-render.
+  const unsavedPositionCheck = useRef<(() => boolean) | null>(null);
+
+  // The same signal as reactive state, reported up by TeamTab. Needed because
+  // PopupContent's `confirmation` prop is read during render and decides
+  // whether the editor is allowed to close at all — a ref can't drive it.
+  const [hasUnsavedPosition, setHasUnsavedPosition] = useState(false);
+
+  // The tab the user tried to move to while a position was mid-edit, held back
+  // until they confirm. null when nothing is pending.
+  const [pendingTab, setPendingTab] = useState<number | null>(null);
+
+  /**
+   * Switches editor tabs, stopping first if the Team tab has an unsaved open
+   * position. Switching away unmounts TeamTab, and the half-filled position
+   * goes with it — including after a failed save, where the position is still
+   * on screen but was never written to the project.
+   * @param tab index of the tab to switch to
+   */
+  const requestTabChange = (tab: number) => {
+    if (tab === currentTab) return;
+
+    // Tab 3 is Team; nothing else holds an in-progress position
+    if (currentTab === 3 && unsavedPositionCheck.current?.()) {
+      setPendingTab(tab);
+      return;
+    }
+
+    setCurrentTab(tab);
+  };
+
   useEffect(() => {
     window.onbeforeunload = () => { if (!saved) return ' ' };
 
@@ -366,7 +400,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   }, [open, projectID, newProject, saved]);
 
   const toggleConfirm = async () => {
-    if (saved) {
+    // An in-progress open position never sets `saved` to false, since it isn't
+    // written to the project until it saves. Without this the editor closed
+    // silently on a half-filled position.
+    if (saved && !unsavedPositionCheck.current?.()) {
       buttonCallback(false);
       setCurrentTab(0);
     }
@@ -823,7 +860,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       )}
 
 
-      <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={!saved}>
+      {/* confirmation also covers an in-progress open position: it never marks
+          the project unsaved, so `!saved` alone let the editor close on it. */}
+      <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={!saved || hasUnsavedPosition}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>
           <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
           <div id="confirm-editor-save">
@@ -835,12 +874,43 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             </PopupButton>
           </div>
         </PopupContent> : ""}
+        {/* Guards against losing an unsaved open position by changing tabs.
+            Leaving the Team tab unmounts it and the position goes with it. */}
+        {pendingTab !== null && (
+          <Popup startOpen={true}>
+            <PopupContent useClose={false} callback={() => setPendingTab(null)}>
+              <div className="small-popup">
+                <h3>Discard this position?</h3>
+                <p className="confirm-msg">
+                  You have an open position that hasn't been saved to the project
+                  yet. Leaving the Team tab discards everything you've filled in
+                  for it.
+                </p>
+                <div className="confirm-deny-btns">
+                  <button
+                    className="confirm-btn"
+                    onClick={() => {
+                      const tab = pendingTab;
+                      setPendingTab(null);
+                      setCurrentTab(tab);
+                    }}
+                  >
+                    Discard
+                  </button>
+                  <button className="deny-btn" onClick={() => setPendingTab(null)}>
+                    Keep Editing
+                  </button>
+                </div>
+              </div>
+            </PopupContent>
+          </Popup>
+        )}
         <div id="project-creator-editor">
           <div id="project-editor-tabs">
             <button
               id="general-tab"
               onClick={() => {
-                setCurrentTab(0);
+                requestTabChange(0);
               }}
               className={`project-editor-tab ${currentTab === 0 ? "project-editor-tab-active" : ""}`}
               ref={startButton}
@@ -851,7 +921,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             <button
               id="tags-tab"
               onClick={() => {
-                setCurrentTab(2);
+                requestTabChange(2);
               }}
               className={`project-editor-tab ${currentTab === 2 ? "project-editor-tab-active" : ""}`}
             >
@@ -860,7 +930,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             <button
               id="media-tab"
               onClick={() => {
-                setCurrentTab(1);
+                requestTabChange(1);
               }}
               className={`project-editor-tab ${currentTab === 1 ? "project-editor-tab-active" : ""}`}
             >
@@ -878,7 +948,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             <button
               id="links-tab"
               onClick={() => {
-                setCurrentTab(4);
+                requestTabChange(4);
               }}
               className={`project-editor-tab ${currentTab === 4 ? "project-editor-tab-active" : ""}`}
             >
@@ -943,6 +1013,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 setInitialPendingRequests={setInitialPendingRequests}
                 setErrorMember={setErrorAddMember}
                 setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/
+                unsavedPositionCheck={unsavedPositionCheck}
+                setHasUnsavedPosition={setHasUnsavedPosition}
                 saveable={saveable}
                 failCheck={failCheck}
                 updateFailCheck={updateFailCheck}

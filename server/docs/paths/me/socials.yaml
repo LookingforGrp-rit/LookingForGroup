@@ -4,7 +4,7 @@ get:
   tags:
     - Me
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - in: query
       name: devId
@@ -43,7 +43,7 @@ post:
   summary: Adds a user social
   description: Adds a specified social to the current user
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Me
   parameters:

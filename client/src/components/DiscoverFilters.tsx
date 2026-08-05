@@ -465,10 +465,8 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                             key={`${tag.label}-${tag.type}`}
                             // className={`tag-button tag-button-${searchedTags.color}-unselected`}
                             className={`tag-button tag-button-${searchedTags.color}-${isTagEnabled(tag, searchedTags.color) !== -1 ? 'selected' : 'unselected'}`}
-                            onClick={(e) => {
-                              const element = e.target as HTMLElement;
+                            onClick={() => {
                               const selectIndex = isTagEnabled(tag, searchedTags.color);
-                              const tempEnabled = enabledFilters;
 
                               //if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
                               //  // Remove all other tags of the same type except the one selected
@@ -491,23 +489,9 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                               //}
 
                               if (selectIndex === -1) {
-                                // Creates an object to store text and category
-                                //setEnabledFilters([...enabledFilters, { tag, color: searchedTags.color }]);
-                                setEnabledFilters([
-                                  ...tempEnabled,
-                                  { tag, color: searchedTags.color },
-                                ]);
-                                element.classList.replace(
-                                  `tag-button-${searchedTags.color}-unselected`,
-                                  `tag-button-${searchedTags.color}-selected`
-                                );
+                                setEnabledFilters(prev => [...prev, { tag, color: searchedTags.color }]);
                               } else {
-                                // Remove tag from list of enabled filters
-                                setEnabledFilters(tempEnabled.toSpliced(selectIndex, 1));
-                                element.classList.replace(
-                                  `tag-button-${searchedTags.color}-selected`,
-                                  `tag-button-${searchedTags.color}-unselected`
-                                );
+                                setEnabledFilters(prev => prev.filter((f) => !(f.tag.label === tag.label && f.tag.type === tag.type)));
                               }
                             }}
                           >
@@ -549,12 +533,11 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                     <PopupButton
                       buttonId={'reset-filters-btn'}
                       callback={() => {
-                        // Reset tag filters before adding results in
-                        const newActiveTags = enabledFilters.map(f => f.tag)
-                        setActiveTagFilters(newActiveTags);
+                        // Clears all pending and active filters
+                        setEnabledFilters([]);
+                        setActiveTagFilters([]);
                         const discoverFilters = document.getElementsByClassName('discover-tag-filter');
 
-                        // Remove any/all other clicked discover tags
                         for (let i = 0; i < discoverFilters.length; i++) {
                           discoverFilters[i].classList.remove('discover-tag-filter-selected');
                         }

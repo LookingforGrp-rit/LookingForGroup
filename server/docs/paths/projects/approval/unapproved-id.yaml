@@ -92,7 +92,7 @@ post:
       required: true
       description: The user Id to be used as the current user.
   security:
-    shibbolethAuth: []
+    googleOAuth: []
   responses:
     '200':
       description: Approval Request Sent

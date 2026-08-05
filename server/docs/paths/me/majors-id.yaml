@@ -4,7 +4,7 @@ delete:
   tags:
     - Me
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - in: path
       name: id
