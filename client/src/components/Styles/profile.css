@@ -2486,8 +2486,11 @@ New Profile page style rules
   }
 }
 
+.tooltip:has(#mod-badge) {    /* Mod badge tooltip */
+  height: 35px;
+}
 #mod-badge {
-  stroke-width: 4;
+  stroke-width: 6;
 }
 
 /* Delete-account confirmation popup in the profile editor. The shared
