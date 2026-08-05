@@ -54,6 +54,9 @@ interface Props {
 
   //Which tab to open first
   defaultTab?: number;
+
+  //Which subtab in the teams tab to open first
+  teamSubtab? : number;
 }
 
 let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
@@ -64,7 +67,7 @@ let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
  * The component is accessed via either the 'edit project' button on project pages or the 'create' button in the sidebar.
  * @returns React component Popup - Renders a modal for creating or editing projects
  */
-export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false, autoStart = false, buttonCallback = () => { }, updateDisplayedProject, approvalStatus, buttonName = "Edit Project", defaultTab = 0}) => {
+export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false, autoStart = false, buttonCallback = () => { }, updateDisplayedProject, approvalStatus, buttonName = "Edit Project", defaultTab = 0, teamSubtab = 0}) => {
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
   const navigate = useNavigate();
@@ -947,6 +950,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 messages={projectMessages}
                 setMessages={setProjectMessages}
                 isSaving={getIsSaving()}
+                defaultSubtab={teamSubtab}
               />
             ) : currentTab === 4 ? (
               <LinksTab

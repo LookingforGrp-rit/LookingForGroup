@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
-import { ProjectCreatorEditor } from "../ProjectCreatorEditor/ProjectCreatorEditor";
+import { ProjectCreatorEditor } from "../ProjectCreatorEditor/ProjectCreatorEditor.tsx";
 import { Popup, PopupButton, PopupContent, PopupContext } from "../Popup";
 import profileImage from "../../images/lfrog.png";
 import { ProjectCarousel } from "../ProjectCarousel";
@@ -1107,13 +1107,23 @@ const Project = () => {
                 
                 {user && displayedProject?.owner.userId === user.userId ?
                 (
-                  <div>
+                  <div id="project-people-tab-buttons">
                     <ProjectCreatorEditor
                       mobileView={false} //error being caused by this prop not being passed in, but it also isn't used in the component at all, sooooo
                       newProject={false}
                       updateDisplayedProject={setDisplayedProject}
                       defaultTab={3}
-                      buttonName={"Edit Jobs"}
+                      buttonName={"Invite Member"}
+                      teamSubtab={0}
+                      /*permissions={userPerms}*/
+                    />
+                    <ProjectCreatorEditor
+                      mobileView={false} //error being caused by this prop not being passed in, but it also isn't used in the component at all, sooooo
+                      newProject={false}
+                      updateDisplayedProject={setDisplayedProject}
+                      defaultTab={3}
+                      buttonName={"Edit Open Positions"}
+                      teamSubtab={2}
                       /*permissions={userPerms}*/
                     />
                 </div>

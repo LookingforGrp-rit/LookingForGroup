@@ -5168,15 +5168,26 @@ button#positions-popup-list-item-active {
 }
 
 #project-people-tabs {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  gap: 10px;
+  text-align: center;
+  gap: 20px;
 }
 
 #project-people-tab {
   font-weight: 700;
   font-size: 1.3rem;
   color: var(--primary-color);
+  
+}
+
+#project-people-tab-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  gap: 5px;
 }
 
 

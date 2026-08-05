@@ -118,6 +118,7 @@ type TeamTabProps = {
 	messages: string[];
 	setMessages: React.Dispatch<React.SetStateAction<string[]>>;
 	isSaving: boolean;
+	defaultSubtab?: number;
 };
 
 /**
@@ -156,7 +157,8 @@ export const TeamTab = ({
 	message,
 	messages,
 	setMessages,
-	isSaving
+	isSaving,
+	defaultSubtab = 0,
 }: TeamTabProps) => {
 	// --- Hooks ---
 	// State for storing all available roles from the API.
@@ -311,6 +313,10 @@ export const TeamTab = ({
 			);
 		});
 	}, [projectData?.members, unmodifiedProject?.members]);
+
+	useEffect(() => {
+		setCurrentTeamTab(defaultSubtab);
+	}, [])
 
 	// Check if Open Positions is unsaved
 	const isOpenPositionsUnsaved = useMemo(() => {
