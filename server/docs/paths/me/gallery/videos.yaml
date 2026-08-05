@@ -3,7 +3,7 @@ get:
   tags:
     - Me Gallery
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   description: Retrieves all videos stored in the user's gallery.
   parameters:
     - in: path

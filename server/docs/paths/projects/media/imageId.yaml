@@ -4,7 +4,7 @@ patch:
   tags:
     - Project Images & Videos
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - name: id
       in: path
@@ -62,7 +62,7 @@ delete:
     - Project Images & Videos
   description: Removes a picture from a project by picture ID
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - in: path
       name: id

@@ -3,7 +3,7 @@ get:
   tags:
     - Me
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - in: query
       name: devId
@@ -37,7 +37,7 @@ patch:
   x-middleware:
     - injectCurrentUser
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - in: query
       name: devId
@@ -79,7 +79,7 @@ delete:
   tags:
     - Me
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - in: query
       name: devId

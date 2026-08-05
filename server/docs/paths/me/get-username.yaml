@@ -3,7 +3,7 @@ get:
   tags:
     - Me
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   description: |
     Retrieves the username of the current user authenticated via Shibboleth. Needs the uid header
   parameters:

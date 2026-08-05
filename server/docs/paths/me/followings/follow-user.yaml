@@ -46,7 +46,7 @@ post:
 delete:
   summary: Unfollow a user
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Me Followings
   parameters:

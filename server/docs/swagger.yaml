@@ -224,7 +224,7 @@ paths:
 # COMPONENTS
 components:
   securitySchemes:
-    shibbolethAuth:
+    googleAuth:
       #Filler values need to be changed
       type: http
       scheme: bearer

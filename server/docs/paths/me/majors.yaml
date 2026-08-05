@@ -4,7 +4,7 @@ get:
   tags:
     - Me
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - in: query
       name: devId
@@ -39,7 +39,7 @@ post:
   tags:
     - Me
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - in: query
       name: devId

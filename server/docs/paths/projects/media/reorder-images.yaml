@@ -2,7 +2,7 @@ put:
   summary: Reorders the images in a project
   description: Takes the IDs of a project's images and reorders them in the specified project
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Project Images & Videos
   parameters:

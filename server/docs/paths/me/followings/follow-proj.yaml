@@ -1,7 +1,7 @@
 post:
   summary: Follow a project
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Me Followings
   parameters:
@@ -46,7 +46,7 @@ post:
 delete:
   summary: Unfollow a project
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Me Followings
   parameters:
