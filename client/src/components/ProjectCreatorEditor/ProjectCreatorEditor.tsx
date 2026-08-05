@@ -48,6 +48,15 @@ interface Props {
   // permissions?: number;
 
   approvalStatus?: ApprovalStatusKey
+
+  // Name of the button
+  buttonName?: string;
+
+  //Which tab to open first
+  defaultTab?: number;
+
+  //Which subtab in the teams tab to open first
+  teamSubtab? : number;
 }
 
 let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
@@ -58,7 +67,7 @@ let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
  * The component is accessed via either the 'edit project' button on project pages or the 'create' button in the sidebar.
  * @returns React component Popup - Renders a modal for creating or editing projects
  */
-export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false, autoStart = false, buttonCallback = () => { }, updateDisplayedProject, approvalStatus, }) => {
+export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false, autoStart = false, buttonCallback = () => { }, updateDisplayedProject, approvalStatus, buttonName = "Edit Project", defaultTab = 0, teamSubtab = 0}) => {
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
   const navigate = useNavigate();
@@ -194,6 +203,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
   // Start editing the project creator
   const createOrEdit = async () => {
+    setCurrentTab(defaultTab);
     const res = await getCurrentUsername();
     if (!(res.status === 200 && res.data?.username)) {
       //redirect user to login if they aren't logged in, remembering that they
@@ -812,7 +822,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       ) : (
         <div id="project-info-contexts">
           <PopupButton callback={() => { buttonCallback(true); createOrEdit(); }} buttonId="project-info-edit">
-            Edit Project
+            {buttonName}
           </PopupButton>
           {approvalStatus === "not-approved" ?
             <Popup>
@@ -1012,6 +1022,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 messages={projectMessages}
                 setMessages={setProjectMessages}
                 isSaving={getIsSaving()}
+                defaultSubtab={teamSubtab}
               />
             ) : currentTab === 4 ? (
               <LinksTab
