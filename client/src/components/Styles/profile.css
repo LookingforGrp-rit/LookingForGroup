@@ -1301,6 +1301,16 @@ New Profile page style rules
             display: flex;
             align-items: center;
             gap: 5px;
+
+            .tooltip-text {
+              width: fit-content;
+              font-size: 0.5em;
+              padding: 10px;
+              
+              top: 100%;
+              right: 20%;
+              left: auto;
+            }
           }
 
           >#profile-username {
