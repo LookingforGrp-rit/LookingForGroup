@@ -113,6 +113,9 @@ const Profile = (/*userProfile: any*/) => {
   const [unbanned, setUnbanned] = useState<boolean>(false);
   const [banDetail, setBanDetail] = useState<BanDetail>();
 
+  // Is the user blocked?
+  const [isBlocked, setIsBlocked] = useState<boolean>(false);
+
   const reportMessage = useRef<HTMLTextAreaElement>(null);
   const warnMessage = useRef<HTMLTextAreaElement>(null);
   const banMessage = useRef<HTMLTextAreaElement>(null);
@@ -140,8 +143,6 @@ const Profile = (/*userProfile: any*/) => {
       return { name: project.title, description: project.hook };
     }
   );
-
-  let blockButton;
 
   // --------------------
   // Page redirect
@@ -329,105 +330,18 @@ const Profile = (/*userProfile: any*/) => {
   };
 
   /**
- * Checks if the displayed user is blocked
- * If so, change the block button to unblock
+ * Checks if the displayed user is blocked and updates the useState
  */
-  const isUserBlocked = async () => {
+  const checkUserBlocked = async () => {
+    if (!parseInt(profileID)) return;
+    
     const blocklistRequest = await getBlockedUsersById();
-    let blocklist: UserPreview[] = [];
-    let blocklistUserIds: number[] = [];
 
-    //Success
     if (blocklistRequest.status === 200) {
-      blocklist = blocklistRequest.data;
-      blocklistUserIds = blocklist.map((userPreview) => userPreview.userId);
-    }
-
-    //Internal server error
-    else if (blocklistRequest.status === 500) {
-      const errorType: string = "Internal server error";
-      console.log(`${errorType} on getBlockedUsersById`);
-      console.log(blocklistRequest.error);
-    }
-
-    const blockUserID = displayedProfile?.userId;
-
-    if (displayedProfile?.userId && blocklistUserIds.includes(displayedProfile?.userId)) {
-      return <button
-        className="profile-menu-dropdown-button"
-        id="profile-menu-block"
-        onClick={async () => {
-          //THE PARAMETER IS THE PERSON TO BLOCK
-          const unblockUserRequest = await unblockUser(blockUserID);
-
-          //Success
-          if (unblockUserRequest.status === 204) {
-            window.location.reload();
-          }
-
-          //Bad request
-          else if (unblockUserRequest.status === 400) {
-            const errorType: string = "Bad request";
-            console.log(`${errorType} on unblockUser`);
-            console.log(unblockUserRequest.error);
-          }
-
-          //Conflict
-          else if (unblockUserRequest.status === 409) {
-            const errorType: string = "Conflict";
-            console.log(`${errorType} on unblockUser`);
-            console.log(unblockUserRequest.error);
-          }
-
-          //Internal server error
-          else if (unblockUserRequest.status === 500) {
-            const errorType: string = "Internal server error";
-            console.log(`${errorType} on unblockUser`);
-            console.log(unblockUserRequest.error);
-          }
-        }}
-      >
-        <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
-        Unblock
-      </button>;
+      const blocklistUserIds = blocklistRequest.data.map((user: UserPreview) => user.userId);
+      setIsBlocked(blocklistUserIds.includes(parseInt(profileID)));
     } else {
-      return <button
-        className="profile-menu-dropdown-button"
-        id="profile-menu-block"
-        onClick={async () => {
-          //THE PARAMETER IS THE PERSON TO BLOCK
-          const blockUserRequest = await blockUser(blockUserID);
-
-          //Success
-          if (blockUserRequest.status === 200) {
-            window.location.reload();
-          }
-
-          //Bad request
-          else if (blockUserRequest.status === 400) {
-            const errorType: string = "Bad request";
-            console.log(`${errorType} on blockUser`);
-            console.log(blockUserRequest.error);
-          }
-
-          //Conflict
-          else if (blockUserRequest.status === 409) {
-            const errorType: string = "Conflict";
-            console.log(`${errorType} on blockUser`);
-            console.log(blockUserRequest.error);
-          }
-
-          //Internal server error
-          else if (blockUserRequest.status === 500) {
-            const errorType: string = "Internal server error";
-            console.log(`${errorType} on blockUser`);
-            console.log(blockUserRequest.error);
-          }
-        }}
-      >
-        <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
-        Block
-      </button>;
+      console.log(`Error on getBlockedUsersById`, blocklistRequest.error);
     }
   };
 
@@ -615,6 +529,9 @@ const Profile = (/*userProfile: any*/) => {
 
     // is the displayed profile a banned user
     isUserBanned();
+
+    // Is the user blocked by the current logged in user
+    checkUserBlocked();
 
     return () => {
       cancelled = true;
@@ -961,7 +878,34 @@ const Profile = (/*userProfile: any*/) => {
                 <ShareButton />
                 {userID > 0 && (
                   <>
-                    {isUserBlocked()}
+                    <button
+                      className="profile-menu-dropdown-button"
+                      id="profile-menu-block"
+                      onClick={async () => {
+                        const blockUserID = displayedProfile?.userId;
+                        if (!blockUserID) return;
+
+                        // Block user
+                        if (isBlocked) {
+                          const request = await unblockUser(blockUserID);
+                          if (request.status === 204) {
+                            navigate(0);
+                          } else {
+                            console.log("Error on unblockUser", request.error);
+                          }
+                        } else { // User is blocked, unblock them
+                          const request = await blockUser(blockUserID);
+                          if (request.status === 200) {
+                            navigate(0);
+                          } else {
+                            console.log("Error on blockUser", request.error);
+                          }
+                        }
+                      }}
+                    >
+                      <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={isBlocked ? 'Unblock' : 'Block'} />
+                      {isBlocked ? "Unblock" : "Block"}
+                    </button>
                     <Popup>
                       <PopupButton
                         className="project-info-dropdown-option"
