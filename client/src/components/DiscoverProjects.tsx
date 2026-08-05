@@ -662,7 +662,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                             <i className='fa fa-close'></i>
                             {/* Excluded tags read as "Not Horror" so they aren't
                                 mistaken for something the project must match */}
-                            <p>{excluded ? `Not ${tag.label}` : tag.label}</p>
+                            <p>{excluded ? `${tag.label} Excluded` : tag.label}</p>
                         </TagElement>
                     ))}
                     <button
