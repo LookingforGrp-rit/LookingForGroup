@@ -3,7 +3,7 @@ get:
   tags:
     - Me Gallery
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   description: Retrieves all images stored in the user's gallery.
   parameters:
     - in: path
@@ -55,7 +55,7 @@ post:
   tags:
     - Me Gallery
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   description: Uploads an image file and alt text, stores the file to the users gallery
   parameters:
     - in: path

@@ -1,7 +1,7 @@
 patch:
   summary: Updates the order of a tag in the list
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Projects
   parameters:
@@ -60,7 +60,7 @@ patch:
 delete:
   summary: Deletes a project tag
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Projects
   parameters:

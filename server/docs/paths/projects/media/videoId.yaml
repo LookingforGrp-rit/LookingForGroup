@@ -4,7 +4,7 @@ delete:
   tags:
     - Project Images & Videos
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - name: id
       in: path

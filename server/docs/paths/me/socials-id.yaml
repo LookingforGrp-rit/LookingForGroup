@@ -2,7 +2,7 @@ patch:
   summary: Updates a user social
   description: Updates one of the socials specified by the current user
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Me
   parameters:
@@ -51,7 +51,7 @@ patch:
 delete:
   summary: Delete one of the current user's socials
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Me
   parameters:

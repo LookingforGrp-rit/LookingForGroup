@@ -4,7 +4,7 @@ get:
   tags:
     - Projects
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - in: path
       name: id
@@ -43,7 +43,7 @@ post:
   summary: Adds a project social
   description: Adds a specified social to the current project
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Projects
   parameters:

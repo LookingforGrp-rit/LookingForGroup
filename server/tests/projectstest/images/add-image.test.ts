@@ -1,7 +1,8 @@
-import type { ProjectImage } from '@looking-for-group/shared';
+import type { ProjectImage, ProjectStatus, Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import type { Prisma } from '#prisma-models/index.js';
+import { unapproveProjectService } from '#services/projects/approval/unapprove-project.ts';
 import addImageService from '#services/projects/images/add-image.ts';
 import { transformProjectImage } from '#services/transformers/projects/parts/project-image.ts';
 
@@ -34,11 +35,30 @@ const transformedImage: ProjectImage = {
   apiUrl: 'api/projects/1/images/4',
 };
 
+const prismaProject = {
+  projectId: 1,
+  title: 'Test Project',
+  hook: 'Test Hook',
+  description: 'Test Description',
+  thumbnailId: null,
+  context: null,
+  status: 'Planning' as ProjectStatus,
+  audience: 'Human' as const,
+  userId: 2,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  globalVisibility: 'Public' as Visibility,
+  approved: true,
+};
+
 vi.mock('#config/prisma.ts', () => ({
   default: {
     projectImages: {
       create: vi.fn(),
       findMany: vi.fn(),
+    },
+    projects: {
+      findUnique: vi.fn(),
     },
   },
 }));
@@ -47,12 +67,18 @@ vi.mock('#services/transformers/projects/parts/project-image.ts', () => ({
   transformProjectImage: vi.fn(),
 }));
 
+vi.mock('#services/projects/approval/unapprove-project.ts', () => ({
+  unapproveProjectService: vi.fn(),
+}));
+
 describe('addImageService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
   it('returns the image if successful', async () => {
     vi.mocked(prisma.projectImages.create).mockResolvedValue(prismaImage);
+    vi.mocked(prisma.projects.findUnique).mockResolvedValue(prismaProject);
+    vi.mocked(unapproveProjectService).mockResolvedValue('OK');
     vi.mocked(transformProjectImage).mockResolvedValue(transformedImage);
     const result = await addImageService(imageData);
 

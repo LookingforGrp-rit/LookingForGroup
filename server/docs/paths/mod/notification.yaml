@@ -3,7 +3,7 @@ post:
   tags:
     - Mod
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - in: query
       name: devId

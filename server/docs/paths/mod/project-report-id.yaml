@@ -3,7 +3,7 @@ get:
   tags:
     - Mod
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - name: id
       in: path
@@ -44,7 +44,7 @@ delete:
   tags:
     - Mod
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - name: id
       in: path

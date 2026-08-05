@@ -1,7 +1,7 @@
 patch:
   summary: Changes the owner of a project
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Project Members
   description: Changes the owner of a project.

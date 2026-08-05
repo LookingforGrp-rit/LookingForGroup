@@ -1,7 +1,7 @@
 post:
   summary: Report a user
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Me Reports
   parameters:

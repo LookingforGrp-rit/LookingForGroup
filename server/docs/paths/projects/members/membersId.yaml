@@ -1,7 +1,7 @@
 patch:
   summary: Update a member in a project
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Project Members
   description: Updates the role or other properties of a member in a project.
