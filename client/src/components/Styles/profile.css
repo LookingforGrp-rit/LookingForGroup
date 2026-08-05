@@ -1444,7 +1444,6 @@ New Profile page style rules
       margin: 0;
       width: fit-content;
       text-wrap: wrap;
-      margin-bottom: 5px;
     }
 
     #skill-block {
@@ -1749,15 +1748,9 @@ New Profile page style rules
   #user-gallery {
     #project-info-edit {
       padding: 2px 5px !important;
-      height: 20px !important;
-
-      .edit-project-member-icon {
-        width: 10px;
-        height: 10px;
-        margin-bottom: 4px;
-      }
+      width: 30px !important;
+      height: 30px !important;
     }
-
   }
 
   #skill-block {
