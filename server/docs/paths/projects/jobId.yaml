@@ -2,7 +2,7 @@ patch:
   summary: Updates a project job
   description: Updates one of the project jobs specified
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Projects
   parameters:
@@ -57,7 +57,7 @@ patch:
 delete:
   summary: Delete one of the specified project's jobs
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Projects
   parameters:

@@ -4,7 +4,7 @@ get:
   tags:
     - Me
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - in: query
       name: devId
@@ -41,7 +41,7 @@ patch:
   summary: Updates a user's tag blacklist
   description: Updates the list of tags a user would like to exclude from their viewed content.
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Me
   parameters:

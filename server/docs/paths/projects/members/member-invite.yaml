@@ -1,7 +1,7 @@
 patch:
   summary: Update a pending member's role in a project
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   tags:
     - Project Members
   description: Updates the role or other properties of a pending member in a project.
@@ -58,7 +58,7 @@ delete:
     - Project Members
   description: Deletes a member from a project by specifying the user ID in the query parameters.
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   parameters:
     - in: path
       name: id

@@ -3,7 +3,7 @@ delete:
   tags:
     - Me Gallery
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   description: Removes a gallery image by its ID.
   parameters:
     - in: path

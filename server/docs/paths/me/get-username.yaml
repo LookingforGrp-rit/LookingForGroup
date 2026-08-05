@@ -1,11 +1,11 @@
 get:
-  summary: Get username through Shibboleth headers
+  summary: Get username through googleOAuth headers
   tags:
     - Me
   security:
-    - shibbolethAuth: []
+    - googleOAuth: []
   description: |
-    Retrieves the username of the current user authenticated via Shibboleth. Needs the uid header
+    Retrieves the username of the current user authenticated via googleOAuth. Needs the uid header
   parameters:
     - in: header
       name: uid
