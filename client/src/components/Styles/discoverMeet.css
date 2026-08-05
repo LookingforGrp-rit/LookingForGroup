@@ -281,12 +281,13 @@ Meet page hero style rules
       flex-direction: column;
       transition: 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
       min-width: 100%;
-      height: 100%;
+      height: auto;
       align-items: center;
-      justify-content: center;
+      justify-content: start;
 
       label {
-        color: var(--main-text)
+        color: var(--main-text);
+        word-break: break-all;
       }
     }
 
@@ -315,7 +316,9 @@ Meet page hero style rules
 
     img,
     iframe {
-      height: 100%;
+      height: auto;
+      max-height: 100%;
+      max-width: 100%;
       object-fit: cover;
       object-position: center;
     }
