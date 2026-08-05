@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FileImage } from './FileImage';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { Select, SelectButton, SelectOptions } from './Select';
@@ -53,14 +53,6 @@ const ImageUploader = ({
   // Ref for reading selected files
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // Unique per instance. This used to be a hard-coded "image-uploader" on both
-  // variants, so whenever two uploaders were mounted at once the ids collided
-  // and the label's htmlFor resolved to whichever input came first in the DOM.
-  // Clicking this label then opened a *different* uploader's file dialog, and
-  // the chosen file was handed to that other instance. Dropping a file was
-  // unaffected, because the drop handler writes straight to inputRef.
-  const inputId = useId();
-
   const [zoom, setZoom] = useState(100);
   const [dX, setDX] = useState(0);
   const [dY, setDY] = useState(0);
@@ -69,6 +61,10 @@ const ImageUploader = ({
   //the changes are read without needing a re-render
   const isDragging = useRef(false);
   const prevPos = useRef<{ x: number, y: number }>({ x: 0, y: 0 });
+  //mobile drag and zoom
+  const lastTouch = useRef<{ x: number; y: number } | null>(null);
+  const lastPinchDist = useRef<number | null>(null);
+
 
   const [cropFile, setCropFile] = useState<File>();
   const [cropImg, setCropImg] = useState<string>();
@@ -87,9 +83,7 @@ const ImageUploader = ({
 
   type AspectRatioKeys = keyof typeof AspectRatios;
   const [aspectRatio, setAspectRatio] = useState<AspectRatioKeys>('1:1');
-
   const [labelName, setLabelName] = useState("drop-area");
-
   const [loadingImage, setLoadingImage] = useState(false);
 
   /**
@@ -122,14 +116,16 @@ const ImageUploader = ({
       prevPos.current = { x: e.clientX, y: e.clientY };
     }
   };
-
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDragging.current || !tempImage.current || !canvas.current) return;
 
-    const rect = canvas.current.getBoundingClientRect();
+    // const rect = canvas.current.getBoundingClientRect();
 
-    const deltaX = (e.clientX - prevPos.current.x) * (canvas.current.width / rect.width);
-    const deltaY = (e.clientY - prevPos.current.y) * (canvas.current.height / rect.height);
+    // const deltaX = (e.clientX - prevPos.current.x) * (canvas.current.width / rect.width);
+    // const deltaY = (e.clientY - prevPos.current.y) * (canvas.current.height / rect.height);
+    const speed = 5; // increase to make dragging faster
+    const deltaX = (e.clientX - prevPos.current.x) * speed;
+    const deltaY = (e.clientY - prevPos.current.y) * speed;
 
     const rawDX = dX - deltaX;
     const rawDY = dY - deltaY;
@@ -142,6 +138,9 @@ const ImageUploader = ({
 
     prevPos.current = { x: e.clientX, y: e.clientY };
     updateCanvas();
+  };
+  const handleMouseUp = () => {
+    isDragging.current = false;
   };
 
   //image boundaries clamp
@@ -168,7 +167,6 @@ const ImageUploader = ({
 
     return (w - canvasWidth) / 2;
   };
-
   const getMaxDY = () => {
     if (!tempImage.current || !canvas.current) return 100;
 
@@ -179,43 +177,7 @@ const ImageUploader = ({
     return (h - canvasHeight) / 2;
   };
 
-  const handleMouseUp = () => {
-    isDragging.current = false;
-  };
-
-  //wheel zooming for cropping
-  // const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
-  //   if(!tempImage.current || !canvas.current) return;
-
-  //   const delta = e.deltaY > 0 ? 0.95 : 1.05;
-  //   const newZoom = zoom * delta;
-
-  //   const minZoom = Math.max(
-  //     (canvas.current?.width! / tempImage.current?.width!) * 100,
-  //     (canvas.current?.height! / tempImage.current?.height!) * 100
-  //   );
-
-  //   const clampedZoom = Math.min(500, Math.max(minZoom, newZoom));
-
-  //   const w = tempImage.current.width * (clampedZoom / 100);
-  //   const h = tempImage.current.height * (clampedZoom / 100);
-
-  //   const cw = canvas.current.width;
-  //   const ch = canvas.current.height;
-
-  //   const maxDX = (w - cw) / 2;
-  //   const maxDY = (h - ch) / 2;
-
-  //   const newDX = Math.min(maxDX, Math.max(-maxDX, dX));
-  //   const newDY = Math.min(maxDY, Math.max(-maxDY, dY));
-
-  //   setDX(newDX);
-  //   setDY(newDY);
-
-  //   setZoom(clampedZoom);
-  //   updateCanvas();
-  // };
-
+  //zoom
   const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
     if (!tempImage.current || !canvas.current) return;
 
@@ -235,7 +197,6 @@ const ImageUploader = ({
 
     updateCanvas();
   };
-
   const getMinZoom = () => {
     if (!tempImage.current || !canvas.current) return 100;
 
@@ -244,7 +205,71 @@ const ImageUploader = ({
       (canvas.current.height / tempImage.current.height) * 100
     );
   };
-  const getMaxZoom = () => 500;
+  const getMaxZoom = () => 1000;
+
+  //mobile drag and pinch
+  //drag
+  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (e.touches.length === 1) {
+      const t = e.touches[0];
+      lastTouch.current = { x: t.clientX, y: t.clientY };
+    }
+  };
+  const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (e.touches.length === 1 && lastTouch.current) {
+      const t = e.touches[0];
+
+      const dx = t.clientX - lastTouch.current.x;
+      const dy = t.clientY - lastTouch.current.y;
+
+      lastTouch.current = { x: t.clientX, y: t.clientY };
+
+      setDX(prev => clampDX(prev - dx));
+      setDY(prev => clampDY(prev - dy));
+    }
+  };
+  const handleTouchEnd = () => {
+    lastTouch.current = null;
+  };
+  //pinch
+  const getPinchDistance = (touches: React.TouchList | TouchList) => {
+    const t1 = touches[0];
+    const t2 = touches[1];
+    const dx = t2.clientX - t1.clientX;
+    const dy = t2.clientY - t1.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  };
+  const handlePinchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (e.touches.length === 2) {
+      lastPinchDist.current = getPinchDistance(e.touches);
+    }
+  };
+  const handlePinchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (e.touches.length === 2 && lastPinchDist.current) {
+      const newDist = getPinchDistance(e.touches);
+      const delta = newDist - lastPinchDist.current;
+
+      lastPinchDist.current = newDist;
+
+      // Convert pinch distance → zoom change
+      const zoomDelta = delta * 0.2; // adjust sensitivity if needed
+
+      setZoom(prev => {
+        const raw = prev + zoomDelta;
+        const clamped = Math.min(getMaxZoom(), Math.max(getMinZoom(), raw));
+        return clamped;
+      });
+
+      // Re‑clamp DX/DY after zoom
+      setDX(prev => clampDX(prev));
+      setDY(prev => clampDY(prev));
+    }
+  };
+  const handlePinchEnd = () => {
+    lastPinchDist.current = null;
+  };
+
+
 
 
 
@@ -340,10 +365,6 @@ const ImageUploader = ({
 
     // allow only one image per upload
     if (files.length > 1) {
-      // Cleared before bailing out, otherwise the input keeps this selection
-      // and picking the exact same files again fires no change event at all,
-      // so the second attempt silently does nothing.
-      input.value = "";
       alert("Only one image can be uploaded at a time.");
       return;
     }
@@ -464,14 +485,26 @@ const ImageUploader = ({
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
-          onWheel={handleWheel}
+          onWheel={(e) => {    
+            e.preventDefault();
+            e.stopPropagation();
+            handleWheel(e);}
+          }
           onContextMenu={(e) => e.preventDefault()}
-
-              width={getCanvasDimensions(aspectRatio).width}
-              height={getCanvasDimensions(aspectRatio).height}
-              style={{ aspectRatio: AspectRatios[aspectRatio] }}
-            ></canvas>
-
+            width={getCanvasDimensions(aspectRatio).width}
+            height={getCanvasDimensions(aspectRatio).height}
+            style={{ aspectRatio: AspectRatios[aspectRatio], touchAction: "none" }} //touchaction none, without mobile drag moves screen up and down too, not just in image
+          onTouchStart={(e) => {
+            if (e.touches.length === 1) handleTouchStart(e);
+            if (e.touches.length === 2) handlePinchStart(e);}}
+          onTouchMove={(e) => {
+            e.preventDefault(); // IMPORTANT: stops page scrolling
+            if (e.touches.length === 1) handleTouchMove(e);
+            if (e.touches.length === 2) handlePinchMove(e);}}
+          onTouchEnd={(e) => {
+            if (e.touches.length === 1) handleTouchEnd();
+            if (e.touches.length === 2) handlePinchEnd();}}
+        ></canvas>
             {/* <img ref={tempImage} id="refImage" src={cropImg} alt={cropImg} /> */}
             <div id="aspect-row">
               <Select>
@@ -612,7 +645,7 @@ const ImageUploader = ({
   const profileVariant = (
     <>
       {cropPopup}
-      <label htmlFor={inputId} id="profile-image-uploader" className={labelName}
+      <label htmlFor="image-uploader" id="profile-image-uploader" className={labelName}
         onDragEnter={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -642,12 +675,8 @@ const ImageUploader = ({
         <input
           type="file"
           name="image"
-          id={inputId}
-          // Filter by MIME type, not extension, so the browse dialog accepts
-          // exactly what handleImgChange accepts. An extension list rejects
-          // .jfif/.jpe/extensionless files that are still image/jpeg, and those
-          // drag in fine, so browsing appears broken for a file that works.
-          accept="image/png, image/jpeg"
+          id="image-uploader"
+          accept=".png, .jpg, .jpeg"
           ref={inputRef}
           onChange={handleImgChange}
           disabled={cropImg !== undefined}
@@ -694,7 +723,7 @@ const ImageUploader = ({
   const projectVariant = (
     <>
       {cropPopup}
-      <label htmlFor={inputId} id="project-image-uploader" className={labelName}
+      <label htmlFor="image-uploader" id="project-image-uploader" className={labelName}
         onDragEnter={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -724,15 +753,11 @@ const ImageUploader = ({
         <input
           type="file"
           name="image"
-          id={inputId}
-          // Filter by MIME type, not extension, so the browse dialog accepts
-          // exactly what handleImgChange accepts. An extension list rejects
-          // .jfif/.jpe/extensionless files that are still image/jpeg, and those
-          // drag in fine, so browsing appears broken for a file that works.
-          multiple accept="image/png, image/jpeg"
+          id="image-uploader"
+          multiple accept=".png, .jpg, .jpeg"
           ref={inputRef}
           onChange={handleImgChange}
-          onClick={() => setLoadingImage(true)}
+          // onClick={() => setLoadingImage(true)} //causing #2511 issues
           disabled={cropImg !== undefined}
           hidden={true}
         />
