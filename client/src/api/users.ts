@@ -275,8 +275,8 @@ export const deleteUser = async (): Promise<ApiResponse> => {
 };
 
 /**
- * Gets an array of all userIDs the current user has blocked
- * @returns number[] of all userIDs the current user has blocked
+ * Gets an array of all users the current user has blocked
+ * @returns JSONified data of all users the current user has blocked
  */
 export const getBlockedUsersById = async () => {
   const apiURL = `/me/blocklist`;
