@@ -394,6 +394,7 @@ Signup process modal style rules
   height: fit-content;
   max-height: 85vh;
   width: min(calc(90vw - 20px), 1055px);
+  max-width: 95vw;
   border-radius: 4px;
   padding: 0px;
   box-shadow: 0px 0px 10px 0px var(--border-color);
