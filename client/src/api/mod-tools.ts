@@ -254,7 +254,7 @@ export const getProjectsMembers = async (projectId: number | undefined): Promise
 }
 
 /**
- * Changes a project's owner
+ * Changes a project's owner (unused)
  * @param projectId The projectID of the project
  * @param newOwnerId The userID of the new owner
  * @param devID Mod/Admin ID
@@ -264,8 +264,7 @@ export const patchProjectOwner = async (projectId: number | undefined, newOwnerI
     const URL = `/projects/${projectId}/change-owner/${newOwnerId}`;
     const res = await PATCH(URL, {
         id: projectId,
-        userId: newOwnerId,
-        devId: devID
+        userId: newOwnerId
     });
 
     if (res.error) {

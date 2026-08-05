@@ -3,9 +3,13 @@ import { createElement } from 'react';
 import { pretty, render, toPlainText } from 'react-email';
 import prisma from '#config/prisma.ts';
 import BanEmail from '#email-templates/ban-email.ts';
+import type { Prisma } from '#prisma-models/index.js';
 import deleteSessionsByGoogleService from '#services/authentication/delete-sessions-by-google.ts';
 import { sendEmail } from '#services/mailer.ts';
+import changeOwnerService from '#services/projects/members/change-owner.ts';
+import getMembersService from '#services/projects/members/get-members.ts';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
+import { getUserProjectsService } from '../get-user-proj.ts';
 
 type AddBlacklistServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 type AddBlacklistServiceSuccess = ServiceSuccessSubset<'OK'>;
@@ -23,6 +27,7 @@ const addBlacklistService = async (
         userId,
       },
     });
+
     if (user === null) return 'NOT_FOUND';
 
     //Attempt to add to blacklist
@@ -32,6 +37,32 @@ const addBlacklistService = async (
         banReason: reason,
       },
     });
+
+    //Change the owner of each of their projects to the oldest member of the team, if applicable
+    const projects = await getUserProjectsService(userId);
+
+    if (projects !== 'INTERNAL_ERROR' && projects !== 'NOT_FOUND') {
+      if (projects.length !== 0) {
+        for (let i = 0; i < projects.length; i++) {
+          let members = await getMembersService(projects[i].projectId);
+
+          if (members !== 'INTERNAL_ERROR' && members !== 'NOT_FOUND') {
+            //Trying to get the oldest member
+            members = members.toSorted(
+              (member1, member2) => member1.memberSince.valueOf() - member2.memberSince.valueOf(),
+            );
+            const oldestMember = members[0];
+
+            const projectId_userId: Prisma.MembersProjectIdUserIdCompoundUniqueInput = {
+              projectId: projects[i].projectId,
+              userId: oldestMember.user.userId,
+            };
+
+            await changeOwnerService(projectId_userId);
+          }
+        }
+      }
+    }
 
     //Log the user out of every session they have open
     const sessionResult = await deleteSessionsByGoogleService(user.googleId);
@@ -56,6 +87,7 @@ const addBlacklistService = async (
             firstName: user.firstName,
             lastName: user.lastName,
           },
+
           banReason: reason,
         }),
       ),
@@ -69,6 +101,7 @@ const addBlacklistService = async (
         firstName: 'Looking For Group',
         lastName: '',
       } as UserEmail,
+
       receiver: user,
       subject: `[DO NOT REPLY] You have been banned from Looking For Group`,
       textBody: text,

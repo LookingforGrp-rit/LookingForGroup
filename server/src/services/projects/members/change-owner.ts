@@ -16,6 +16,7 @@ const changeOwnerService = async (
       where: { projectId_userId },
       select: { ...ProjectMemberSelector, projectId: true },
     });
+
     if (!member) return 'NOT_FOUND';
 
     await prisma.projects.update({

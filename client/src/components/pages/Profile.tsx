@@ -948,12 +948,11 @@ const Profile = (/*userProfile: any*/) => {
       if (bannedUsersProjects.length !== 0) {
 
         for (let i = 0; i < bannedUsersProjects.length; i++) {
-          const oldestMember = await getOldestMember(bannedUsersProjects[i].projectId);
+          // const oldestMember = await getOldestMember(bannedUsersProjects[i].projectId);
 
           //I don't think we do anything special if the banned user is the only member
           //If we do we should do it here
-          //Might need newProjectOwner for debugging
-          const newProjectOwner = await changeProjectOwner(bannedUsersProjects[i].projectId, oldestMember?.user.userId, userID);
+          // const newProjectOwner = await changeProjectOwner(bannedUsersProjects[i].projectId, oldestMember?.user.userId, userID);
           const projectMembers = await getAllProjectMembers(bannedUsersProjects[i].projectId);
 
 
@@ -963,8 +962,8 @@ const Profile = (/*userProfile: any*/) => {
             receiverId: member.user.userId,
             subjectLine: `Change in ownership of ${bannedUsersProjects[i].title}`,
             message: `The previous owner of this project has been banned. ` +
-              `Therefore, the Looking For Group moderation team has given ownership to 
-                ${newProjectOwner?.user.firstName} ${newProjectOwner?.user.lastName}. ` +
+              `Therefore, the Looking For Group moderation team has changed the ownership of this project 
+                to another member on the team. ` +
               `If the team believes there is a more suitable owner, the new owner can transfer ownership to them` +
               `Additionally, this project has been unapproved and requires re-approval. `,
             type: 'General',
