@@ -680,6 +680,7 @@ Project Creator and Editor Popup style rules
   font-size: 1rem;
   background: none;
   display: flex;
+  gap: 3px;
   position: relative;
 
   border-radius: 10px;
@@ -1834,9 +1835,6 @@ Project Creator and Editor Popup style rules
   height: 24px;
 }
 
-#profile-extra #project-info-edit {
-  margin-bottom: 6px;
-}
 
 .project-editor-project-member>.edit-project-member-button {
   top: 6px;
