@@ -25,12 +25,16 @@ export const peopleTabs = {
 export const tags = [
   /*'New',*/
   'Video Game',
-  'Analog Game',
+  'Board Game',
   'Mobile Application',
   'Website',
   'Animation',
   'Film',
   'Software',
+  'Installation',
+  'Music',
+  'Tabletop Game',
+  'Card Game',
   'Other',
 ];
 
