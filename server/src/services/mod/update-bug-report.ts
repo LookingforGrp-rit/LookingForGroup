@@ -32,7 +32,7 @@ const updateBugReportService = async (
 
     return 'OK';
   } catch (e) {
-    console.error(`Error in getBugReportByIdService: ${e as Error}`);
+    console.error(`Error in updateBugReportService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }
