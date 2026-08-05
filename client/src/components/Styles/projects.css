@@ -3997,7 +3997,7 @@ New Project Page style rules
   }
 
   #project-editor-team-tabs {
-    /* justify-content: flex-start; */
+    justify-content: flex-start;
     gap: 4%;
     height: 80px;
 
@@ -4005,6 +4005,10 @@ New Project Page style rules
       text-wrap: wrap !important;
       max-width: 150px;
     }
+  }
+
+  #project-editor-team-tabs::-webkit-scrollbar-thumb {
+      background-color: rgb(113, 114, 118);
   }
 
   #project-editor-project-members {
