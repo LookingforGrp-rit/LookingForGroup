@@ -35,7 +35,7 @@ import {
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
 import {
-  MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail,
+  MeDetail, MePrivate, ProjectDetail, ProjectPreview, ProjectWithFollowers, UserPreview, Role, UserDetail,
   UserAccessLevel, UserReport, BanDetail,
   GalleryImage,
   GalleryVideo,
@@ -53,6 +53,8 @@ import {
 } from "../../api/mod-tools";
 import { getYouTubeEmbedID, getYouTubeEmbedURL } from "../../functions/parseYoutube";
 import { Carousel, CarouselButton, CarouselContent, CarouselTabs } from "../ImageCarousel";
+import { canViewProjectOnProfile } from "../../functions/profileProjectVisibility";
+import { getByID as getProjectById } from "../../api/projects";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -503,16 +505,50 @@ const Profile = (/*userProfile: any*/) => {
   /**
    * Gets the user's projects to display.
    */
-  const getProfileProjectData = useCallback(async () => {
+  const getProfileProjectData = useCallback(async (viewerUserId: number, isOwnProfile: boolean) => {
     try {
-      const response = isUsersProfile ? await getProjectsByUser() : await getVisibleProjects(Number(profileID)) as { data: ProjectPreview[] }; //TODO: IMPLEMENT PROJECT GETTING
+      const response = isOwnProfile
+        ? await getProjectsByUser()
+        : await getVisibleProjects(Number(profileID)) as { data: ProjectPreview[] };
       const data = response.data;
 
-      // Only update if there's data
-      if (data) {
+      if (!data) {
+        setFullProjectList([]);
+        setDisplayedProjects([]);
+        return;
+      }
+
+      if (isOwnProfile) {
         setFullProjectList(data);
         setDisplayedProjects(data);
+        return;
       }
+
+      const visibleProjects = await Promise.all(
+        data.map(async (project) => {
+          try {
+            const projectResponse = await getProjectById(project.projectId);
+            const fullProject = projectResponse.data;
+
+            if (!fullProject) {
+              return null;
+            }
+
+            return canViewProjectOnProfile(fullProject, viewerUserId, false)
+              ? fullProject
+              : null;
+          } catch (error) {
+            console.error(`Failed to load project ${project.projectId}:`, error);
+            return null;
+          }
+        }),
+      );
+
+      const filteredProjects = visibleProjects.filter(
+        (project): project is ProjectWithFollowers => project !== null,
+      );
+      setFullProjectList(filteredProjects);
+      setDisplayedProjects(filteredProjects);
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
@@ -520,7 +556,7 @@ const Profile = (/*userProfile: any*/) => {
         console.log(`Unknown error: ${error}`);
       }
     }
-  }, [profileID, isUsersProfile, setFullProjectList, setDisplayedProjects]);
+  }, [profileID, setFullProjectList, setDisplayedProjects]);
 
   // Gets the profile data
   const getProfileData = async (data: MePrivate | undefined) => {
@@ -540,7 +576,9 @@ const Profile = (/*userProfile: any*/) => {
         //console.log(data);
         setDisplayedProfile(data);
         setMajorsArr(data.majors.map((maj) => maj.label));
-        await getProfileProjectData();
+        const isOwnProfile = data.userId.toString() === profileID;
+        setIsUsersProfile(isOwnProfile);
+        await getProfileProjectData(data.userId, isOwnProfile);
         //checkFollow();
       } else {
         navigate(paths.routes.NOTFOUND, { replace: true });
