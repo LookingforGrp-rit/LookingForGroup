@@ -1424,6 +1424,7 @@ body.modal-open {
     h3,
     h4 {
       padding-left: 10px;
+      margin-bottom: 0.5em;
     }
   }
 
