@@ -2,6 +2,7 @@ import type { UserPreview, ProjectDetail, UpdateProjectInput } from '@looking-fo
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import type { Projects } from '#prisma-models/index.js';
+import { unapproveProjectService } from '#services/projects/approval/unapprove-project.ts';
 import updateProjectService from '#services/projects/update-proj.ts';
 import { transformProjectToDetail } from '#services/transformers/projects/project-detail.ts';
 
@@ -12,10 +13,15 @@ vi.mock('#services/transformers/projects/project-detail.ts', () => ({
   transformProjectToDetail: vi.fn(),
 }));
 
+vi.mock('#services/projects/approval/unapprove-project.ts', () => ({
+  unapproveProjectService: vi.fn(),
+}));
+
 vi.mock('#config/prisma.ts', () => ({
   default: {
     projects: {
       update: vi.fn(),
+      findUnique: vi.fn(),
       findMany: vi.fn(),
     },
     projectImages: {
@@ -105,6 +111,7 @@ describe('deleteProjectService', async () => {
   });
 
   it('returns transformed if successful update', async () => {
+    vi.mocked(prisma.projects.findUnique).mockResolvedValue(prismaProject);
     vi.mocked(prisma.projects.update).mockResolvedValue(prismaProject);
     vi.mocked(transformProjectToDetail).mockReturnValue(transformed);
     const result = await updateProjectService(1, projectUpdate);
@@ -112,6 +119,27 @@ describe('deleteProjectService', async () => {
     expect(transformProjectToDetail).toHaveBeenCalledWith(prismaProject);
     expect(result).toBe(transformed);
   });
+
+  it('does not unapprove for non-general project updates', async () => {
+    vi.mocked(prisma.projects.findUnique).mockResolvedValue({ ...prismaProject, approved: true });
+    vi.mocked(prisma.projects.update).mockResolvedValue({ ...prismaProject, approved: true });
+    vi.mocked(transformProjectToDetail).mockReturnValue(transformed);
+
+    await updateProjectService(1, { status: 'Planning' });
+
+    expect(unapproveProjectService).not.toHaveBeenCalled();
+  });
+
+  it('unapproves when a general-field update changes approved project data', async () => {
+    vi.mocked(prisma.projects.findUnique).mockResolvedValue({ ...prismaProject, approved: true });
+    vi.mocked(prisma.projects.update).mockResolvedValue({ ...prismaProject, approved: true });
+    vi.mocked(transformProjectToDetail).mockReturnValue(transformed);
+
+    await updateProjectService(1, { title: 'New Title' });
+
+    expect(unapproveProjectService).toHaveBeenCalledWith(1);
+  });
+
   it('returns INTERNAL_ERROR if prisma throws', async () => {
     vi.mocked(prisma.projects.update).mockRejectedValue('db exploded :(');
     vi.mocked(transformProjectToDetail).mockReturnValue(transformed);
