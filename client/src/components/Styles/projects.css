@@ -3986,6 +3986,21 @@ New Project Page style rules
       'people' auto;
   }
 }
+@media screen and (max-width: 1020px) {
+  #project-editor-team-tabs {
+    gap: 4%;
+    height: 80px;
+
+    button {
+      text-wrap: wrap !important;
+      max-width: 150px;
+    }
+  }
+
+  #project-editor-team-tabs::-webkit-scrollbar-thumb {
+      background-color: rgb(113, 114, 118);
+  }
+}
 
 @media screen and (max-width: 700px) {
   #project-page-content {
@@ -3998,17 +4013,6 @@ New Project Page style rules
 
   #project-editor-team-tabs {
     justify-content: flex-start;
-    gap: 4%;
-    height: 80px;
-
-    button {
-      text-wrap: wrap !important;
-      max-width: 150px;
-    }
-  }
-
-  #project-editor-team-tabs::-webkit-scrollbar-thumb {
-      background-color: rgb(113, 114, 118);
   }
 
   #project-editor-project-members {
