@@ -5615,8 +5615,8 @@ My projects page style rules
   box-sizing: border-box;
   border: 2px solid var(--bg-color);
   border-radius: 10px;
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   cursor: pointer;
@@ -5691,6 +5691,9 @@ My projects page style rules
 
   position: relative;
   overflow: hidden;
+
+  display: flex;
+  justify-content: center;
 }
 
 .grid-card-image-button:focus {
@@ -5886,11 +5889,6 @@ My projects page style rules
   .my-projects-grid {
     flex-direction: column;
     align-items: center;
-  }
-
-  .grid-card-image {
-    width: 250px;
-    height: 250px;
   }
 
   .grid-card-details {
