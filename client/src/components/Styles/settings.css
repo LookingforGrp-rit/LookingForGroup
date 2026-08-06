@@ -591,7 +591,8 @@ input:checked+.slider:before {
       box-shadow: 0px 0px 10px 3px var(--shadow-color);
     }
 
-    .deny-btn, #cancel-button {
+    .deny-btn,
+    #cancel-button {
       background: none;
       border: none;
       outline: none;
@@ -647,6 +648,64 @@ input:checked+.slider:before {
 #phone-number-visibility input {
   width: 1em;
   margin-right: 1em;
+}
+
+.blocklist {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 300px;
+  padding: 20px 30px;
+  margin: 0 0 30px!important;
+  background-color: var(--header-color);
+  overflow-y: auto;
+  scrollbar-color: var(--primary-color) var(--bg-color);
+  scrollbar-width: thin;
+}
+
+.blocked-user {
+  padding: 15px;
+  border-radius: 12px;
+  background-color: var(--bg-color);
+}
+
+.blocked-user, .blocked-user a {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+
+.blocked-user a:link, .blocked-user a:visited {
+  text-decoration: none;
+  gap: 0;
+}
+
+.blocked-user a:hover {
+  text-decoration: underline;
+}
+
+.blocked-user-profile {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-color);
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.remove-blocklist-btn {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  font-size: 1em;
+  background-color: var(--error-delete-color);
+  border: none;
+  border-radius: 30px;
+  padding: 6px 20px;
+  color: var(--main-text);
 }
 
 /* edit and delete buttons */
