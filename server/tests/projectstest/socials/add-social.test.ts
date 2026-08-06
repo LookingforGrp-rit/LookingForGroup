@@ -87,7 +87,7 @@ describe('addProjectSocialService', async () => {
     expect(result).toBe(transformedSocial);
   });
 
-  it('returns the social when add is successful and does not do anything to the unapproved project', async () => {
+  it('returns the social when add is successful and does unapprove a not-approved project', async () => {
     vi.mocked(prisma.socials.findFirst).mockResolvedValue({ websiteId: 29, label: 'Test' });
     vi.mocked(prisma.projectSocials.findFirst).mockResolvedValue(null);
     vi.mocked(prisma.projectSocials.create).mockResolvedValue(testSocial);

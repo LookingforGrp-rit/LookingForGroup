@@ -1,6 +1,7 @@
 import prisma from '#config/prisma.ts';
 import type { Prisma } from '#prisma-models/index.js';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
+import { unapproveProjectService } from '../approval/unapprove-project.ts';
 
 type AddVideoServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type AddVideoServiceSuccess = ServiceSuccessSubset<'CREATED'>;
@@ -12,9 +13,21 @@ const addVideoService = async (
 ): Promise<AddVideoServiceSuccess | AddVideoServiceError> => {
   try {
     //add video
-    await prisma.projectVideos.create({
+    const newVideo = await prisma.projectVideos.create({
       data,
     });
+
+    //find project for the approval stuff
+    const proj = await prisma.projects.findUnique({
+      where: {
+        projectId: newVideo.projectId,
+      },
+    });
+
+    //unapprove project on change
+    if (proj && proj.approved) {
+      await unapproveProjectService(proj.projectId);
+    }
 
     return 'CREATED';
   } catch (e) {
