@@ -257,11 +257,11 @@ const ProjectPanelJob = ({ project }: { project: ProjectWithFollowers }) => {
         </TagElement>
       ))}
 
-      {overflowCount > 0 && (
+      {overflowCount > 0 ? (
         <TagElement selected={true} className='project-panel-meta-plus'>
           <p>+{overflowCount}</p>
         </TagElement>
-      )}
+      ) : ""}
     </div>
   );
 };

@@ -1,0 +1,79 @@
+get:
+  summary: Get a project's members
+  description: Returns the list of members on the specified project
+  tags:
+    - Project Members
+  security:
+    - googleOAuth: []
+  parameters:
+    - in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: The ID of the project
+  responses:
+    '200':
+      description: List of members the current project has
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: array
+                items:
+                  $ref: '../../../swagger.yaml#/components/schemas/ProjectMember'
+post:
+  summary: Add a member to a project
+  tags:
+    - Project Members
+  security:
+    - googleOAuth: []
+  description: Adds a new member to a project using the project ID.
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+      description: Project ID to add the member to
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../../swagger.yaml#/components/schemas/CreateProjectMemberInput'
+  responses:
+    '201':
+      description: Member added successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 201
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: object
+                $ref: '../../../swagger.yaml#/components/schemas/ProjectMember'
+    '500':
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'

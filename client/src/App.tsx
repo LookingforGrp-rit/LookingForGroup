@@ -94,12 +94,12 @@ function App() {
           <Route path={paths.routes.ACCEPTINVITATION} element={<AcceptInvitation />} />
           <Route path={paths.routes.ACCEPTAPPLICATION} element={<AcceptApplication />} />
           <Route path={paths.routes.SETTINGS} element={<NewSettings  />} />
+          <Route path={paths.routes.MODERATION} element={<ModeratorPage />}/>
           <Route path={paths.routes.NOTFOUND} element={<NotFound />} />
           {/* <Route path={paths.routes.MESSAGEHISTORY} element={<MessageHistory />} /> */}
           <Route path={paths.routes.CREDITS} element={<Credits />} />
           <Route path={paths.routes.ABOUT} element={<AboutPage />} />
           <Route path={paths.routes.ACCOUNTACTIVATE} element={<AccountActivation />} />
-          <Route path={paths.routes.MODERATION} element={<ModeratorPage />}/>
         </Routes>
         {/* Shown once after a project is created, wherever the editor's reload
             lands. Mounted here so it works from the sidebar's create button too,

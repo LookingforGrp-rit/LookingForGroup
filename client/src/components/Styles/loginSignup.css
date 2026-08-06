@@ -319,9 +319,6 @@ Login and Signup page style rules
 }
 
 @media screen and (max-width:500px) and (max-height:900px) {
-  .login-signup-container {
-    margin-bottom: 200px;
-  }
 
   .signup-form {
     padding: 0 25px;
@@ -397,6 +394,7 @@ Signup process modal style rules
   height: fit-content;
   max-height: 85vh;
   width: min(calc(90vw - 20px), 1055px);
+  max-width: 95vw;
   border-radius: 4px;
   padding: 0px;
   box-shadow: 0px 0px 10px 0px var(--border-color);
@@ -424,7 +422,7 @@ Signup process modal style rules
 
 .ChooseSkills #profile-editor-tags {
   width: 90%;
-  overflow-y: hidden;
+  overflow-y: scroll;
   display: flex;
 
   #project-editor-tag-wrapper,
@@ -435,6 +433,30 @@ Signup process modal style rules
 
   #project-editor-tag-wrapper {
     min-height: 36px;
+  }
+
+  /* The Choose Skills dropdown container for MOBILE */
+  /* Make sure to only edit CSS here to maintain consistency for non-mobile devices */
+  .dropdown-container, #choose-skills-select-dropdown {
+    width: 100%;
+    text-align: left;
+    order: 2;
+
+    .dropdown, #project-editor-selected-tags {
+      width: calc(100% - 10px);
+    }
+    
+    /* The dropdown button */
+    #choose-skills-select-dropdown {
+      border-radius: 10px;
+      background-color: var(--bg-color);
+      border: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px;
+      align-items: center;
+    }
+    height: 45px; /* matches dropdown containers on CompleteProfile.tsx */
   }
 }
 
@@ -629,12 +651,26 @@ Signup process modal style rules
   grid-area: image;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   align-self: center;
   width: min(50vw, 250px);
   height: min(50vw, 250px);
   aspect-ratio: 1 / 1;
+
+  #profile-image-label{
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 0.5em;
+  }
+
+  #profile-image-uploader{
+    max-width: 85%;
+    /* max-height: 85%; */
+    aspect-ratio: 1/1;
+  }
 }
 
 #profile-pic {
@@ -922,6 +958,24 @@ Signup process modal style rules
 
     max-height: 570%;
   }
+
+  .tooltip-text {
+    visibility: hidden;
+    width: 250px;
+    background-color: var(--bg-color);
+    color: var(--main-text);
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    top: -40px;
+    left: 0;
+  }
+
+  .tooltip:hover .tooltip-text {
+    visibility: visible;
+  }
 }
 
 #ritStatus-input {
@@ -1142,8 +1196,8 @@ Signup process modal style rules
   overflow-y: scroll;
   max-height: 500%;
   height: auto;
-  scrollbar-width: thick;
-  scrollbar-color: var(--header-color) rgba(0, 0, 0, 0);
+  /* scrollbar-width: thick;
+  scrollbar-color: var(--header-color) rgba(0, 0, 0, 0); */
 }
 
 /* Mobile css to individual signup pages */
@@ -1232,7 +1286,8 @@ Signup process modal style rules
     /* prevents x scrollbar */
 
     #project-editor-tag-search {
-      height: 80%;
+      height: auto;
+      max-height: 80%;
       overflow-y: scroll;
       max-width: auto;
       gap: 10px;
@@ -1280,7 +1335,7 @@ Signup process modal style rules
     padding: 0 !important;
 
     #project-editor-selected-tags {
-      width: calc(100% - 62px - 1.818px);
+      width: 100%;
       overflow-y: scroll;
       flex-shrink: 1;
 

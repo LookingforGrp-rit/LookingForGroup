@@ -1,0 +1,44 @@
+post:
+  summary: Sends a notification to a user
+  tags:
+    - Mod
+  security:
+    - googleOAuth: []
+  parameters:
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../swagger.yaml#/components/schemas/ModeratorNotificationInput'
+  responses:
+    '201':
+      description: Notification sent successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: object
+                nullabe: true
+                example: 'CREATED'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '409':
+      $ref: '../../swagger.yaml#/components/responses/Conflict'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

@@ -144,14 +144,14 @@ textarea {
 
 
       #project-editor-selected-tags {
-        /* width: 93%; */
+        width: calc(100% - 60px);
         height: 40%;
         overflow-y: scroll;
         order: 2;
       }
 
       #project-editor-tag-search {
-        /* width: 93%; */
+        width: calc(100% - 60px);
         height: 50%;
       }
 

@@ -220,6 +220,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							<div
 								id="complete-profile-add-image"
 								className="edit-profile-image">
+								<p id="profile-image-label">Profile Image</p>
 								<ProfileImageUploader
 									onFileSelected={handleUploadPfp}
 									initialImageFile={profileImage}
@@ -242,7 +243,9 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 
 								{/* Current Job Title */}
 								<div id="jobTitle-input">
-									<div className="dropdown-label">Job Title</div>
+									<div className="dropdown-label tooltip">Job Title
+										<span className="tooltip-text">This is for your current job.</span>
+									</div>
 									<Select>
 										<SelectButton
 											placeholder={"Job Title"}

@@ -3,6 +3,7 @@ import prisma from '#config/prisma.ts';
 import { ProjectImageSelector } from '#services/selectors/projects/parts/project-image.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformProjectImage } from '#services/transformers/projects/parts/project-image.ts';
+import { unapproveProjectService } from '../approval/unapprove-project.ts';
 
 type UpdateThumbnailServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
@@ -25,7 +26,7 @@ const updateThumbnailService = async (
 
     if (!image) return 'NOT_FOUND';
 
-    await prisma.projects.update({
+    const proj = await prisma.projects.update({
       //set it as the thumbnail
       where: {
         projectId,
@@ -38,6 +39,11 @@ const updateThumbnailService = async (
         },
       },
     });
+
+    //unapprove project on change
+    if (proj.approved) {
+      await unapproveProjectService(projectId);
+    }
 
     return transformProjectImage(image.projectId, image);
   } catch (e) {

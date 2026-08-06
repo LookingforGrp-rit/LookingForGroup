@@ -4,14 +4,7 @@ import type {
   UpdateMemberRequestInput,
 } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import { InviteAcceptedNotificationBuilder } from '#notification-templates/invite-accepted-notification.ts';
-import { InviteRejectedNotificationBuilder } from '#notification-templates/invite-rejected-notification.ts';
-import type { NotificationBuilder } from '#notification-templates/notification-builder.ts';
-import { RequestAcceptedNotificationBuilder } from '#notification-templates/request-accepted-notification.ts';
-import { RequestRejectedNotificationBuilder } from '#notification-templates/request-rejected-notification.ts';
-import sendNotificationService from '#services/notifications/send-notification.ts';
 import updateMemberRequestStatusService from '#services/projects/members/update-member-request.ts';
-import { determineMembershipRequestResponse } from './determine-member-request-response.ts';
 
 //DELETE api/projects/members/requests/{requestId}
 //adds a member to the project
@@ -59,25 +52,6 @@ const updateMemberRequest = async (req: AuthenticatedRequest, res: Response) => 
     data: null,
   };
   res.status(200).json(resBody);
-
-  // Sending the notification //
-  let builder: NotificationBuilder;
-  switch (await determineMembershipRequestResponse(req)) {
-    case 'REQUEST-ACCEPTED':
-      builder = new RequestAcceptedNotificationBuilder();
-      break;
-    case 'REQUEST-REJECTED':
-      builder = new RequestRejectedNotificationBuilder();
-      break;
-    case 'INVITE-ACCEPTED':
-      builder = new InviteAcceptedNotificationBuilder();
-      break;
-    case 'INVITE-REJECTED':
-      builder = new InviteRejectedNotificationBuilder();
-      break;
-  }
-
-  sendNotificationService(builder, req).catch(() => {});
 };
 
 export default updateMemberRequest;

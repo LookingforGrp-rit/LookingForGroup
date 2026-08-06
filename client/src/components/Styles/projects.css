@@ -491,7 +491,7 @@ Project Creator and Editor Popup style rules
   flex-direction: column;
   max-width: 1121px;
   width: 100%;
-  height: 869px;
+  height: 100%;
   border: none;
   border-radius: 10px;
   color: var(--main-text);
@@ -680,6 +680,7 @@ Project Creator and Editor Popup style rules
   font-size: 1rem;
   background: none;
   display: flex;
+  gap: 3px;
   position: relative;
 
   border-radius: 10px;
@@ -1834,9 +1835,6 @@ Project Creator and Editor Popup style rules
   height: 24px;
 }
 
-#profile-extra #project-info-edit {
-  margin-bottom: 6px;
-}
 
 .project-editor-project-member>.edit-project-member-button {
   top: 6px;
@@ -1919,6 +1917,11 @@ Project Creator and Editor Popup style rules
     background-color: var(--header-color);
     border-radius: 10px;
 
+    label{
+      margin-top: 0.5em;
+      font-size: 1.5rem;
+    }
+
     img {
       height: 320px;
       margin: 20px;
@@ -1942,8 +1945,13 @@ Project Creator and Editor Popup style rules
     margin: auto 0;
     width: 40%;
 
+    label{
+      margin-bottom: 0.5em;
+    }
+
     .select-container {
       margin: 0 auto;
+      margin-top: 0.5em;
       width: 80%;
     }
 
@@ -1951,12 +1959,11 @@ Project Creator and Editor Popup style rules
       display: flex;
       flex-direction: column;
       margin-top: 40px;
-      gap: 20px;
 
       #change-owner-confirm {
         margin: 0 auto;
         width: min-content;
-        padding: 10px 5px;
+        padding: 10px 10px;
         border: none;
         border-radius: 20px;
         background-color: var(--primary-color);
@@ -1964,6 +1971,21 @@ Project Creator and Editor Popup style rules
         font-weight: 800;
       }
     }
+  }
+}
+
+@media only screen and (max-width: 799px){
+  #project-editor-change-owner{
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  #project-editor-owner-options{
+    width: 100% !important;
+  }
+
+  #project-editor-owner-confirm{
+    margin-top: 1em !important;
   }
 }
 
@@ -2209,7 +2231,9 @@ Project Creator and Editor Popup style rules
 .positions-popup-info>.popup-container>.popup {
   display: flex;
   flex-direction: column;
-  width: 439px;
+  width: 300px;
+  max-width: 60%;
+  max-height: 75vh;
   padding: 20px 50px;
   align-items: center;
   gap: 15px;
@@ -2758,7 +2782,8 @@ button.edit-position-contact .project-member-image {
 }
 
 .project-crop {
-  width: 700px;
+  width: 90%;
+  max-width: 700px;
   text-align: center;
   height: 100%;
   padding: 20px;
@@ -2767,6 +2792,7 @@ button.edit-position-contact .project-member-image {
     display: block;
   }
 
+  
   #canvas {
     border: 3px solid var(--primary-color);
     border-radius: 10px;
@@ -3962,6 +3988,21 @@ New Project Page style rules
       'people' auto;
   }
 }
+@media screen and (max-width: 1020px) {
+  #project-editor-team-tabs {
+    gap: 4%;
+    height: 80px;
+
+    button {
+      text-wrap: wrap !important;
+      max-width: 150px;
+    }
+  }
+
+  #project-editor-team-tabs::-webkit-scrollbar-thumb {
+      background-color: rgb(113, 114, 118);
+  }
+}
 
 @media screen and (max-width: 700px) {
   #project-page-content {
@@ -3973,14 +4014,7 @@ New Project Page style rules
   }
 
   #project-editor-team-tabs {
-    /* justify-content: flex-start; */
-    gap: 4%;
-    height: 80px;
-
-    button {
-      text-wrap: wrap !important;
-      max-width: 150px;
-    }
+    justify-content: flex-start;
   }
 
   #project-editor-project-members {
@@ -4216,18 +4250,12 @@ Project Carousel style rules
 
 @media only screen and (max-width: 1200px) {
   #project-info-panel {
-    max-width: calc(100vw - 80px);
+    max-width: 100%;
   }
 
   .mod-project-options,
   .mod-user-options {
     max-width: calc(100vw - 80px);
-  }
-}
-
-@media only screen and (max-width: 800px) {
-  #project-info-panel {
-    max-width: 100%;
   }
 }
 
@@ -4751,8 +4779,14 @@ button#positions-popup-list-item-active {
   #project-open-positions-popup {
     overflow-y: auto;
     padding: 20px;
-    justify-content: center;
+
+    
+    justify-content: flex-start;
     align-items: center;
+
+    
+    height: auto;
+    max-height: none;
   }
 
   .positions-popup-list,
@@ -5149,14 +5183,25 @@ button#positions-popup-list-item-active {
 
 #project-people-tabs {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  gap: 10px;
+  text-align: center;
+  gap: 20px;
 }
 
 #project-people-tab {
   font-weight: 700;
   font-size: 1.3rem;
   color: var(--primary-color);
+  
+}
+
+#project-people-tab-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  gap: 5px;
 }
 
 
@@ -5500,7 +5545,7 @@ My projects page style rules
 }
 
 .my-projects-grid {
-  width: 100%;
+  width: calc(100% - 35px);
   margin: 30px auto;
   padding: 0 20px;
   margin-bottom: 60px;
@@ -5584,8 +5629,8 @@ My projects page style rules
   box-sizing: border-box;
   border: 2px solid var(--bg-color);
   border-radius: 10px;
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   cursor: pointer;
@@ -5660,6 +5705,9 @@ My projects page style rules
 
   position: relative;
   overflow: hidden;
+
+  display: flex;
+  justify-content: center;
 }
 
 .grid-card-image-button:focus {
@@ -5857,11 +5905,6 @@ My projects page style rules
     align-items: center;
   }
 
-  .grid-card-image {
-    width: 250px;
-    height: 250px;
-  }
-
   .grid-card-details {
     max-width: 250px;
   }
@@ -5883,7 +5926,7 @@ My projects page style rules
 .responsive-table {
   box-sizing: border-box;
   width: 100%;
-  max-width: calc(100% - 60px);
+  max-width: calc(100% - 80px);
   border-collapse: separate;
   border-spacing: 0 10px;
 }

@@ -1,0 +1,119 @@
+get:
+  summary: Gets all gallery images for the current user.
+  tags:
+    - Me Gallery
+  security:
+    - googleOAuth: []
+  description: Retrieves all images stored in the user's gallery.
+  parameters:
+    - in: path
+      name: userId
+      required: true
+      schema:
+        type: integer
+      description: ID of the current user.
+  responses:
+    '200':
+      description: Gallery images retrieved successfully.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                nullable: true
+                example: null
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    galleryImageId:
+                      type: integer
+                      example: 12
+                    image:
+                      type: string
+                      example: 'https://cdn.example.com/gallery/img123.png'
+                    altText:
+                      type: string
+                      example: 'My gallery image'
+                    position:
+                      type: integer
+                      example: 0
+                    userId:
+                      type: integer
+                      example: 42
+    '404':
+      $ref: '../../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'
+post:
+  summary: Adds an image to the current user's gallery.
+  tags:
+    - Me Gallery
+  security:
+    - googleOAuth: []
+  description: Uploads an image file and alt text, stores the file to the users gallery
+  parameters:
+    - in: path
+      name: userId
+      required: true
+      schema:
+        type: integer
+      description: ID of current user.
+  requestBody:
+    required: true
+    content:
+      multipart/form-data:
+        schema:
+          type: object
+          properties:
+            file:
+              type: string
+              format: binary
+              description: The image file to upload.
+            altText:
+              type: string
+              description: Alt text describing the image.
+          required:
+            - file
+            - altText
+  responses:
+    '200':
+      description: Image added to gallery.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                nullable: true
+                example: null
+              data:
+                type: object
+                properties:
+                  galleryImageId:
+                    type: integer
+                    example: 1
+                  image:
+                    type: string
+                    example: 'https://cdn.example.com/uploads/img123.png'
+                  altText:
+                    type: string
+                    example: 'My cool gallery image'
+                  position:
+                    type: integer
+                    example: 0
+                  userId:
+                    type: integer
+                    example: 42
+    '404':
+      $ref: '../../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'

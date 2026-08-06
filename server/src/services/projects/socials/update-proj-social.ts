@@ -3,6 +3,7 @@ import prisma from '#config/prisma.ts';
 import { ProjectSocialSelector } from '#services/selectors/projects/parts/project-social.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformProjectSocial } from '#services/transformers/projects/parts/project-social.ts';
+import { unapproveProjectService } from '../approval/unapprove-project.ts';
 
 type UpdateProjectSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
@@ -28,6 +29,18 @@ export const updateProjectSocialService = async (
       data: data,
       select: ProjectSocialSelector,
     });
+
+    //find project for the approval stuff
+    const proj = await prisma.projects.findUnique({
+      where: {
+        projectId,
+      },
+    });
+
+    //unapprove project on change
+    if (proj && proj.approved) {
+      await unapproveProjectService(proj.projectId);
+    }
 
     return transformProjectSocial(projectId, social);
   } catch (error) {

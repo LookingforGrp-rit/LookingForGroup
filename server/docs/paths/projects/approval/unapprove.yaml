@@ -1,0 +1,50 @@
+patch:
+  summary: Unapproves a project, removing it from the public eye.
+  tags:
+    - Unapproved Projects
+  description: Removes a project from the public eye by setting it's approval status as 'not approved.'
+  parameters:
+    - name: id
+      in: path
+      schema:
+        type: integer
+      required: true
+      description: Project to be unapproved
+    - name: devId
+      in: query
+      schema:
+        type: integer
+      required: true
+      description: User id to be used. Use a user id from a moderator.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            reason:
+              type: string
+  responses:
+    '204':
+      description: Project unapproved
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 204
+              error:
+                nullable: true
+                example: null
+              data:
+                type: string
+                example: Project Approved
+    '400':
+      $ref: '../../../swagger.yaml#/components/responses/BadRequest'
+    '403':
+      $ref: '../../../swagger.yaml#/components/responses/Forbidden'
+    '500':
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'

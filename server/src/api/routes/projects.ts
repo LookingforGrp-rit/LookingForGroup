@@ -3,10 +3,17 @@ import { Router, type NextFunction, type Request, type Response } from 'express'
 import { upload } from '#config/multer.ts';
 import PROJECT from '#controllers/projects/index.ts';
 import { requiresNotSelf } from '#middleware/authorization/requires-not-self.ts';
+import { sendNotificationAfterAll } from '#middleware/send-notification-after-all.ts';
 import { isUserBlocked } from '#middleware/validators/is-user-blocked.ts';
 import { BodyParameterLocation } from '#middleware/validators/parameter-location/body-param-location.ts';
 import { ProjectMemberInPathParameterLocation } from '#middleware/validators/parameter-location/project-member-in-path-parameter.ts';
 import { ProjectOwnerInPathParameterLocation } from '#middleware/validators/parameter-location/project-owner-in-path-param-location.ts';
+import { InviteReceivedNotificationBuilder } from '#notification-templates/invite-received-notification-builder.ts';
+import { MemberRequestUpdatedNotificationBuilder } from '#notification-templates/member-request-updated.ts';
+import { ProjectApprovedNotificationBuilder } from '#notification-templates/project-approved-notification-builder.ts';
+import { ProjectRejectedNotificationBuilder } from '#notification-templates/project-rejected-notification-builder.ts';
+import { ProjectUnapprovedNotificationBuilder } from '#notification-templates/project-unapproved-notification-buildier.ts';
+import { RequestToJoinNotificationBuilder } from '#notification-templates/request-to-join-notification-builder.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresModerator from '../middleware/authorization/requires-mod.ts';
 import requiresProjectOwner from '../middleware/authorization/requires-project-owner.ts';
@@ -72,6 +79,7 @@ router.patch(
   '/members/requests/:id',
   requiresLogin,
   injectCurrentUser,
+  sendNotificationAfterAll(new MemberRequestUpdatedNotificationBuilder(), false),
   authenticated(PROJECT.updateMemberRequest),
 );
 //#endregion
@@ -111,6 +119,7 @@ router.delete(
   authenticated(requiresModerator),
   projectExistsAt('path', 'id'),
   authenticated(requiresNotSelf(new Map([[new ProjectOwnerInPathParameterLocation(), 'id']]))),
+  sendNotificationAfterAll(new ProjectRejectedNotificationBuilder(), false),
   authenticated(PROJECT.rejectProject),
 );
 //#endregion
@@ -135,6 +144,7 @@ router.patch(
       ]),
     ),
   ),
+  sendNotificationAfterAll(new ProjectApprovedNotificationBuilder(), false),
   authenticated(PROJECT.approveProject),
 );
 
@@ -146,6 +156,7 @@ router.patch(
   authenticated(requiresModerator),
   projectExistsAt('path', 'id'),
   authenticated(requiresNotSelf(new Map([[new ProjectOwnerInPathParameterLocation(), 'id']]))),
+  sendNotificationAfterAll(new ProjectUnapprovedNotificationBuilder(), false),
   authenticated(PROJECT.unapproveProject),
 );
 
@@ -336,6 +347,7 @@ router.post(
     new BodyParameterLocation(),
     'ownerUserId',
   ),
+  sendNotificationAfterAll(new InviteReceivedNotificationBuilder(), false),
   PROJECT.sendInvite,
 );
 
@@ -354,6 +366,7 @@ router.post(
     new BodyParameterLocation(),
     'prospectiveMemberId',
   ),
+  sendNotificationAfterAll(new RequestToJoinNotificationBuilder(), false),
   PROJECT.requestToJoin,
 );
 

@@ -52,7 +52,7 @@ Profile Panel component style rules
 
 .profile-panel {
   display: flex;
-  width: 100%;
+  width: 96%;
   flex-shrink: 0;
   height: auto;
   border: none;
@@ -71,6 +71,7 @@ Profile Panel component style rules
   overflow-wrap: break-word;
   margin-bottom: 1em;
   font-size: 0.875rem;
+  padding: 10px;
 
   img {
     width: 100%;
@@ -82,7 +83,7 @@ Profile Panel component style rules
 
   /* Name */
   h2 {
-    margin: 8px 15px 0 15px;
+    margin: 0px;
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary-color);
@@ -94,7 +95,7 @@ Profile Panel component style rules
 
   /* Major */
   h3 {
-    margin: 0px 15px 0px 15px;
+    margin: 0px;
     color: var(--main-text);
     font-size: 1rem;
     font-weight: 400;
@@ -114,6 +115,17 @@ Profile Panel component style rules
     align-self: stretch;
     overflow-wrap: break-word;
     word-break: break-word;
+  }
+
+  .profile-extra {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    margin-top: 2px;
+
+    svg {
+      margin-bottom: 2px;
+    }
   }
 }
 
@@ -150,9 +162,165 @@ Profile Panel component style rules
 
 @media only screen and (hover: none) {
   .profile-panel {
-    width: clamp(125px, 25vw, 200px);
+    max-width: 97%;
   }
 }
+
+/*NEW PROFILE PANEL START*/
+.profile-panel-img-info {
+  display: flex;
+  direction: row;
+
+  img {
+    aspect-ratio: 1/1;
+    width: 100px;
+    border-radius: 10px;
+  }
+
+  h3,
+  #quote {
+    margin-right: 0;
+  }
+
+  .profile-extra {
+    display: flex;
+    margin-left: 0px;
+    gap: 3px;
+    align-items: center;
+  }
+}
+
+.profile-extra-mobile,
+.mobile-quote {
+  display: none;
+}
+
+.profile-panel-info {
+  margin: 5px 10px;
+  margin-right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+
+.profile-panel-name-prns {
+  display: flex;
+  direction: row;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 5px;
+
+  h2 {
+    margin-right: 0;
+  }
+}
+
+.profile-panel-skills {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  row-gap: 5px;
+  margin-top: 10px;
+}
+
+@media screen and (max-width:1460px) {
+  #quote {
+    display: none;
+  }
+
+  .mobile-quote {
+    display: block !important;
+  }
+}
+
+@media screen and (max-width:850px) {
+  #quote {
+    display: none;
+  }
+
+  .mobile-quote {
+    display: block !important;
+  }
+}
+
+@media screen and (max-width:700px) {
+
+  .profile-extra-mobile,
+  .mobile-quote {
+    display: block;
+  }
+
+  .profile-extra-mobile {
+    margin: 5px;
+  }
+
+  .profile-panel-major-job {
+    display: none;
+  }
+
+  .profile-panel-info {
+    justify-content: center !important;
+  }
+}
+
+@media screen and (max-width:550px) {
+
+  .skill-tag-label {
+    font-size: small !important;
+    gap: 5px !important;
+    padding: 2px 10px !important;
+    text-align: center;
+    height: auto;
+    max-height: fit-content;
+
+  }
+
+  h3 {
+    font-size: .9rem !important;
+  }
+
+  .profile-panel {
+    .profile-extra {
+      font-size: .8rem;
+    }
+  }
+
+  .profile-panel-name-prns {
+    div {
+      font-size: .7rem;
+    }
+  }
+}
+
+@media screen and (max-width:520px) {
+
+  .profile-extra-mobile,
+  .mobile-quote {
+    display: none !important;
+  }
+
+  .profile-panel-major-job,
+  #quote {
+    display: block;
+  }
+
+  .profile-panel-info {
+    margin: 5px;
+  }
+
+  .profile-panel-img-info {
+    flex-direction: column;
+
+    img {
+      justify-items: center;
+      width: 100%;
+      margin: 0;
+    }
+  }
+}
+
+/*NEW PROFILE PANEL END*/
 
 .profile-panel-hover-item {
   /* border: 1px solid black; */
@@ -161,7 +329,7 @@ Profile Panel component style rules
   align-items: start;
   font-style: italic;
   gap: 15px;
-  padding: 0 15px;
+  /* padding: 0 15px; */
   overflow-wrap: break-word;
   height: fit-content;
 
@@ -206,9 +374,9 @@ Profile Panel component style rules
   border-radius: 0 0 10px 10px;
   background-color: var(--header-color);
   color: var(--main-text);
-  height: calc(100% - 5px);
+  height: calc(98% - 5px);
   bottom: 0;
-  width: calc(100% - 5px);
+  width: calc(96% - 5px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -251,17 +419,8 @@ Profile Panel component style rules
   opacity: 1;
 }
 
-@media screen and (max-width:1050px) {
-  .profile-panel {
-    width: clamp(180px, 340px, 340px) !important;
-  }
-}
-
 @media (min-width: 500px) and (max-width: 555px) {
   .profile-panel {
-    width: 98% !important;
-    display: flex;
-
     h2 {
       font-size: 1.2rem;
     }
@@ -274,6 +433,8 @@ Profile Panel component style rules
 
 @media screen and (max-width: 555px) {
   .profile-panel {
+    width: 90% !important;
+
     h2 {
       font-size: 1.2rem;
     }
@@ -306,11 +467,17 @@ Profile Panel component style rules
     padding-top: 10px !important;
     padding: 10px 14px !important;
   }
+
+  .profile-panel {
+    #quote {
+      padding: 5px 8px !important;
+    }
+  }
 }
 
 @media (max-width: 499px) {
   .profile-panel {
-    width: clamp(120px, 100%, 100%) !important;
+    /* width: clamp(120px, 100%, 100%) !important; */
     display: flex;
 
     img {
@@ -1298,6 +1465,19 @@ New Profile page style rules
             margin: 0;
             width: fit-content;
             text-wrap: wrap;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+
+            .tooltip-text {
+              width: fit-content;
+              font-size: 0.5em;
+              padding: 10px;
+              
+              top: 100%;
+              right: 20%;
+              left: auto;
+            }
           }
 
           >#profile-username {
@@ -1431,7 +1611,6 @@ New Profile page style rules
       margin: 0;
       width: fit-content;
       text-wrap: wrap;
-      margin-bottom: 5px;
     }
 
     #skill-block {
@@ -1736,15 +1915,9 @@ New Profile page style rules
   #user-gallery {
     #project-info-edit {
       padding: 2px 5px !important;
-      height: 20px !important;
-
-      .edit-project-member-icon {
-        width: 10px;
-        height: 10px;
-        margin-bottom: 4px;
-      }
+      width: 30px !important;
+      height: 30px !important;
     }
-
   }
 
   #skill-block {
@@ -2289,7 +2462,7 @@ New Profile page style rules
   border-radius: 50px;
   border: none;
   padding: 5px 15px;
-  font-size: medium;
+  font-size: .9rem;
   flex-shrink: 0;
   height: fit-content;
   width: fit-content;
@@ -2481,6 +2654,13 @@ New Profile page style rules
       color: var(--primary-color);
     }
   }
+}
+
+.tooltip:has(#mod-badge) {    /* Mod badge tooltip */
+  height: 35px;
+}
+#mod-badge {
+  stroke-width: 6;
 }
 
 /* Delete-account confirmation popup in the profile editor. The shared

@@ -40,7 +40,7 @@ const updateJobSkillsService = async (
       }
     }
 
-    console.error('Error in updateSkillsService:', e);
+    console.error('Error in updateJobSkillsService:', e);
     return 'INTERNAL_ERROR';
   }
 };
