@@ -2231,7 +2231,9 @@ Project Creator and Editor Popup style rules
 .positions-popup-info>.popup-container>.popup {
   display: flex;
   flex-direction: column;
-  width: 439px;
+  width: 300px;
+  max-width: 60%;
+  max-height: 75vh;
   padding: 20px 50px;
   align-items: center;
   gap: 15px;
