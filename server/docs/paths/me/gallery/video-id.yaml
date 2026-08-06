@@ -1,0 +1,41 @@
+delete:
+  summary: Deletes a video from the current user's gallery.
+  tags:
+    - Me Gallery
+  security:
+    - googleOAuth: []
+  description: Removes a gallery video by its ID.
+  parameters:
+    - in: path
+      name: userId
+      required: true
+      schema:
+        type: integer
+      description: ID of the current user.
+    - in: path
+      name: videoId
+      required: true
+      schema:
+        type: integer
+      description: ID of the gallery video to delete.
+  responses:
+    '204':
+      description: Video deleted successfully.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 204
+              error:
+                nullable: true
+                example: null
+              data:
+                nullable: true
+                example: null
+    '404':
+      $ref: '../../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'

@@ -3,6 +3,7 @@ import prisma from '#config/prisma.ts';
 import { ProjectDetailSelector } from '#services/selectors/projects/project-detail.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformProjectToDetail } from '#services/transformers/projects/project-detail.ts';
+import { unapproveProjectService } from './approval/unapprove-project.ts';
 
 type UpdateProjectServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
@@ -18,6 +19,10 @@ const updateProjectService = async (
       data: updates,
       select: ProjectDetailSelector,
     });
+    //unapprove project on change
+    if (project.approved) {
+      await unapproveProjectService(projectId);
+    }
 
     return transformProjectToDetail(project);
   } catch (e) {

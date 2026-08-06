@@ -4,6 +4,7 @@ import type { Prisma } from '#prisma-models/index.js';
 import { ProjectImageSelector } from '#services/selectors/projects/parts/project-image.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformProjectImage } from '#services/transformers/projects/parts/project-image.ts';
+import { unapproveProjectService } from '../approval/unapprove-project.ts';
 
 type AddImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
@@ -17,6 +18,18 @@ const addImageService = async (
       data,
       select: { ...ProjectImageSelector, projectId: true },
     });
+
+    //find project for the approval stuff
+    const proj = await prisma.projects.findUnique({
+      where: {
+        projectId: newImage.projectId,
+      },
+    });
+
+    //unapprove project on change
+    if (proj && proj.approved) {
+      await unapproveProjectService(proj.projectId);
+    }
 
     return transformProjectImage(newImage.projectId, newImage);
   } catch (e) {

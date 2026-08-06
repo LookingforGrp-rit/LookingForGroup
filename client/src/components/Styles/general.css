@@ -2749,6 +2749,22 @@ Theme Icons style rules
   fill: white;
 }
 
+/* ======== Not used - here if needed ========== */
+[data-theme="light"] .mono-fill-invert use,
+[data-theme="dark"] button.active .mono-fill-invert use,
+/* Where is this used? */
+.theme-light .svg-color-icon {
+  fill: white;
+}
+
+[data-theme="light"] .mono-fill-invert use,
+[data-theme="dark"] button.active .mono-fill-invert use,
+/* Where is this used? */
+.theme-dark .svg-color-icon {
+  fill: black;
+}
+/* ============== */
+
 /* Colored SVGs */
 .color-stroke>use {
   stroke: var(--primary-color);

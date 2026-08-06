@@ -343,7 +343,7 @@ export const ProfileMeetPage = () => {
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={userDataSet}
         onSearch={searchUsers}
-        value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
+        value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value.toLowerCase())}
         setCurrentUserId={getAuth}
         placeholderText="Search by Name"
         mobilePlaceholderText="People"

@@ -31,7 +31,7 @@ const getMembersService = async (projectId: number): Promise<ProjectMember[] | G
 
     return members.map((member) => transformProjectMember(projectId, member));
   } catch (e) {
-    console.error(`Error in getMemberssService: ${e as Error}`);
+    console.error(`Error in getMembersService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }

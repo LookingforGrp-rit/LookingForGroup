@@ -21,7 +21,7 @@ const deactivateUserReport = async (
 
     return 'NO_CONTENT';
   } catch (e) {
-    console.error(`Error in getUserReportsService: ${e as Error}`);
+    console.error(`Error in deactivateUserReport: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }

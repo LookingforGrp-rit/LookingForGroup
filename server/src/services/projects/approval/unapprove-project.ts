@@ -18,7 +18,7 @@ export const unapproveProjectService = async (
 
     return 'OK';
   } catch (e) {
-    console.error(`Error changeProjectApprovalService:`, e);
+    console.error(`Error unapproveProjectService:`, e);
     return 'INTERNAL_ERROR';
   }
 };

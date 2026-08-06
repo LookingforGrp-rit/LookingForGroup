@@ -1,0 +1,112 @@
+get:
+  summary: Gets the current user
+  tags:
+    - Me
+  security:
+    - googleOAuth: []
+  parameters:
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  responses:
+    '200':
+      description: A single user
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                $ref: '../../swagger.yaml#/components/schemas/MePrivate'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+patch:
+  summary: Updates user profile information
+  tags:
+    - Me
+  x-middleware:
+    - injectCurrentUser
+  security:
+    - googleOAuth: []
+  parameters:
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  requestBody:
+    required: true
+    content:
+      multipart/form-data:
+        schema:
+          $ref: '../../swagger.yaml#/components/schemas/UpdateUserInput'
+  responses:
+    '200':
+      description: Update a single user
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                $ref: '../../swagger.yaml#/components/schemas/MePrivate'
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+delete:
+  summary: Delete a user by ID
+  tags:
+    - Me
+  security:
+    - googleOAuth: []
+  parameters:
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  responses:
+    '200':
+      description: User successfully deleted
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: object
+                nullable: true
+                example: null
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

@@ -1,0 +1,96 @@
+patch:
+  summary: Updates a project job
+  description: Updates one of the project jobs specified
+  security:
+    - googleOAuth: []
+  tags:
+    - Projects
+  parameters:
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+    - name: jobId
+      in: path
+      required: true
+      description: ID of the job to be deleted
+      schema:
+        type: integer
+    - in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: The ID of the project
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../swagger.yaml#/components/schemas/UpdateProjectJobInput'
+  responses:
+    '200':
+      description: Job updated successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: object
+                $ref: '../../swagger.yaml#/components/schemas/ProjectJob'
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+delete:
+  summary: Delete one of the specified project's jobs
+  security:
+    - googleOAuth: []
+  tags:
+    - Projects
+  parameters:
+    - name: jobId
+      in: path
+      required: true
+      description: ID of the job to be deleted
+      schema:
+        type: integer
+    - in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: The ID of the project
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  responses:
+    '200':
+      description: Job deleted successfully
+      content:
+        application/json:
+          example:
+            status: 200
+            error: null
+            data: null
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

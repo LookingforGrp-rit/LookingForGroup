@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
-import { ProjectCreatorEditor } from "../ProjectCreatorEditor/ProjectCreatorEditor";
+import { ProjectCreatorEditor } from "../ProjectCreatorEditor/ProjectCreatorEditor.tsx";
 import { Popup, PopupButton, PopupContent, PopupContext } from "../Popup";
 import profileImage from "../../images/lfrog.png";
 import { ProjectCarousel } from "../ProjectCarousel";
@@ -178,7 +178,7 @@ const Project = () => {
     getUserPermissions();
   }, [])
 
-  // Fetch attached videos and check approval status (for now)
+  // Fetch attached videos
   useEffect(() => {
     async function fetchVideos() {
       const res = await getVideos(projectID);
@@ -187,6 +187,11 @@ const Project = () => {
       }
     }
 
+    fetchVideos();
+  }, [projectID]);
+
+  // Resolve the project's approval status
+  useEffect(() => {
     const checkApprovalRequest = async () => {
       try {
         const result = await projectApprovalRequestExists(projectID);
@@ -211,13 +216,14 @@ const Project = () => {
       }
     };
 
-    fetchVideos();
+   
+    if (!displayedProject) return;
 
     if (isMember || isUserAdmin) {
       checkApprovalRequest();
     }
 
-  }, [projectID, isMember, isUserAdmin]);
+  }, [projectID, isMember, isUserAdmin, displayedProject]);
 
   // Approve a project request
   const handleApproveRequest = async () => {
@@ -1098,6 +1104,31 @@ const Project = () => {
                 >
                   The Team
                 </div>
+                
+                {user && displayedProject?.owner.userId === user.userId ?
+                (
+                  <div id="project-people-tab-buttons">
+                    <ProjectCreatorEditor
+                      mobileView={false} //error being caused by this prop not being passed in, but it also isn't used in the component at all, sooooo
+                      newProject={false}
+                      updateDisplayedProject={setDisplayedProject}
+                      defaultTab={3}
+                      buttonName={"Invite Member"}
+                      teamSubtab={0}
+                      /*permissions={userPerms}*/
+                    />
+                    <ProjectCreatorEditor
+                      mobileView={false} //error being caused by this prop not being passed in, but it also isn't used in the component at all, sooooo
+                      newProject={false}
+                      updateDisplayedProject={setDisplayedProject}
+                      defaultTab={3}
+                      buttonName={"Edit Open Positions"}
+                      teamSubtab={2}
+                      /*permissions={userPerms}*/
+                    />
+                </div>
+                ) : ""}
+
                 {/* If contributors are added as a site feature, use the commented code below */}
                 {/* <button className={`project-people-tab ${displayedPeople === 'Contributors' ? 'project-people-tab-active' : ''}`} onClick={(e) => setDisplayedPeople('Contributors')}>Contributors</button> */}
               </div>

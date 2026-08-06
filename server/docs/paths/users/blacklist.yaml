@@ -1,0 +1,27 @@
+get:
+  tags:
+    - Users
+  summary: Get list of users that is banned/on the blacklist
+  responses:
+    '200':
+      description: List of users that are banned/on the blacklist
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: array
+                items:
+                  $ref: '../../swagger.yaml#/components/schemas/UserDetail'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

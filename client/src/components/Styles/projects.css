@@ -680,6 +680,7 @@ Project Creator and Editor Popup style rules
   font-size: 1rem;
   background: none;
   display: flex;
+  gap: 3px;
   position: relative;
 
   border-radius: 10px;
@@ -1834,9 +1835,6 @@ Project Creator and Editor Popup style rules
   height: 24px;
 }
 
-#profile-extra #project-info-edit {
-  margin-bottom: 6px;
-}
 
 .project-editor-project-member>.edit-project-member-button {
   top: 6px;
@@ -3997,7 +3995,7 @@ New Project Page style rules
   }
 
   #project-editor-team-tabs {
-    /* justify-content: flex-start; */
+    justify-content: flex-start;
     gap: 4%;
     height: 80px;
 
@@ -4005,6 +4003,10 @@ New Project Page style rules
       text-wrap: wrap !important;
       max-width: 150px;
     }
+  }
+
+  #project-editor-team-tabs::-webkit-scrollbar-thumb {
+      background-color: rgb(113, 114, 118);
   }
 
   #project-editor-project-members {
@@ -5167,14 +5169,25 @@ button#positions-popup-list-item-active {
 
 #project-people-tabs {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  gap: 10px;
+  text-align: center;
+  gap: 20px;
 }
 
 #project-people-tab {
   font-weight: 700;
   font-size: 1.3rem;
   color: var(--primary-color);
+  
+}
+
+#project-people-tab-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  gap: 5px;
 }
 
 

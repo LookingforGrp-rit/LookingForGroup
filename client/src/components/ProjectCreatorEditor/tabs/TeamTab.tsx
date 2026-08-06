@@ -4,6 +4,7 @@ import {
 	useCallback,
 	useEffect,
 	useMemo,
+	useRef,
 	useState,
 	useContext
 } from "react";
@@ -108,6 +109,12 @@ type TeamTabProps = {
 	// from here
 	setErrorMember: (error: string) => void;
 	setErrorPosition: (error: string) => void;
+	// Filled in by this tab so the editor can ask, synchronously, whether an
+	// open position is mid-edit with unsaved changes. Leaving the Team tab
+	// unmounts this component and takes the in-progress position with it.
+	unsavedPositionCheck?: React.RefObject<(() => boolean) | null>;
+	// The same signal as state, for the editor's render-time close guard
+	setHasUnsavedPosition?: (value: boolean) => void;
 	// permissions: number;
 	saveProject: () => void;
 	updatePendingProject: (updatedPendingProject: PendingProject) => void;
@@ -118,6 +125,7 @@ type TeamTabProps = {
 	messages: string[];
 	setMessages: React.Dispatch<React.SetStateAction<string[]>>;
 	isSaving: boolean;
+	defaultSubtab?: number;
 };
 
 /**
@@ -147,6 +155,8 @@ export const TeamTab = ({
 	setInitialPendingRequests,
 	setErrorMember,
 	setErrorPosition,
+	unsavedPositionCheck,
+	setHasUnsavedPosition,
 	/*permissions,*/
 	saveProject,
 	updatePendingProject,
@@ -156,7 +166,8 @@ export const TeamTab = ({
 	message,
 	messages,
 	setMessages,
-	isSaving
+	isSaving,
+	defaultSubtab = 0,
 }: TeamTabProps) => {
 	// --- Hooks ---
 	// State for storing all available roles from the API.
@@ -193,6 +204,9 @@ export const TeamTab = ({
 
 	// State indicating whether a new position is being created.
 	const [isCreatingNewPosition, setIsCreatingNewPosition] = useState(false);
+
+	// Whether the "discard this position?" confirmation is showing
+	const [confirmLeavePosition, setConfirmLeavePosition] = useState(false);
 
 	// State controlling whether a popup should close
 	const [closePopup, setClosePopup] = useState(false);
@@ -311,6 +325,10 @@ export const TeamTab = ({
 			);
 		});
 	}, [projectData?.members, unmodifiedProject?.members]);
+
+	useEffect(() => {
+		setCurrentTeamTab(defaultSubtab);
+	}, [])
 
 	// Check if Open Positions is unsaved
 	const isOpenPositionsUnsaved = useMemo(() => {
@@ -776,6 +794,54 @@ export const TeamTab = ({
 
 	// --- Position handlers ---
 	/**
+	 * Serializes a position so two versions of it can be compared. Some fields
+	 * (the job dates) are written straight onto currentJob rather than through
+	 * setCurrentJob, so comparing object identity wouldn't catch those edits.
+	 * @param job the position to serialize
+	 * @returns a comparable string form of the position
+	 */
+	const serializeJob = (job?: ProjectJob | Fillable<Pending<ProjectJob>>) =>
+		JSON.stringify(job ?? null);
+
+	// The position as it looked when editing started. Compared against the live
+	// one to tell whether cancelling would throw away real work.
+	const positionSnapshot = useRef<string>(serializeJob(undefined));
+
+	/** True when the open position being edited has changes that aren't saved. */
+	const hasUnsavedPositionChanges = () =>
+		serializeJob(currentJob) !== positionSnapshot.current;
+
+	// Re-installed after every render so the editor's check always closes over
+	// the current position. No dependency array on purpose: some position fields
+	// are written directly onto currentJob, so a stale closure here would report
+	// the position as clean when it isn't.
+	useEffect(() => {
+		if (!unsavedPositionCheck) return;
+
+		unsavedPositionCheck.current = () => editMode && hasUnsavedPositionChanges();
+
+		// Cleared on unmount so a stale check can't outlive this tab
+		return () => {
+			unsavedPositionCheck.current = null;
+		};
+	});
+
+	// The same signal as a plain value. The editor's close guard is a prop read
+	// during render, so it can't call the ref above — it needs state.
+	const positionDirty = editMode && hasUnsavedPositionChanges();
+
+	useEffect(() => {
+		setHasUnsavedPosition?.(positionDirty);
+	}, [positionDirty, setHasUnsavedPosition]);
+
+	// Cleared when this tab unmounts, otherwise discarding a position and
+	// switching tabs would leave the editor believing work is still at risk.
+	useEffect(
+		() => () => setHasUnsavedPosition?.(false),
+		[setHasUnsavedPosition]
+	);
+
+	/**
 	 * Toggles between adding a new position and canceling the operation.
 	 * @returns void
 	 */
@@ -807,7 +873,10 @@ export const TeamTab = ({
 			setIsCreatingNewPosition(true);
 			// clear selected role
 			emptyJob.jobSkills = [];
-			setCurrentJob({ ...emptyJob });
+			const newJob = { ...emptyJob };
+			setCurrentJob(newJob);
+			// Baseline for the unsaved-changes check below
+			positionSnapshot.current = serializeJob(newJob);
 			const activePosition = document.querySelector(
 				"#team-positions-active-button"
 			);
@@ -1132,9 +1201,10 @@ export const TeamTab = ({
 				<button
 					className="edit-project-member-button"
 					onClick={() => {
-						setCurrentJob(
-							getProjectJob(currentJob?.role?.roleId as number)
-						);
+						const job = getProjectJob(currentJob?.role?.roleId as number);
+						setCurrentJob(job);
+						// Baseline for the unsaved-changes check on cancel
+						positionSnapshot.current = serializeJob(job);
 						setEditMode(true);
 					}}>
 					<ThemeIcon
@@ -1818,6 +1888,12 @@ export const TeamTab = ({
 					</button>
 					<button
 						onClick={() => {
+							// Cancelling discards the position outright, so check first
+							// when there's actual work to lose.
+							if (hasUnsavedPositionChanges()) {
+								setConfirmLeavePosition(true);
+								return;
+							}
 							addPositionCallback();
 						}}
 						id="position-edit-cancel"
@@ -1827,6 +1903,42 @@ export const TeamTab = ({
 				</div>
 				<div className="error">{errorAddPosition}</div>
 			</div>
+
+			{/* Guards against losing an unsaved position on cancel */}
+			{confirmLeavePosition && (
+				<Popup startOpen={true}>
+					<PopupContent
+						useClose={false}
+						// Dismissing by clicking away or pressing Escape has to clear
+						// this too, otherwise the popup unmounts visually but the flag
+						// stays set and it can never be reopened.
+						callback={() => setConfirmLeavePosition(false)}
+					>
+						<div className="small-popup">
+							<h3>Discard this position?</h3>
+							<p className="confirm-msg">
+								This position hasn't been saved yet. Leaving now discards
+								everything you've filled in for it.
+							</p>
+							<div className="confirm-deny-btns">
+								<button
+									className="confirm-btn"
+									onClick={() => {
+										setConfirmLeavePosition(false);
+										addPositionCallback();
+									}}>
+									Discard
+								</button>
+								<button
+									className="deny-btn"
+									onClick={() => setConfirmLeavePosition(false)}>
+									Keep Editing
+								</button>
+							</div>
+						</div>
+					</PopupContent>
+				</Popup>
+			)}
 		</>
 	);
 

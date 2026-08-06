@@ -16,6 +16,7 @@ const changeOwnerService = async (
       where: { projectId_userId },
       select: { ...ProjectMemberSelector, projectId: true },
     });
+
     if (!member) return 'NOT_FOUND';
 
     await prisma.projects.update({
@@ -29,7 +30,7 @@ const changeOwnerService = async (
 
     return transformProjectMember(member.projectId, member);
   } catch (e) {
-    console.error('Error in updateMemberService:', e);
+    console.error('Error in changeOwnerService:', e);
     return 'INTERNAL_ERROR';
   }
 };

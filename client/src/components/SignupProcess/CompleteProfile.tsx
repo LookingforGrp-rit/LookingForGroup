@@ -243,7 +243,9 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 
 								{/* Current Job Title */}
 								<div id="jobTitle-input">
-									<div className="dropdown-label">Job Title</div>
+									<div className="dropdown-label tooltip">Job Title
+										<span className="tooltip-text">This is for your current job.</span>
+									</div>
 									<Select>
 										<SelectButton
 											placeholder={"Job Title"}
