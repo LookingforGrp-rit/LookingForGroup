@@ -9,9 +9,11 @@ import { Header } from '../Header';
 //import PasswordValidator from 'password-validator';
 import ToTopButton from '../ToTopButton';
 import * as paths from '../../constants/routes';
-import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editUser } from '../../api/users';
-import { MePrivate, UpdateUserInput } from '@looking-for-group/shared';
+import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editUser, getTagExclusion, getAllTags } from '../../api/users';
+import { MePrivate, Tag, UpdateUserInput } from '@looking-for-group/shared';
 import { ProfileEditPopup } from '../Profile/ProfileEditPopup';
+import TagDisplay from '../TagDisplay';
+import type { TagDisplayProps, TagOrSkill } from '../TagDisplay';
 type JsonData = Record<string, unknown>;
 
 /**
@@ -62,6 +64,21 @@ const Settings = (userProfile: any) => {
     }
   }, [dataLoaded, userInfo, navigate, location]);
 
+  let tagBlacklist: Tag[] = [];
+  let tags: Tag[] = [];
+
+  const tabsBlacklist: string[] = [
+    "Content Warning",
+    "Context",
+    "Game Engine",
+    "Genre",
+    "Purpose",
+    "Style"
+  ];
+
+  let tabsBlacklistId: number = 0;
+  let blacklistSearchValue: string = "";
+
   // --------------------
   // Helper functions
   // --------------------
@@ -94,6 +111,23 @@ const Settings = (userProfile: any) => {
       setUserInfo(acc.data);
     }
 
+    const tagBlacklistRes = await getTagExclusion();
+
+    //Success
+    if (tagBlacklistRes.status === 200) {
+      if (tagBlacklistRes.data) {
+        tagBlacklist = tagBlacklistRes.data;
+      }
+    }
+
+    //Not Found
+    //Not else if so it always checks
+    if (tagBlacklistRes.status === 404 || !tagBlacklistRes.data) {
+      tagBlacklist = [];
+    }
+
+    tags = await allTags();
+
     // Don't call API again even if user isn't logged in
     setDataLoaded(true);
   };
@@ -102,6 +136,78 @@ const Settings = (userProfile: any) => {
   if (!dataLoaded) {
     getUserData();
   }
+
+  /**
+   * Converts a Tag[] to a TagOrSkill[] because they're different for some reason
+   * @param tagArray The Tag[] to cast
+   * @returns Equivalent TagOrSkill[]
+   */
+  const tagArrayToTagOrSkillArray = (tagArray: Tag[]): TagOrSkill[] => {
+    let tagOrSkillArray: TagOrSkill[] = [];
+
+    //Theres probably a better way of doing this
+    for (let i = 0; i < tagArray.length; i++) {
+      const tagOrSkill: TagOrSkill = {
+        label: tagArray[i].label,
+        id: tagArray[i].tagId,
+        type: tagArray[i].type,
+        category: tagArray[i].category
+      };
+
+      tagOrSkillArray.push(tagOrSkill);
+    }
+
+    return tagOrSkillArray;
+  }
+
+  const toggleTagBlacklist = (id: number, type: string) => {
+    //Look for the tag in the blacklist
+    let found: boolean = false;
+    let foundIndex: number = -1;
+
+    for (let i = 0; i < tagBlacklist.length; i++) {
+      if (tagBlacklist[i].tagId === id) {
+        found = true;
+        foundIndex = i;
+      }
+    }
+
+    //If it's already in the blacklist, remove it
+    if (found) {
+      tagBlacklist.splice(foundIndex, 1);
+    }
+
+    //If it's not in the blacklist, add it
+    else {
+      const tagsIds = tags.map((tag) => tag.tagId);
+      foundIndex = tagsIds.indexOf(id);
+      tagBlacklist.push(tags[foundIndex]);
+    }
+  }
+
+  /**
+   * Gets all tags
+   * Seperate function in case it's needed elsewhere
+   * @returns Tag[] of all tags
+   */
+  const allTags = async (): Promise<Tag[]> => {
+    const getAllTagsRes = await getAllTags();
+    let allTagsData: Tag[] = [];
+
+    //Success
+    if (getAllTagsRes.status === 200) {
+      allTagsData = getAllTagsRes.data;
+    }
+
+    //Internal server error
+    else if (getAllTagsRes.status === 500) {
+      console.log(`Internal server error in getAlltags: ${getAllTagsRes}`);
+    }
+
+    return allTagsData;
+  }
+
+  let blacklistSearchResults: TagOrSkill[] = tagArrayToTagOrSkillArray(tags);
 
   // --------------------
   // Components:
@@ -502,7 +608,7 @@ const Settings = (userProfile: any) => {
       {/* Search bar is not used in settings */}
       <div id="settings-page">
         <header id="header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Header dataSets={[]} onSearch={() => { }} hideSearchBar hideBackButton={false} 
+          <Header dataSets={[]} onSearch={() => { }} hideSearchBar hideBackButton={false}
             // pageTitle='Settings'
             placeholderText='' />
         </header>
@@ -726,6 +832,19 @@ const Settings = (userProfile: any) => {
               </div>
             </div>
             <hr />
+            <div className="subsection">
+              <h2 className="settings-header">Content Restriction</h2>
+              Hide content that is mature, graphic, etc.
+              <TagDisplay
+                selected={tagArrayToTagOrSkillArray(tagBlacklist)}
+                toggleTag={toggleTagBlacklist}
+                tabs={tabsBlacklist}
+                tabId={tabsBlacklistId}
+                all={tagArrayToTagOrSkillArray(tags)}
+                searchValue={blacklistSearchValue}
+                searchData={blacklistSearchResults}
+              ></TagDisplay>
+            </div>
             <div className="settings-row settings-row-actions">
               {/* Edit Profile — opens the same editor popup used on the profile page */}
               <div className="subsection">

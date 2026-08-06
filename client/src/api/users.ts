@@ -172,7 +172,7 @@ export const getGalleryVideos = async (userId: number): Promise<ApiResponse<Gall
  */
 export const postGalleryImage = async (userId: number, imageData: AddGalleryImageInput): Promise<ApiResponse<GalleryImage>> => {
   const apiURL = `/me/gallery/${userId}/images`;
-  
+
   const form = new FormData();
   for (const [name, value] of Object.entries(imageData)) {
     if (value !== null) form.append(name, value);
@@ -445,6 +445,21 @@ export const updateTagExclusion = async (
   //console.log(response);
   return response as ApiResponse<Tag[]>;
 };
+
+/**
+ * Gets a list of all tags
+ * @returns API response, data is Tag[]
+ */
+export const getAllTags = async () => {
+  const URL = `/datasets/tags`;
+  const res = await GET(URL);
+
+  if (res.error) {
+    console.log(`Error in getAllTags: ${res.error}`);
+  }
+
+  return res;
+}
 
 //#endregion
 
