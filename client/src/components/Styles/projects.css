@@ -1644,6 +1644,19 @@ Project Creator and Editor Popup style rules
 #confirm-editor-save-text {
   padding: 50px;
   font-size: 1.25rem;
+
+  #unapproved-warning {
+    max-width: 50ch;
+    min-width: 10ch;
+    color: var(--primary-color);
+    font-weight: bold;
+    line-height: 1.5em;
+  }
+
+  .fa-triangle-exclamation {
+    color: #F59E0B;
+    padding-right: 10px;
+  }
 }
 
 #project-editor-project-members {
