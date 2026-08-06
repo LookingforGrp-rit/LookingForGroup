@@ -173,10 +173,13 @@ export const JobSkillPopup = ({
         }
       }
       else {
-        const newSkills = modifiedJob.jobSkills;
+        let newSkills = modifiedJob.jobSkills;
         const lengthPreAdd = modifiedJob.jobSkills?.length
         //limit-imposing if statement
-        if ((newSkills as JobSkill[]).length >= skillLimit) newSkills?.shift();
+        if ((newSkills as JobSkill[]).length >= skillLimit && newSkills != null) {
+          newSkills = newSkills.slice(0, 4);
+          //newSkills?.shift();
+        }
 
         newSkills?.push({
           ...skillToToggle,
@@ -474,7 +477,7 @@ export const JobSkillPopup = ({
           )}
         </div>
         <div className="project-editor-extra-info">
-          Drag and drop to reorder
+          Drag and drop to reorder.<br></br><b>You can select up to 5.</b>
         </div>
         <DndContext
           sensors={sensors}
