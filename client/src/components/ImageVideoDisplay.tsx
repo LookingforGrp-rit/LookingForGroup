@@ -310,10 +310,10 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
                 <PopupContent useClose={false} callback={() => setConfirm(false)}>
                   <div id="confirm-editor-save-text">
                     Are you sure you want to save all changes?
-                    {project?.approved &&
+                    {project && project.approved &&
                       <p id="unapproved-warning">
                         <i className="fa-solid fa-triangle-exclamation"></i>
-                        Saving changes to the General, Media, or Links tabs will unapprove your project and require you to submit it for review again before it can be approved.
+                        Changes to the General tab, or adding or updating Media or Links, will unapprove your project. You'll need to submit it for review again before it can be approved.
                       </p>
                     }
                   </div>
