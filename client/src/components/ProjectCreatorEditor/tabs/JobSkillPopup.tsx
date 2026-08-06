@@ -8,6 +8,7 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "./SortableItem";
 import { clampDragWithinContainer } from "./dragModifiers";
+import { ThemeIcon } from "../../ThemeIcon";
 
 const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
 
@@ -507,26 +508,37 @@ export const JobSkillPopup = ({
             </div>
           </SortableContext>
         </DndContext>
-        <button
-          type="button"
-          className="delete-tags-btn"
-          hidden={(job.jobSkills as JobSkill[])?.length === 0 || job.jobSkills == undefined}
-          onClick={() => {
-            /* deletes all skills for the user */
-            modifiedJob = {
-              ...modifiedJob,
-              jobSkills: [],
-            }
-
-            /* re-renders the current popup with 0 skills remaining and updates
-            user profile */
-            setSkills((job.jobSkills as JobSkill[]).splice(0));
-            updateJob(modifiedJob);
-          }}
-          title="Remove all selected tags"
-        >
-          <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
-        </button>
+        <div id="clear-all-button-align">
+            <button
+              type="button"
+              className="delete-position-button-alt button-reset"
+              hidden={(modifiedJob.jobSkills as JobSkill[])?.length === 0 || modifiedJob.jobSkills == undefined}
+              onClick={() => {
+                /*deletes all skills for the user
+                modifiedJob = {
+                  ...modifiedJob,
+                  jobSkills: [],
+              }
+              
+                /*re-renders the current popup with 0 skills remaining and updates
+                user profile*/
+                setSkills((modifiedJob.jobSkills as JobSkill[]).splice(0));
+                modifiedJob = ({...modifiedJob, jobSkills: []});
+                updateJob(modifiedJob);
+              }}
+              title="Remove all selected tags"
+            >
+              <div id="clear-all-trash-row">
+                <p id="clear-all-trash-text">Clear All</p>
+                <ThemeIcon
+                  id="trash"
+                  width={18}
+                  height={18}
+                  ariaLabel="Delete position"
+                />
+              </div>
+            </button>
+          </div>
       </div>
 
       <div id="project-editor-tag-search">
