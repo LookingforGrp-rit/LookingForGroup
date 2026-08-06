@@ -92,14 +92,13 @@ export const PanelBox = ({ category, itemList, projectCache, followedProjectIds,
   let columns = 3; // Default for desktop
 
   if (category == 'profiles') {
-    columns = 5; // large desktop
-    if (isMediumDesktop) columns = 4;
-    if (isSmallDesktop) columns = 3;
+    columns = 4; // large desktop
+    if (isMediumDesktop) columns = 3;
+    if (isSmallDesktop) columns = 2;
     if (isMobile) columns = 2; //changed from 1 to 2 
     else if (isTabletProfile) columns = 2;
   }
-  else if (category == 'bugs')
-  {
+  else if (category == 'bugs') {
     columns = 2;
     if (isMobile) columns = 1; //changed from 1 to 2
   }
