@@ -1543,7 +1543,7 @@ export const TeamTab = ({
 							}
 							else return ""
 						}
-						) : "None"}
+						) : <div id="invalid-input-error"><p>Select up to 5 skills for this position</p></div>}
 				</div>
 			</div>
 			<div id="edit-position-details">

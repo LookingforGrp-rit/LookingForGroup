@@ -1869,6 +1869,20 @@ Project Creator and Editor Popup style rules
   font-size: 1.6ch;
 }
 
+/* job skills popup */
+#job-skills-popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 95%;
+
+  #invalid-input-error {
+    grid-column: 1/3;
+    width: calc(100% - 20px);
+    order: 3;
+  }
+}
+
 /* "Merge Project Team" tile below the Current Team view */
 #merge-project-team {
   display: flex;
