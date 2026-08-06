@@ -144,6 +144,8 @@ const Profile = (/*userProfile: any*/) => {
 
   const [followedProjectsIds, setFollowProjectsIds] = useState<Set<number>>(new Set);
 
+  const isViewingOwnProfile = userID > 0 && Number(profileID) === userID;
+
   const projectSearchData = fullProjectList?.map(
     (project: Project) => {
       return { name: project.title, description: project.hook };
@@ -214,10 +216,10 @@ const Profile = (/*userProfile: any*/) => {
   }, [profileID]);
 
   useEffect(() => {
-    if (isUsersProfile || galleryImages.length > 0 || galleryVideos.length > 0)
+    if (isViewingOwnProfile || galleryImages.length > 0 || galleryVideos.length > 0)
       setShowGallery(true);
 
-  }, [isUsersProfile, galleryImages, galleryVideos])
+  }, [isViewingOwnProfile, galleryImages, galleryVideos])
 
 
   // --------------------
@@ -576,7 +578,7 @@ const Profile = (/*userProfile: any*/) => {
         //console.log(data);
         setDisplayedProfile(data);
         setMajorsArr(data.majors.map((maj) => maj.label));
-        const isOwnProfile = data.userId.toString() === profileID;
+        const isOwnProfile = userID > 0 && data.userId === userID;
         setIsUsersProfile(isOwnProfile);
         await getProfileProjectData(data.userId, isOwnProfile);
         //checkFollow();
@@ -615,7 +617,7 @@ const Profile = (/*userProfile: any*/) => {
   // "Invite to project" popup.
   useEffect(() => {
     if (userID === undefined || userID === -1) return;
-    if (isUsersProfile) {
+    if (isViewingOwnProfile) {
       //if this is the user's profile, display their liked profiles/projects in the liked section      const displayFollowedProfiles = async () => {
       const displayFollowedProfiles = async () => {
         const tempFollowProfileArray = [];
@@ -684,7 +686,7 @@ const Profile = (/*userProfile: any*/) => {
       cancelled = true;
     };
 
-  }, [isUsersProfile, userID]);
+  }, [isViewingOwnProfile, userID]);
 
   // Resets the invite form to its initial state. Called when the popup opens
   // or closes so a previous send doesn't bleed into the next one.
@@ -957,7 +959,7 @@ const Profile = (/*userProfile: any*/) => {
   const aboutMeButtons = (
     <>
       {/* If the displayed user is the user's profile */}
-      {isUsersProfile ? (
+      {isViewingOwnProfile ? (
         <>
           <ShareButton />
           <ProfileEditPopup />
@@ -1346,7 +1348,7 @@ const Profile = (/*userProfile: any*/) => {
           </div>
 
           {/* Mod options for unbanning a banned user */}
-          {(!isUsersProfile) && isUserMod && banned && banDetail && displayedProfile && (<>
+          {(!isViewingOwnProfile) && isUserMod && banned && banDetail && displayedProfile && (<>
             <div className="mod-user-options">
               <h2>Unban this User</h2>
               <p>Unbanning this user will unfreeze their account, allowing them to log in to Looking For Group again.
@@ -1401,7 +1403,7 @@ const Profile = (/*userProfile: any*/) => {
           </>)}
 
           {/* Mod options when this is a reported user */}
-          {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div className="mod-user-options">
+          {(!isViewingOwnProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div className="mod-user-options">
             <h2>Reports</h2>
             <p>You can dismiss this report, warn the user and request edits from them, or ban the user.</p>
             <h3>Active Reports</h3>
@@ -1524,7 +1526,7 @@ const Profile = (/*userProfile: any*/) => {
                       <ThemeIcon id={'phone'} width={25} height={25} className={'mono-fill'} ariaLabel={'phone'} />
                       {displayedProfile.phoneNumber}
                     </a>
-                    {isUsersProfile && <ThemeIcon id="pencil" width={12} height={12} className={'black-fill edit'} ariaLabel={'edit'} onClick={() => navigate(paths.routes.SETTINGS)} />}
+                    {isViewingOwnProfile && <ThemeIcon id="pencil" width={12} height={12} className={'black-fill edit'} ariaLabel={'edit'} onClick={() => navigate(paths.routes.SETTINGS)} />}
                   </div>
                   //dead link when no number
                   : <></>
@@ -1563,7 +1565,7 @@ const Profile = (/*userProfile: any*/) => {
                 </div>
                 {/* Invite-to-project: only shown when a logged-in user is
                   viewing someone else's profile. */}
-                {(!isUsersProfile) && userID !== undefined && userID !== -1 && (
+                {(!isViewingOwnProfile) && userID !== undefined && userID !== -1 && (
                   <Popup>
                     <PopupButton
                       buttonId="profile-invite-button"
@@ -1693,7 +1695,7 @@ const Profile = (/*userProfile: any*/) => {
               <div id="skills">
                 <div className="contact-skills-edit-label-btn">
                   <h1 id="title">Skills</h1>
-                  {isUsersProfile ? <ProfileEditPopup editSkills={true} />
+                  {isViewingOwnProfile ? <ProfileEditPopup editSkills={true} />
                     : ""}</div>
                 <div id="skill-block">
                   {displayedProfile?.skills !== undefined && (
@@ -1733,7 +1735,7 @@ const Profile = (/*userProfile: any*/) => {
                 </div>
               </div>
             </div>
-            {isUsersProfile ?
+            {isViewingOwnProfile ?
               <div id="profile-likes">
                 <h1 id="title">Likes</h1>
                 <div id="likes-block">
