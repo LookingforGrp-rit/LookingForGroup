@@ -20,20 +20,6 @@ export const getUserProjectsService = async (
     });
     if (user === null) return 'NOT_FOUND';
 
-    const approvalVisibilityFilter = viewerId
-      ? [
-          { approved: true },
-          { userId: viewerId },
-          {
-            members: {
-              some: {
-                userId: viewerId,
-              },
-            },
-          },
-        ]
-      : [{ approved: true }];
-
     //get projects that a user is publicly a member of
     const projects = await prisma.projects.findMany({
       where: {
@@ -43,15 +29,36 @@ export const getUserProjectsService = async (
             profileVisibility: 'public',
           },
         },
-        OR: approvalVisibilityFilter,
       },
       orderBy: { createdAt: 'desc' },
-      select: ProjectPreviewSelector,
+      select: {
+        ...ProjectPreviewSelector,
+        approved: true,
+        members: {
+          select: {
+            userId: true,
+          },
+        },
+      },
     });
 
     //if (projects.length === 0) return 'NOT_FOUND';
 
-    let result = projects.map(transformProjectToPreview);
+    const visibleProjects = projects.filter((project) => {
+      if (project.approved) {
+        return true;
+      }
+
+      if (viewerId === undefined) {
+        return false;
+      }
+
+      return (
+        project.userId === viewerId || project.members.some((member) => member.userId === viewerId)
+      );
+    });
+
+    let result = visibleProjects.map(transformProjectToPreview);
 
     //Sorts the array alphabetically by project title
     result = result.toSorted(

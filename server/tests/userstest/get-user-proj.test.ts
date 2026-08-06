@@ -26,8 +26,22 @@ vi.mock('#services/transformers/projects/project-preview.ts', () => ({
 }));
 
 const mockProjects = [
-  { project_id: 10, title: 'projectAlpha', createdAt: new Date() },
-  { project_id: 11, title: 'projectBeta', createdAt: new Date() },
+  {
+    projectId: 10,
+    title: 'projectAlpha',
+    createdAt: new Date(),
+    approved: true,
+    userId: 42,
+    members: [{ userId: 42 }],
+  },
+  {
+    projectId: 11,
+    title: 'projectBeta',
+    createdAt: new Date(),
+    approved: true,
+    userId: 42,
+    members: [{ userId: 42 }],
+  },
 ];
 
 const mockPreviews = [
@@ -78,24 +92,31 @@ describe('getuserProjectsService', () => {
     //expect(result).toEqual(mockPreviews);
   });
 
-  it('allows unapproved projects to be visible to the creator or members only', async () => {
-    vi.mocked(prisma.projects.findMany).mockResolvedValue(mockProjects as any);
+  it('hides unapproved projects from non-members while allowing creators and members', async () => {
+    const projectsWithVisibility = [
+      {
+        projectId: 10,
+        title: 'approved-project',
+        approved: true,
+        userId: 42,
+        members: [{ userId: 42 }],
+      },
+      {
+        projectId: 11,
+        title: 'pending-project',
+        approved: false,
+        userId: 42,
+        members: [{ userId: 42 }],
+      },
+    ];
+
+    vi.mocked(prisma.projects.findMany).mockResolvedValue(projectsWithVisibility as any);
     vi.mocked(prisma.users.findUnique).mockResolvedValue(mockUser as any);
 
-    await getUserProjectsService(42, 99);
+    const result = await getUserProjectsService(42, 99);
 
-    expect(prisma.projects.findMany).toHaveBeenCalledWith(expect.objectContaining({
-      where: expect.objectContaining({
-        members: expect.objectContaining({
-          some: expect.objectContaining({ userId: 42, profileVisibility: 'public' }),
-        }),
-        OR: expect.arrayContaining([
-          expect.objectContaining({ approved: true }),
-          expect.objectContaining({ userId: 99 }),
-          expect.objectContaining({ members: expect.objectContaining({ some: expect.objectContaining({ userId: 99 }) }) }),
-        ]),
-      }),
-    }));
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({ title: 'approved-project' });
   });
 
   it("returns NOT_FOUND when user doesn't exist", async () => {
