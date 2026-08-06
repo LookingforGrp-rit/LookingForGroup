@@ -1036,7 +1036,7 @@ const Profile = (/*userProfile: any*/) => {
         );
       }).filter(item => item !== null),
       ...galleryImages.map(i => (<>
-        <label>{i.altText}</label>
+        <label>{i.altText !== "Gallery Image" ? i.altText : ""}</label>
         <img
           key={`img-${i.position}`}
           src={i.image}

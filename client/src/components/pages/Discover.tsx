@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useEffect, useEffectEvent } from 'react';
+import React, { useMemo, useState, useCallback, useEffect, useEffectEvent, useRef } from 'react';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
@@ -26,9 +26,6 @@ let index = 0;
 //Determines the number of different projects for some reason
 const count = 10;
 
-//Synchronous storing of the full project list for quick reference
-let syncFullProjectList: ProjectPreview[] = [];
-
 enum sortModes {
   "A-Z" = "A-Z",
   "Z-A" = "Z-A",
@@ -54,12 +51,16 @@ export const DiscoverPage = () => {
   // --------------------
   const [loaded, setLoaded] = useState<boolean>(false);
   const [currentSearch, setCurrentSearch] = useState('');
+  const searchRef = useRef('');
+  //Synchronous storing of the full project list for quick reference
+  const syncFullProjectList = useRef<ProjectPreview[]>([]);
 
   // Full data and displayed data based on filter/search query
   const [fullProjectList, setFullProjectList] = useState<ProjectPreview[]>([]);
   const [projectCache, setProjectCache] = useState<NumberDictionary<StructuredProjectInfo>>({});
 
   const [filteredProjectList, setFilteredProjectList] = useState<ProjectPreview[]>([]);
+  const [searchedProjectList, setSearchedProjectList] = useState<ProjectPreview[]>([]);
   const [heroProjectList, setHeroProjectList] = useState<ProjectWithFollowers[]>([]);
 
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
@@ -69,8 +70,8 @@ export const DiscoverPage = () => {
 
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const projectDataSet = useMemo(() => {
-    return [{ data: fullProjectList }];
-  }, [fullProjectList]);
+    return [{ data: filteredProjectList }];
+  }, [filteredProjectList]);
 
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)
@@ -294,19 +295,19 @@ export const DiscoverPage = () => {
     }
     
     if (invert) {
-      setFullProjectList(projects.toReversed());
-      syncFullProjectList = projects.toReversed();
-      setFilteredProjectList(projects.toReversed());
+      setFullProjectList((searchRef.current.length === 0 ? projects.toReversed() : searchedProjectList));
+      syncFullProjectList.current = (searchRef.current.length === 0 ? projects.toReversed() : searchedProjectList);
+      setFilteredProjectList(searchRef.current.length === 0 ? projects.toReversed() : searchedProjectList);
 
-      getShowcaseDetails(projects.toReversed(), newProjectCache);
+      getShowcaseDetails((searchRef.current.length === 0 ? projects.toReversed() : searchedProjectList), newProjectCache);
       setProjectCache(newProjectCache);
     }
     else {
-      setFullProjectList(projects);
-      syncFullProjectList = projects;
-      setFilteredProjectList(projects);
+      setFullProjectList((searchRef.current.length === 0 ? projects : searchedProjectList));
+      syncFullProjectList.current = (searchRef.current.length === 0 ? projects : searchedProjectList);
+      setFilteredProjectList(searchRef.current.length === 0 ? projects : searchedProjectList);
 
-      getShowcaseDetails(projects, newProjectCache);
+      getShowcaseDetails((searchRef.current.length === 0 ? projects : searchedProjectList), newProjectCache);
       setProjectCache(newProjectCache);
     }
     setLoaded(true);
@@ -327,7 +328,7 @@ export const DiscoverPage = () => {
     //save filters
     filterData = {tags: activeTagFilters, excludeTags: activeExclusionFilters, filterMode, sortMode};
     
-    const projectList = syncFullProjectList;
+    const projectList = syncFullProjectList.current;
 
     // Helper: build full item list (prefer cache) and filter by tags/exclusions
     const buildAndFilter = async (sourcePreviews: ProjectPreview[]) => {
@@ -404,7 +405,7 @@ export const DiscoverPage = () => {
 
     // If no tags are currently selected, render all projects (use syncFullProjectList)
     if (activeTagFilters.length === 0 && activeExclusionFilters.length === 0) {
-      setFilteredProjectList(syncFullProjectList);
+      setFilteredProjectList(syncFullProjectList.current);
       return;
     }
 
@@ -452,7 +453,6 @@ export const DiscoverPage = () => {
 
   const projectLoadButton = useCallback(() => {
     sortProjects();
-    setCurrentSearch('');
   }, []);
 
   /**
@@ -565,9 +565,9 @@ export const DiscoverPage = () => {
         const tagFilteredIds = new Set(tagFiltered.map((t) => t.projectId));
         const previewMatches = matches.filter((m) => tagFilteredIds.has(m.projectId));
 
-        setFilteredProjectList(previewMatches.length > 0 ? previewMatches : []);
+        setSearchedProjectList(previewMatches.length > 0 ? previewMatches : []);
       } else {
-        setFilteredProjectList(matches);
+        setSearchedProjectList(matches);
       }
     })();
   }, [fullProjectList, projectCache]);
@@ -584,7 +584,11 @@ export const DiscoverPage = () => {
     discoverPanelContents = (
       <PanelBox
         category={'projects'}
-        itemList={filteredProjectList}
+        itemList={
+          searchRef.current.length === 0 || 
+          [...filterData.tags, ...filterData.excludeTags].length > 0 
+          ? filteredProjectList 
+          : searchedProjectList}
         projectCache={projectCache}
         followedProjectIds={followedProjectIds}
         userId={currentUserId ?? -1}
@@ -642,7 +646,10 @@ export const DiscoverPage = () => {
       <Header dataSets={projectDataSet}
         onSearch={searchProjects}
         value={currentSearch}
-        setSearch={setCurrentSearch}
+        setSearch={(value) => {
+          setCurrentSearch(value);
+          searchRef.current = value.toString();
+        }}
         setCurrentUserId={getAuth}
         searchOnFocus={handleSearchFocus}
         placeholderText="Search by Project"
