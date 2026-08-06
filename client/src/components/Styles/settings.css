@@ -655,9 +655,10 @@ input:checked+.slider:before {
   flex-direction: column;
   gap: 10px;
   height: 300px;
-  padding: 20px 30px;
+  padding: 20px;
   margin: 0 0 30px!important;
   background-color: var(--header-color);
+  border-radius: 12px;
   overflow-y: auto;
   scrollbar-color: var(--primary-color) var(--bg-color);
   scrollbar-width: thin;
@@ -715,6 +716,7 @@ input:checked+.slider:before {
   justify-content: flex-start;
   gap: 16px;
   width: fit-content;
+  margin: 30px;
 }
 
 #settings-page .settings-row.settings-row-actions .subsection {
