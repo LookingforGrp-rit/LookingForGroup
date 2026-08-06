@@ -1068,12 +1068,12 @@ Filters / Tags Style Rules
   border-width: 2px;
   border-style: solid;
 
-  min-height: 28px;
+  min-height: 26px;
   height: fit-content;
   width: max-content;
   max-width: 100%;
-  padding: 0 17px;
-  font-size: medium;
+  padding: 0 15px;
+  font-size: .9rem;
   flex-shrink: 0;
   text-align: left;
   transition: all 0.2s ease-in-out;

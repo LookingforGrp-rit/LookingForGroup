@@ -147,7 +147,7 @@ export const ProfilePanel = ({ profileData, currentUserId, onUnfollow }: Profile
       </div>
       {/**only shows on certain mobile width */}
       <div className='profile-extra-mobile'>
-        <h3>{majorsArr.join(', ') || ''}</h3>
+        <h3>{majorsArr.join(', ') || ''}{profileData.ritStatus ? " " + RitStatusLabel[profileData.ritStatus] : ""}</h3>
         {profileData?.title ?
           <div className="profile-extra">
             <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'} />
@@ -158,11 +158,12 @@ export const ProfilePanel = ({ profileData, currentUserId, onUnfollow }: Profile
 
       <div className="profile-panel-skills">
         {
-          /*copy pasted from Profile.tsx, doesnt work */
+          /*copy pasted from Profile.tsx, doesnt work until filter tab is clicked at least once */
           /* Will take in a list of tags the user has selected, then */
           /* use a map function to generate tags to fill this div */
           shownSkills.map((tag) => {
             let category: string;
+
             switch (tag.type) {
               case "Designer":
                 category = "red";
@@ -210,7 +211,7 @@ export const ProfilePanel = ({ profileData, currentUserId, onUnfollow }: Profile
         <h2>
           {profileData.firstName} {profileData.lastName}
         </h2>
-        <h3>{majorsArr?.join(', ') || ''}</h3>
+        <h3>{majorsArr?.join(', ') || ''}{profileData.ritStatus ? " " + RitStatusLabel[profileData.ritStatus] : ""}</h3>
         {profileData.headline ?
           <div id="quote">{profileData.headline ?
             (profileData.headline.startsWith(`"`) && profileData.headline.endsWith(`"`) ? `${profileData.headline}` : `"${profileData.headline}"`) : ''}</div>
