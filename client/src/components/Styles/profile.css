@@ -71,6 +71,7 @@ Profile Panel component style rules
   overflow-wrap: break-word;
   margin-bottom: 1em;
   font-size: 0.875rem;
+  padding: 10px;
 
   img {
     width: 100%;
@@ -82,7 +83,7 @@ Profile Panel component style rules
 
   /* Name */
   h2 {
-    margin: 8px 15px 0 15px;
+    margin: 0px;
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary-color);
@@ -94,7 +95,7 @@ Profile Panel component style rules
 
   /* Major */
   h3 {
-    margin: 0px 15px 0px 15px;
+    margin: 0px;
     color: var(--main-text);
     font-size: 1rem;
     font-weight: 400;
@@ -150,9 +151,103 @@ Profile Panel component style rules
 
 @media only screen and (hover: none) {
   .profile-panel {
-    width: clamp(125px, 25vw, 200px);
+    max-width: 97%;
   }
 }
+
+/* 
+@media only screen and (max-width: 1640px) {
+  .profile-panel {
+    width: clamp(225px, 23vw, 23vw);
+  }
+}
+
+@media only screen and (max-width: 1360px) {
+  .profile-panel {
+    width: clamp(225px, 35vw, 100%);
+  }
+} */
+
+/*NEW PROFILE PANEL START*/
+.profile-panel-img-info {
+  display: flex;
+  direction: row;
+
+  img {
+    aspect-ratio: 1/1;
+    width: 100px;
+    border-radius: 10px;
+  }
+
+  h3,
+  #quote {
+    margin-right: 0;
+  }
+
+  .profile-extra {
+    display: flex;
+    margin-left: 0px;
+    gap: 3px;
+    align-items: center;
+  }
+}
+
+.profile-extra-mobile,
+.mobile-quote {
+  display: none;
+}
+
+.profile-panel-info {
+  margin: 5px 10px;
+  display: flex;
+  flex-direction: column;
+
+}
+
+
+.profile-panel-name-prns {
+  display: flex;
+  direction: row;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 5px;
+
+  h2 {
+    margin-right: 0;
+  }
+}
+
+.profile-panel-skills {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  row-gap: 5px;
+  margin-top: 10px;
+}
+
+@media screen and (max-width:850px) {
+  #quote {
+    display: none;
+  }
+
+  .mobile-quote {
+    display: block !important;
+  }
+}
+
+@media screen and (max-width:555px) {
+
+  .profile-extra-mobile,
+  .mobile-quote {
+    display: block;
+  }
+
+  .profile-panel-major-job {
+    display: none;
+  }
+}
+
+/*NEW PROFILE PANEL END*/
 
 .profile-panel-hover-item {
   /* border: 1px solid black; */
@@ -161,7 +256,7 @@ Profile Panel component style rules
   align-items: start;
   font-style: italic;
   gap: 15px;
-  padding: 0 15px;
+  /* padding: 0 15px; */
   overflow-wrap: break-word;
   height: fit-content;
 
@@ -253,13 +348,13 @@ Profile Panel component style rules
 
 @media screen and (max-width:1050px) {
   .profile-panel {
-    width: clamp(180px, 340px, 340px) !important;
+    width: clamp(180px, 400px, 400px) !important;
   }
 }
 
 @media (min-width: 500px) and (max-width: 555px) {
   .profile-panel {
-    width: 98% !important;
+
     display: flex;
 
     h2 {
@@ -274,6 +369,8 @@ Profile Panel component style rules
 
 @media screen and (max-width: 555px) {
   .profile-panel {
+    width: 90% !important;
+
     h2 {
       font-size: 1.2rem;
     }
@@ -310,7 +407,7 @@ Profile Panel component style rules
 
 @media (max-width: 499px) {
   .profile-panel {
-    width: clamp(120px, 100%, 100%) !important;
+    /* width: clamp(120px, 100%, 100%) !important; */
     display: flex;
 
     img {

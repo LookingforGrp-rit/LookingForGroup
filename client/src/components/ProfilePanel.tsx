@@ -6,6 +6,9 @@ import usePreloadedImage from '../functions/imageLoad';
 import { UserPreview } from '@looking-for-group/shared';
 import { useEffect, useState, useRef } from 'react';
 import { addUserFollowing, deleteUserFollowing, getUsersById } from '../api/users';
+import { Tag as TagElement } from './Tag';
+import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
+
 
 interface ProfilePanelProps {
   profileData: UserPreview;
@@ -36,6 +39,14 @@ export const ProfilePanel = ({ profileData, currentUserId, onUnfollow }: Profile
   const [isFollow, setIsFollow] = useState<boolean>(false);
 
   const profilePanel = useRef<HTMLDivElement>(null);
+
+  const allSkills = profileData.skills ?? [];
+
+  const MAX_SKILLS_TO_SHOW = 3;
+
+
+  const shownSkills = allSkills.slice(0, MAX_SKILLS_TO_SHOW);
+  const overflowCount = allSkills.length - MAX_SKILLS_TO_SHOW;
 
   /**
    * useEffect to fetch follow information:
@@ -94,7 +105,7 @@ export const ProfilePanel = ({ profileData, currentUserId, onUnfollow }: Profile
       className={'profile-panel'}
       onClick={() => navigate(profileURL)}
     >
-      <img
+      {/* OLD PANEL <img
         src={usePreloadedImage(`${profileData.profileImage}`, profilePicture)}
         alt={`${profileData.firstName} ${profileData.lastName}'s avatar`}
       />
@@ -105,6 +116,94 @@ export const ProfilePanel = ({ profileData, currentUserId, onUnfollow }: Profile
         </h2>
         <h3>{majorsArr.join(', ') || ''}</h3>
         <div id="quote">{profileData.headline ? (profileData.headline.startsWith(`"`) && profileData.headline.endsWith(`"`) ? `${profileData.headline}` : `"${profileData.headline}"`) : ''}</div>
+      </div> */}
+      <div className="profile-panel-img-info">
+        <div className="profile-panel-img">
+          <img
+            src={usePreloadedImage(`${profileData.profileImage}`, profilePicture)}
+            alt={`${profileData.firstName} ${profileData.lastName}'s avatar`}
+          />
+        </div>
+        <div className="profile-panel-info">
+          <div className="profile-panel-name-prns">
+            <h2>
+              {profileData.firstName} {profileData.lastName}
+            </h2>
+            {profileData.pronouns ?
+              <div className={'profile-panel-hover-item'}>
+                <p>{profileData.pronouns}</p>
+              </div> : ""}
+          </div>
+          <div className="profile-panel-major-job">
+            <h3>{majorsArr.join(', ') || ''}{profileData.ritStatus ? " " + RitStatusLabel[profileData.ritStatus] : ""}</h3>
+            {profileData?.title ?
+              <div className="profile-extra">
+                <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'} />
+                {profileData.title}
+              </div> : ""}
+          </div>
+          <div id="quote">{profileData.headline ? (profileData.headline.startsWith(`"`) && profileData.headline.endsWith(`"`) ? `${profileData.headline}` : `"${profileData.headline}"`) : ''}</div>
+        </div>
+      </div>
+      {/**only shows on certain mobile width */}
+      <div className='profile-extra-mobile'>
+        <h3>{majorsArr.join(', ') || ''}</h3>
+        {profileData?.title ?
+          <div className="profile-extra">
+            <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'} />
+            {profileData.title}
+          </div> : ""}
+      </div>
+      <div id="quote" className="mobile-quote">{profileData.headline ? (profileData.headline.startsWith(`"`) && profileData.headline.endsWith(`"`) ? `${profileData.headline}` : `"${profileData.headline}"`) : ''}</div>
+
+      <div className="profile-panel-skills">
+        {
+          /*copy pasted from Profile.tsx, doesnt work */
+          /* Will take in a list of tags the user has selected, then */
+          /* use a map function to generate tags to fill this div */
+          shownSkills.map((tag) => {
+            let category: string;
+            switch (tag.type) {
+              case "Designer":
+                category = "red";
+                break;
+              case "Developer":
+                category = "yellow";
+                break;
+              case "Soft":
+                category = "purple";
+                break;
+              case "Audio":
+                category = "periwinkle";
+                break;
+              case "Engineer":
+                category = "cyan";
+                break;
+              default:
+                category = "grey";
+            }
+            return (
+              <div
+                key={`${tag.skillId}`}
+                className={`skill-tag-label label-${category}`}
+              >
+                {tag.label}
+              </div>
+            );
+          }
+          )}
+
+
+        {overflowCount > 0 ? (
+          <TagElement selected={true} className='project-panel-meta-plus'>
+            <p>+{overflowCount}</p>
+          </TagElement>
+        ) : ""}
+      </div>
+
+
+      <div className={'profile-panel-extras'} ref={profilePanel} hidden={true}>
+
       </div>
 
       <div className='profile-panel-hover'>
@@ -157,7 +256,7 @@ export const ProfilePanel = ({ profileData, currentUserId, onUnfollow }: Profile
             <p>{profileData.pronouns}</p>
           </div> : ""}
         {/* Displays 'No extra information' if there is no other data displayed on the user's profile */}
-        {!(profileData.title || profileData.location || profileData.pronouns || profileData.funFact) ?
+        {!(profileData.title || profileData.location || profileData.pronouns /* || profileData.funFact*/) ?
           <div className='profile-panel-hover-item'>
             <p>No extra information</p>
           </div> : ""}
