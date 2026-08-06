@@ -23,6 +23,7 @@ export const updateProjectSocialService = async (
     });
     if (!social) return 'NOT_FOUND';
 
+    // Check if social data changes
     const socialChanged =
       social.url !== data.url ||
       social.alias !== data.alias ||

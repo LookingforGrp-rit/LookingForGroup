@@ -105,7 +105,7 @@ const transformed: ProjectDetail = {
   approved: true,
 };
 
-describe('deleteProjectService', async () => {
+describe('updateProjectService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -120,7 +120,7 @@ describe('deleteProjectService', async () => {
     expect(result).toBe(transformed);
   });
 
-  it('does not unapprove for non-general project updates', async () => {
+  it('does not unapprove if no project data changes', async () => {
     vi.mocked(prisma.projects.findUnique).mockResolvedValue({ ...prismaProject, approved: true });
     vi.mocked(prisma.projects.update).mockResolvedValue({ ...prismaProject, approved: true });
     vi.mocked(transformProjectToDetail).mockReturnValue(transformed);
@@ -130,7 +130,7 @@ describe('deleteProjectService', async () => {
     expect(unapproveProjectService).not.toHaveBeenCalled();
   });
 
-  it('unapproves when a general-field update changes approved project data', async () => {
+  it('unapproves when a field update changes approved project data', async () => {
     vi.mocked(prisma.projects.findUnique).mockResolvedValue({ ...prismaProject, approved: true });
     vi.mocked(prisma.projects.update).mockResolvedValue({ ...prismaProject, approved: true });
     vi.mocked(transformProjectToDetail).mockReturnValue(transformed);
@@ -140,8 +140,16 @@ describe('deleteProjectService', async () => {
     expect(unapproveProjectService).toHaveBeenCalledWith(1);
   });
 
+  it('returns NOT_FOUND if project not found', async () => {
+    vi.mocked(prisma.projects.findUnique).mockResolvedValue(null);
+
+    const result = await updateProjectService(1, projectUpdate);
+
+    expect(result).toBe('NOT_FOUND');
+  });
+
   it('returns INTERNAL_ERROR if prisma throws', async () => {
-    vi.mocked(prisma.projects.update).mockRejectedValue('db exploded :(');
+    vi.mocked(prisma.projects.findUnique).mockRejectedValue(new Error('db exploded :('));
     vi.mocked(transformProjectToDetail).mockReturnValue(transformed);
     const result = await updateProjectService(1, projectUpdate);
 

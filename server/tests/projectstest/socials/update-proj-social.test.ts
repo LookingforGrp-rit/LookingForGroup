@@ -70,6 +70,7 @@ describe('updateProjectSocialService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
+
   it('returns the social when update is successful', async () => {
     vi.mocked(prisma.projectSocials.findUnique).mockResolvedValue(testSocial as any);
     vi.mocked(prisma.projectSocials.update).mockResolvedValue(testSocial as any);
