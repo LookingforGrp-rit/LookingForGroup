@@ -4777,8 +4777,14 @@ button#positions-popup-list-item-active {
   #project-open-positions-popup {
     overflow-y: auto;
     padding: 20px;
-    justify-content: center;
+
+    
+    justify-content: flex-start;
     align-items: center;
+
+    
+    height: auto;
+    max-height: none;
   }
 
   .positions-popup-list,
