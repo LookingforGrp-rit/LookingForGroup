@@ -203,8 +203,8 @@ export const ProfileMeetPage = () => {
       for (let tag of activeExclusionFilters) {
         if ((item.title === tag.label && tag.type === "Role") ||
           item.majors.some(major => major.label === tag.label && major.majorId === tag.skillId) ||
-          item.skills.some(skill => skill.type === tag.type && tag.category ==="Other") || //.type used instead of .skillId to accomodate for people tab filters, which reference general types and not specific skillIds
-          item.skills.some(skill => skill.skillId === tag.skillId)) 
+          item.skills.some(skill => skill.type === tag.type && tag.category === "Other") || //.type used instead of .skillId to accomodate for people tab filters, which reference general types and not specific skillIds
+          item.skills.some(skill => skill.skillId === tag.skillId))
           return false;
       }
       if (activeSkillFilters.length === 0) return true;

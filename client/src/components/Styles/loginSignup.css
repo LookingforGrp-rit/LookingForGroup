@@ -651,7 +651,7 @@ Signup process modal style rules
   grid-area: image;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   align-self: center;
   width: min(50vw, 250px);
@@ -660,15 +660,16 @@ Signup process modal style rules
 
   #profile-image-label{
     color: var(--primary-color);
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     font-weight: 600;
-    margin-top: 0.5em;
+    margin-top: 0;
     margin-bottom: 0.5em;
   }
 
   #profile-image-uploader{
     max-width: 85%;
-    max-height: 85%;
+    /* max-height: 85%; */
+    aspect-ratio: 1/1;
   }
 }
 
@@ -1195,8 +1196,8 @@ Signup process modal style rules
   overflow-y: scroll;
   max-height: 500%;
   height: auto;
-  scrollbar-width: thick;
-  scrollbar-color: var(--header-color) rgba(0, 0, 0, 0);
+  /* scrollbar-width: thick;
+  scrollbar-color: var(--header-color) rgba(0, 0, 0, 0); */
 }
 
 /* Mobile css to individual signup pages */
