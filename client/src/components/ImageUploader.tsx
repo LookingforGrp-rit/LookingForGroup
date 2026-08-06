@@ -625,7 +625,7 @@ const ImageUploader = ({
                 <div id='alt-text-input'>
                   <input
                     type='text' ref={inputAlt}
-                    placeholder='enter the caption/alt text for the image (optional)'
+                    placeholder='Caption / Alt Text (Optional)'
                   >
                   </input>
                 </div>
