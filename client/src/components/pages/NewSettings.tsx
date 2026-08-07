@@ -187,33 +187,52 @@ const Settings = (userProfile: any) => {
       }
     }
 
+    setTagBlacklist((tagBlacklist) => {
+      const newTagBlacklist = [...tagBlacklist];
+
+      //If it's already in the blacklist, remove it
+      if (found) {
+        newTagBlacklist.splice(foundIndex, 1);
+      }
+
+      //If it's not in the blacklist, add it
+      else {
+        const tagsIds = tags.map((tag) => tag.tagId);
+        foundIndex = tagsIds.indexOf(id);
+        newTagBlacklist.push(tags[foundIndex]);
+      }
+
+      console.log(newTagBlacklist);
+      return newTagBlacklist;
+    });
+
     //The duplicates prevent the ui from getting reversed somehow (deselected makes it filled, selected makes it unfilled)
     //Not sure if anyone else had this issue
 
     //If it's already in the blacklist, remove it
-    if (found) {
-      setTagBlacklist(tagBlacklist => {
-        const newArray = [...tagBlacklist];
-        newArray.splice(foundIndex, 1);
-        return newArray;
-      });
+    // if (found) {
+    //   setTagBlacklist(tagBlacklist => {
+    //     const newArray = [...tagBlacklist];
+    //     newArray.splice(foundIndex, 1);
+    //     return newArray;
+    //   });
 
-      //tagBlacklist.splice(foundIndex, 1);
-    }
+    //   //tagBlacklist.splice(foundIndex, 1);
+    // }
 
-    //If it's not in the blacklist, add it
-    else {
-      const tagsIds = tags.map((tag) => tag.tagId);
-      foundIndex = tagsIds.indexOf(id);
+    // //If it's not in the blacklist, add it
+    // else {
+    //   const tagsIds = tags.map((tag) => tag.tagId);
+    //   foundIndex = tagsIds.indexOf(id);
 
-      setTagBlacklist(tagBlacklist => {
-        const newArray = [...tagBlacklist];
-        newArray.push(tags[foundIndex]);
-        return newArray;
-      });
+    //   setTagBlacklist(tagBlacklist => {
+    //     const newArray = [...tagBlacklist];
+    //     newArray.push(tags[foundIndex]);
+    //     return newArray;
+    //   });
 
-      //tagBlacklist.push(tags[foundIndex]);
-    }
+    //   //tagBlacklist.push(tags[foundIndex]);
+    // }
 
     console.log(tagBlacklist);
   }
