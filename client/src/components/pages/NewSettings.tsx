@@ -9,8 +9,9 @@ import { Header } from '../Header';
 //import PasswordValidator from 'password-validator';
 import ToTopButton from '../ToTopButton';
 import * as paths from '../../constants/routes';
-import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editUser } from '../../api/users';
-import { MePrivate, UpdateUserInput } from '@looking-for-group/shared';
+import UnblockUser from '../UnblockUser';
+import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editUser, getBlockedUsers } from '../../api/users';
+import { MePrivate, UpdateUserInput, UserPreview } from '@looking-for-group/shared';
 import { ProfileEditPopup } from '../Profile/ProfileEditPopup';
 type JsonData = Record<string, unknown>;
 
@@ -26,6 +27,7 @@ const Settings = (userProfile: any) => {
   const [dataLoaded, setDataLoaded] = useState(false);
   const [userInfo, setUserInfo] = useState<MePrivate>();
   const [deleteResponseText, setdeleteResponseText] = useState<String | null>(null);
+  const [blocklist, setBlocklist] = useState<UserPreview[]>([]);
 
   const navigate = useNavigate();
 
@@ -47,6 +49,10 @@ const Settings = (userProfile: any) => {
       const me = await getCurrentAccount();
       if (me.data) {
         setUserInfo(me.data);
+
+        // get blocklist
+        const res = await getBlockedUsers();
+        if (res.data) setBlocklist(res.data);
       }
       setDataLoaded(true);
     };
@@ -502,15 +508,13 @@ const Settings = (userProfile: any) => {
       {/* Search bar is not used in settings */}
       <div id="settings-page">
         <header id="header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Header dataSets={[]} onSearch={() => { }} hideSearchBar hideBackButton={false} 
+          <Header dataSets={[]} onSearch={() => { }} hideSearchBar hideBackButton={false}
             // pageTitle='Settings'
             placeholderText='' />
         </header>
-        {userInfo === undefined ? (
-          <p>You aren't logged in!</p>
-        ) : (
-
-          <div id='main'>
+        {userInfo === undefined
+          ? (<p>You aren't logged in!</p>)
+          : (<div id='main'>
             <h1 className="settings-title">Settings</h1>
             <hr />
             {/* Top Row: Personal and Email Settings */}
@@ -603,6 +607,28 @@ const Settings = (userProfile: any) => {
                     <label htmlFor="toggle-phone-checkbox">Show Phone Number on your Profile?</label>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <hr />
+            
+            {/* Blocklist */}
+            <div className="settings-row">
+              <h2 className="settings-header">Blocklist</h2>
+              <div className="settings-column blocklist">
+                {blocklist.length !== 0
+                  ? blocklist.map(b =>
+                    <UnblockUser
+                      user={b}
+                      onUnblock={
+                        (userId: number) => {
+                          setBlocklist((prev) => prev.filter((u) => u.userId !== userId));
+                        }
+                      }
+                    />
+                  )
+                  : <p id='no-blocks'>No blocked user!</p>
+                }
               </div>
             </div>
 
@@ -783,8 +809,7 @@ const Settings = (userProfile: any) => {
                 </Popup>
               </div>
             </div>
-          </div>
-        )}
+          </div>)}
       </div>
       <ToTopButton />
     </main>
