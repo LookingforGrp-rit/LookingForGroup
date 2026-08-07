@@ -4,7 +4,7 @@ import { Popup, PopupButton, PopupContent } from '../Popup';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import { ThemeIcon } from '../ThemeIcon';
 import { useNavigate } from 'react-router-dom';
-import { useState, useContext, SetStateAction, useEffect } from 'react';
+import { useState, useContext, SetStateAction, useEffect, useCallback } from 'react';
 import { Header } from '../Header';
 //import PasswordValidator from 'password-validator';
 import ToTopButton from '../ToTopButton';
@@ -14,6 +14,7 @@ import { MePrivate, Tag, UpdateUserInput } from '@looking-for-group/shared';
 import { ProfileEditPopup } from '../Profile/ProfileEditPopup';
 import TagDisplay from '../TagDisplay';
 import type { TagDisplayProps, TagOrSkill } from '../TagDisplay';
+import { SearchBar } from '../SearchBar';
 type JsonData = Record<string, unknown>;
 
 /**
@@ -77,7 +78,22 @@ const Settings = (userProfile: any) => {
   ];
 
   let tabsBlacklistId: number = 0;
-  let blacklistSearchValue: string = "";
+  const [currentTagsTab, setCurrentTagsTab] = useState(0);
+
+  // Filtered results from tag search bar
+  const [searchedTags, setSearchedTags] = useState<unknown[]>([]);
+  const [blacklistSearchValue, setSearchValue] = useState("");
+
+  // Category color for each tag tab, matching the tag/filter-tab colors.
+  const tagTabColors: Record<string, string> = {
+    Medium: 'blue',
+    Genre: 'green',
+    Style: 'pink',
+    Purpose: 'orange',
+    "Content Warning": 'red', //TODO: replace this red (and maybe the orange) with updated colors once those colors are decided
+    'Game Engine': 'yellow',
+    'Project Type': 'blue'
+  };
 
   // --------------------
   // Helper functions
@@ -603,6 +619,18 @@ const Settings = (userProfile: any) => {
       setThemeOption("Light Mode")
   }, [theme])
 
+  // Callback for the SearchBar component that updates the displayed tags based on search results.
+  const handleSearch = useCallback((results: unknown[][]) => {
+    // setSearchResults(results);
+    if (results.length === 0 && tags.length !== 0) {
+      // no results or current data set
+      setSearchedTags([]);
+    }
+    else {
+      setSearchedTags(results[0]);
+    }
+  }, [tags.length, setSearchedTags]);
+
   return (
     <main className="page" style={{ position: 'relative' }} tabIndex={-1}>
       {/* Search bar is not used in settings */}
@@ -837,7 +865,7 @@ const Settings = (userProfile: any) => {
               Hide content that you're not interested in.
 
               {/* Not the right id but it's what I'm basing the menu on */}
-              <div id="project-editor-tag-search-container">
+              {/* <div id="project-editor-tag-search-container">
                 <TagDisplay
                   selected={tagArrayToTagOrSkillArray(tagBlacklist)}
                   toggleTag={toggleTagBlacklist}
@@ -846,7 +874,58 @@ const Settings = (userProfile: any) => {
                   all={tagArrayToTagOrSkillArray(tags)}
                   searchValue={blacklistSearchValue}
                   searchData={blacklistSearchResults}
-                ></TagDisplay>
+                />
+              </div> */}
+              <div id="project-editor-tag-search">
+                <SearchBar
+                  key={currentTagsTab}
+                  dataSets={[{
+                    data: tags.filter((tag) => tag.type != "Positions" &&
+                      tag.type != "Context" &&
+                      tag.type != "Major")
+                  }]}
+                  onSearch={handleSearch}
+                  value={blacklistSearchValue}
+                  setValue={setSearchValue}
+                  placeholderText='Search for Tag'
+                />
+                <div id="project-editor-tag-wrapper">
+                  <div id="project-editor-tag-search-tabs">
+                    {tabsBlacklist.map((type, index) =>
+                      <>
+                        <button
+                          onClick={() => {
+                            setCurrentTagsTab(index);
+                            let container = document.getElementById("project-editor-tag-search-container");
+                            if (container) {
+                              container.scrollTop = 0; //shows error but still works?
+                            }
+                          }}
+                          className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${
+                            tagTabColors[type as string] ?? 'grey'} ${tabsBlacklistId === index && 
+                            blacklistSearchValue === "" ? "tag-search-tab-active" : ""}`}>
+                          {type}
+                        </button>
+                        {
+                          type == "Project Type" &&
+                          <span id="vertical-line"></span>
+                        }
+                      </>
+                    )}
+                  </div>
+                  <hr id="tag-search-divider" />
+                </div>
+                <div id="project-editor-tag-search-container">
+                  <TagDisplay
+                    selected={tagArrayToTagOrSkillArray(tagBlacklist)}
+                    toggleTag={toggleTagBlacklist}
+                    tabs={tabsBlacklist}
+                    tabId={tabsBlacklistId}
+                    all={tagArrayToTagOrSkillArray(tags)}
+                    searchValue={blacklistSearchValue}
+                    searchData={blacklistSearchResults}
+                  />
+                </div>
               </div>
             </div>
             <div className="settings-row settings-row-actions">
