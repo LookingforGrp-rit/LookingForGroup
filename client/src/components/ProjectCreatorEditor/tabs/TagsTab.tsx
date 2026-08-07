@@ -567,7 +567,15 @@ export const TagsTab = ({
 
             {confirm ?
               <PopupContent useClose={false} callback={() => setConfirm(false)}>
-                <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+                <div id="confirm-editor-save-text">
+                  Are you sure you want to save all changes?
+                  {projectData.approved &&
+                    <p id="unapproved-warning">
+                      <i className="fa-solid fa-triangle-exclamation"></i>
+                      Changes to the General tab, or adding or updating Media or Links, will unapprove your project. You'll need to submit it for review again before it can be approved.
+                    </p>
+                  }
+                </div>
                 <div id="confirm-editor-save">
                   <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
                     Confirm
