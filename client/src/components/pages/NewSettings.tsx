@@ -9,8 +9,8 @@ import { Header } from '../Header';
 //import PasswordValidator from 'password-validator';
 import ToTopButton from '../ToTopButton';
 import * as paths from '../../constants/routes';
-import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editUser, getTagExclusion, getAllTags } from '../../api/users';
-import { MePrivate, Tag, UpdateUserInput } from '@looking-for-group/shared';
+import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editUser, getTagExclusion, getAllTags, updateTagExclusion } from '../../api/users';
+import { MePrivate, Tag, UpdateTagBlacklistInput, UpdateUserInput } from '@looking-for-group/shared';
 import { ProfileEditPopup } from '../Profile/ProfileEditPopup';
 import TagDisplay from '../TagDisplay';
 import type { TagDisplayProps, TagOrSkill } from '../TagDisplay';
@@ -224,6 +224,44 @@ const Settings = (userProfile: any) => {
   }
 
   let blacklistSearchResults: TagOrSkill[] = tagArrayToTagOrSkillArray(tags);
+
+  /**
+   * Update the blacklist on backend
+   */
+  const buttonBlacklistApplyClicked = async () => {
+    const updateTagBlacklist: UpdateTagBlacklistInput = {
+      tagBlacklist: tagBlacklist
+    };
+
+    const updateTagExclusionRes = await updateTagExclusion(updateTagBlacklist);
+
+    //201 is success
+
+    //Invalid request
+    if (updateTagExclusionRes.status === 400) {
+      console.log(`Invalid request for updateTagExclusionRes: ${updateTagExclusionRes}`);
+    }
+
+    //Failed/missing authentication
+    else if (updateTagExclusionRes.status === 401) {
+      console.log(`Failed/missing authentication for updateTagExclusionRes: ${updateTagExclusionRes}`);
+    }
+
+    //Not found
+    else if (updateTagExclusionRes.status === 404) {
+      console.log(`updateTagExclusionRes not found: ${updateTagExclusionRes}`);
+    }
+
+    //Conflict
+    else if (updateTagExclusionRes.status === 409) {
+      console.log(`updateTagExclusionRes already exists: ${updateTagExclusionRes}`);
+    }
+
+    //Internal server error
+    else if (updateTagExclusionRes.status === 500) {
+      console.log(`Internal server error in updateTagExclusionRes: ${updateTagExclusionRes}`);
+    }
+  }
 
   // --------------------
   // Components:
@@ -864,18 +902,6 @@ const Settings = (userProfile: any) => {
               <h2 className="settings-header">Content Restriction</h2>
               Hide content that you're not interested in.
 
-              {/* Not the right id but it's what I'm basing the menu on */}
-              {/* <div id="project-editor-tag-search-container">
-                <TagDisplay
-                  selected={tagArrayToTagOrSkillArray(tagBlacklist)}
-                  toggleTag={toggleTagBlacklist}
-                  tabs={tabsBlacklist}
-                  tabId={tabsBlacklistId}
-                  all={tagArrayToTagOrSkillArray(tags)}
-                  searchValue={blacklistSearchValue}
-                  searchData={blacklistSearchResults}
-                />
-              </div> */}
               <div id="project-editor-tag-search">
                 <SearchBar
                   key={currentTagsTab}
@@ -901,9 +927,9 @@ const Settings = (userProfile: any) => {
                               container.scrollTop = 0; //shows error but still works?
                             }
                           }}
-                          className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${
-                            tagTabColors[type as string] ?? 'grey'} ${tabsBlacklistId === index && 
-                            blacklistSearchValue === "" ? "tag-search-tab-active" : ""}`}>
+                          className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${tagTabColors[
+                            type as string] ?? 'grey'} ${tabsBlacklistId === index &&
+                              blacklistSearchValue === "" ? "tag-search-tab-active" : ""}`}>
                           {type}
                         </button>
                         {
@@ -927,6 +953,13 @@ const Settings = (userProfile: any) => {
                   />
                 </div>
               </div>
+              <button
+                type="submit"
+                id="btn-blacklist-apply"
+                onClick={buttonBlacklistApplyClicked}
+              >
+                Apply
+              </button>
             </div>
             <div className="settings-row settings-row-actions">
               {/* Edit Profile — opens the same editor popup used on the profile page */}
@@ -958,7 +991,9 @@ const Settings = (userProfile: any) => {
                       <div className="delete-user-button-pair">
                         {/* Popup if user presses delete account to show successful delete action */}
                         <Popup>
-                          <PopupButton className="delete-button" callback={deleteAccountPressed} disabled={notValid}>Delete Account</PopupButton>
+                          <PopupButton className="delete-button" callback={deleteAccountPressed} disabled={notValid}>
+                            Delete Account
+                          </PopupButton>
                           <PopupContent>
                             <div className="small-popup">
                               <div id="delete-success-title">{
