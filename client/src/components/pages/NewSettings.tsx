@@ -834,16 +834,20 @@ const Settings = (userProfile: any) => {
             <hr />
             <div className="subsection">
               <h2 className="settings-header">Content Restriction</h2>
-              Hide content that is mature, graphic, etc.
-              <TagDisplay
-                selected={tagArrayToTagOrSkillArray(tagBlacklist)}
-                toggleTag={toggleTagBlacklist}
-                tabs={tabsBlacklist}
-                tabId={tabsBlacklistId}
-                all={tagArrayToTagOrSkillArray(tags)}
-                searchValue={blacklistSearchValue}
-                searchData={blacklistSearchResults}
-              ></TagDisplay>
+              Hide content that you're not interested in.
+
+              {/* Not the right id but it's what I'm basing the menu on */}
+              <div id="project-editor-tag-search-container">
+                <TagDisplay
+                  selected={tagArrayToTagOrSkillArray(tagBlacklist)}
+                  toggleTag={toggleTagBlacklist}
+                  tabs={tabsBlacklist}
+                  tabId={tabsBlacklistId}
+                  all={tagArrayToTagOrSkillArray(tags)}
+                  searchValue={blacklistSearchValue}
+                  searchData={blacklistSearchResults}
+                ></TagDisplay>
+              </div>
             </div>
             <div className="settings-row settings-row-actions">
               {/* Edit Profile — opens the same editor popup used on the profile page */}
