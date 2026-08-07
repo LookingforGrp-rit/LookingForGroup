@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useEffect, useEffectEvent } from 'react';
+import React, { useMemo, useState, useCallback, useEffect, useEffectEvent, useRef } from 'react';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
@@ -26,9 +26,6 @@ let index = 0;
 //Determines the number of different projects for some reason
 const count = 10;
 
-//Synchronous storing of the full project list for quick reference
-let syncFullProjectList: ProjectPreview[] = [];
-
 enum sortModes {
   "A-Z" = "A-Z",
   "Z-A" = "Z-A",
@@ -54,12 +51,16 @@ export const DiscoverPage = () => {
   // --------------------
   const [loaded, setLoaded] = useState<boolean>(false);
   const [currentSearch, setCurrentSearch] = useState('');
+  const searchRef = useRef('');
+  //Synchronous storing of the full project list for quick reference
+  const syncFullProjectList = useRef<ProjectPreview[]>([]);
 
   // Full data and displayed data based on filter/search query
   const [fullProjectList, setFullProjectList] = useState<ProjectPreview[]>([]);
   const [projectCache, setProjectCache] = useState<NumberDictionary<StructuredProjectInfo>>({});
 
   const [filteredProjectList, setFilteredProjectList] = useState<ProjectPreview[]>([]);
+  const [searchedProjectList, setSearchedProjectList] = useState<ProjectPreview[]>([]);
   const [heroProjectList, setHeroProjectList] = useState<ProjectWithFollowers[]>([]);
 
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
@@ -295,7 +296,7 @@ export const DiscoverPage = () => {
     
     if (invert) {
       setFullProjectList(projects.toReversed());
-      syncFullProjectList = projects.toReversed();
+      syncFullProjectList.current = projects.toReversed();
       setFilteredProjectList(projects.toReversed());
 
       getShowcaseDetails(projects.toReversed(), newProjectCache);
@@ -303,7 +304,7 @@ export const DiscoverPage = () => {
     }
     else {
       setFullProjectList(projects);
-      syncFullProjectList = projects;
+      syncFullProjectList.current = projects;
       setFilteredProjectList(projects);
 
       getShowcaseDetails(projects, newProjectCache);
@@ -327,7 +328,7 @@ export const DiscoverPage = () => {
     //save filters
     filterData = {tags: activeTagFilters, excludeTags: activeExclusionFilters, filterMode, sortMode};
     
-    const projectList = syncFullProjectList;
+    const projectList = syncFullProjectList.current;
 
     // Helper: build full item list (prefer cache) and filter by tags/exclusions
     const buildAndFilter = async (sourcePreviews: ProjectPreview[]) => {
@@ -404,7 +405,7 @@ export const DiscoverPage = () => {
 
     // If no tags are currently selected, render all projects (use syncFullProjectList)
     if (activeTagFilters.length === 0 && activeExclusionFilters.length === 0) {
-      setFilteredProjectList(syncFullProjectList);
+      setFilteredProjectList(syncFullProjectList.current);
       return;
     }
 
@@ -452,7 +453,6 @@ export const DiscoverPage = () => {
 
   const projectLoadButton = useCallback(() => {
     sortProjects();
-    setCurrentSearch('');
   }, []);
 
   /**
@@ -500,77 +500,9 @@ export const DiscoverPage = () => {
         }
       }
       setProjectCache(newCache);
-
-      // If there are active filters, filter the matched full items by those tags.
-      if (filterData.tags.length > 0 || filterData.excludeTags.length > 0) {
-        const matchedFullItems: ProjectWithFollowers[] = [];
-        for (const preview of matches) {
-          const cached = newCache[preview.projectId];
-          if (cached?.full) matchedFullItems.push(cached.full as ProjectWithFollowers);
-        }
-
-        const tagFiltered = matchedFullItems.filter((item) => {
-          for (const tag of filterData.excludeTags) {
-            if (
-              item.tags.some((projectTag) => projectTag.tagId === tag.tagId && projectTag.type === tag.type) ||
-              item.mediums.some((medium) => medium.mediumId === tag.tagId && tag.type === "Project Type") ||
-              item.jobs.some((job) => job.jobId === tag.tagId && tag.type === "Role") ||
-              (item.context === tag.label && tag.type === "Context")
-            )
-              return false;
-          }
-          if (filterData.tags.length === 0) return true;
-          let matchesAny = false;
-          let matchesAll = true;
-          for (const tag of filterData.tags) {
-            if (tag.type === 'Project Type' && Array.isArray(item.mediums)) {
-              const projectTypes = item.mediums.map((t) => t.label.toLowerCase());
-              if (tag.label === `New`) {
-                const cutOff = Date.now() - 604800000;
-                const date = Date.parse(item.createdAt.toString());
-                if (date > cutOff) {
-                  matchesAny = true;
-                } else {
-                  matchesAll = false;
-                }
-              } else if (projectTypes.includes(tag.label.toLowerCase())) {
-                matchesAny = true;
-              } else {
-                matchesAll = false;
-              }
-            } else if (tag.type === 'Context' && item.context) {
-              const projectContext = item.context.toLowerCase();
-              if (projectContext.includes(tag.label.toLowerCase())) {
-                matchesAny = true;
-              } else {
-                matchesAll = false;
-              }
-            } else if (tag.type === "Positions") {
-              const roles = item.jobs.map((job) => job.role);
-              if (roles.find((role) => role.roleId === tag.tagId)) matchesAny = true;
-              else matchesAll = false;
-            } else if (tag.tagId && item.tags) {
-              const tagIDs = item.tags.map((itemTag) => itemTag.tagId);
-              if (tagIDs.includes(tag.tagId)) {
-                matchesAny = true;
-              } else {
-                matchesAll = false;
-              }
-            }
-          }
-          return filterData.filterMode === "Match Any" ? matchesAny : matchesAll;
-        });
-
-        // Map back to the original previews for rendering
-        const tagFilteredIds = new Set(tagFiltered.map((t) => t.projectId));
-        const previewMatches = matches.filter((m) => tagFilteredIds.has(m.projectId));
-
-        setFilteredProjectList(previewMatches.length > 0 ? previewMatches : []);
-      } else {
-        setFilteredProjectList(matches);
-      }
+      setSearchedProjectList(matches);
     })();
-  }, [fullProjectList, projectCache]);
+  }, [fullProjectList, projectCache, filteredProjectList]);
 
   //gets the discover stuff at the bottom
   let discoverPanelContents: React.ReactElement;
@@ -584,7 +516,10 @@ export const DiscoverPage = () => {
     discoverPanelContents = (
       <PanelBox
         category={'projects'}
-        itemList={filteredProjectList}
+        itemList={
+          searchRef.current.length === 0
+          ? filteredProjectList 
+          : searchedProjectList.filter(a => filteredProjectList.some(b => a.projectId === b.projectId))}
         projectCache={projectCache}
         followedProjectIds={followedProjectIds}
         userId={currentUserId ?? -1}
@@ -642,7 +577,10 @@ export const DiscoverPage = () => {
       <Header dataSets={projectDataSet}
         onSearch={searchProjects}
         value={currentSearch}
-        setSearch={setCurrentSearch}
+        setSearch={(value) => {
+          setCurrentSearch(value);
+          searchRef.current = value.toString();
+        }}
         setCurrentUserId={getAuth}
         searchOnFocus={handleSearchFocus}
         placeholderText="Search by Project"

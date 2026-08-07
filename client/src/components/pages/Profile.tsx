@@ -26,7 +26,7 @@ import profilePicture from "../../images/lfrog.png";
 import {
   getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing,
   getJobTitles,
-  getBlockedUsersById,
+  getBlockedUsers,
   blockUser,
   unblockUser,
   getGalleryImages,
@@ -448,13 +448,13 @@ const Profile = (/*userProfile: any*/) => {
   const checkUserBlocked = async () => {
     if (!parseInt(profileID)) return;
     
-    const blocklistRequest = await getBlockedUsersById();
+    const blocklistRequest = await getBlockedUsers();
 
     if (blocklistRequest.status === 200) {
       const blocklistUserIds = blocklistRequest.data.map((user: UserPreview) => user.userId);
       setIsBlocked(blocklistUserIds.includes(parseInt(profileID)));
     } else {
-      console.log(`Error on getBlockedUsersById`, blocklistRequest.error);
+      console.log(`Error on getBlockedUsers`, blocklistRequest.error);
     }
   };
 
@@ -1163,7 +1163,7 @@ const Profile = (/*userProfile: any*/) => {
         );
       }).filter(item => item !== null),
       ...galleryImages.map(i => (<>
-        <label>{i.altText}</label>
+        <label>{i.altText !== "Gallery Image" ? i.altText : ""}</label>
         <img
           key={`img-${i.position}`}
           src={i.image}

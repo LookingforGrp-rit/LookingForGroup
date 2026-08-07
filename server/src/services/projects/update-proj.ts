@@ -13,14 +13,27 @@ const updateProjectService = async (
   updates: Omit<UpdateProjectInput, 'thumbnail'>,
 ): Promise<ProjectDetail | UpdateProjectServiceError> => {
   try {
+    const currentProject = await prisma.projects.findUnique({
+      where: { projectId },
+    });
+
+    if (!currentProject) {
+      return 'NOT_FOUND';
+    }
+
+    const hasChanges = (Object.keys(updates) as (keyof typeof updates)[]).some(
+      (key) => currentProject[key] !== updates[key],
+    );
+
     //removed all the thumbnail stuff, that's handled elsewhere now
     const project = await prisma.projects.update({
       where: { projectId },
       data: updates,
       select: ProjectDetailSelector,
     });
+
     //unapprove project on change
-    if (project.approved) {
+    if (project.approved && hasChanges) {
       await unapproveProjectService(projectId);
     }
 

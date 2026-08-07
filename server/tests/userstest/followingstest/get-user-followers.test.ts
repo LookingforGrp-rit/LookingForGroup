@@ -1,4 +1,4 @@
-import type { UserFollowsList, Visibility } from '@looking-for-group/shared';
+import type { UserFollowsList, Visibility, RitStatus } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import { transformUserToPreview } from '#services/transformers/users/user-preview.ts';
@@ -65,7 +65,6 @@ describe('getUserFollowersService', () => {
       pronouns: '',
       title: '',
       displayPhone: false,
-      ritStatus: null,
       location: '',
       bio: '',
       designer: false,
@@ -73,6 +72,8 @@ describe('getUserFollowersService', () => {
       privacy: 'public' as Visibility,
       majors: [],
       apiUrl: '/api/users/2',
+      skills: [],
+      ritStatus: 'FourthYear' as RitStatus,
     };
 
     vi.mocked(prisma.userFollowings.findMany).mockResolvedValue(prismaResult);

@@ -1644,6 +1644,19 @@ Project Creator and Editor Popup style rules
 #confirm-editor-save-text {
   padding: 50px;
   font-size: 1.25rem;
+
+  #unapproved-warning {
+    max-width: 50ch;
+    min-width: 10ch;
+    color: var(--primary-color);
+    font-weight: bold;
+    line-height: 1.5em;
+  }
+
+  .fa-triangle-exclamation {
+    color: #F59E0B;
+    padding-right: 10px;
+  }
 }
 
 #project-editor-project-members {
@@ -1867,6 +1880,20 @@ Project Creator and Editor Popup style rules
   font-weight: 700;
   color: var(--header-color);
   font-size: 1.6ch;
+}
+
+/* job skills popup */
+#job-skills-popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 95%;
+
+  #invalid-input-error {
+    grid-column: 1/3;
+    width: calc(100% - 20px);
+    order: 3;
+  }
 }
 
 /* "Merge Project Team" tile below the Current Team view */
