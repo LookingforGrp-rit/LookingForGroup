@@ -1003,7 +1003,7 @@ Page popup style rules
   max-height: min(849px, 90vh);
   overflow-y: auto;
   opacity: 100%;
-  /* height: 849px; */
+  height: 849px;
 
 }
 
