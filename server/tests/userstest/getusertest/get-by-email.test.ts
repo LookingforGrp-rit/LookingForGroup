@@ -49,6 +49,8 @@ describe('getUserByEmailService', () => {
       title: '',
       location: '',
       majors: [],
+      skills: [],
+      ritStatus: 'FifthYear',
     };
 
     vi.mocked(prisma.users.findFirst).mockResolvedValue(prismaUser as any);
