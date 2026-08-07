@@ -61,6 +61,8 @@ export const JobSkillPopup = ({
   // currently selected skills
   //const [selectedSkills, setSelectedSkills] = useState<JobSkill[]>([]);
 
+  const [message, setMessage] = useState<string>("");
+
   /* ONLY used for the deleting tags button. This is needed to re-render
     the selected skills section when reseting tags */
   const [skills, setSkills] = useState<Skill[]>();
@@ -174,29 +176,26 @@ export const JobSkillPopup = ({
         }
       }
       else {
-        let newSkills = modifiedJob.jobSkills;
-        const lengthPreAdd = modifiedJob.jobSkills?.length
-        //limit-imposing if statement
-        if ((newSkills as JobSkill[]).length >= skillLimit && newSkills != null) {
-          newSkills = newSkills.slice(0, 4);
-          //newSkills?.shift();
+        if ((modifiedJob.jobSkills ? modifiedJob.jobSkills.length : -1) < skillLimit)
+        {
+          const newSkills = modifiedJob.jobSkills;
+          const lengthPreAdd = modifiedJob.jobSkills?.length
+          
+          newSkills?.push({
+            ...skillToToggle,
+            proficiency: "Novice",
+            position: lengthPreAdd ?? 0,
+            apiUrl: "",
+          })
+          modifiedJob = ({
+            ...modifiedJob,
+            jobSkills: newSkills as JobSkill[],
+          });
+          //fix the positions right after they're changed
+          for (let i = 0; i < (newSkills as JobSkill[]).length; i++) {
+            (newSkills as JobSkill[])[i].position = i;
+          }
         }
-
-        newSkills?.push({
-          ...skillToToggle,
-          proficiency: "Novice",
-          position: lengthPreAdd ?? 0,
-          apiUrl: "",
-        })
-        modifiedJob = {
-          ...modifiedJob,
-          jobSkills: newSkills as JobSkill[],
-        }
-        //fix the positions right after they're changed
-        for (let i = 0; i < (newSkills as JobSkill[]).length; i++) {
-          (newSkills as JobSkill[])[i].position = i;
-        }
-
       }
 
       updateJob(modifiedJob);
@@ -205,6 +204,24 @@ export const JobSkillPopup = ({
   );
 
   const selectedSkills = job.jobSkills ? (job.jobSkills as JobSkill[]).sort((a, b) => a.position - b.position) : [];
+
+  /**
+   * Updates the error message to the user based on how many skills they have selected
+   */
+  useEffect(() => {
+    let newMessage = "";
+    console.log("length" + modifiedJob.jobSkills?.length);
+    if ((modifiedJob.jobSkills ? modifiedJob.jobSkills.length : -1)  >= skillLimit) {
+      newMessage = `Maximum of ${skillLimit} selected skills reached!`;
+    }
+    else if ((modifiedJob.jobSkills ? modifiedJob.jobSkills.length : -1)  == 0) {
+      newMessage = `Select up to ${skillLimit} skills for this position`
+    }
+    else {
+      newMessage = "";
+    }
+    setMessage(newMessage);
+  }, [modifiedJob.jobSkills?.length]);
 
   /**
    * Renders skill tags as clickable buttons based on the active tab and search results.
@@ -467,95 +484,90 @@ export const JobSkillPopup = ({
   }, [job.jobSkills, originalSkillOrder]);
 
   return (
-    <div id="profile-editor-tags">
-      <div id="project-editor-selected-tags">
-        <div className="project-editor-section-header">
-          Selected Skills
-          {isSkillsUnsaved && (
-            <span className="unsaved-indicator">
-              (Unsaved)
-            </span>
-          )}
-        </div>
-        <div className="project-editor-extra-info">
-          Drag and drop to reorder.<br></br><b>You can select up to 5.</b>
-        </div>
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-          modifiers={[clampDragWithinContainer]}
-        >
-          <SortableContext
-            items={selectedSkills.map((t) => t.skillId)}
-            strategy={verticalListSortingStrategy}
-          >
-            <div id="project-editor-selected-tags-container">
-              {selectedSkills.map((skill) => (
-                <Fragment key={skill.skillId}>
-                  <SortableTag
-                    id={skill.skillId}
-                    tag={{
-                      skillId: skill.skillId,
-                      label: skill.label,
-                      type: skill.type as SkillType,
-                      category: skill.category
-                    }}
-                    onRemove={handleSkillToggle}
-                  />
-                </Fragment>
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
-        <div id="clear-all-button-align">
-            <button
-              type="button"
-              className="delete-position-button-alt button-reset"
-              hidden={(modifiedJob.jobSkills as JobSkill[])?.length === 0 || modifiedJob.jobSkills == undefined}
-              onClick={() => {
-                /*deletes all skills for the user
-                modifiedJob = {
-                  ...modifiedJob,
-                  jobSkills: [],
-              }
-              
-                /*re-renders the current popup with 0 skills remaining and updates
-                user profile*/
-                setSkills((modifiedJob.jobSkills as JobSkill[]).splice(0));
-                modifiedJob = ({...modifiedJob, jobSkills: []});
-                updateJob(modifiedJob);
-              }}
-              title="Remove all selected tags"
-            >
-              <div id="clear-all-trash-row">
-                <p id="clear-all-trash-text">Clear All</p>
-                <ThemeIcon
-                  id="trash"
-                  width={18}
-                  height={18}
-                  ariaLabel="Delete position"
-                />
-              </div>
-            </button>
+    <div id="job-skills-popup">
+      <div id="profile-editor-tags">
+        <div id="project-editor-selected-tags">
+          <div className="project-editor-section-header">
+            Selected Skills
+            {isSkillsUnsaved && (
+              <span className="unsaved-indicator">
+                (Unsaved)
+              </span>
+            )}
           </div>
-      </div>
-
-      <div id="project-editor-tag-search">
-        <SearchBar
-          key={currentSkillsTab}
-          dataSets={currentDataSet}
-          onSearch={(results) =>
-            handleSearch(results as unknown[][] as Skill[][])
-          }
-          placeholderText='Search for Tag'
-
-        />
-        <div id="project-editor-tag-wrapper">
-          <SkillSearchTabs />
-          <hr id="tag-search-divider" />
+          <div className="project-editor-extra-info">
+            Drag and drop to reorder.<br></br><b>You can select up to 5.</b>
+          </div>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            modifiers={[clampDragWithinContainer]}
+          >
+            <SortableContext
+              items={selectedSkills.map((t) => t.skillId)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div id="project-editor-selected-tags-container">
+                {selectedSkills.map((skill) => (
+                  <Fragment key={skill.skillId}>
+                    <SortableTag
+                      id={skill.skillId}
+                      tag={{
+                        skillId: skill.skillId,
+                        label: skill.label,
+                        type: skill.type as SkillType,
+                        category: skill.category
+                      }}
+                      onRemove={handleSkillToggle}
+                    />
+                  </Fragment>
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+          <button
+            type="button"
+            className="delete-tags-btn"
+            hidden={(job.jobSkills as JobSkill[])?.length === 0 || job.jobSkills == undefined}
+            onClick={() => {
+              /* deletes all skills for the user */
+              modifiedJob = {
+                ...modifiedJob,
+                jobSkills: [],
+              }
+            
+              /* re-renders the current popup with 0 skills remaining and updates
+              user profile */
+              setSkills((job.jobSkills as JobSkill[]).splice(0));
+              updateJob(modifiedJob);
+            }}
+            title="Remove all selected tags"
+          >
+            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+          </button>
         </div>
-        <div id="project-editor-tag-search-container">{renderSkills()}</div>
+          
+        <div id="project-editor-tag-search">
+          <SearchBar
+            key={currentSkillsTab}
+            dataSets={currentDataSet}
+            onSearch={(results) =>
+              handleSearch(results as unknown[][] as Skill[][])
+            }
+            placeholderText='Search for Tag'
+          
+          />
+          <div id="project-editor-tag-wrapper">
+            <SkillSearchTabs />
+            <hr id="tag-search-divider" />
+          </div>
+          <div id="project-editor-tag-search-container">{renderSkills()}</div>
+        </div>
+        <div id="invalid-input-error" className={"save-error-msg-general"}>
+          {message ?
+          <p>*{message}*</p> : ""}
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,4 @@
 //Styles
-import "../Styles/credits.css";
 import "../Styles/discoverMeet.css";
 import "../Styles/emailConfirmation.css";
 import "../Styles/general.css";
@@ -26,7 +25,7 @@ import profilePicture from "../../images/lfrog.png";
 import {
   getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing,
   getJobTitles,
-  getBlockedUsersById,
+  getBlockedUsers,
   blockUser,
   unblockUser,
   getGalleryImages,
@@ -35,7 +34,7 @@ import {
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
 import {
-  MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail,
+  MeDetail, MePrivate, ProjectDetail, ProjectPreview, ProjectWithFollowers, UserPreview, Role, UserDetail,
   UserAccessLevel, UserReport, BanDetail,
   GalleryImage,
   GalleryVideo,
@@ -53,6 +52,8 @@ import {
 } from "../../api/mod-tools";
 import { getYouTubeEmbedID, getYouTubeEmbedURL } from "../../functions/parseYoutube";
 import { Carousel, CarouselButton, CarouselContent, CarouselTabs } from "../ImageCarousel";
+import { canViewProjectOnProfile } from "../../functions/profileProjectVisibility";
+import { getByID as getProjectById } from "../../api/projects";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -142,6 +143,8 @@ const Profile = (/*userProfile: any*/) => {
 
   const [followedProjectsIds, setFollowProjectsIds] = useState<Set<number>>(new Set);
 
+  const isViewingOwnProfile = userID > 0 && Number(profileID) === userID;
+
   const projectSearchData = fullProjectList?.map(
     (project: Project) => {
       return { name: project.title, description: project.hook };
@@ -212,10 +215,10 @@ const Profile = (/*userProfile: any*/) => {
   }, [profileID]);
 
   useEffect(() => {
-    if (isUsersProfile || galleryImages.length > 0 || galleryVideos.length > 0)
+    if (isViewingOwnProfile || galleryImages.length > 0 || galleryVideos.length > 0)
       setShowGallery(true);
 
-  }, [isUsersProfile, galleryImages, galleryVideos])
+  }, [isViewingOwnProfile, galleryImages, galleryVideos])
 
 
   // --------------------
@@ -443,14 +446,14 @@ const Profile = (/*userProfile: any*/) => {
  */
   const checkUserBlocked = async () => {
     if (!parseInt(profileID)) return;
-    
-    const blocklistRequest = await getBlockedUsersById();
+
+    const blocklistRequest = await getBlockedUsers();
 
     if (blocklistRequest.status === 200) {
       const blocklistUserIds = blocklistRequest.data.map((user: UserPreview) => user.userId);
       setIsBlocked(blocklistUserIds.includes(parseInt(profileID)));
     } else {
-      console.log(`Error on getBlockedUsersById`, blocklistRequest.error);
+      console.log(`Error on getBlockedUsers`, blocklistRequest.error);
     }
   };
 
@@ -503,16 +506,50 @@ const Profile = (/*userProfile: any*/) => {
   /**
    * Gets the user's projects to display.
    */
-  const getProfileProjectData = useCallback(async () => {
+  const getProfileProjectData = useCallback(async (viewerUserId: number, isOwnProfile: boolean) => {
     try {
-      const response = isUsersProfile ? await getProjectsByUser() : await getVisibleProjects(Number(profileID)) as { data: ProjectPreview[] }; //TODO: IMPLEMENT PROJECT GETTING
+      const response = isOwnProfile
+        ? await getProjectsByUser()
+        : await getVisibleProjects(Number(profileID)) as { data: ProjectPreview[] };
       const data = response.data;
 
-      // Only update if there's data
-      if (data) {
+      if (!data) {
+        setFullProjectList([]);
+        setDisplayedProjects([]);
+        return;
+      }
+
+      if (isOwnProfile) {
         setFullProjectList(data);
         setDisplayedProjects(data);
+        return;
       }
+
+      const visibleProjects = await Promise.all(
+        data.map(async (project) => {
+          try {
+            const projectResponse = await getProjectById(project.projectId);
+            const fullProject = projectResponse.data;
+
+            if (!fullProject) {
+              return null;
+            }
+
+            return canViewProjectOnProfile(fullProject, viewerUserId, false)
+              ? fullProject
+              : null;
+          } catch (error) {
+            console.error(`Failed to load project ${project.projectId}:`, error);
+            return null;
+          }
+        }),
+      );
+
+      const filteredProjects = visibleProjects.filter(
+        (project): project is ProjectWithFollowers => project !== null,
+      );
+      setFullProjectList(filteredProjects);
+      setDisplayedProjects(filteredProjects);
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
@@ -520,14 +557,16 @@ const Profile = (/*userProfile: any*/) => {
         console.log(`Unknown error: ${error}`);
       }
     }
-  }, [profileID, isUsersProfile, setFullProjectList, setDisplayedProjects]);
+  }, [profileID, setFullProjectList, setDisplayedProjects]);
 
   // Gets the profile data
-  const getProfileData = async (data: MePrivate | undefined) => {
+  const getProfileData = async (current: MePrivate | undefined) => {
+    let isOwnProfile = false;
     // Get the userID for our current user
-    if (data) {
-      setUserID(data.userId);
-      setIsUsersProfile(data.userId.toString() === profileID);
+    if (current) {
+      setUserID(current.userId);
+      isOwnProfile = current.userId.toString() === profileID;
+      setIsUsersProfile(isOwnProfile);
     }
     else { setUserID(-1); }
 
@@ -540,7 +579,7 @@ const Profile = (/*userProfile: any*/) => {
         //console.log(data);
         setDisplayedProfile(data);
         setMajorsArr(data.majors.map((maj) => maj.label));
-        await getProfileProjectData();
+        await getProfileProjectData(current ? current.userId : 0, isOwnProfile);
         //checkFollow();
       } else {
         navigate(paths.routes.NOTFOUND, { replace: true });
@@ -577,7 +616,7 @@ const Profile = (/*userProfile: any*/) => {
   // "Invite to project" popup.
   useEffect(() => {
     if (userID === undefined || userID === -1) return;
-    if (isUsersProfile) {
+    if (isViewingOwnProfile) {
       //if this is the user's profile, display their liked profiles/projects in the liked section      const displayFollowedProfiles = async () => {
       const displayFollowedProfiles = async () => {
         const tempFollowProfileArray = [];
@@ -646,7 +685,7 @@ const Profile = (/*userProfile: any*/) => {
       cancelled = true;
     };
 
-  }, [isUsersProfile, userID]);
+  }, [isViewingOwnProfile, userID]);
 
   // Resets the invite form to its initial state. Called when the popup opens
   // or closes so a previous send doesn't bleed into the next one.
@@ -919,7 +958,7 @@ const Profile = (/*userProfile: any*/) => {
   const aboutMeButtons = (
     <>
       {/* If the displayed user is the user's profile */}
-      {isUsersProfile ? (
+      {isViewingOwnProfile ? (
         <>
           <ShareButton />
           <ProfileEditPopup />
@@ -1123,7 +1162,7 @@ const Profile = (/*userProfile: any*/) => {
         );
       }).filter(item => item !== null),
       ...galleryImages.map(i => (<>
-        <label>{i.altText}</label>
+        <label>{i.altText !== "Gallery Image" ? i.altText : ""}</label>
         <img
           key={`img-${i.position}`}
           src={i.image}
@@ -1245,10 +1284,10 @@ const Profile = (/*userProfile: any*/) => {
                   <div id="profile-names">
                     <h1 id="profile-fullname">
                       {displayedProfile?.firstName} {displayedProfile?.lastName}
-                      {displayedProfileAccessLevel === 'Administrator' || displayedProfileAccessLevel === 'Moderator' 
-                      ? <span className="tooltip">
+                      {displayedProfileAccessLevel === 'Administrator' || displayedProfileAccessLevel === 'Moderator'
+                        ? <span className="tooltip">
                           <ThemeIcon id={'mod-badge'} width={35} height={35} className={"color-fill mono-stroke-invert"}
-                        ariaLabel={displayedProfileAccessLevel === 'Administrator' ? "Administrator" : "Moderator"}/>
+                            ariaLabel={displayedProfileAccessLevel === 'Administrator' ? "Administrator" : "Moderator"} />
                           <span className="tooltip-text">{displayedProfileAccessLevel === 'Administrator' ? "Administrator" : "Moderator"}</span></span> : ""}
                     </h1>
                     <h2 id="profile-username">
@@ -1308,7 +1347,7 @@ const Profile = (/*userProfile: any*/) => {
           </div>
 
           {/* Mod options for unbanning a banned user */}
-          {(!isUsersProfile) && isUserMod && banned && banDetail && displayedProfile && (<>
+          {(!isViewingOwnProfile) && isUserMod && banned && banDetail && displayedProfile && (<>
             <div className="mod-user-options">
               <h2>Unban this User</h2>
               <p>Unbanning this user will unfreeze their account, allowing them to log in to Looking For Group again.
@@ -1363,7 +1402,7 @@ const Profile = (/*userProfile: any*/) => {
           </>)}
 
           {/* Mod options when this is a reported user */}
-          {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div className="mod-user-options">
+          {(!isViewingOwnProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div className="mod-user-options">
             <h2>Reports</h2>
             <p>You can dismiss this report, warn the user and request edits from them, or ban the user.</p>
             <h3>Active Reports</h3>
@@ -1486,7 +1525,7 @@ const Profile = (/*userProfile: any*/) => {
                       <ThemeIcon id={'phone'} width={25} height={25} className={'mono-fill'} ariaLabel={'phone'} />
                       {displayedProfile.phoneNumber}
                     </a>
-                    {isUsersProfile && <ThemeIcon id="pencil" width={12} height={12} className={'black-fill edit'} ariaLabel={'edit'} onClick={() => navigate(paths.routes.SETTINGS)} />}
+                    {isViewingOwnProfile && <ThemeIcon id="pencil" width={12} height={12} className={'black-fill edit'} ariaLabel={'edit'} onClick={() => navigate(paths.routes.SETTINGS)} />}
                   </div>
                   //dead link when no number
                   : <></>
@@ -1525,7 +1564,7 @@ const Profile = (/*userProfile: any*/) => {
                 </div>
                 {/* Invite-to-project: only shown when a logged-in user is
                   viewing someone else's profile. */}
-                {(!isUsersProfile) && userID !== undefined && userID !== -1 && (
+                {(!isViewingOwnProfile) && userID !== undefined && userID !== -1 && (
                   <Popup>
                     <PopupButton
                       buttonId="profile-invite-button"
@@ -1655,7 +1694,7 @@ const Profile = (/*userProfile: any*/) => {
               <div id="skills">
                 <div className="contact-skills-edit-label-btn">
                   <h1 id="title">Skills</h1>
-                  {isUsersProfile ? <ProfileEditPopup editSkills={true} />
+                  {isViewingOwnProfile ? <ProfileEditPopup editSkills={true} />
                     : ""}</div>
                 <div id="skill-block">
                   {displayedProfile?.skills !== undefined && (
@@ -1695,7 +1734,7 @@ const Profile = (/*userProfile: any*/) => {
                 </div>
               </div>
             </div>
-            {isUsersProfile ?
+            {isViewingOwnProfile ?
               <div id="profile-likes">
                 <h1 id="title">Likes</h1>
                 <div id="likes-block">

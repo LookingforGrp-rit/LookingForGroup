@@ -82,14 +82,26 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
       setUploadError("File too large! (max: 2mb)");
       return;
     }
-    else {
-      setUploadError("");
+
+    // Check if it is a duplicate image
+    for (const i of newImages) {
+      // convert to file
+      const imageFile = i.image;
+      // compare
+      if (image.name === imageFile.name && image.webkitRelativePath === imageFile.webkitRelativePath) {
+        // TODO: add error to show users cannot add duplicate image
+        setUploadError("*Sorry, no duplicate images here!*")
+        return;
+      }
     }
+
+    setUploadError("");
+
     setNewImages([
       ...newImages, 
       { 
         image, 
-        altText: altText ?? "Gallery Image", 
+        altText: (altText?.length !== undefined && altText.length > 0 ? altText : "Gallery Image"), 
         localId: localIdIncrement,
       }
     ]);
@@ -100,7 +112,7 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
       },
       data: {
         file: image,
-        altText: altText ?? "Gallery Image",
+        altText:  (altText?.length !== undefined && altText.length > 0 ? altText : "Gallery Image"),
       }
     });
     localIdIncrement++;
