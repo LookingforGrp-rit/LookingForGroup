@@ -1767,7 +1767,7 @@ Project Creator and Editor Popup style rules
 }
 
 #project-editor-project-requests {
-  width: 100%;
+  width: calc(100% - 40px);
   margin-top: 0px;
   padding: 20px;
   border-radius: 10px;
