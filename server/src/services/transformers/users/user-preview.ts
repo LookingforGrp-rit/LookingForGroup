@@ -43,6 +43,12 @@ export const transformUserToPreview = (user: UsersGetPayload): UserPreview => {
     developer: user.userSkills.some(hasSkillOfType('Developer')),
     designer: user.userSkills.some(hasSkillOfType('Designer')),
     apiUrl: `api/users/${user.userId.toString()}`,
+    ritStatus: user.ritStatus,
+    skills: user.userSkills.map(({ position, proficiency, skills }) => ({
+      position,
+      proficiency,
+      ...skills,
+    })),
   } as UserPreview;
 
   if (user.displayPhone) {

@@ -245,11 +245,17 @@ Meet page hero style rules
     width: 100%;
   }
 
-  #emtpy-carousel {
+  #empty-carousel {
     color: var(--main-text);
     text-align: center;
     margin-bottom: 10px;
     line-height: 22px;
+    font-weight: 400;
+
+    span{
+      font-weight: bold;
+      font-style: italic;
+    }
   }
 
   .project-crop {
@@ -883,7 +889,6 @@ Filters / Tags Style Rules
 
   .popup {
     width: calc(100vw - 220px);
-    max-width: 70vw;
   }
 }
 
@@ -1071,12 +1076,12 @@ Filters / Tags Style Rules
   border-width: 2px;
   border-style: solid;
 
-  min-height: 28px;
+  min-height: 26px;
   height: fit-content;
   width: max-content;
   max-width: 100%;
-  padding: 0 17px;
-  font-size: medium;
+  padding: 0 15px;
+  font-size: .9rem;
   flex-shrink: 0;
   text-align: left;
   transition: all 0.2s ease-in-out;
@@ -1517,8 +1522,6 @@ Filters / Tags Style Rules
   width: 100%;
   height: auto;
 
-  /* Clamped to 88vh so it avoids hitting the browser address bar edges */
-  max-width: 70vw;
   max-height: 88vh;
 
   background-color: var(--bg-color);
@@ -1535,12 +1538,6 @@ Filters / Tags Style Rules
 @media only screen and (max-width: 800px) {
   .popup:has#filters-popup {
     width: 95vw;
-  }
-}
-
-@media only screen and (max-width: 550px) {
-  .popup {
-    max-width: 85vw !important;
   }
 }
 
@@ -1866,7 +1863,6 @@ Filters / Tags Style Rules
   #filters-popup {
     /* removes offset that accounts for ui sidebar*/
     left: 50% !important;
-    max-width: 94vw !important;
     max-height: min(810px, 82vh) !important;
 
     /* Slightly trimmer padding to save mobile screen space */

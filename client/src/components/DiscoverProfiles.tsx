@@ -441,7 +441,6 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                   </div>
                   <div id="selected-section" className="popup-section">
                     <h3>Selected</h3>
-                    <h4>Click once to include-<i className='fa fa-check'></i>, twice to exclude-<i className='fa fa-close'></i>, three times to remove.</h4>
                     <div id="selected-filters">
                       {activeSkillFilters.map((skill) => (
                         <Tag
