@@ -238,11 +238,15 @@ export const projectDataManager = async (projectId: number) => {
 
     // project fields
     try {
-      await runAndCollectErrors<UpdateProjectInput>(
-        "Updating project",
-        [updates.fields],
-        ({ data }) => updateProject(projectId, data)
-      );
+      const hasProjectFieldChanges = Object.keys(updates.fields.data ?? {}).length > 0;
+
+      if (hasProjectFieldChanges) {
+        await runAndCollectErrors<UpdateProjectInput>(
+          "Updating project",
+          [updates.fields],
+          ({ data }) => updateProject(projectId, data)
+        );
+      }
     } catch (error) {
       errorMessage += (error as { message: string }).message;
     }

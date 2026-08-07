@@ -10,8 +10,8 @@ import ResetPassword from './components/pages/ResetPassword';
 import MyProjects from './components/pages/MyProjects';
 import Profile from './components/pages/Profile';
 import Project from './components/pages/Project';
-import {DiscoverPage} from './components/pages/Discover';
-import {ProfileMeetPage} from './components/pages/Meet';
+import { DiscoverPage } from './components/pages/Discover';
+import { ProfileMeetPage } from './components/pages/Meet';
 //import Settings from './components/pages/Settings'; -- Commented in clean up 26-20-01 
 import NewSettings from './components/pages/NewSettings';
 import NotFound from './components/pages/NotFound';
@@ -20,7 +20,6 @@ import CreateProject from './components/pages/CreateProject';
 import AcceptInvitation from './components/pages/AcceptInvitation';
 import AcceptApplication from './components/pages/AcceptApplication';
 //import CreditsFooter from './components/CreditsFooter';  -- Commented in clean up 26-20-01 
-import Credits from './components/pages/CreditsPage';
 import AccountActivation from './components/pages/AccountActivation';
 import { ThemeContext } from './contexts/ThemeContext';
 import AboutPage from './components/pages/About';
@@ -84,20 +83,19 @@ function App() {
           <Route path={paths.routes.FORGOTPASSWORD} element={<ForgotPassword />} />
           <Route path={paths.routes.RESETPASSWORD} element={<ResetPassword />} />
 
-          <Route path={paths.routes.HOME} element={<DiscoverPage  />} />
+          <Route path={paths.routes.HOME} element={<DiscoverPage />} />
           <Route path={paths.routes.MEET} element={<ProfileMeetPage />} />
           {/* <Route path={paths.routes.MESSAGES} element={<Messages />} /> */}
-          <Route path={paths.routes.MYPROJECTS} element={<MyProjects  />} />
-          <Route path={paths.routes.PROFILE} element={<Profile  />} />
-          <Route path={paths.routes.PROJECT} element={<Project  />} />
+          <Route path={paths.routes.MYPROJECTS} element={<MyProjects />} />
+          <Route path={paths.routes.PROFILE} element={<Profile />} />
+          <Route path={paths.routes.PROJECT} element={<Project />} />
           <Route path={paths.routes.CREATEPROJECT} element={<CreateProject />} />
           <Route path={paths.routes.ACCEPTINVITATION} element={<AcceptInvitation />} />
           <Route path={paths.routes.ACCEPTAPPLICATION} element={<AcceptApplication />} />
-          <Route path={paths.routes.SETTINGS} element={<NewSettings  />} />
-          <Route path={paths.routes.MODERATION} element={<ModeratorPage />}/>
+          <Route path={paths.routes.SETTINGS} element={<NewSettings />} />
+          <Route path={paths.routes.MODERATION} element={<ModeratorPage />} />
           <Route path={paths.routes.NOTFOUND} element={<NotFound />} />
           {/* <Route path={paths.routes.MESSAGEHISTORY} element={<MessageHistory />} /> */}
-          <Route path={paths.routes.CREDITS} element={<Credits />} />
           <Route path={paths.routes.ABOUT} element={<AboutPage />} />
           <Route path={paths.routes.ACCOUNTACTIVATE} element={<AccountActivation />} />
         </Routes>

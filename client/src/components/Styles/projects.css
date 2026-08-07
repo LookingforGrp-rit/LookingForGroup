@@ -446,6 +446,10 @@ Project Panel component style rules
         }
       }
     }
+
+    .masonry{
+      overflow-x: hidden;
+    }
   }
 }
 
@@ -1644,6 +1648,19 @@ Project Creator and Editor Popup style rules
 #confirm-editor-save-text {
   padding: 50px;
   font-size: 1.25rem;
+
+  #unapproved-warning {
+    max-width: 50ch;
+    min-width: 10ch;
+    color: var(--primary-color);
+    font-weight: bold;
+    line-height: 1.5em;
+  }
+
+  .fa-triangle-exclamation {
+    color: #F59E0B;
+    padding-right: 10px;
+  }
 }
 
 #project-editor-project-members {
@@ -1754,7 +1771,7 @@ Project Creator and Editor Popup style rules
 }
 
 #project-editor-project-requests {
-  width: 100%;
+  width: calc(100% - 40px);
   margin-top: 0px;
   padding: 20px;
   border-radius: 10px;
@@ -1869,6 +1886,20 @@ Project Creator and Editor Popup style rules
   font-size: 1.6ch;
 }
 
+/* job skills popup */
+#job-skills-popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 95%;
+
+  #invalid-input-error {
+    grid-column: 1/3;
+    width: calc(100% - 20px);
+    order: 3;
+  }
+}
+
 /* "Merge Project Team" tile below the Current Team view */
 #merge-project-team {
   display: flex;
@@ -1910,14 +1941,14 @@ Project Creator and Editor Popup style rules
   width: 100%;
   max-width: 1141px;
   height: fit-content;
-  
+
   .project-editor-owner-info {
     display: flex;
     flex-direction: column;
     background-color: var(--header-color);
     border-radius: 10px;
 
-    label{
+    label {
       margin-top: 0.5em;
       font-size: 1.5rem;
     }
@@ -1945,7 +1976,7 @@ Project Creator and Editor Popup style rules
     margin: auto 0;
     width: 40%;
 
-    label{
+    label {
       margin-bottom: 0.5em;
     }
 
@@ -1974,17 +2005,17 @@ Project Creator and Editor Popup style rules
   }
 }
 
-@media only screen and (max-width: 799px){
-  #project-editor-change-owner{
+@media only screen and (max-width: 799px) {
+  #project-editor-change-owner {
     flex-direction: column;
     gap: 20px;
   }
 
-  #project-editor-owner-options{
+  #project-editor-owner-options {
     width: 100% !important;
   }
 
-  #project-editor-owner-confirm{
+  #project-editor-owner-confirm {
     margin-top: 1em !important;
   }
 }
@@ -2523,8 +2554,8 @@ Project Creator and Editor Popup style rules
   gap: 10px;
 }
 
-@media only screen and (max-width:950px){
-  #open-position-details{
+@media only screen and (max-width:950px) {
+  #open-position-details {
     gap: 50px;
   }
 }
@@ -2792,7 +2823,7 @@ button.edit-position-contact .project-member-image {
     display: block;
   }
 
-  
+
   #canvas {
     border: 3px solid var(--primary-color);
     border-radius: 10px;
@@ -2861,7 +2892,7 @@ button.edit-position-contact .project-member-image {
   }
 
   #alt-text-input {
-    margin: 10px auto ;
+    margin: 10px auto;
     width: 85%;
 
     input {
@@ -3988,6 +4019,7 @@ New Project Page style rules
       'people' auto;
   }
 }
+
 @media screen and (max-width: 1020px) {
   #project-editor-team-tabs {
     gap: 4%;
@@ -4000,7 +4032,7 @@ New Project Page style rules
   }
 
   #project-editor-team-tabs::-webkit-scrollbar-thumb {
-      background-color: rgb(113, 114, 118);
+    background-color: rgb(113, 114, 118);
   }
 }
 
@@ -4780,11 +4812,11 @@ button#positions-popup-list-item-active {
     overflow-y: auto;
     padding: 20px;
 
-    
+
     justify-content: flex-start;
     align-items: center;
 
-    
+
     height: auto;
     max-height: none;
   }
@@ -5148,33 +5180,28 @@ button#positions-popup-list-item-active {
 
 .project-contributor-info {
   margin: auto;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(1fr, 3fr));
-  grid-template-rows: 2fr 1fr;
+  display: flex;
+  gap: 5px;
+  justify-content: center;
 
   .team-member-name {
     align-items: center;
     justify-content: center;
     margin: auto 0;
-    grid-column: 2/3;
-    grid-row: 1/2;
     font-weight: 700;
     font-size: 1rem;
     color: var(--primary-color);
   }
 
   .team-member-role {
-    grid-column: 2/3;
-    grid-row: 2/3;
     font-style: italic;
     font-size: clamp(0.625rem, 2vw, 0.875rem);
     font-weight: 400;
     color: var(--neutral-gray);
+    margin-top: 2px;
   }
 
   #owner-crown {
-    grid-column: 1 / 2;
-    grid-row: 1 / 2;
     align-items: center;
     justify-content: center;
     margin: auto 5px;
@@ -5193,7 +5220,7 @@ button#positions-popup-list-item-active {
   font-weight: 700;
   font-size: 1.3rem;
   color: var(--primary-color);
-  
+
 }
 
 #project-people-tab-buttons {

@@ -8,6 +8,7 @@ import { ProjectImageUploader } from "./ImageUploader";
 import { getYouTubeEmbedURL } from "../functions/parseYoutube";
 import { Popup, PopupButton, PopupContent } from "./Popup";
 import { DeleteProjectButton } from "./ProjectCreatorEditor/DeleteProjectButton";
+import { MAX_GALLERY_IMAGES, MAX_GALLERY_VIDEOS } from "../constants/mediaLimits";
 
 interface ImageVideoDisplayProps<Image, Video> {
   thumbnail?: ProjectImage | PendingProjectImage,
@@ -62,8 +63,36 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
   const [videoPopupOpen, setVideoPopupOpen] = useState(false);
 
   const [newVideo, setNewVideo] = useState<Video>({} as Video);
- 
+
   const [confirm, setConfirm] = useState(false);
+
+  // Upload limits live here rather than in MediaTab and GalleryTab separately,
+  // since both render through this component. See constants/mediaLimits.ts.
+  const imageCount = images?.length ?? 0;
+  const videoCount = videos?.length ?? 0;
+  const imageLimitReached = imageCount >= MAX_GALLERY_IMAGES;
+  const videoLimitReached = videoCount >= MAX_GALLERY_VIDEOS;
+
+  /**
+   * Accepts an uploaded image only while there's room left. The uploader is
+   * swapped out at the limit, but a queued multi-select can still deliver
+   * files after the last slot fills, so this backs it up.
+   * @param file the uploaded image
+   * @param altText optional caption entered in the crop popup
+   */
+  const handleImageUploadWithinLimit = (file: File, altText?: string) => {
+    if (imageLimitReached) return;
+    handleImageUpload(file, altText);
+  };
+
+  /**
+   * Accepts a linked video only while there's room left.
+   * @param video the video to add
+   */
+  const handleAddVideoWithinLimit = (video: Video) => {
+    if (videoLimitReached) return;
+    handleAddVideo(video);
+  };
 
   return (
     <div id="project-editor-media">
@@ -71,6 +100,7 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
       <div className="project-editor-extra-info">
         Upload images for showcasing. {thumbnail ? `Star an image for it to be used as
         this project's thumbnail on the Discover and My Projects pages.` : ""}
+        {" "}({imageCount} of {MAX_GALLERY_IMAGES} used)
       </div>
 
       {/* Display warning upon duplicate image */}
@@ -142,7 +172,7 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
                     ariaLabel="change thumbnail"
                     onClick={() => handleThumbnailChange?.(projectImage as ProjectImage | PendingProjectImage)}
                   />
-              : "" }
+                : ""}
 
               {/* Delete icon */}
               <ThemeIcon
@@ -157,15 +187,29 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
           </div>
         ))}
 
-        {/* Image uploader */}
+        {/* Image uploader, replaced by a notice once the gallery is full */}
         <div id="project-editor-add-image">
-          <ProjectImageUploader onFileSelected={handleImageUpload} />
+          {imageLimitReached ? (
+            <div className="drop-area media-limit-reached">
+              <div id="img-view" className="project-uploader">
+                <p className="project-editor-extra-info">
+                  Image limit reached ({MAX_GALLERY_IMAGES})
+                </p>
+                <p className="project-editor-extra-info">
+                  Delete an image to add another
+                </p>
+              </div>
+            </div>
+          ) : (
+            <ProjectImageUploader onFileSelected={handleImageUploadWithinLimit} />
+          )}
         </div>
       </div>
 
       <label>{thumbnail ? "Project" : "Gallery"} Videos</label>
       <div className="project-editor-extra-info">
         Link YouTube videos to be embedded.
+        {" "}({videoCount} of {MAX_GALLERY_VIDEOS} used)
       </div>
 
       <div id="project-editor-image-ui">
@@ -245,7 +289,7 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
               <button
                 className="confirm-btn"
                 onClick={() => {
-                  handleAddVideo(newVideo);
+                  handleAddVideoWithinLimit(newVideo);
                   setVideoPopupOpen(false);
                 }}
               >
@@ -262,17 +306,31 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
               </button>
             </div>
           </div>
-          :
-          <div id="project-editor-add-image">
-            <button id="project-video-uploader" className="drop-area" onClick={() => setVideoPopupOpen(!videoPopupOpen)}>
-              <div id="img-view" className="project-uploader">
-                <svg xmlns="http://www.w3.org/2000/svg" width={38} height={39} viewBox="0 0 448 512">
-                  <path d="M256 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 160-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l160 0 0 160c0 17.7 14.3 32 32 32s32-14.3 32-32l0-160 160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0 0-160z" fill="var(--neutral-gray)" />
-                </svg>
-                <p className="project-editor-extra-info">Click here to add a new video</p>
+          : videoLimitReached
+            ? /* Add-video button replaced by a notice once the gallery is full */
+            <div id="project-editor-add-image">
+              <div className="drop-area media-limit-reached">
+                <div id="img-view" className="project-uploader">
+                  <p className="project-editor-extra-info">
+                    Video limit reached ({MAX_GALLERY_VIDEOS})
+                  </p>
+                  <p className="project-editor-extra-info">
+                    Delete a video to add another
+                  </p>
+                </div>
               </div>
-            </button>
-          </div>
+            </div>
+            :
+            <div id="project-editor-add-image">
+              <button id="project-video-uploader" className="drop-area" onClick={() => setVideoPopupOpen(!videoPopupOpen)}>
+                <div id="img-view" className="project-uploader">
+                  <svg xmlns="http://www.w3.org/2000/svg" width={38} height={39} viewBox="0 0 448 512">
+                    <path d="M256 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 160-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l160 0 0 160c0 17.7 14.3 32 32 32s32-14.3 32-32l0-160 160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0 0-160z" fill="var(--neutral-gray)" />
+                  </svg>
+                  <p className="project-editor-extra-info">Click here to add a new video</p>
+                </div>
+              </button>
+            </div>
         }
       </div>
 
@@ -284,31 +342,39 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
                 <div id="invalid-input-error" className={"save-error-msg-general"}>
                   <p>*{message}*</p>
                 </div>}
-                {
-                  // Switches out the save button for a loading icon if the project is saving
-                  isSaving ? 
+              {
+                // Switches out the save button for a loading icon if the project is saving
+                isSaving ?
                   (
                     // Currently Saving
                     <div className='spinning-loader'></div>
                   ) : (
                     // Save is complete or hasn't been pressed
                     <PopupButton
-                    buttonId="project-editor-save"
-                    callback={() => {
-                      // Incomplete form: still clickable so the save validation runs,
-                      // shows the error, and auto-scrolls to the first missing field.
-                      if (!saveable) saveProject();
-                      else setConfirm(true);
-                    }}
-                  >
-                    Save Changes
-                  </PopupButton>
-                )
+                      buttonId="project-editor-save"
+                      callback={() => {
+                        // Incomplete form: still clickable so the save validation runs,
+                        // shows the error, and auto-scrolls to the first missing field.
+                        if (!saveable) saveProject();
+                        else setConfirm(true);
+                      }}
+                    >
+                      Save Changes
+                    </PopupButton>
+                  )
               }
-                          
+
               {confirm ?
                 <PopupContent useClose={false} callback={() => setConfirm(false)}>
-                  <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+                  <div id="confirm-editor-save-text">
+                    Are you sure you want to save all changes?
+                    {project && project.approved &&
+                      <p id="unapproved-warning">
+                        <i className="fa-solid fa-triangle-exclamation"></i>
+                        Changes to the General tab, or adding or updating Media or Links, will unapprove your project. You'll need to submit it for review again before it can be approved.
+                      </p>
+                    }
+                  </div>
                   <div id="confirm-editor-save">
                     <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
                       Confirm
@@ -317,26 +383,26 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
                       Cancel
                     </PopupButton>
                   </div>
-                </PopupContent> : "" 
+                </PopupContent> : ""
               }
             </Popup>
             {
-            // Hides the delete project button if the project is currently saving
-            isSaving ?
-            (
-              // Just here for blank space and to prevent 
-              // accidental deletion while a project is saving
-              ""
-            ) : (
-              <DeleteProjectButton
-                projectID={project?.projectId}
-                projectTitle={project?.title}
-              />
-            )
+              // Hides the delete project button if the project is currently saving
+              isSaving ?
+                (
+                  // Just here for blank space and to prevent 
+                  // accidental deletion while a project is saving
+                  ""
+                ) : (
+                  <DeleteProjectButton
+                    projectID={project?.projectId}
+                    projectTitle={project?.title}
+                  />
+                )
             }
           </div>
         </div>
-      : ""}
+        : ""}
     </div>
   );
 }

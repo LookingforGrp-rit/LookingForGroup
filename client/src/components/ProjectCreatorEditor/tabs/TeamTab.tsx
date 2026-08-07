@@ -278,7 +278,7 @@ export const TeamTab = ({
 
 	const { setOpen: closeOuterPopup } = useContext(PopupContext);
 	const { setOpen } = useContext(PopupContext);
-	
+
 	// Check if the Pending Requests tab is unsaved
 	const isPendingRequestsUnsaved = useMemo(() => {
 		const currentInvitations = pendingInvitations || [];
@@ -637,19 +637,19 @@ export const TeamTab = ({
 			// prompt user of successfully added member
 			setSuccessAddMember(true);
 			setErrorAddMember(
-				`${currentMember.user.firstName} ${currentMember.user.lastName} added to team!`
+				`Invitation for ${currentMember.user.firstName} ${currentMember.user.lastName} created! It will be sent after your changes are saved.`
 			);
 
 			// reset prompt to clear visual effect of error text
 			setTimeout(() => {
 				setErrorAddMember("");
 				setSuccessAddMember(false);
-			}, 2000);
+			}, 10000);
 
-			// close popup
-			setClosePopup(true);
+			// keep popup open so the user can invite another member without reopening it
+			setClosePopup(false);
+
 			// add member
-
 			if ("localId" in currentMember)
 				(currentMember as PendingProjectMember).localId =
 					++localIdIncrement;
@@ -1543,7 +1543,7 @@ export const TeamTab = ({
 							}
 							else return ""
 						}
-						) : "None"}
+						) : <div id="invalid-input-error"><p>Select up to 5 skills for this position</p></div>}
 				</div>
 			</div>
 			<div id="edit-position-details">
@@ -1945,8 +1945,8 @@ export const TeamTab = ({
 	// Check if team tab is in edit mode
 	const positionWindow =
 		editMode === true ? positionEditWindow : positionViewWindow;
-	
-		// Renders the current member requests interface with member cards and edit functionality.
+
+	// Renders the current member requests interface with member cards and edit functionality.
 	const currentRequestsContent: JSX.Element = useMemo(
 		() => (
 			<div id="project-editor-project-requests">
@@ -2214,7 +2214,7 @@ export const TeamTab = ({
 							}}
 						/>
 						<div className="project-editor-project-member-info">
-							{projectAfterTeamChanges.owner.userId === member.user?.userId ? <ThemeIcon id={'owner-crown'} width={18} height={18} className={'color-fill'} ariaLabel="Project Owner"/> : ""}
+							{projectAfterTeamChanges.owner.userId === member.user?.userId ? <ThemeIcon id={'owner-crown'} width={18} height={18} className={'color-fill'} ariaLabel="Project Owner" /> : ""}
 							<div className="project-editor-project-member-name">
 								{member.user?.firstName} {member.user?.lastName}
 							</div>
@@ -2388,7 +2388,7 @@ export const TeamTab = ({
 												updatePendingProject(
 													projectAfterTeamChanges
 												);
-                        setErrorAddMember("");
+												setErrorAddMember("");
 											}}>
 											Save
 										</PopupButton>
@@ -2657,7 +2657,7 @@ export const TeamTab = ({
 									handlePopupReset();
 								}}
 								className="button-reset">
-								Cancel
+								Close
 							</PopupButton>
 						</div>
 					</PopupContent>
@@ -2736,92 +2736,92 @@ export const TeamTab = ({
 		]
 	);
 
-  const projectOwnershipContent: JSX.Element = useMemo(() => 
-    <div id="project-editor-change-owner">
-      <div
-        key={projectAfterTeamChanges.owner.userId}
-        className="project-editor-owner-info"
-      >
-        <label>Current Owner</label>
-        <div className="project-editor-project-owner-extra">
-          <div id="owner-name">
-            {projectAfterTeamChanges.owner.firstName} {projectAfterTeamChanges.owner.lastName}
-          </div>
-          <div id="owner-user">
-            {projectAfterTeamChanges.owner.username}
-          </div>
-        </div>
-        <img
-          className="project-owner-image"
-          src={projectAfterTeamChanges.owner.profileImage ?? profileImage}
-          alt="profile image"
-          title={"Profile picture"}
-          // Cannot use usePreloadedImage function because this is in a callback
-          onError={(e) => {
-            const profileImg = e.target as HTMLImageElement;
-            profileImg.src = profileImage;
-          }}
-        />
-      </div>
-      {unmodifiedProject.owner.userId === currentUserId ? 
-        <div id="project-editor-owner-options">
-          <label>Change Owner To...</label>
-            <Select>
-              <SelectButton
-                placeholder="Select"
-                initialVal=""
-                type="input"
-                searchable={true}
-              />
-              <SelectOptions
-                callback={(e) => {
-                  setNewOwner(allUsers.find(user => user.userId === Number.parseInt((e.target as HTMLButtonElement).value)) ?? null)
-                }}
-                options={
-                projectAfterTeamChanges.members
-                .filter(m => m.user?.userId !== projectAfterTeamChanges.owner.userId)
-                .map((member) => {
-                  return {
-                    markup: <>
-                      <p className="user-search-name">
-                        {member.user?.firstName}{" "}
-                        {member.user?.lastName}
-                      </p>
-                      <p className="user-search-username">
-                        {member.user?.username}
-                      </p></>,
-                    value: member.user?.userId + "",
-                    disabled: false
-                  };
-                })}
-              />
-            </Select>
-          {newOwner?.userId !== projectAfterTeamChanges.owner.userId ? 
-            <div id="project-editor-owner-confirm">
-              <label>Confirm</label>
-              <button id="change-owner-confirm"
-              onClick={() => {
-                if (newOwner) {
-                  dataManager?.swapOwner({
-                    id: {
-                      type: "canon",
-                      value: newOwner.userId,
-                    },
-                    data: newOwner.userId,
-                  });
-                  projectAfterTeamChanges.owner = newOwner;
-                  updatePendingProject(projectAfterTeamChanges);
-                }
-              }}
-              >
-                Change Ownership
-              </button>
-            </div> 
-          : <></>}
-        </div>
-      : <></>}
-    </div>
-  , [projectAfterTeamChanges, currentUserId, searchBarKey, newOwner, searchResults]);
+	const projectOwnershipContent: JSX.Element = useMemo(() =>
+		<div id="project-editor-change-owner">
+			<div
+				key={projectAfterTeamChanges.owner.userId}
+				className="project-editor-owner-info"
+			>
+				<label>Current Owner</label>
+				<div className="project-editor-project-owner-extra">
+					<div id="owner-name">
+						{projectAfterTeamChanges.owner.firstName} {projectAfterTeamChanges.owner.lastName}
+					</div>
+					<div id="owner-user">
+						{projectAfterTeamChanges.owner.username}
+					</div>
+				</div>
+				<img
+					className="project-owner-image"
+					src={projectAfterTeamChanges.owner.profileImage ?? profileImage}
+					alt="profile image"
+					title={"Profile picture"}
+					// Cannot use usePreloadedImage function because this is in a callback
+					onError={(e) => {
+						const profileImg = e.target as HTMLImageElement;
+						profileImg.src = profileImage;
+					}}
+				/>
+			</div>
+			{unmodifiedProject.owner.userId === currentUserId ?
+				<div id="project-editor-owner-options">
+					<label>Change Owner To...</label>
+					<Select>
+						<SelectButton
+							placeholder="Select"
+							initialVal=""
+							type="input"
+							searchable={true}
+						/>
+						<SelectOptions
+							callback={(e) => {
+								setNewOwner(allUsers.find(user => user.userId === Number.parseInt((e.target as HTMLButtonElement).value)) ?? null)
+							}}
+							options={
+								projectAfterTeamChanges.members
+									.filter(m => m.user?.userId !== projectAfterTeamChanges.owner.userId)
+									.map((member) => {
+										return {
+											markup: <>
+												<p className="user-search-name">
+													{member.user?.firstName}{" "}
+													{member.user?.lastName}
+												</p>
+												<p className="user-search-username">
+													{member.user?.username}
+												</p></>,
+											value: member.user?.userId + "",
+											disabled: false
+										};
+									})}
+						/>
+					</Select>
+					{newOwner?.userId !== projectAfterTeamChanges.owner.userId ?
+						<div id="project-editor-owner-confirm">
+							<label>Confirm</label>
+							<button id="change-owner-confirm"
+								onClick={() => {
+									if (newOwner) {
+										dataManager?.swapOwner({
+											id: {
+												type: "canon",
+												value: newOwner.userId,
+											},
+											data: newOwner.userId,
+										});
+										projectAfterTeamChanges.owner = newOwner;
+										updatePendingProject(projectAfterTeamChanges);
+									}
+								}}
+							>
+								Change Ownership
+							</button>
+						</div>
+						: <></>}
+				</div>
+				: <></>}
+		</div>
+		, [projectAfterTeamChanges, currentUserId, searchBarKey, newOwner, searchResults]);
 
 	// Set content depending on what tab is selected
 	const teamTabContent =
@@ -2832,8 +2832,8 @@ export const TeamTab = ({
 		) : currentTeamTab === 2 ? (
 			openPositionsContent
 		) : currentTeamTab === 3 ? (
-      projectOwnershipContent
-    ) : (
+			projectOwnershipContent
+		) : (
 			<></>
 		);
 
@@ -2919,28 +2919,34 @@ export const TeamTab = ({
 						{
 							// Switches out the save button for a loading icon if the project is saving
 							isSaving ?
-							(
-								// Currently Saving
-								<div className='spinning-loader'></div>
-							) : (
-								// Save is complete or hasn't been pressed
-								<PopupButton
-									buttonId="project-editor-save"
-									callback={() => {
-										// Incomplete form: still clickable so the save validation
-										// runs, shows the error, and auto-scrolls to the missing field.
-										if (!saveable) saveProject?.();
-										else setConfirm(true)
-									}}>
-									Save Changes
-								</PopupButton>
-							)
+								(
+									// Currently Saving
+									<div className='spinning-loader'></div>
+								) : (
+									// Save is complete or hasn't been pressed
+									<PopupButton
+										buttonId="project-editor-save"
+										callback={() => {
+											// Incomplete form: still clickable so the save validation
+											// runs, shows the error, and auto-scrolls to the missing field.
+											if (!saveable) saveProject?.();
+											else setConfirm(true)
+										}}>
+										Save Changes
+									</PopupButton>
+								)
 						}
 
 						{confirm ?
 							<PopupContent useClose={false} callback={() => setConfirm(false)}>
 								<div id="confirm-editor-save-text">
 									Are you sure you want to save all changes?
+									{projectData.approved &&
+										<p id="unapproved-warning">
+											<i className="fa-solid fa-triangle-exclamation"></i>
+											Changes to the General tab, or adding or updating Media or Links, will unapprove your project. You'll need to submit it for review again before it can be approved.
+										</p>
+									}
 								</div>
 								<div id="confirm-editor-save">
 									<PopupButton
@@ -2960,16 +2966,16 @@ export const TeamTab = ({
 					{
 						// Hides the delete project button if the project is currently saving
 						isSaving ?
-						(
-							// Just here for blank space and to prevent 
-							// accidental deletion while a project is saving
-							""
-						) : (
-							<DeleteProjectButton
-								projectID={unmodifiedProject.projectId}
-								projectTitle={unmodifiedProject.title}
-							/>
-						)
+							(
+								// Just here for blank space and to prevent 
+								// accidental deletion while a project is saving
+								""
+							) : (
+								<DeleteProjectButton
+									projectID={unmodifiedProject.projectId}
+									projectTitle={unmodifiedProject.title}
+								/>
+							)
 					}
 				</div>
 			</div>
