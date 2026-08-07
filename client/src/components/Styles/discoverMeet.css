@@ -252,7 +252,7 @@ Meet page hero style rules
     line-height: 22px;
     font-weight: 400;
 
-    span{
+    span {
       font-weight: bold;
       font-style: italic;
     }
@@ -1928,7 +1928,11 @@ Filters / Tags Style Rules
 
 @media (max-width:550px) {
   #filter-tabs>* {
-    font-size: 0.875rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  .filter-tab {
+    padding: 4px 8px !important;
   }
 
   #filters.popup-section {
