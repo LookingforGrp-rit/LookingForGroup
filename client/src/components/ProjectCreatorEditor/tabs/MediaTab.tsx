@@ -266,7 +266,7 @@ export const MediaTab = ({
     dataManager?.deleteVideo({
       id: {
         value: video.videoId,
-        type: video.apiUrl ? "canon" : "local"
+        type: ("isLocal" in video && (video as any).isLocal) ? "local" : "canon"
       },
       data: null
     });
