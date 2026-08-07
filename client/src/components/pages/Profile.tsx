@@ -561,11 +561,13 @@ const Profile = (/*userProfile: any*/) => {
   }, [profileID, setFullProjectList, setDisplayedProjects]);
 
   // Gets the profile data
-  const getProfileData = async (data: MePrivate | undefined) => {
+  const getProfileData = async (current: MePrivate | undefined) => {
+    let isOwnProfile = false;
     // Get the userID for our current user
-    if (data) {
-      setUserID(data.userId);
-      setIsUsersProfile(data.userId.toString() === profileID);
+    if (current) {
+      setUserID(current.userId);
+      isOwnProfile = current.userId.toString() === profileID;
+      setIsUsersProfile(isOwnProfile);
     }
     else { setUserID(-1); }
 
@@ -578,9 +580,7 @@ const Profile = (/*userProfile: any*/) => {
         //console.log(data);
         setDisplayedProfile(data);
         setMajorsArr(data.majors.map((maj) => maj.label));
-        const isOwnProfile = userID > 0 && data.userId === userID;
-        setIsUsersProfile(isOwnProfile);
-        await getProfileProjectData(data.userId, isOwnProfile);
+        await getProfileProjectData(current ? current.userId : 0, isOwnProfile);
         //checkFollow();
       } else {
         navigate(paths.routes.NOTFOUND, { replace: true });
