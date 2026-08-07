@@ -66,7 +66,7 @@ const Settings = (userProfile: any) => {
   }, [dataLoaded, userInfo, navigate, location]);
 
   let tagBlacklist: Tag[] = [];
-  let tags: Tag[] = [];
+  const [tags, setTags] = useState<Tag[]>([]);
 
   const tabsBlacklist: string[] = [
     "Content Warning",
@@ -142,7 +142,7 @@ const Settings = (userProfile: any) => {
       tagBlacklist = [];
     }
 
-    tags = await allTags();
+    setTags(await allTags());
 
     // Don't call API again even if user isn't logged in
     setDataLoaded(true);
