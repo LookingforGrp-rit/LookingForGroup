@@ -13,10 +13,47 @@ vi.mock('#config/prisma.ts', () => ({
     },
     users: {
       findUnique: vi.fn(),
+      findMany: vi.fn(),
       update: vi.fn(),
     },
     session: {
       deleteMany: vi.fn(),
+    },
+    majors: {
+      findMany: vi.fn(),
+    },
+    blocklist: {
+      findMany: vi.fn(),
+    },
+    members: {
+      findMany: vi.fn(),
+    },
+    projectImages: {
+      findMany: vi.fn(),
+    },
+    roles: {
+      findMany: vi.fn(),
+    },
+    skills: {
+      findMany: vi.fn(),
+    },
+    jobSkills: {
+      findMany: vi.fn(),
+    },
+    jobs: {
+      findMany: vi.fn(),
+    },
+    mediums: {
+      findMany: vi.fn(),
+    },
+    tags: {
+      findMany: vi.fn(),
+    },
+    projects: {
+      findMany: vi.fn(),
+    },
+    projectsAwaitingApproval: {
+      findMany: vi.fn(),
     },
   },
 }));

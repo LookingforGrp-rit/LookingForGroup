@@ -316,21 +316,24 @@ input:checked+.slider:before {
   @media (max-width: 500px) {
     #back {
       position: absolute;
+      top: 20px;
     }
 
     .page-title {
       margin-top: 42px;
       padding-top: 35px;
-      width:min-content;
+      width: min-content;
     }
 
-    #header-buttons{
-       position:absolute;
-      
-       #about-btn{
-          padding-left: 7.5px;
-          padding-right: 7.5px;
-       }
+    #header-buttons {
+      position: absolute;
+      top: 20px;
+      right: 16px;
+
+      #about-btn {
+        padding-left: 7.5px;
+        padding-right: 7.5px;
+      }
     }
 
     #header {

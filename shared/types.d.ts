@@ -654,16 +654,23 @@ export interface UserPreview {
   phoneNumber?: string | null;
 
   apiUrl: string;
+
+  /**
+     * Skills the user has selected
+     */
+  skills: UserSkill[];
+
+  /**
+   * The user's RIT status, or null if unset
+   */
+  ritStatus: RitStatus | null;
+
 }
 
 /**
  * The full data of a user, excluding sensitive data
  */
 export interface UserDetail extends UserPreview {
-  /**
-   * The user's RIT status, or null if unset
-   */
-  ritStatus: RitStatus | null;
 
   /**
    * The user's bio
@@ -674,11 +681,6 @@ export interface UserDetail extends UserPreview {
    * Projects the user is a member of and has chosen to show on their profile
    */
   projects: UserMember[];
-
-  /**
-   * Skills the user has selected
-   */
-  skills: UserSkill[];
 
   /**
    * Social media accounts the user has
