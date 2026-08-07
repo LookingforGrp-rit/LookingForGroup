@@ -446,6 +446,10 @@ Project Panel component style rules
         }
       }
     }
+
+    .masonry{
+      overflow-x: hidden;
+    }
   }
 }
 
