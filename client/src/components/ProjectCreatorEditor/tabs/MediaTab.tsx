@@ -148,7 +148,7 @@ export const MediaTab = ({
         // convert to file
         const imageFile = await stringToFile((image as PendingProjectImage).image?.name as string);
         // compare
-        if (file.name === imageFile.name && file.size === imageFile.size && file.webkitRelativePath === imageFile.webkitRelativePath) {
+        if (file.name === imageFile.name && file.webkitRelativePath === imageFile.webkitRelativePath) {
           // TODO: add error to show users cannot add duplicate image
           setImageError("*Sorry, no duplicate images here!*")
           return;

@@ -317,7 +317,7 @@ const ImageUploader = ({
     // Each image gets its own caption. The popup stays mounted between queued
     // files, so the previous image's caption has to be cleared off both the
     // state and the uncontrolled input or it carries over to this one.
-    if (inputAlt.current) inputAlt.current.value = "";
+    // if (inputAlt.current) inputAlt.current.value = "";
 
     if ((file.size > 1000000 && type === "profile") || file.size > 2000000) {
       onFileSelected(file, inputAlt.current?.value);
