@@ -13,7 +13,7 @@ import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editU
 import { MePrivate, Tag, UpdateTagBlacklistInput, UpdateUserInput } from '@looking-for-group/shared';
 import { ProfileEditPopup } from '../Profile/ProfileEditPopup';
 import TagDisplay from '../TagDisplay';
-import type { TagDisplayProps, TagOrSkill } from '../TagDisplay';
+import type { TagDisplayProps, TagOrSkill, tagToTagOrSkill } from '../TagDisplay';
 import { SearchBar } from '../SearchBar';
 type JsonData = Record<string, unknown>;
 
@@ -77,7 +77,6 @@ const Settings = (userProfile: any) => {
     "Style"
   ];
 
-  let tabsBlacklistId: number = 0;
   const [currentTagsTab, setCurrentTagsTab] = useState(0);
 
   // Filtered results from tag search bar
@@ -188,16 +187,32 @@ const Settings = (userProfile: any) => {
       }
     }
 
+    //The duplicates prevent the ui from getting reversed somehow (deselected makes it filled, selected makes it unfilled)
+    //Not sure if anyone else had this issue
+
     //If it's already in the blacklist, remove it
     if (found) {
-      tagBlacklist.splice(foundIndex, 1);
+      setTagBlacklist(tagBlacklist => {
+        const newArray = [...tagBlacklist];
+        newArray.splice(foundIndex, 1);
+        return newArray;
+      });
+
+      //tagBlacklist.splice(foundIndex, 1);
     }
 
     //If it's not in the blacklist, add it
     else {
       const tagsIds = tags.map((tag) => tag.tagId);
       foundIndex = tagsIds.indexOf(id);
-      tagBlacklist.push(tags[foundIndex]);
+
+      setTagBlacklist(tagBlacklist => {
+        const newArray = [...tagBlacklist];
+        newArray.push(tags[foundIndex]);
+        return newArray;
+      });
+
+      //tagBlacklist.push(tags[foundIndex]);
     }
 
     console.log(tagBlacklist);
@@ -932,7 +947,7 @@ const Settings = (userProfile: any) => {
                             }
                           }}
                           className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${tagTabColors[
-                            type as string] ?? 'grey'} ${tabsBlacklistId === index &&
+                            type as string] ?? 'grey'} ${currentTagsTab === index &&
                               blacklistSearchValue === "" ? "tag-search-tab-active" : ""}`}>
                           {type}
                         </button>
@@ -953,13 +968,14 @@ const Settings = (userProfile: any) => {
                     tabId={currentTagsTab}
                     all={tagArrayToTagOrSkillArray(tags)}
                     searchValue={blacklistSearchValue}
-                    searchData={blacklistSearchResults}
+                    searchData={searchedTags as TagOrSkill[]}
                   />
                 </div>
               </div>
               <button
                 type="submit"
-                id="btn-blacklist-apply"
+                className="subsection"
+                id='project-info-edit'
                 onClick={buttonBlacklistApplyClicked}
               >
                 Apply
