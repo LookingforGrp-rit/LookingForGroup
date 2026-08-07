@@ -985,7 +985,7 @@ Page popup style rules
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 20;
+  z-index: 1000;
 }
 
 /*rules for the popup itself*/
@@ -1069,7 +1069,7 @@ Page popup style rules
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 21;
+  z-index: 1001;
   border-radius: 10px;
 }
 

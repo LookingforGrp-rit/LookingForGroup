@@ -168,7 +168,7 @@ export const MediaTab = ({
     try {
       const fullImg = {
         image: file,
-        altText: altText ?? "Project Image",
+        altText: (altText?.length !== undefined && altText.length > 0 ? altText : "Project Image"), 
       } as CreateProjectImageInput;
 
       const localId = ++localIdIncrement;
