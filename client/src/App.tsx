@@ -20,7 +20,6 @@ import CreateProject from './components/pages/CreateProject';
 import AcceptInvitation from './components/pages/AcceptInvitation';
 import AcceptApplication from './components/pages/AcceptApplication';
 //import CreditsFooter from './components/CreditsFooter';  -- Commented in clean up 26-20-01 
-import Credits from './components/pages/CreditsPage';
 import AccountActivation from './components/pages/AccountActivation';
 import { ThemeContext } from './contexts/ThemeContext';
 import AboutPage from './components/pages/About';
@@ -97,7 +96,6 @@ function App() {
           <Route path={paths.routes.MODERATION} element={<ModeratorPage />}/>
           <Route path={paths.routes.NOTFOUND} element={<NotFound />} />
           {/* <Route path={paths.routes.MESSAGEHISTORY} element={<MessageHistory />} /> */}
-          <Route path={paths.routes.CREDITS} element={<Credits />} />
           <Route path={paths.routes.ABOUT} element={<AboutPage />} />
           <Route path={paths.routes.ACCOUNTACTIVATE} element={<AccountActivation />} />
         </Routes>

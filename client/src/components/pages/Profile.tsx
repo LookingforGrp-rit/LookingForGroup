@@ -1,5 +1,4 @@
 //Styles
-import "../Styles/credits.css";
 import "../Styles/discoverMeet.css";
 import "../Styles/emailConfirmation.css";
 import "../Styles/general.css";
