@@ -606,7 +606,7 @@ input:checked+.slider:before {
       color: var(--primary-color);
     }
 
-    /*                  Removing this-- the gray looks out of place
+    /* Removing this-- the gray looks out of place
     .deny-btn:hover {
       background-color: var(--neutral-gray);
       color: var(--invert-text);
@@ -654,14 +654,20 @@ input:checked+.slider:before {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: auto !important;
   height: 300px;
+  min-width: 200px;
   padding: 20px;
   margin: 0 0 30px!important;
   background-color: var(--header-color);
   border-radius: 12px;
   overflow-y: auto;
-  scrollbar-color: var(--primary-color) var(--bg-color);
+  scrollbar-color: var(--primary-color) var(--header-color);
   scrollbar-width: thin;
+}
+
+.blocklist:has(#no-blocks)  {
+  height: auto;
 }
 
 .blocked-user {
@@ -789,5 +795,12 @@ input:checked+.slider:before {
         margin: 0 auto;
       }
     }
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .blocked-user {
+    flex-direction: column;
+    gap: 10px;
   }
 }

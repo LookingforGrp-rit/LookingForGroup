@@ -611,10 +611,24 @@ const Settings = (userProfile: any) => {
             </div>
 
             <hr />
+            
+            {/* Blocklist */}
             <div className="settings-row">
               <h2 className="settings-header">Blocklist</h2>
               <div className="settings-column blocklist">
-                {blocklist.map(b => <UnblockUser user={b} />)}
+                {blocklist.length !== 0
+                  ? blocklist.map(b =>
+                    <UnblockUser
+                      user={b}
+                      onUnblock={
+                        (userId: number) => {
+                          setBlocklist((prev) => prev.filter((u) => u.userId !== userId));
+                        }
+                      }
+                    />
+                  )
+                  : <p id='no-blocks'>No blocked user!</p>
+                }
               </div>
             </div>
 
