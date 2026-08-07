@@ -9,11 +9,19 @@ import { Header } from '../Header';
 //import PasswordValidator from 'password-validator';
 import ToTopButton from '../ToTopButton';
 import * as paths from '../../constants/routes';
-import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editUser, getTagExclusion, getAllTags, updateTagExclusion } from '../../api/users';
-import { MePrivate, Tag, UpdateTagBlacklistInput, UpdateUserInput } from '@looking-for-group/shared';
+import {
+  getUserByEmail,
+  getUserByUsername,
+  getCurrentAccount,
+  deleteUser,
+  editUser,
+  getBlockedUsers,
+  getTagExclusion,
+  getAllTags,
+  updateTagExclusion
+} from '../../api/users';
+import { MePrivate, Tag, UpdateTagBlacklistInput, UpdateUserInput, UserPreview } from '@looking-for-group/shared';
 import UnblockUser from '../UnblockUser';
-import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editUser, getBlockedUsers } from '../../api/users';
-import { MePrivate, UpdateUserInput, UserPreview } from '@looking-for-group/shared';
 import { ProfileEditPopup } from '../Profile/ProfileEditPopup';
 import TagDisplay from '../TagDisplay';
 import type { TagDisplayProps, TagOrSkill, tagToTagOrSkill } from '../TagDisplay';
@@ -823,7 +831,7 @@ const Settings = (userProfile: any) => {
             </div>
 
             <hr />
-            
+
             {/* Blocklist */}
             <div className="settings-row">
               <h2 className="settings-header">Blocklist</h2>
