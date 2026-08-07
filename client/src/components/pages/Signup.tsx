@@ -415,7 +415,6 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
             /> */}
 
             <div id="googleBtn"></div>
-            <span className="spacer"> </span>
             {/* <input
               className="signup-input"
               autoComplete="off"
