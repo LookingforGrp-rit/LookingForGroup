@@ -55,6 +55,17 @@
     border: 2px dashed #424242;
     border-radius: 10px;
 }
+/* Stands in for the uploader once a gallery hits its limit (see
+   constants/mediaLimits.ts). Same dashed box, but inert. */
+.media-limit-reached {
+    cursor: default;
+    opacity: 0.6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
 .drop-area-drag-over {
     height: 100%;
     width: 100%;
