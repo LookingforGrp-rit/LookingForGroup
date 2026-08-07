@@ -8,7 +8,7 @@ import { Medium, Skill, Tag } from "@looking-for-group/shared";
  * @param type - the broader grouper, in a string format to allow for all type data types
  * @param category - the more specific grouper, in a string format to allow for all category data types
 */
-type TagOrSkill = {
+export type TagOrSkill = {
   label: string;
   id: number;
   type: string;
@@ -114,7 +114,7 @@ const CatOrder: Record<string, number> = {
  * @param searchValue - the value of the search bar present in the tag/skill menu
  * @param searchData - the returned array of tags/skills found by the search bar
 */
-interface TagDisplayProps {
+export interface TagDisplayProps {
   selected: TagOrSkill[];
   toggleTag: (id: number, type: string) => void;
   tabs: string[];

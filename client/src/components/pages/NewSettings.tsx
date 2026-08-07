@@ -4,15 +4,28 @@ import { Popup, PopupButton, PopupContent } from '../Popup';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import { ThemeIcon } from '../ThemeIcon';
 import { useNavigate } from 'react-router-dom';
-import { useState, useContext, SetStateAction, useEffect } from 'react';
+import { useState, useContext, SetStateAction, useEffect, useCallback } from 'react';
 import { Header } from '../Header';
 //import PasswordValidator from 'password-validator';
 import ToTopButton from '../ToTopButton';
 import * as paths from '../../constants/routes';
+import {
+  getUserByEmail,
+  getUserByUsername,
+  getCurrentAccount,
+  deleteUser,
+  editUser,
+  getBlockedUsers,
+  getTagExclusion,
+  getAllTags,
+  updateTagExclusion
+} from '../../api/users';
+import { MePrivate, Tag, UpdateTagBlacklistInput, UpdateUserInput, UserPreview } from '@looking-for-group/shared';
 import UnblockUser from '../UnblockUser';
-import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editUser, getBlockedUsers } from '../../api/users';
-import { MePrivate, UpdateUserInput, UserPreview } from '@looking-for-group/shared';
 import { ProfileEditPopup } from '../Profile/ProfileEditPopup';
+import TagDisplay from '../TagDisplay';
+import type { TagDisplayProps, TagOrSkill, tagToTagOrSkill } from '../TagDisplay';
+import { SearchBar } from '../SearchBar';
 type JsonData = Record<string, unknown>;
 
 /**
@@ -68,6 +81,35 @@ const Settings = (userProfile: any) => {
     }
   }, [dataLoaded, userInfo, navigate, location]);
 
+  const [tagBlacklist, setTagBlacklist] = useState<Tag[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
+
+  const tabsBlacklist: string[] = [
+    "Content Warning",
+    "Context",
+    "Game Engine",
+    "Genre",
+    "Purpose",
+    "Style"
+  ];
+
+  const [currentTagsTab, setCurrentTagsTab] = useState(0);
+
+  // Filtered results from tag search bar
+  const [searchedTags, setSearchedTags] = useState<unknown[]>([]);
+  const [blacklistSearchValue, setSearchValue] = useState("");
+
+  // Category color for each tag tab, matching the tag/filter-tab colors.
+  const tagTabColors: Record<string, string> = {
+    Medium: 'blue',
+    Genre: 'green',
+    Style: 'pink',
+    Purpose: 'orange',
+    "Content Warning": 'red', //TODO: replace this red (and maybe the orange) with updated colors once those colors are decided
+    'Game Engine': 'yellow',
+    'Project Type': 'blue'
+  };
+
   // --------------------
   // Helper functions
   // --------------------
@@ -100,6 +142,23 @@ const Settings = (userProfile: any) => {
       setUserInfo(acc.data);
     }
 
+    const tagBlacklistRes = await getTagExclusion();
+
+    //Success
+    if (tagBlacklistRes.status === 200) {
+      if (tagBlacklistRes.data) {
+        setTagBlacklist(tagBlacklistRes.data);
+      }
+    }
+
+    //Not Found
+    //Not else if so it always checks
+    if (tagBlacklistRes.status === 404 || !tagBlacklistRes.data) {
+      setTagBlacklist([]);
+    }
+
+    setTags(await allTags());
+
     // Don't call API again even if user isn't logged in
     setDataLoaded(true);
   };
@@ -107,6 +166,155 @@ const Settings = (userProfile: any) => {
   // Uses stateful variable to only run once at initial render
   if (!dataLoaded) {
     getUserData();
+  }
+
+  /**
+   * Converts a Tag[] to a TagOrSkill[] because they're different for some reason
+   * @param tagArray The Tag[] to cast
+   * @returns Equivalent TagOrSkill[]
+   */
+  const tagArrayToTagOrSkillArray = (tagArray: Tag[]): TagOrSkill[] => {
+    let tagOrSkillArray: TagOrSkill[] = [];
+
+    //Theres probably a better way of doing this
+    for (let i = 0; i < tagArray.length; i++) {
+      const tagOrSkill: TagOrSkill = {
+        label: tagArray[i].label,
+        id: tagArray[i].tagId,
+        type: tagArray[i].type,
+        category: tagArray[i].category
+      };
+
+      tagOrSkillArray.push(tagOrSkill);
+    }
+
+    return tagOrSkillArray;
+  }
+
+  const toggleTagBlacklist = (id: number, type: string) => {
+    //Look for the tag in the blacklist
+    let found: boolean = false;
+    let foundIndex: number = -1;
+
+    for (let i = 0; i < tagBlacklist.length; i++) {
+      if (tagBlacklist[i].tagId === id) {
+        found = true;
+        foundIndex = i;
+      }
+    }
+
+    setTagBlacklist((tagBlacklist) => {
+      const newTagBlacklist = [...tagBlacklist];
+
+      //If it's already in the blacklist, remove it
+      if (found) {
+        newTagBlacklist.splice(foundIndex, 1);
+      }
+
+      //If it's not in the blacklist, add it
+      else {
+        const tagsIds = tags.map((tag) => tag.tagId);
+        foundIndex = tagsIds.indexOf(id);
+        newTagBlacklist.push(tags[foundIndex]);
+      }
+
+      console.log(newTagBlacklist);
+      return newTagBlacklist;
+    });
+
+    //The duplicates prevent the ui from getting reversed somehow (deselected makes it filled, selected makes it unfilled)
+    //Not sure if anyone else had this issue
+
+    //If it's already in the blacklist, remove it
+    // if (found) {
+    //   setTagBlacklist(tagBlacklist => {
+    //     const newArray = [...tagBlacklist];
+    //     newArray.splice(foundIndex, 1);
+    //     return newArray;
+    //   });
+
+    //   //tagBlacklist.splice(foundIndex, 1);
+    // }
+
+    // //If it's not in the blacklist, add it
+    // else {
+    //   const tagsIds = tags.map((tag) => tag.tagId);
+    //   foundIndex = tagsIds.indexOf(id);
+
+    //   setTagBlacklist(tagBlacklist => {
+    //     const newArray = [...tagBlacklist];
+    //     newArray.push(tags[foundIndex]);
+    //     return newArray;
+    //   });
+
+    //   //tagBlacklist.push(tags[foundIndex]);
+    // }
+
+    console.log(tagBlacklist);
+  }
+
+  /**
+   * Gets all tags
+   * Seperate function in case it's needed elsewhere
+   * @returns Tag[] of all tags
+   */
+  const allTags = async (): Promise<Tag[]> => {
+    const getAllTagsRes = await getAllTags();
+    let allTagsData: Tag[] = [];
+
+    //Success
+    if (getAllTagsRes.status === 200) {
+      allTagsData = getAllTagsRes.data;
+    }
+
+    //Internal server error
+    else if (getAllTagsRes.status === 500) {
+      console.log(`Internal server error in getAlltags: ${getAllTagsRes}`);
+    }
+
+    return allTagsData;
+  }
+
+  let blacklistSearchResults: TagOrSkill[] = tagArrayToTagOrSkillArray(tags);
+
+  /**
+   * Update the blacklist on backend
+   */
+  const buttonBlacklistApplyClicked = async () => {
+    const updateTagBlacklist: UpdateTagBlacklistInput = {
+      tagBlacklist: tagBlacklist
+    };
+
+    const updateTagExclusionRes = await updateTagExclusion(updateTagBlacklist);
+
+    //Success is 201
+
+    //Invalid request
+    if (updateTagExclusionRes.status === 400) {
+      console.log(`Invalid request for updateTagExclusionRes: ${updateTagExclusionRes}`);
+    }
+
+    //Failed/missing authentication
+    else if (updateTagExclusionRes.status === 401) {
+      console.log(`Failed/missing authentication for updateTagExclusionRes: ${updateTagExclusionRes}`);
+    }
+
+    //Not found
+    else if (updateTagExclusionRes.status === 404) {
+      console.log(`updateTagExclusionRes not found: ${updateTagExclusionRes}`);
+    }
+
+    //Conflict
+    else if (updateTagExclusionRes.status === 409) {
+      console.log(`updateTagExclusionRes already exists: ${updateTagExclusionRes}`);
+    }
+
+    //Internal server error
+    else if (updateTagExclusionRes.status === 500) {
+      console.log(`Internal server error in updateTagExclusionRes: ${updateTagExclusionRes}`);
+    }
+
+    window.location.reload();
   }
 
   // --------------------
@@ -503,6 +711,18 @@ const Settings = (userProfile: any) => {
       setThemeOption("Light Mode")
   }, [theme])
 
+  // Callback for the SearchBar component that updates the displayed tags based on search results.
+  const handleSearch = useCallback((results: unknown[][]) => {
+    // setSearchResults(results);
+    if (results.length === 0 && tags.length !== 0) {
+      // no results or current data set
+      setSearchedTags([]);
+    }
+    else {
+      setSearchedTags(results[0]);
+    }
+  }, [tags.length, setSearchedTags]);
+
   return (
     <main className="page" style={{ position: 'relative' }} tabIndex={-1}>
       {/* Search bar is not used in settings */}
@@ -611,7 +831,7 @@ const Settings = (userProfile: any) => {
             </div>
 
             <hr />
-            
+
             {/* Blocklist */}
             <div className="settings-row">
               <h2 className="settings-header">Blocklist</h2>
@@ -752,6 +972,70 @@ const Settings = (userProfile: any) => {
               </div>
             </div>
             <hr />
+            <div className="subsection">
+              <h2 className="settings-header">Content Restriction</h2>
+              Hide content that you're not interested in.
+
+              <div id="project-editor-tag-search">
+                <SearchBar
+                  key={currentTagsTab}
+                  dataSets={[{
+                    data: tags.filter((tag) => tag.type != "Positions" &&
+                      tag.type != "Context" &&
+                      tag.type != "Major")
+                  }]}
+                  onSearch={handleSearch}
+                  value={blacklistSearchValue}
+                  setValue={setSearchValue}
+                  placeholderText='Search for Tag'
+                />
+                <div id="project-editor-tag-wrapper">
+                  <div id="project-editor-tag-search-tabs">
+                    {tabsBlacklist.map((type, index) =>
+                      <>
+                        <button
+                          onClick={() => {
+                            setCurrentTagsTab(index);
+                            let container = document.getElementById("project-editor-tag-search-container");
+                            if (container) {
+                              container.scrollTop = 0; //shows error but still works?
+                            }
+                          }}
+                          className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${tagTabColors[
+                            type as string] ?? 'grey'} ${currentTagsTab === index &&
+                              blacklistSearchValue === "" ? "tag-search-tab-active" : ""}`}>
+                          {type}
+                        </button>
+                        {
+                          type == "Project Type" &&
+                          <span id="vertical-line"></span>
+                        }
+                      </>
+                    )}
+                  </div>
+                  <hr id="tag-search-divider" />
+                </div>
+                <div id="project-editor-tag-search-container">
+                  <TagDisplay
+                    selected={tagArrayToTagOrSkillArray(tagBlacklist)}
+                    toggleTag={toggleTagBlacklist}
+                    tabs={tabsBlacklist}
+                    tabId={currentTagsTab}
+                    all={tagArrayToTagOrSkillArray(tags)}
+                    searchValue={blacklistSearchValue}
+                    searchData={searchedTags as TagOrSkill[]}
+                  />
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="subsection"
+                id='project-info-edit'
+                onClick={buttonBlacklistApplyClicked}
+              >
+                Apply
+              </button>
+            </div>
             <div className="settings-row settings-row-actions">
               {/* Edit Profile — opens the same editor popup used on the profile page */}
               <div className="subsection">
@@ -782,7 +1066,9 @@ const Settings = (userProfile: any) => {
                       <div className="delete-user-button-pair">
                         {/* Popup if user presses delete account to show successful delete action */}
                         <Popup>
-                          <PopupButton className="delete-button" callback={deleteAccountPressed} disabled={notValid}>Delete Account</PopupButton>
+                          <PopupButton className="delete-button" callback={deleteAccountPressed} disabled={notValid}>
+                            Delete Account
+                          </PopupButton>
                           <PopupContent>
                             <div className="small-popup">
                               <div id="delete-success-title">{
