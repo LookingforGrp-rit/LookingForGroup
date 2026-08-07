@@ -5,13 +5,15 @@
 
 @import url(./aboutPage.css);
 @import url(./aboutTab.css);
-@import url(./credits.css);
+@import url(./acceptInvite.css);
+@import url(./deleteUser.css);
 @import url(./discoverMeet.css);
 @import url(./emailConfirmation.css);
 @import url(./general.css);
 @import url(./imageUploader.css);
 @import url(./linksTab.css);
 @import url(./loginSignup.css);
+@import url(./modPage.css);
 @import url(./NotFound.css);
 @import url(./pages.css);
 @import url(./profile.css);

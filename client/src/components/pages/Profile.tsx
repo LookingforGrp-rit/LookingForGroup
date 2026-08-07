@@ -1,5 +1,4 @@
 //Styles
-import "../Styles/credits.css";
 import "../Styles/discoverMeet.css";
 import "../Styles/emailConfirmation.css";
 import "../Styles/general.css";
@@ -26,7 +25,7 @@ import profilePicture from "../../images/lfrog.png";
 import {
   getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing,
   getJobTitles,
-  getBlockedUsersById,
+  getBlockedUsers,
   blockUser,
   unblockUser,
   getGalleryImages,
@@ -444,13 +443,13 @@ const Profile = (/*userProfile: any*/) => {
   const checkUserBlocked = async () => {
     if (!parseInt(profileID)) return;
     
-    const blocklistRequest = await getBlockedUsersById();
+    const blocklistRequest = await getBlockedUsers();
 
     if (blocklistRequest.status === 200) {
       const blocklistUserIds = blocklistRequest.data.map((user: UserPreview) => user.userId);
       setIsBlocked(blocklistUserIds.includes(parseInt(profileID)));
     } else {
-      console.log(`Error on getBlockedUsersById`, blocklistRequest.error);
+      console.log(`Error on getBlockedUsers`, blocklistRequest.error);
     }
   };
 
