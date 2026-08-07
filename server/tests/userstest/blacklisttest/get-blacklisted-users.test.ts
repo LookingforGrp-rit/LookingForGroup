@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
+import { UserDetailSelector } from '#services/selectors/users/user-detail.ts';
 import { transformUserToDetail } from '#services/transformers/users/user-detail.ts';
 import { getBlacklistedUsersService } from '#services/users/blacklist/get-blacklisted-users.ts';
 
@@ -7,6 +8,7 @@ import { getBlacklistedUsersService } from '#services/users/blacklist/get-blackl
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/unbound-method */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 
 vi.mock('#config/prisma.ts', () => ({
   default: {
@@ -49,10 +51,12 @@ const transformed = [
   {
     userId: 1,
     username: 'user1',
+    firstName: 'user1',
   },
   {
     userId: 2,
     username: 'user2',
+    firstName: 'user2',
   },
 ];
 
@@ -64,7 +68,9 @@ describe('getBlacklistedUsersService', async () => {
   it('returns an array of blacklisted users if found', async () => {
     vi.mocked(prisma.userBlacklist.findMany).mockResolvedValue(prismaBlacklist);
     vi.mocked(prisma.users.findMany).mockResolvedValue(prismaUsers as any);
-    vi.mocked(transformUserToDetail).mockResolvedValue(transformed as any);
+    vi.mocked(transformUserToDetail).mockImplementation((user: { userId: number }) => {
+      return transformed.find((transformedUser) => transformedUser.userId === user.userId) as any;
+    });
 
     const result = await getBlacklistedUsersService();
 
@@ -75,6 +81,7 @@ describe('getBlacklistedUsersService', async () => {
           in: prismaBlacklist.map((b) => b.googleId),
         },
       },
+      select: UserDetailSelector,
     });
     expect(transformUserToDetail).toHaveBeenCalledTimes(prismaUsers.length);
     expect(result).toStrictEqual(transformed);

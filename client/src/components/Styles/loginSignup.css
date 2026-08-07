@@ -161,17 +161,20 @@ Login and Signup page style rules
 
 .signup-form-inputs,
 .login-form-inputs {
-  /* border: 1px solid black; */
   width: 100%;
   max-width: 320px;
   max-height: 340px;
   height: auto;
-  margin: 20px auto;
+  margin: 15px auto 20px auto; /* accounts for error message padding -- looks more centered */
   gap: 15px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: stretch;
+  align-items: center;
+
+  #googleBtn {
+    align-self: stretch;
+  }
 }
 
 .signup-form p {

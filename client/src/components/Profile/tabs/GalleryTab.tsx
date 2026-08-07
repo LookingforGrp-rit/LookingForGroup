@@ -101,7 +101,7 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
       ...newImages, 
       { 
         image, 
-        altText: altText ?? "Gallery Image", 
+        altText: (altText?.length !== undefined && altText.length > 0 ? altText : "Gallery Image"), 
         localId: localIdIncrement,
       }
     ]);
@@ -112,7 +112,7 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
       },
       data: {
         file: image,
-        altText: altText ?? "Gallery Image",
+        altText:  (altText?.length !== undefined && altText.length > 0 ? altText : "Gallery Image"),
       }
     });
     localIdIncrement++;

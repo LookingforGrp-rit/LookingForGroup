@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { FileImage } from './FileImage';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { Select, SelectButton, SelectOptions } from './Select';
@@ -52,6 +52,14 @@ const ImageUploader = ({
 }: ImageUploaderProps) => {
   // Ref for reading selected files
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  // Unique per instance. This used to be a hard-coded "image-uploader" on both
+  // variants, so whenever two uploaders were mounted at once the ids collided
+  // and the label's htmlFor resolved to whichever input came first in the DOM.
+  // Clicking this label then opened a *different* uploader's file dialog, and
+  // the chosen file was handed to that other instance. Dropping a file was
+  // unaffected, because the drop handler writes straight to inputRef.
+  const inputId = useId();
 
   const [zoom, setZoom] = useState(100);
   const [dX, setDX] = useState(0);
@@ -365,6 +373,10 @@ const ImageUploader = ({
 
     // allow only one image per upload
     if (files.length > 1) {
+      // Cleared before bailing out, otherwise the input keeps this selection
+      // and picking the exact same files again fires no change event at all,
+      // so the second attempt silently does nothing.
+      input.value = "";
       alert("Only one image can be uploaded at a time.");
       return;
     }
@@ -472,39 +484,43 @@ const ImageUploader = ({
   }, [loadingImage, pendingFiles, setCropImg]);
 
   const cropPopup = useMemo(
-  () => cropImg !== undefined ?
-    <Popup startOpen={true}>
-      <PopupContent confirmation={true} callback={closePopup}>
-        <div className="project-crop">
-        <label id="project-crop-header">Crop image for thumbnail usage</label>
-        <div className="project-crop-extra-info">
-          Crop your image to a set ratio that better matches the site.
-        </div>
-        <canvas ref={canvas} id="canvas"
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onWheel={(e) => {    
-            e.preventDefault();
-            e.stopPropagation();
-            handleWheel(e);}
-          }
-          onContextMenu={(e) => e.preventDefault()}
-            width={getCanvasDimensions(aspectRatio).width}
-            height={getCanvasDimensions(aspectRatio).height}
-            style={{ aspectRatio: AspectRatios[aspectRatio], touchAction: "none" }} //touchaction none, without mobile drag moves screen up and down too, not just in image
-          onTouchStart={(e) => {
-            if (e.touches.length === 1) handleTouchStart(e);
-            if (e.touches.length === 2) handlePinchStart(e);}}
-          onTouchMove={(e) => {
-            e.preventDefault(); // IMPORTANT: stops page scrolling
-            if (e.touches.length === 1) handleTouchMove(e);
-            if (e.touches.length === 2) handlePinchMove(e);}}
-          onTouchEnd={(e) => {
-            if (e.touches.length === 1) handleTouchEnd();
-            if (e.touches.length === 2) handlePinchEnd();}}
-        ></canvas>
+    () => cropImg !== undefined ?
+      <Popup startOpen={true}>
+        <PopupContent confirmation={true} callback={closePopup}>
+          <div className="project-crop">
+            <label id="project-crop-header">Crop image for thumbnail usage</label>
+            <div className="project-crop-extra-info">
+              Crop your image to a set ratio that better matches the site.
+            </div>
+            <canvas ref={canvas} id="canvas"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onWheel={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleWheel(e);
+              }
+              }
+              onContextMenu={(e) => e.preventDefault()}
+              width={getCanvasDimensions(aspectRatio).width}
+              height={getCanvasDimensions(aspectRatio).height}
+              style={{ aspectRatio: AspectRatios[aspectRatio], touchAction: "none" }} //touchaction none, without mobile drag moves screen up and down too, not just in image
+              onTouchStart={(e) => {
+                if (e.touches.length === 1) handleTouchStart(e);
+                if (e.touches.length === 2) handlePinchStart(e);
+              }}
+              onTouchMove={(e) => {
+                e.preventDefault(); // IMPORTANT: stops page scrolling
+                if (e.touches.length === 1) handleTouchMove(e);
+                if (e.touches.length === 2) handlePinchMove(e);
+              }}
+              onTouchEnd={(e) => {
+                if (e.touches.length === 1) handleTouchEnd();
+                if (e.touches.length === 2) handlePinchEnd();
+              }}
+            ></canvas>
             {/* <img ref={tempImage} id="refImage" src={cropImg} alt={cropImg} /> */}
             <div id="aspect-row">
               <Select>
@@ -540,7 +556,7 @@ const ImageUploader = ({
               </Select>
             </div>
             <div className="project-crop-mouse-instructions">
-              <p>You can also drag the image around the view using the mouse,<br/>and zoom in and out with the scroll wheel.</p>
+              <p>You can also drag the image around the view using the mouse,<br />and zoom in and out with the scroll wheel.</p>
             </div>
             <div id="hide-range-rows">
               <div id="zoom-row">
@@ -645,7 +661,7 @@ const ImageUploader = ({
   const profileVariant = (
     <>
       {cropPopup}
-      <label htmlFor="image-uploader" id="profile-image-uploader" className={labelName}
+      <label htmlFor={inputId} id="profile-image-uploader" className={labelName}
         onDragEnter={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -675,8 +691,12 @@ const ImageUploader = ({
         <input
           type="file"
           name="image"
-          id="image-uploader"
-          accept=".png, .jpg, .jpeg"
+          id={inputId}
+          // Filter by MIME type, not extension, so the browse dialog accepts
+          // exactly what handleImgChange accepts. An extension list rejects
+          // .jfif/.jpe/extensionless files that are still image/jpeg, and those
+          // drag in fine, so browsing appears broken for a file that works.
+          accept="image/png, image/jpeg"
           ref={inputRef}
           onChange={handleImgChange}
           disabled={cropImg !== undefined}
@@ -723,7 +743,7 @@ const ImageUploader = ({
   const projectVariant = (
     <>
       {cropPopup}
-      <label htmlFor="image-uploader" id="project-image-uploader" className={labelName}
+      <label htmlFor={inputId} id="project-image-uploader" className={labelName}
         onDragEnter={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -753,8 +773,12 @@ const ImageUploader = ({
         <input
           type="file"
           name="image"
-          id="image-uploader"
-          multiple accept=".png, .jpg, .jpeg"
+          id={inputId}
+          // Filter by MIME type, not extension, so the browse dialog accepts
+          // exactly what handleImgChange accepts. An extension list rejects
+          // .jfif/.jpe/extensionless files that are still image/jpeg, and those
+          // drag in fine, so browsing appears broken for a file that works.
+          multiple accept="image/png, image/jpeg"
           ref={inputRef}
           onChange={handleImgChange}
           // onClick={() => setLoadingImage(true)} //causing #2511 issues

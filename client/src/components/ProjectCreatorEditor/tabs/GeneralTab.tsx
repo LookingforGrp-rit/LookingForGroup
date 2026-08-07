@@ -30,11 +30,11 @@ type GeneralTabProps = {
   unmodifiedProject: ProjectWithFollowers;
   saveProject?: () => Promise<void>;
   updatePendingProject?: (updatedPendingProject: PendingProject) => void;
-  saveable : boolean;
+  saveable: boolean;
   failCheck: boolean;
   updateFailCheck: boolean;
   message: string;
-  isSaving : boolean;
+  isSaving: boolean;
 };
 
 /**
@@ -53,8 +53,8 @@ export const GeneralTab = ({
   dataManager,
   projectData,
   unmodifiedProject,
-  saveProject = async () => {},
-  updatePendingProject = () => {},
+  saveProject = async () => { },
+  updatePendingProject = () => { },
   saveable,
   failCheck,
   updateFailCheck,
@@ -63,7 +63,7 @@ export const GeneralTab = ({
 }: GeneralTabProps) => {
 
   projectAfterGeneralChanges = structuredClone(projectData);
-  
+
   const projectId = projectData.projectId!;
   const saveButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -317,69 +317,77 @@ export const GeneralTab = ({
       />
       <div id="general-save-info">
         <div className="editor-save-actions">
-        <Popup>
-          {saveable ? "" :
-          <div id="invalid-input-error" className={"save-error-msg-general"}>
-            <p>*{message}*</p>
-          </div>}
+          <Popup>
+            {saveable ? "" :
+              <div id="invalid-input-error" className={"save-error-msg-general"}>
+                <p>*{message}*</p>
+              </div>}
+
+            {
+              // Switches out the save button for a loading icon if the project is saving
+              isSaving ?
+                (
+                  // Currently Saving
+                  <div className='spinning-loader'></div>
+                ) : (
+                  // Save is complete or hasn't been pressed
+                  <PopupButton
+                    buttonId="project-editor-save"
+                    callback={() => {
+                      // Incomplete form: still clickable so the save validation runs,
+                      // shows the error, and auto-scrolls to the first missing field.
+                      if (!saveable) {
+                        saveProject?.();
+                        return;
+                      }
+                      else setConfirm(true);
+                      console.log(`Current save ref: ${saveButtonRef.current}`);
+                      saveButtonRef.current?.focus();
+                    }}
+                  >
+                    Save Changes
+                  </PopupButton>
+                )
+            }
+
+            {confirm ?
+              <PopupContent useClose={false} callback={() => setConfirm(false)}>
+                <div id="confirm-editor-save-text">
+                  Are you sure you want to save all changes?
+                  {projectData.approved &&
+                    <p id="unapproved-warning">
+                      <i className="fa-solid fa-triangle-exclamation"></i>
+                      Changes to the General tab, or adding or updating Media or Links, will unapprove your project. You'll need to submit it for review again before it can be approved.
+                    </p>
+                  }
+                </div>
+                <div id="confirm-editor-save">
+                  <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save"
+                    ref={saveButtonRef} >
+                    Confirm
+                  </PopupButton>
+                  <PopupButton buttonId="team-edit-member-cancel-button">
+                    Cancel
+                  </PopupButton>
+                </div>
+              </PopupContent> : ""
+            }
+          </Popup>
 
           {
-            // Switches out the save button for a loading icon if the project is saving
-            isSaving ? 
-            (
-              // Currently Saving
-              <div className='spinning-loader'></div>
-            ) : (
-              // Save is complete or hasn't been pressed
-              <PopupButton
-                buttonId="project-editor-save"
-                callback={() => {
-                  // Incomplete form: still clickable so the save validation runs,
-                  // shows the error, and auto-scrolls to the first missing field.
-                  if (!saveable) {
-                    saveProject?.();
-                    return;
-                  }
-                  else setConfirm(true);
-                  console.log(`Current save ref: ${saveButtonRef.current}`);
-                  saveButtonRef.current?.focus();
-                }}
-              >
-                Save Changes
-              </PopupButton>
-            )
+            // Hides the delete project button if the project is currently saving
+            isSaving ?
+              (
+                // Just here for blank space and to prevent 
+                // accidental deletion while a project is saving
+                ""
+              ) : (
+                <DeleteProjectButton
+                  projectID={unmodifiedProject.projectId}
+                  projectTitle={unmodifiedProject.title}
+                />
+              )
           }
-        
-          {confirm ?
-            <PopupContent useClose={false} callback={() => setConfirm(false)}>
-              <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
-              <div id="confirm-editor-save">
-                <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save"
-                    ref={saveButtonRef} >
-                  Confirm
-                </PopupButton>
-                <PopupButton buttonId="team-edit-member-cancel-button">
-                  Cancel
-                </PopupButton>
-              </div>
-            </PopupContent> : ""
-          }
-        </Popup>
-        
-        {
-          // Hides the delete project button if the project is currently saving
-          isSaving ?
-          (
-            // Just here for blank space and to prevent 
-            // accidental deletion while a project is saving
-            ""
-          ) : (
-            <DeleteProjectButton
-              projectID={unmodifiedProject.projectId}
-              projectTitle={unmodifiedProject.title}
-            />
-          )
-        }
         </div>
       </div>
 
