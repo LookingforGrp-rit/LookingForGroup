@@ -637,19 +637,19 @@ export const TeamTab = ({
 			// prompt user of successfully added member
 			setSuccessAddMember(true);
 			setErrorAddMember(
-				`${currentMember.user.firstName} ${currentMember.user.lastName} added to team!`
+				`Invitation for ${currentMember.user.firstName} ${currentMember.user.lastName} created! It will be sent after your changes are saved.`
 			);
 
 			// reset prompt to clear visual effect of error text
 			setTimeout(() => {
 				setErrorAddMember("");
 				setSuccessAddMember(false);
-			}, 2000);
+			}, 10000);
 
-			// close popup
-			setClosePopup(true);
+			// keep popup open so the user can invite another member without reopening it
+			setClosePopup(false);
+
 			// add member
-
 			if ("localId" in currentMember)
 				(currentMember as PendingProjectMember).localId =
 					++localIdIncrement;
@@ -2657,7 +2657,7 @@ export const TeamTab = ({
 									handlePopupReset();
 								}}
 								className="button-reset">
-								Cancel
+								Close
 							</PopupButton>
 						</div>
 					</PopupContent>
