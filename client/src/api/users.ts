@@ -439,7 +439,7 @@ export const updateTagExclusion = async (
   newBlacklist: UpdateTagBlacklistInput
 ): Promise<ApiResponse<Tag[]>> => {
   const url = `/me/tag-blacklist`;
-  const response = await POST(url, newBlacklist);
+  const response = await PATCH(url, newBlacklist);
 
   if (response.error) console.log(`Error in updateTagBlacklist: ${response.error}`);
   //console.log(response);

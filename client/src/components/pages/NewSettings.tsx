@@ -199,6 +199,8 @@ const Settings = (userProfile: any) => {
       foundIndex = tagsIds.indexOf(id);
       tagBlacklist.push(tags[foundIndex]);
     }
+
+    console.log(tagBlacklist);
   }
 
   /**
@@ -235,7 +237,7 @@ const Settings = (userProfile: any) => {
 
     const updateTagExclusionRes = await updateTagExclusion(updateTagBlacklist);
 
-    //201 is success
+    //Success is 201
 
     //Invalid request
     if (updateTagExclusionRes.status === 400) {
@@ -261,6 +263,8 @@ const Settings = (userProfile: any) => {
     else if (updateTagExclusionRes.status === 500) {
       console.log(`Internal server error in updateTagExclusionRes: ${updateTagExclusionRes}`);
     }
+
+    window.location.reload();
   }
 
   // --------------------
@@ -946,7 +950,7 @@ const Settings = (userProfile: any) => {
                     selected={tagArrayToTagOrSkillArray(tagBlacklist)}
                     toggleTag={toggleTagBlacklist}
                     tabs={tabsBlacklist}
-                    tabId={tabsBlacklistId}
+                    tabId={currentTagsTab}
                     all={tagArrayToTagOrSkillArray(tags)}
                     searchValue={blacklistSearchValue}
                     searchData={blacklistSearchResults}
