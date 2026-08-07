@@ -70,8 +70,8 @@ export const DiscoverPage = () => {
 
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const projectDataSet = useMemo(() => {
-    return [{ data: filteredProjectList }];
-  }, [filteredProjectList]);
+    return [{ data: fullProjectList }];
+  }, [fullProjectList]);
 
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)
@@ -295,19 +295,19 @@ export const DiscoverPage = () => {
     }
     
     if (invert) {
-      setFullProjectList((searchRef.current.length === 0 ? projects.toReversed() : searchedProjectList));
-      syncFullProjectList.current = (searchRef.current.length === 0 ? projects.toReversed() : searchedProjectList);
-      setFilteredProjectList(searchRef.current.length === 0 ? projects.toReversed() : searchedProjectList);
+      setFullProjectList(projects.toReversed());
+      syncFullProjectList.current = projects.toReversed();
+      setFilteredProjectList(projects.toReversed());
 
-      getShowcaseDetails((searchRef.current.length === 0 ? projects.toReversed() : searchedProjectList), newProjectCache);
+      getShowcaseDetails(projects.toReversed(), newProjectCache);
       setProjectCache(newProjectCache);
     }
     else {
-      setFullProjectList((searchRef.current.length === 0 ? projects : searchedProjectList));
-      syncFullProjectList.current = (searchRef.current.length === 0 ? projects : searchedProjectList);
-      setFilteredProjectList(searchRef.current.length === 0 ? projects : searchedProjectList);
+      setFullProjectList(projects);
+      syncFullProjectList.current = projects;
+      setFilteredProjectList(projects);
 
-      getShowcaseDetails((searchRef.current.length === 0 ? projects : searchedProjectList), newProjectCache);
+      getShowcaseDetails(projects, newProjectCache);
       setProjectCache(newProjectCache);
     }
     setLoaded(true);
@@ -500,77 +500,9 @@ export const DiscoverPage = () => {
         }
       }
       setProjectCache(newCache);
-
-      // If there are active filters, filter the matched full items by those tags.
-      if (filterData.tags.length > 0 || filterData.excludeTags.length > 0) {
-        const matchedFullItems: ProjectWithFollowers[] = [];
-        for (const preview of matches) {
-          const cached = newCache[preview.projectId];
-          if (cached?.full) matchedFullItems.push(cached.full as ProjectWithFollowers);
-        }
-
-        const tagFiltered = matchedFullItems.filter((item) => {
-          for (const tag of filterData.excludeTags) {
-            if (
-              item.tags.some((projectTag) => projectTag.tagId === tag.tagId && projectTag.type === tag.type) ||
-              item.mediums.some((medium) => medium.mediumId === tag.tagId && tag.type === "Project Type") ||
-              item.jobs.some((job) => job.jobId === tag.tagId && tag.type === "Role") ||
-              (item.context === tag.label && tag.type === "Context")
-            )
-              return false;
-          }
-          if (filterData.tags.length === 0) return true;
-          let matchesAny = false;
-          let matchesAll = true;
-          for (const tag of filterData.tags) {
-            if (tag.type === 'Project Type' && Array.isArray(item.mediums)) {
-              const projectTypes = item.mediums.map((t) => t.label.toLowerCase());
-              if (tag.label === `New`) {
-                const cutOff = Date.now() - 604800000;
-                const date = Date.parse(item.createdAt.toString());
-                if (date > cutOff) {
-                  matchesAny = true;
-                } else {
-                  matchesAll = false;
-                }
-              } else if (projectTypes.includes(tag.label.toLowerCase())) {
-                matchesAny = true;
-              } else {
-                matchesAll = false;
-              }
-            } else if (tag.type === 'Context' && item.context) {
-              const projectContext = item.context.toLowerCase();
-              if (projectContext.includes(tag.label.toLowerCase())) {
-                matchesAny = true;
-              } else {
-                matchesAll = false;
-              }
-            } else if (tag.type === "Positions") {
-              const roles = item.jobs.map((job) => job.role);
-              if (roles.find((role) => role.roleId === tag.tagId)) matchesAny = true;
-              else matchesAll = false;
-            } else if (tag.tagId && item.tags) {
-              const tagIDs = item.tags.map((itemTag) => itemTag.tagId);
-              if (tagIDs.includes(tag.tagId)) {
-                matchesAny = true;
-              } else {
-                matchesAll = false;
-              }
-            }
-          }
-          return filterData.filterMode === "Match Any" ? matchesAny : matchesAll;
-        });
-
-        // Map back to the original previews for rendering
-        const tagFilteredIds = new Set(tagFiltered.map((t) => t.projectId));
-        const previewMatches = matches.filter((m) => tagFilteredIds.has(m.projectId));
-
-        setSearchedProjectList(previewMatches.length > 0 ? previewMatches : []);
-      } else {
-        setSearchedProjectList(matches);
-      }
+      setSearchedProjectList(matches);
     })();
-  }, [fullProjectList, projectCache]);
+  }, [fullProjectList, projectCache, filteredProjectList]);
 
   //gets the discover stuff at the bottom
   let discoverPanelContents: React.ReactElement;
@@ -585,10 +517,9 @@ export const DiscoverPage = () => {
       <PanelBox
         category={'projects'}
         itemList={
-          searchRef.current.length === 0 || 
-          [...filterData.tags, ...filterData.excludeTags].length > 0 
+          searchRef.current.length === 0
           ? filteredProjectList 
-          : searchedProjectList}
+          : searchedProjectList.filter(a => filteredProjectList.some(b => a.projectId === b.projectId))}
         projectCache={projectCache}
         followedProjectIds={followedProjectIds}
         userId={currentUserId ?? -1}
