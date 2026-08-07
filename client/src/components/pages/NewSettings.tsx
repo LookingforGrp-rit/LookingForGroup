@@ -65,7 +65,7 @@ const Settings = (userProfile: any) => {
     }
   }, [dataLoaded, userInfo, navigate, location]);
 
-  let tagBlacklist: Tag[] = [];
+  const [tagBlacklist, setTagBlacklist] = useState<Tag[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
 
   const tabsBlacklist: string[] = [
@@ -132,14 +132,14 @@ const Settings = (userProfile: any) => {
     //Success
     if (tagBlacklistRes.status === 200) {
       if (tagBlacklistRes.data) {
-        tagBlacklist = tagBlacklistRes.data;
+        setTagBlacklist(tagBlacklistRes.data);
       }
     }
 
     //Not Found
     //Not else if so it always checks
     if (tagBlacklistRes.status === 404 || !tagBlacklistRes.data) {
-      tagBlacklist = [];
+      setTagBlacklist([]);
     }
 
     setTags(await allTags());
