@@ -22,7 +22,7 @@ const prismaReport = {
   active: false,
 };
 
-describe('getProjectReportsService', async () => {
+describe('deactivateUserReportService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

@@ -17,8 +17,9 @@ import { getCurrentUsername, getProjectsByUser } from '../../api/users.ts'
 import { MePrivate, ProjectDetail } from '@looking-for-group/shared';
 import { ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import { deleteProject, projectApprovalRequestExists } from '../../api/projects.ts';
-import { Popup } from '../Popup.tsx';
 
+// Lets this file know when there is a project being saved
+// Used with getting the loading icon to show up here and in ProjectCreatorEditor
 let isSaving = false;
 const setIsSaving = (value: boolean) => {
   isSaving = value;
@@ -26,6 +27,7 @@ const setIsSaving = (value: boolean) => {
 const getIsSaving = () => {
   return isSaving;
 }
+
 /**
  * My Projects page. Creates a customizable page that showcases the user's projects.
  * @returns JSX Element
@@ -84,9 +86,10 @@ const MyProjects = (/*userProfile: any*/) => {
   type ApprovalStatusKey = keyof typeof ApprovalStatus;
   const [approvalStatuses, setApprovalStatuses] = useState<Record<number, ApprovalStatusKey>>({});
 
+  // Used to dynamically update the loading icon for this page
   const [saving, setSaving] = useState(false);
   useEffect(() => {
-    console.log(getIsSaving());
+    //console.log(getIsSaving());
     if(getIsSaving() == true)
     {
       setSaving(true);
@@ -703,6 +706,8 @@ const MyProjects = (/*userProfile: any*/) => {
               <p>You have no projects, you're not logged in!</p>
             </div>
           ) : (
+            // Checks to see if the project is currently saving
+            // Displays the loading icon if it is, otherwise displays the projects
             (saving ? 
               (
                 <div

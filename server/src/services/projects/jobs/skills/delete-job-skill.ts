@@ -22,7 +22,7 @@ export const deleteJobSkillService = async (
 
     return 'NO_CONTENT';
   } catch (error) {
-    console.error('Error in deleteJobSkillsService:', error);
+    console.error('Error in deleteJobSkillService:', error);
 
     if (error instanceof Object && 'code' in error) {
       if (error.code === 'P2025') {

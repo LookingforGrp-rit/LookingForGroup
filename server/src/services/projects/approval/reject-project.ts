@@ -1,5 +1,4 @@
 import prisma from '#config/prisma.ts';
-import { PrismaClientKnownRequestError } from '#prisma-models/runtime/library.js';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type rejectProjectServiceError = ServiceErrorSubset<'NOT_FOUND' | 'INTERNAL_ERROR'>;
@@ -19,9 +18,15 @@ export const rejectProjectService = async (
     return 'NO_CONTENT';
   } catch (e) {
     console.error('Error in rejectProjectService: ', e);
-    if ((e as PrismaClientKnownRequestError).code.toUpperCase() === 'P2025') {
+
+    if (!(e instanceof Object && 'code' in e)) {
+      return 'INTERNAL_ERROR';
+    }
+
+    if (e.code === 'P2025') {
       return 'NOT_FOUND';
     }
+
     return 'INTERNAL_ERROR';
   }
 };

@@ -1,0 +1,81 @@
+patch:
+  summary: Modify a skill.
+  tags:
+    - Admin
+  description: Modifies a skill with the given parameters.
+  parameters:
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: true
+      description: The userId being used for credentials.
+    - in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: The ID of the skill to be modified.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../swagger.yaml#/components/schemas/SkillInput'
+  responses:
+    '200':
+      description: Skill modified successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                nullable: true
+                example: null
+              data:
+                $ref: '../../swagger.yaml#/components/schemas/Skill'
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+delete:
+  summary: Deletes a skill.
+  tags:
+    - Admin
+  description: Deletes a skill from the database.
+  parameters:
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: true
+      description: The userId being used for credentials.
+    - in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: The ID of the tag to be deleted.
+  responses:
+    '204':
+      description: Skill deleted successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 204
+              error:
+                nullable: true
+                example: null
+              data:
+                type: string
+                example: Skill deleted successfully
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

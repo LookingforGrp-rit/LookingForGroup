@@ -1,0 +1,28 @@
+get:
+  summary: Get a user by their ID
+  tags:
+    - Users
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+      description: The ID of the user to retrieve
+  responses:
+    '200':
+      description: User found successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                $ref: '../../swagger.yaml#/components/schemas/UserDetail'

@@ -5,7 +5,7 @@ import type { ParameterLocation } from '#middleware/validators/parameter-locatio
 /**
  * Checks if the subject of the action being performed is the same person as the one performing the action.
  *  (e.g. moderator approving their own project)
- * @param subjectParamLocations A map of parameter keys ("id", "userId", etc) to parameter locations (path, body, etc.)
+ * @param subjectParamLocations A map of parameter locations (path, body, etc.) to parameter keys ("id", "userId", etc)
  */
 export const requiresNotSelf = (subjectParamLocations: Map<ParameterLocation, string>) => {
   return async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {

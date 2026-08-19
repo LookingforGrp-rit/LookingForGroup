@@ -27,7 +27,6 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
         projectId,
         prospectiveMemberId,
         roleId,
-        requestStatus: 'Pending',
       },
       select: {
         requestId: true,

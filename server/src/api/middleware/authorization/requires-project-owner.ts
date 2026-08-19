@@ -57,6 +57,7 @@ const requiresProjectOwner = async (
     return;
   }
 
+  //Only works if the owner is the current user
   if (result.owner.userId !== user.userId) {
     const resBody: ApiResponse = {
       status: 403,

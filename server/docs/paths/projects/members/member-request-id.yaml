@@ -1,0 +1,43 @@
+get:
+  summary: Gets member requests
+  description: Gets the member requests associated to the project id
+  tags:
+    - Project Members
+  security:
+    - googleOAuth: []
+  parameters:
+    - in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: The ID of the project
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  responses:
+    '200':
+      description: Request Successful
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: array
+                items:
+                  $ref: '../../../swagger.yaml#/components/schemas/ProjectMemberRequest'
+    '404':
+      $ref: '../../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'

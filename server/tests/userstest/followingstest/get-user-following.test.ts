@@ -1,4 +1,4 @@
-import type { ProjectFollowsList, Visibility } from '@looking-for-group/shared';
+import type { ProjectFollowsList, Visibility, RitStatus } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import type { Projects } from '#prisma-models/index.js';
@@ -75,6 +75,8 @@ describe('getProjectFollowingService', () => {
         majors: [],
         displayPhone: false,
         apiUrl: '/api/users/1',
+        skills: [],
+        ritStatus: 'FourthYear' as RitStatus,
       },
       thumbnail: null,
       thumbnailId: 0,

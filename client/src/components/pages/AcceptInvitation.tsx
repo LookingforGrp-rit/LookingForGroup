@@ -196,11 +196,11 @@ const AcceptInvitation = () => {
                                             </div>
                                             <div>
                                                 <p className='detail-header'>Content</p>
-                                                <p>{ProjectContext[project.context!]}</p>
+                                                <p>{project.context ? ProjectContext[project.context] : 'Not Provided'}</p>
                                             </div>
                                             <div>
                                                 <p className='detail-header'>Audience</p>
-                                                <p>{project.audience}</p>
+                                                <p>{project.audience ? project.audience : 'Not Provided'}</p>
                                             </div>
                                         </div>
                                     </div>

@@ -1,0 +1,126 @@
+get:
+  summary: Get project by ID
+  tags:
+    - Projects
+  description: Gets information about a single project by its project ID.
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+      description: Project ID
+  responses:
+    '200':
+      description: Project found and returned
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                $ref: '../../swagger.yaml#/components/schemas/ProjectWithFollowers'
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+patch:
+  summary: Updates project information
+  tags:
+    - Projects
+  security:
+    - googleOAuth: []
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+      description: The project ID
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  requestBody:
+    required: true
+    content:
+      multipart/form-data:
+        schema:
+          $ref: '../../swagger.yaml#/components/schemas/UpdateProjectInput'
+  responses:
+    '200':
+      description: Update a single project
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                $ref: '../../swagger.yaml#/components/schemas/ProjectDetail'
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+delete:
+  summary: Delete a project by ID
+  description: Deletes a project by its ID.
+  tags:
+    - Projects
+  security:
+    - googleOAuth: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: The ID of the project to delete
+      schema:
+        type: integer
+    - name: devId
+      in: query
+      required: false
+      description: The ID to be used as the current user
+      schema:
+        type: integer
+  responses:
+    '200':
+      description: Project deleted successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: object
+                nullable:
+                example: null
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

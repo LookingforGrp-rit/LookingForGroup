@@ -5,6 +5,7 @@ import { deleteImageService } from '#services/images/delete-image.ts';
 import { ProjectImageSelector } from '#services/selectors/projects/parts/project-image.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformProjectImage } from '#services/transformers/projects/parts/project-image.ts';
+import { unapproveProjectService } from '../approval/unapprove-project.ts';
 
 type UpdateImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
@@ -26,6 +27,18 @@ const updateImageService = async (
       data: updates,
       select: { ...ProjectImageSelector, projectId: true },
     });
+
+    //find project for the approval stuff
+    const proj = await prisma.projects.findUnique({
+      where: {
+        projectId: updatedImage.projectId,
+      },
+    });
+
+    //unapprove project on change
+    if (proj && proj.approved) {
+      await unapproveProjectService(proj.projectId);
+    }
 
     return transformProjectImage(updatedImage.projectId, updatedImage);
   } catch (e) {

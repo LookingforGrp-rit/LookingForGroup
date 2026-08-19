@@ -18,12 +18,8 @@ const getGalleryVideosService = async (
 
     return videos;
   } catch (e) {
-    console.error('Error in getGalleryVideoService:', e);
-    if (e instanceof Object && 'code' in e) {
-      if (e.code === 'P2025') {
-        return 'NOT_FOUND';
-      }
-    }
+    console.error('Error in getGalleryVideosService:', e);
+
     return 'INTERNAL_ERROR';
   }
 };

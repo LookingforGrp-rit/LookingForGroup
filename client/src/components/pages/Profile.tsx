@@ -1,5 +1,4 @@
 //Styles
-import "../Styles/credits.css";
 import "../Styles/discoverMeet.css";
 import "../Styles/emailConfirmation.css";
 import "../Styles/general.css";
@@ -26,7 +25,7 @@ import profilePicture from "../../images/lfrog.png";
 import {
   getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing,
   getJobTitles,
-  getBlockedUsersById,
+  getBlockedUsers,
   blockUser,
   unblockUser,
   getGalleryImages,
@@ -35,20 +34,26 @@ import {
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
 import {
-  MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail,
+  MeDetail, MePrivate, ProjectDetail, ProjectPreview, ProjectWithFollowers, UserPreview, Role, UserDetail,
   UserAccessLevel, UserReport, BanDetail,
   GalleryImage,
-  GalleryVideo
+  GalleryVideo,
+  ProjectMember
 } from '@looking-for-group/shared';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
 import {
   getReportedUsers, getUserAccessLevel, promoteToMod, demoteToUser, deleteUserReport, banUser, sendModeratorNotification,
-  deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi
+  deactivateUserReport, getBannedUsers, getBanDetail, unbanUser as unbanUserApi,
+  getBannedUsersProjects,
+  getProjectsMembers,
+  patchProjectOwner
 } from "../../api/mod-tools";
 import { getYouTubeEmbedID, getYouTubeEmbedURL } from "../../functions/parseYoutube";
 import { Carousel, CarouselButton, CarouselContent, CarouselTabs } from "../ImageCarousel";
+import { canViewProjectOnProfile } from "../../functions/profileProjectVisibility";
+import { getByID as getProjectById } from "../../api/projects";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -70,6 +75,7 @@ const Profile = (/*userProfile: any*/) => {
 
   // Get URL parameters to tell what user we're looking for and store it
   const urlParams = new URLSearchParams(window.location.search);
+
   // User ID of profile being viewed
   const profileID: string = urlParams.get("userID")!;
 
@@ -112,6 +118,9 @@ const Profile = (/*userProfile: any*/) => {
   const [unbanned, setUnbanned] = useState<boolean>(false);
   const [banDetail, setBanDetail] = useState<BanDetail>();
 
+  // Is the user blocked?
+  const [isBlocked, setIsBlocked] = useState<boolean>(false);
+
   const reportMessage = useRef<HTMLTextAreaElement>(null);
   const warnMessage = useRef<HTMLTextAreaElement>(null);
   const banMessage = useRef<HTMLTextAreaElement>(null);
@@ -134,13 +143,13 @@ const Profile = (/*userProfile: any*/) => {
 
   const [followedProjectsIds, setFollowProjectsIds] = useState<Set<number>>(new Set);
 
+  const isViewingOwnProfile = userID > 0 && Number(profileID) === userID;
+
   const projectSearchData = fullProjectList?.map(
     (project: Project) => {
       return { name: project.title, description: project.hook };
     }
   );
-
-  let blockButton;
 
   // --------------------
   // Page redirect
@@ -200,21 +209,126 @@ const Profile = (/*userProfile: any*/) => {
 
       if (videoResponse.data)
         setGalleryVideos(videoResponse.data);
-    }
+    };
 
     loadGallery();
   }, [profileID]);
 
   useEffect(() => {
-    if (isUsersProfile || galleryImages.length > 0 || galleryVideos.length > 0)
+    if (isViewingOwnProfile || galleryImages.length > 0 || galleryVideos.length > 0)
       setShowGallery(true);
 
-  }, [isUsersProfile, galleryImages, galleryVideos])
+  }, [isViewingOwnProfile, galleryImages, galleryVideos])
 
 
   // --------------------
   // Helper functions
   // --------------------
+
+  /**
+   * Checks if the banned user owns projects and returns them
+   * @returns projects that the banned user owns
+   */
+  const checkBannedUserForProjects = async () => {
+    //Check if the banned user owns projects and put them into an array if they do
+    const bannedUsersProjectsRes = await getBannedUsersProjects(displayedProfile?.userId);
+    let bannedUsersProjects: ProjectPreview[] = [];
+
+    //Success
+    if (bannedUsersProjectsRes.status === 200) {
+      bannedUsersProjects = bannedUsersProjectsRes.data;
+    }
+
+    //Bad request
+    else if (bannedUsersProjectsRes.status === 400) {
+      console.log(`Bad request on bannedUsersProjectsRes: ${bannedUsersProjectsRes}`);
+    }
+
+    //Not found
+    else if (bannedUsersProjectsRes.status === 404) {
+      console.log(`bannedUsersProjectsRes not found: ${bannedUsersProjectsRes}`);
+    }
+
+    //Server error
+    else if (bannedUsersProjectsRes.status === 500) {
+      console.log(`Internal server error on bannedUsersProjectsRes: ${bannedUsersProjectsRes}`);
+    }
+
+    return bannedUsersProjects;
+  }
+
+  const getAllProjectMembers = async (projectId: number | undefined): Promise<ProjectMember[]> => {
+    const getProjectMembers = await getProjectsMembers(projectId);
+    let projectMembers: ProjectMember[] = [];
+
+    //Success
+    if (getProjectMembers.status === 200) {
+      projectMembers = getProjectMembers.data;
+    }
+
+    //Bad request
+    else if (getProjectMembers.status === 400) {
+      console.log(`Bad request on getProjectMembers: ${getProjectMembers}`);
+    }
+
+    //Not found
+    else if (getProjectMembers.status === 404) {
+      console.log(`getProjectMembers not found: ${getProjectMembers}`);
+    }
+
+    //Server error
+    else if (getProjectMembers.status === 500) {
+      console.log(`Internal server error on getProjectMembers: ${getProjectMembers}`);
+    }
+
+    return projectMembers;
+  }
+
+  const getOldestMember = async (projectId: number | undefined): Promise<ProjectMember | undefined> => {
+    const projectMembers = await getAllProjectMembers(projectId);
+
+    //Return undefined if it's empty
+    if (projectMembers.length >= 2) {
+      const projectMembersSorted: ProjectMember[] = projectMembers.sort(
+        (member1, member2) => member1.memberSince.valueOf() - member2.memberSince.valueOf());
+
+      //I think this is correct?
+      console.log(projectMembersSorted);
+      return projectMembersSorted[0];
+    } else if (projectMembers.length === 1) {
+      return projectMembers[0];
+    }
+
+    return undefined;
+  }
+
+  const changeProjectOwner = async (projectId: number | undefined, newOwnerId: number | undefined, devId: number) => {
+    const changeProjectOwnerRes = await patchProjectOwner(projectId, newOwnerId, devId);
+    let newProjectOwner: ProjectMember | undefined;
+
+    //Success
+    if (changeProjectOwnerRes.status === 200) {
+      newProjectOwner = changeProjectOwnerRes.data as ProjectMember;
+    }
+
+    //Bad request
+    else if (changeProjectOwnerRes.status === 400) {
+      console.log(`Bad request on changeProjectOwnerRes: ${changeProjectOwnerRes}`);
+    }
+
+    //Not found
+    else if (changeProjectOwnerRes.status === 404) {
+      console.log(`changeProjectOwnerRes not found: ${changeProjectOwnerRes}`);
+    }
+
+    //Server error
+    else if (changeProjectOwnerRes.status === 500) {
+      console.log(`Internal server error on changeProjectOwnerRes: ${changeProjectOwnerRes}`);
+    }
+
+    return newProjectOwner;
+  }
+
   /**
    * Checks if the user is following this user
    * @returns true if following
@@ -328,105 +442,18 @@ const Profile = (/*userProfile: any*/) => {
   };
 
   /**
- * Checks if the displayed user is blocked
- * If so, change the block button to unblock
+ * Checks if the displayed user is blocked and updates the useState
  */
-  const isUserBlocked = async () => {
-    const blocklistRequest = await getBlockedUsersById();
-    let blocklist: UserPreview[] = [];
-    let blocklistUserIds: number[] = [];
+  const checkUserBlocked = async () => {
+    if (!parseInt(profileID)) return;
 
-    //Success
+    const blocklistRequest = await getBlockedUsers();
+
     if (blocklistRequest.status === 200) {
-      blocklist = blocklistRequest.data;
-      blocklistUserIds = blocklist.map((userPreview) => userPreview.userId);
-    }
-
-    //Internal server error
-    else if (blocklistRequest.status === 500) {
-      const errorType: string = "Internal server error";
-      console.log(`${errorType} on getBlockedUsersById`);
-      console.log(blocklistRequest.error);
-    }
-
-    const blockUserID = displayedProfile?.userId;
-
-    if (displayedProfile?.userId && blocklistUserIds.includes(displayedProfile?.userId)) {
-      return <button
-        className="profile-menu-dropdown-button"
-        id="profile-menu-block"
-        onClick={async () => {
-          //THE PARAMETER IS THE PERSON TO BLOCK
-          const unblockUserRequest = await unblockUser(blockUserID);
-
-          //Success
-          if (unblockUserRequest.status === 204) {
-            window.location.reload();
-          }
-
-          //Bad request
-          else if (unblockUserRequest.status === 400) {
-            const errorType: string = "Bad request";
-            console.log(`${errorType} on unblockUser`);
-            console.log(unblockUserRequest.error);
-          }
-
-          //Conflict
-          else if (unblockUserRequest.status === 409) {
-            const errorType: string = "Conflict";
-            console.log(`${errorType} on unblockUser`);
-            console.log(unblockUserRequest.error);
-          }
-
-          //Internal server error
-          else if (unblockUserRequest.status === 500) {
-            const errorType: string = "Internal server error";
-            console.log(`${errorType} on unblockUser`);
-            console.log(unblockUserRequest.error);
-          }
-        }}
-      >
-        <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
-        Unblock
-      </button>;
+      const blocklistUserIds = blocklistRequest.data.map((user: UserPreview) => user.userId);
+      setIsBlocked(blocklistUserIds.includes(parseInt(profileID)));
     } else {
-      return <button
-        className="profile-menu-dropdown-button"
-        id="profile-menu-block"
-        onClick={async () => {
-          //THE PARAMETER IS THE PERSON TO BLOCK
-          const blockUserRequest = await blockUser(blockUserID);
-
-          //Success
-          if (blockUserRequest.status === 200) {
-            window.location.reload();
-          }
-
-          //Bad request
-          else if (blockUserRequest.status === 400) {
-            const errorType: string = "Bad request";
-            console.log(`${errorType} on blockUser`);
-            console.log(blockUserRequest.error);
-          }
-
-          //Conflict
-          else if (blockUserRequest.status === 409) {
-            const errorType: string = "Conflict";
-            console.log(`${errorType} on blockUser`);
-            console.log(blockUserRequest.error);
-          }
-
-          //Internal server error
-          else if (blockUserRequest.status === 500) {
-            const errorType: string = "Internal server error";
-            console.log(`${errorType} on blockUser`);
-            console.log(blockUserRequest.error);
-          }
-        }}
-      >
-        <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
-        Block
-      </button>;
+      console.log(`Error on getBlockedUsers`, blocklistRequest.error);
     }
   };
 
@@ -479,16 +506,50 @@ const Profile = (/*userProfile: any*/) => {
   /**
    * Gets the user's projects to display.
    */
-  const getProfileProjectData = useCallback(async () => {
+  const getProfileProjectData = useCallback(async (viewerUserId: number, isOwnProfile: boolean) => {
     try {
-      const response = isUsersProfile ? await getProjectsByUser() : await getVisibleProjects(Number(profileID)) as { data: ProjectPreview[] }; //TODO: IMPLEMENT PROJECT GETTING
+      const response = isOwnProfile
+        ? await getProjectsByUser()
+        : await getVisibleProjects(Number(profileID)) as { data: ProjectPreview[] };
       const data = response.data;
 
-      // Only update if there's data
-      if (data) {
+      if (!data) {
+        setFullProjectList([]);
+        setDisplayedProjects([]);
+        return;
+      }
+
+      if (isOwnProfile) {
         setFullProjectList(data);
         setDisplayedProjects(data);
+        return;
       }
+
+      const visibleProjects = await Promise.all(
+        data.map(async (project) => {
+          try {
+            const projectResponse = await getProjectById(project.projectId);
+            const fullProject = projectResponse.data;
+
+            if (!fullProject) {
+              return null;
+            }
+
+            return canViewProjectOnProfile(fullProject, viewerUserId, false)
+              ? fullProject
+              : null;
+          } catch (error) {
+            console.error(`Failed to load project ${project.projectId}:`, error);
+            return null;
+          }
+        }),
+      );
+
+      const filteredProjects = visibleProjects.filter(
+        (project): project is ProjectWithFollowers => project !== null,
+      );
+      setFullProjectList(filteredProjects);
+      setDisplayedProjects(filteredProjects);
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
@@ -496,14 +557,16 @@ const Profile = (/*userProfile: any*/) => {
         console.log(`Unknown error: ${error}`);
       }
     }
-  }, [profileID, isUsersProfile, setFullProjectList, setDisplayedProjects]);
+  }, [profileID, setFullProjectList, setDisplayedProjects]);
 
   // Gets the profile data
-  const getProfileData = async (data: MePrivate | undefined) => {
+  const getProfileData = async (current: MePrivate | undefined) => {
+    let isOwnProfile = false;
     // Get the userID for our current user
-    if (data) {
-      setUserID(data.userId);
-      setIsUsersProfile(data.userId.toString() === profileID);
+    if (current) {
+      setUserID(current.userId);
+      isOwnProfile = current.userId.toString() === profileID;
+      setIsUsersProfile(isOwnProfile);
     }
     else { setUserID(-1); }
 
@@ -516,7 +579,7 @@ const Profile = (/*userProfile: any*/) => {
         //console.log(data);
         setDisplayedProfile(data);
         setMajorsArr(data.majors.map((maj) => maj.label));
-        await getProfileProjectData();
+        await getProfileProjectData(current ? current.userId : 0, isOwnProfile);
         //checkFollow();
       } else {
         navigate(paths.routes.NOTFOUND, { replace: true });
@@ -553,7 +616,7 @@ const Profile = (/*userProfile: any*/) => {
   // "Invite to project" popup.
   useEffect(() => {
     if (userID === undefined || userID === -1) return;
-    if (isUsersProfile) {
+    if (isViewingOwnProfile) {
       //if this is the user's profile, display their liked profiles/projects in the liked section      const displayFollowedProfiles = async () => {
       const displayFollowedProfiles = async () => {
         const tempFollowProfileArray = [];
@@ -615,11 +678,14 @@ const Profile = (/*userProfile: any*/) => {
     // is the displayed profile a banned user
     isUserBanned();
 
+    // Is the user blocked by the current logged in user
+    checkUserBlocked();
+
     return () => {
       cancelled = true;
     };
 
-  }, [isUsersProfile, userID]);
+  }, [isViewingOwnProfile, userID]);
 
   // Resets the invite form to its initial state. Called when the popup opens
   // or closes so a previous send doesn't bleed into the next one.
@@ -692,7 +758,7 @@ const Profile = (/*userProfile: any*/) => {
     const response = await reportUser(parseInt(profileID), message);
     let responseText = response.error;
     if (responseText === null || responseText === undefined) {
-      responseText = "Your report was sent! Your request will be processed and receive an update shortly.";
+      responseText = "Your report was sent! Your submission will be processed by our moderators. They will reach out if they need more information.";
     }
     /* A report on the user already exists */
     else if (response.status === 409) {
@@ -763,7 +829,6 @@ const Profile = (/*userProfile: any*/) => {
       })));
 
       if (res?.every(r => r.status === 200) && notif.every(r => r.status === 201)) {
-        setModActionComplete(true);
         navigate(paths.routes.MODERATION);
       };
 
@@ -795,7 +860,6 @@ const Profile = (/*userProfile: any*/) => {
       if (warnRes.status === 201
         && deactivateRes?.every(r => r.status === 200)
         && notif.every(r => r.status === 201)) {
-        setModActionComplete(true);
         navigate(paths.routes.MODERATION);
       }
     } else if (action === 'ban') {
@@ -830,9 +894,43 @@ const Profile = (/*userProfile: any*/) => {
         type: 'General',
       })));
 
+      //If the banned owner owns projects
+      //The current plan is to transfer ownership to the oldest member, then notify the entire team about what happened, 
+      // and unapprove the project
+      const bannedUsersProjects = await checkBannedUserForProjects();
+      let projectOwnerBannedNotif;
+
+      //Don't need to do anything if the banned user doesn't own any projects
+      if (bannedUsersProjects.length !== 0) {
+
+        for (let i = 0; i < bannedUsersProjects.length; i++) {
+          // const oldestMember = await getOldestMember(bannedUsersProjects[i].projectId);
+
+          //I don't think we do anything special if the banned user is the only member
+          //If we do we should do it here
+          // const newProjectOwner = await changeProjectOwner(bannedUsersProjects[i].projectId, oldestMember?.user.userId, userID);
+          const projectMembers = await getAllProjectMembers(bannedUsersProjects[i].projectId);
+
+
+          //Send notification
+          projectOwnerBannedNotif = await Promise.all(projectMembers.map((member) => sendModeratorNotification({
+            modUserId: userID,
+            receiverId: member.user.userId,
+            subjectLine: `Change in ownership of ${bannedUsersProjects[i].title}`,
+            message: `The previous owner of this project has been banned. ` +
+              `Therefore, the Looking For Group moderation team has changed the ownership of this project 
+                to another member of the project. ` +
+              `If the team believes there is a more suitable owner, the new owner can transfer ownership to them` +
+              `Additionally, this project has been unapproved and requires re-approval. `,
+            type: 'General',
+          })));
+        }
+      }
+
       if (banRes.status === 200 &&
         deactivateRes.every(r => r.status === 200) &&
-        notif.every(r => r.status === 201)) {
+        notif.every(r => r.status === 201) &&
+        projectOwnerBannedNotif?.every(r => r.status === 201)) {
         setModActionComplete(true);
         setBanned(true);
       }
@@ -860,7 +958,7 @@ const Profile = (/*userProfile: any*/) => {
   const aboutMeButtons = (
     <>
       {/* If the displayed user is the user's profile */}
-      {isUsersProfile ? (
+      {isViewingOwnProfile ? (
         <>
           <ShareButton />
           <ProfileEditPopup />
@@ -962,7 +1060,34 @@ const Profile = (/*userProfile: any*/) => {
                 <ShareButton />
                 {userID > 0 && (
                   <>
-                    {isUserBlocked()}
+                    <button
+                      className="profile-menu-dropdown-button"
+                      id="profile-menu-block"
+                      onClick={async () => {
+                        const blockUserID = displayedProfile?.userId;
+                        if (!blockUserID) return;
+
+                        // Block user
+                        if (isBlocked) {
+                          const request = await unblockUser(blockUserID);
+                          if (request.status === 204) {
+                            navigate(0);
+                          } else {
+                            console.log("Error on unblockUser", request.error);
+                          }
+                        } else { // User is blocked, unblock them
+                          const request = await blockUser(blockUserID);
+                          if (request.status === 200) {
+                            navigate(0);
+                          } else {
+                            console.log("Error on blockUser", request.error);
+                          }
+                        }
+                      }}
+                    >
+                      <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={isBlocked ? 'Unblock' : 'Block'} />
+                      {isBlocked ? "Unblock" : "Block"}
+                    </button>
                     <Popup>
                       <PopupButton
                         className="project-info-dropdown-option"
@@ -1037,7 +1162,7 @@ const Profile = (/*userProfile: any*/) => {
         );
       }).filter(item => item !== null),
       ...galleryImages.map(i => (<>
-        <label>{i.altText}</label>
+        <label>{i.altText !== "Gallery Image" ? i.altText : ""}</label>
         <img
           key={`img-${i.position}`}
           src={i.image}
@@ -1115,8 +1240,8 @@ const Profile = (/*userProfile: any*/) => {
               </div> : ""}
           </div>
         </Carousel> :
-        <label id="emtpy-carousel">
-          No gallery items yet...<br />Edit your profile and upload your achievments!<br />(not visible to others while empty)
+        <label id="empty-carousel">
+          No gallery items yet...<br />Edit your profile and upload your achievements!<br /><span>(not visible to others while empty)</span>
         </label>
       }
     </div>
@@ -1159,6 +1284,11 @@ const Profile = (/*userProfile: any*/) => {
                   <div id="profile-names">
                     <h1 id="profile-fullname">
                       {displayedProfile?.firstName} {displayedProfile?.lastName}
+                      {displayedProfileAccessLevel === 'Administrator' || displayedProfileAccessLevel === 'Moderator'
+                        ? <span className="tooltip">
+                          <ThemeIcon id={'mod-badge'} width={35} height={35} className={"color-fill mono-stroke-invert"}
+                            ariaLabel={displayedProfileAccessLevel === 'Administrator' ? "Administrator" : "Moderator"} />
+                          <span className="tooltip-text">{displayedProfileAccessLevel === 'Administrator' ? "Administrator" : "Moderator"}</span></span> : ""}
                     </h1>
                     <h2 id="profile-username">
                       @{displayedProfile?.username}
@@ -1217,7 +1347,7 @@ const Profile = (/*userProfile: any*/) => {
           </div>
 
           {/* Mod options for unbanning a banned user */}
-          {(!isUsersProfile) && isUserMod && banned && banDetail && displayedProfile && (<>
+          {(!isViewingOwnProfile) && isUserMod && banned && banDetail && displayedProfile && (<>
             <div className="mod-user-options">
               <h2>Unban this User</h2>
               <p>Unbanning this user will unfreeze their account, allowing them to log in to Looking For Group again.
@@ -1272,7 +1402,7 @@ const Profile = (/*userProfile: any*/) => {
           </>)}
 
           {/* Mod options when this is a reported user */}
-          {(!isUsersProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div className="mod-user-options">
+          {(!isViewingOwnProfile) && isUserMod && (activeReportList.length !== 0) && userID !== parseInt(profileID) ? <div className="mod-user-options">
             <h2>Reports</h2>
             <p>You can dismiss this report, warn the user and request edits from them, or ban the user.</p>
             <h3>Active Reports</h3>
@@ -1323,7 +1453,8 @@ const Profile = (/*userProfile: any*/) => {
                   <div className="small-popup" id="report-popup">
                     <h3>Ban {displayedProfile?.firstName} {displayedProfile?.lastName} from LookingForGroup</h3>
                     <p>Why are you banning this user?</p>
-                    <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={banMessage}></textarea>
+                    <textarea placeholder="Write your reasoning here..." className="input input-multiline" ref={banMessage}>
+                    </textarea>
                     <div className="confirm-deny-btns">
                       <PopupButton
                         buttonId="ban-cancel-button"
@@ -1337,7 +1468,13 @@ const Profile = (/*userProfile: any*/) => {
                         Cancel
                       </PopupButton>
                       <Popup>
-                        <PopupButton buttonId="mod-submit-ban-btn" className="confirm-btn" callback={() => resolveReport('ban')}>Submit</PopupButton>
+                        <PopupButton
+                          buttonId="mod-submit-ban-btn"
+                          className="confirm-btn"
+                          callback={() => resolveReport('ban')}
+                        >
+                          Submit
+                        </PopupButton>
                         <PopupContent>
                           <div className="small-popup">
                             {modActionComplete
@@ -1388,7 +1525,7 @@ const Profile = (/*userProfile: any*/) => {
                       <ThemeIcon id={'phone'} width={25} height={25} className={'mono-fill'} ariaLabel={'phone'} />
                       {displayedProfile.phoneNumber}
                     </a>
-                    {isUsersProfile && <ThemeIcon id="pencil" width={12} height={12} className={'black-fill edit'} ariaLabel={'edit'} onClick={() => navigate(paths.routes.SETTINGS)} />}
+                    {isViewingOwnProfile && <ThemeIcon id="pencil" width={12} height={12} className={'black-fill edit'} ariaLabel={'edit'} onClick={() => navigate(paths.routes.SETTINGS)} />}
                   </div>
                   //dead link when no number
                   : <></>
@@ -1427,7 +1564,7 @@ const Profile = (/*userProfile: any*/) => {
                 </div>
                 {/* Invite-to-project: only shown when a logged-in user is
                   viewing someone else's profile. */}
-                {(!isUsersProfile) && userID !== undefined && userID !== -1 && (
+                {(!isViewingOwnProfile) && userID !== undefined && userID !== -1 && (
                   <Popup>
                     <PopupButton
                       buttonId="profile-invite-button"
@@ -1557,7 +1694,7 @@ const Profile = (/*userProfile: any*/) => {
               <div id="skills">
                 <div className="contact-skills-edit-label-btn">
                   <h1 id="title">Skills</h1>
-                  {isUsersProfile ? <ProfileEditPopup editSkills={true} />
+                  {isViewingOwnProfile ? <ProfileEditPopup editSkills={true} />
                     : ""}</div>
                 <div id="skill-block">
                   {displayedProfile?.skills !== undefined && (
@@ -1597,7 +1734,7 @@ const Profile = (/*userProfile: any*/) => {
                 </div>
               </div>
             </div>
-            {isUsersProfile ?
+            {isViewingOwnProfile ?
               <div id="profile-likes">
                 <h1 id="title">Likes</h1>
                 <div id="likes-block">

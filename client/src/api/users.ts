@@ -77,7 +77,7 @@ export const testLogin = async (): Promise<ApiResponse<SessionUserData>> => {
 }
 
 /**
- * Checks if the user is logged in (shibboleth) and returns username if they are
+ * Checks if the user is logged in (googleAuth) and returns username if they are
  * @returns ApiResponse with username is logged in, 404 if guest
  */
 export const getCurrentUsername = async (): Promise<UsernameResponse> => {
@@ -172,7 +172,7 @@ export const getGalleryVideos = async (userId: number): Promise<ApiResponse<Gall
  */
 export const postGalleryImage = async (userId: number, imageData: AddGalleryImageInput): Promise<ApiResponse<GalleryImage>> => {
   const apiURL = `/me/gallery/${userId}/images`;
-  
+
   const form = new FormData();
   for (const [name, value] of Object.entries(imageData)) {
     if (value !== null) form.append(name, value);
@@ -275,10 +275,10 @@ export const deleteUser = async (): Promise<ApiResponse> => {
 };
 
 /**
- * Gets an array of all userIDs the current user has blocked
- * @returns number[] of all userIDs the current user has blocked
+ * Gets an array of all users the current user has blocked
+ * @returns JSONified data of all users the current user has blocked
  */
-export const getBlockedUsersById = async () => {
+export const getBlockedUsers = async () => {
   const apiURL = `/me/blocklist`;
   const response = await GET(apiURL);
   //console.log(response);
@@ -403,7 +403,7 @@ export const addUserFollowing = async (
 };
 
 /**
- * Unfollow person for a user. Unauthorized until shibboleth.
+ * Unfollow person for a user. Unauthorized until googleAuth.
  * @param {number} userId - ID of the user being followed
  */
 export const deleteUserFollowing = async (id: number) => {
@@ -439,12 +439,27 @@ export const updateTagExclusion = async (
   newBlacklist: UpdateTagBlacklistInput
 ): Promise<ApiResponse<Tag[]>> => {
   const url = `/me/tag-blacklist`;
-  const response = await POST(url, newBlacklist);
+  const response = await PATCH(url, newBlacklist);
 
   if (response.error) console.log(`Error in updateTagBlacklist: ${response.error}`);
   //console.log(response);
   return response as ApiResponse<Tag[]>;
 };
+
+/**
+ * Gets a list of all tags
+ * @returns API response, data is Tag[]
+ */
+export const getAllTags = async () => {
+  const URL = `/datasets/tags`;
+  const res = await GET(URL);
+
+  if (res.error) {
+    console.log(`Error in getAllTags: ${res.error}`);
+  }
+
+  return res;
+}
 
 //#endregion
 
@@ -477,7 +492,7 @@ export const getVisibleProjects = async (
 };
 
 /**
- * Update project visibility for a project a user is a member of. Invalid until shibboleth
+ * Update project visibility for a project a user is a member of. Invalid until googleAuth
  * @param projectID - ID of the project
  * @param _visibility - either "public" or "private", set visibility
  * @return 201 if successful, 400 if not

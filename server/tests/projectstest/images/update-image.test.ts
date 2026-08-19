@@ -1,6 +1,7 @@
-import type { ProjectImage } from '@looking-for-group/shared';
+import type { ProjectImage, ProjectStatus, Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
+import { unapproveProjectService } from '#services/projects/approval/unapprove-project.ts';
 import updateImageService from '#services/projects/images/update-image.ts';
 import { transformProjectImage } from '#services/transformers/projects/parts/project-image.ts';
 
@@ -34,10 +35,29 @@ const transformedImage: ProjectImage = {
   apiUrl: 'api/projects/1/images/4',
 };
 
+const prismaProject = {
+  projectId: 1,
+  title: 'Test Project',
+  hook: 'Test Hook',
+  description: 'Test Description',
+  thumbnailId: null,
+  context: null,
+  status: 'Planning' as ProjectStatus,
+  audience: 'Human' as const,
+  userId: 2,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  globalVisibility: 'Public' as Visibility,
+  approved: true,
+};
+
 vi.mock('#config/prisma.ts', () => ({
   default: {
     projectImages: {
       update: vi.fn(),
+      findUnique: vi.fn(),
+    },
+    projects: {
       findUnique: vi.fn(),
     },
   },
@@ -47,6 +67,10 @@ vi.mock('#services/transformers/projects/parts/project-image.ts', () => ({
   transformProjectImage: vi.fn(),
 }));
 
+vi.mock('#services/projects/approval/unapprove-project.ts', () => ({
+  unapproveProjectService: vi.fn(),
+}));
+
 describe('updateImageService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -54,6 +78,8 @@ describe('updateImageService', async () => {
   it('returns the image if successful', async () => {
     vi.mocked(prisma.projectImages.findUnique).mockResolvedValue(prismaImage);
     vi.mocked(prisma.projectImages.update).mockResolvedValue(updatedImage);
+    vi.mocked(prisma.projects.findUnique).mockResolvedValue(prismaProject);
+    vi.mocked(unapproveProjectService).mockResolvedValue('OK');
     vi.mocked(transformProjectImage).mockResolvedValue(transformedImage);
     const result = await updateImageService(4, changes);
 

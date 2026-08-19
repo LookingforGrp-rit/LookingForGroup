@@ -20,7 +20,7 @@ export const getBlocklistIdsService = async (
       return value.blockedId;
     });
   } catch (e) {
-    console.error('There was an error in getBlocklistService: ', e);
+    console.error('There was an error in getBlocklistIdsService: ', e);
     return 'INTERNAL_ERROR';
   }
 };

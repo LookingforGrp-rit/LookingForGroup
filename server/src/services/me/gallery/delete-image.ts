@@ -31,12 +31,6 @@ export const deleteGalleryImageService = async (
   } catch (error) {
     console.error('Error in deleteGalleryImageService:', error);
 
-    if (error instanceof Object && 'code' in error) {
-      if (error.code === 'P2025') {
-        return 'NOT_FOUND';
-      }
-    }
-
     return 'INTERNAL_ERROR';
   }
 };

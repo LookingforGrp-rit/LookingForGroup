@@ -50,7 +50,7 @@ const transformedReports = [
   },
 ];
 
-describe('getProjectReportsService', async () => {
+describe('getUserReportsService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

@@ -24,7 +24,7 @@ const deleteNotificationService = async (
       return 'INTERNAL_ERROR';
     }
 
-    if (e.code !== 'P2025') {
+    if (e.code === 'P2025') {
       return 'NOT_FOUND';
     }
 

@@ -1,0 +1,71 @@
+get:
+  summary: Get all users
+  tags:
+    - Users
+  parameters:
+    - in: path
+      name: method
+      required: true
+      schema:
+        type: string
+      description: Sorting method (options are "Newest" for newest first and "A-Z" for alphabetical)
+    - in: query
+      name: strictness
+      required: false
+      schema:
+        type: string
+      description: The strictness with which to apply the filters (return if they match either any of the filters or all of them)
+    - in: query
+      name: designer
+      required: false
+      schema:
+        type: boolean
+    - in: query
+      name: developer
+      required: false
+      schema:
+        type: boolean
+    - in: query
+      name: skills
+      required: false
+      schema:
+        type: string
+    - in: query
+      name: majors
+      required: false
+      schema:
+        type: string
+    - in: query
+      name: ritStatus
+      required: false
+      schema:
+        type: string
+    - in: query
+      name: socials
+      required: false
+      schema:
+        type: string
+      description: The filters to apply on users that you wish to get
+  responses:
+    '200':
+      description: A list of users
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: array
+                items:
+                  $ref: '../../swagger.yaml#/components/schemas/UserPreview'
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

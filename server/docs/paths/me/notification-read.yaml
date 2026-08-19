@@ -1,0 +1,39 @@
+patch:
+  summary: Marks a notification as read.
+  tags:
+    - Me
+  description: Sets the 'has_been_read' column for the specified notification to true.
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: Id of the notification.
+    - in: query
+      name: devId
+      required: true
+      schema:
+        type: integer
+      description: Id used as 'me'.
+  responses:
+    '200':
+      description: Notification marked as read.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                nullable: true
+                example: null
+              data:
+                type: string
+                example:
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

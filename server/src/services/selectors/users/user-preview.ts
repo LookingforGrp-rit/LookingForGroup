@@ -12,8 +12,13 @@ export const UserPreviewSelector = Object.freeze({
       skills: {
         select: {
           type: true,
+          label: true,
+          category: true,
+          skillId: true,
         },
       },
+      position: true,
+      proficiency: true,
     },
   },
   pronouns: true,
@@ -21,4 +26,5 @@ export const UserPreviewSelector = Object.freeze({
   headline: true,
   location: true,
   majors: true,
+  ritStatus: true,
 });

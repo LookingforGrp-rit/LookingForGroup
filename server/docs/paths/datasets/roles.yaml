@@ -1,0 +1,25 @@
+get:
+  summary: Returns a list of all roles
+  tags:
+    - Datasets
+  responses:
+    '200':
+      description: List of all the roles available
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: array
+                items:
+                  $ref: '../../swagger.yaml#/components/schemas/Role'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

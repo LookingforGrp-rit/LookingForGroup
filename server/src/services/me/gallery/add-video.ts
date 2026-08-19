@@ -19,11 +19,7 @@ const addGalleryVideoService = async (
     return 'CREATED';
   } catch (e) {
     console.error('Error in addGalleryVideoService:', e);
-    if (e instanceof Object && 'code' in e) {
-      if (e.code === 'P2025') {
-        return 'NOT_FOUND';
-      }
-    }
+
     return 'INTERNAL_ERROR';
   }
 };

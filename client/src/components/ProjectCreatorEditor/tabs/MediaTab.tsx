@@ -138,7 +138,7 @@ export const MediaTab = ({
   const handleImageUpload = useCallback(async (file: File, altText?: string) => {
     if (!["image/jpeg", "image/png"].includes(file.type)) return;
     else if (file.size > 2000000) {
-      setImageError("File too large");
+      setImageError("File too large! (max: 2mb)");
       return;
     }
 
@@ -148,7 +148,7 @@ export const MediaTab = ({
         // convert to file
         const imageFile = await stringToFile((image as PendingProjectImage).image?.name as string);
         // compare
-        if (file.name === imageFile.name && file.size === imageFile.size && file.webkitRelativePath === imageFile.webkitRelativePath) {
+        if (file.name === imageFile.name && file.webkitRelativePath === imageFile.webkitRelativePath) {
           // TODO: add error to show users cannot add duplicate image
           setImageError("*Sorry, no duplicate images here!*")
           return;
@@ -168,7 +168,7 @@ export const MediaTab = ({
     try {
       const fullImg = {
         image: file,
-        altText: altText ?? "Project Image",
+        altText: (altText?.length !== undefined && altText.length > 0 ? altText : "Project Image"), 
       } as CreateProjectImageInput;
 
       const localId = ++localIdIncrement;
@@ -266,7 +266,7 @@ export const MediaTab = ({
     dataManager?.deleteVideo({
       id: {
         value: video.videoId,
-        type: video.apiUrl ? "canon" : "local"
+        type: ("isLocal" in video && (video as any).isLocal) ? "local" : "canon"
       },
       data: null
     });
@@ -468,19 +468,8 @@ export const MediaTab = ({
         saveProject={saveProject}
         isSaving={isSaving}
         imageError={imageError as string}
+        project={projectData}
       />
-      {isSaving ?
-        (
-          // Just here for blank space and to prevent 
-          // accidental deletion while a project is saving
-          ""
-        ) : (
-          <DeleteProjectButton
-            projectID={unmodifiedProject.projectId}
-            projectTitle={unmodifiedProject.title}
-          />
-        )
-      }
     </>
   );
 };

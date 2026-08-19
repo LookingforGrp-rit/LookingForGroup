@@ -9,7 +9,7 @@ import { Select, SelectButton, SelectOptions } from "../../Select";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Input } from "../../Input";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
-import { PendingUserProfile, PendingUserSocial } from "../../../../types/types";
+import { PendingUserProfile } from "../../../../types/types";
 import { BaseSocialUrl } from "@looking-for-group/shared/enums";
 
 

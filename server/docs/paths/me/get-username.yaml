@@ -1,0 +1,52 @@
+get:
+  summary: Get username through googleOAuth headers
+  tags:
+    - Me
+  security:
+    - googleOAuth: []
+  description: |
+    Retrieves the username of the current user authenticated via googleOAuth. Needs the uid header
+  parameters:
+    - in: header
+      name: uid
+      required: true
+      schema:
+        type: string
+      description: Google ID from the Google OAuth response
+  responses:
+    '200':
+      description: Username successfully retrieved
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  userId:
+                    type: integer
+          examples:
+            default:
+              summary: Example response
+              value:
+                status: 200
+                error: null
+                data:
+                  username: mistahbones
+                  userId: 18
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

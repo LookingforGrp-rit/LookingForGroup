@@ -53,6 +53,8 @@ const transformedUserPreview: UserPreview = {
   title: '',
   userId: 2,
   username: '',
+  skills: [],
+  ritStatus: 'FourthYear',
 };
 
 const prismaUserFollowing: MyFollowing = {

@@ -1,0 +1,38 @@
+post:
+  summary: Create a skill.
+  tags:
+    - Admin
+  description: Creates a skill with the given parameters.
+  parameters:
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: true
+      description: The userId being used for credentials.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../swagger.yaml#/components/schemas/SkillInput'
+  responses:
+    '200':
+      description: Skill created successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                nullable: true
+                example: null
+              data:
+                $ref: '../../swagger.yaml#/components/schemas/Skill'
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

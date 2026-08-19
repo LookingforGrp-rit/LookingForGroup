@@ -30,7 +30,7 @@ const transformedReport = {
   reason: 'test report',
 };
 
-describe('getProjectReportsService', async () => {
+describe('getProjectReportByIdService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

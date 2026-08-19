@@ -11,13 +11,20 @@ export const sendNotificationAfterAll = (
   template: NotificationBuilder,
   isGlobal: boolean,
 ): RequestHandler => {
-  return async (request: Request, response: Response, next: NextFunction) => {
+  return (request: Request, response: Response, next: NextFunction) => {
     next();
 
-    if (response.statusCode !== 200) {
+    // anything equal to or higher than 400 is an error
+    if (response.statusCode >= 400) {
       return;
     }
 
-    await sendNotificationService(template, request, isGlobal);
+    // this is the best solution I could think of
+    // because, for some reason, this is called before the next() function is completed fully
+    // ergo we need to give the database time to update.
+    // If someone else figures out why, please find a better solution.
+    setTimeout(() => {
+      sendNotificationService(template, request, isGlobal).catch(() => {});
+    }, 500);
   };
 };

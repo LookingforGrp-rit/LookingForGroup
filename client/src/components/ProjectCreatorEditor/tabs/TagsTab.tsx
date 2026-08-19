@@ -502,7 +502,13 @@ export const TagsTab = ({
             {tagTabs.map((type, index) =>
               <>
                 <button
-                  onClick={() => setCurrentTagsTab(index)}
+                  onClick={() => {
+                    setCurrentTagsTab(index);
+                    let container = document.getElementById("project-editor-tag-search-container");
+                    if (container) {
+                      container.scrollTop = 0; //shows error but still works?
+                    }
+                  }}
                   className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${tagTabColors[type as string] ?? 'grey'} ${currentTagsTab === index && searchValue === "" ? "tag-search-tab-active" : ""}`}>
                   {type}
                 </button>
@@ -517,10 +523,10 @@ export const TagsTab = ({
         </div>
         <div id="project-editor-tag-search-container">
           <TagDisplay
-            selected={[[
+            selected={[
               ...tagToTagOrSkill(projectAfterTagsChanges.tags),
               ...mediumToTagOrSkill(projectAfterTagsChanges.mediums)
-            ], []]}
+            ]}
             toggleTag={handleTagSelect}
             tabs={tagTabs}
             tabId={currentTagsTab}
@@ -537,29 +543,39 @@ export const TagsTab = ({
               <div id="invalid-input-error" className={"save-error-msg-general"}>
                 <p>*{message}*</p>
               </div>}
-            {isSaving ? 
-            (
-              // Currently Saving
-              <div className='spinning-loader'></div>
-            ) : (
-              // Save is complete or hasn't been pressed
-              <PopupButton
-                  buttonId="project-editor-save"
-                  callback={() => {
-                    // Incomplete form: still clickable so the save validation runs,
-                    // shows the error, and auto-scrolls to the first missing field.
-                    if (!saveable) saveProject?.();
-                    else setConfirm(true);
-                  }}
-                >
-                  Save Changes
-                </PopupButton>
-              )  
+            {
+              // Switches out the save button for a loading icon if the project is saving
+              isSaving ?
+                (
+                  // Currently Saving
+                  <div className='spinning-loader'></div>
+                ) : (
+                  // Save is complete or hasn't been pressed
+                  <PopupButton
+                    buttonId="project-editor-save"
+                    callback={() => {
+                      // Incomplete form: still clickable so the save validation runs,
+                      // shows the error, and auto-scrolls to the first missing field.
+                      if (!saveable) saveProject?.();
+                      else setConfirm(true);
+                    }}
+                  >
+                    Save Changes
+                  </PopupButton>
+                )
             }
 
             {confirm ?
               <PopupContent useClose={false} callback={() => setConfirm(false)}>
-                <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+                <div id="confirm-editor-save-text">
+                  Are you sure you want to save all changes?
+                  {projectData.approved &&
+                    <p id="unapproved-warning">
+                      <i className="fa-solid fa-triangle-exclamation"></i>
+                      Changes to the General tab, or adding or updating Media or Links, will unapprove your project. You'll need to submit it for review again before it can be approved.
+                    </p>
+                  }
+                </div>
                 <div id="confirm-editor-save">
                   <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
                     Confirm
@@ -572,17 +588,19 @@ export const TagsTab = ({
             }
           </Popup>
 
-          {isSaving ?
-            (
-              // Just here for blank space and to prevent 
-              // accidental deletion while a project is saving
-              ""
-            ) : (
-              <DeleteProjectButton
-                projectID={unmodifiedProject.projectId}
-                projectTitle={unmodifiedProject.title}
-              />
-            )
+          {
+            // Hides the delete project button if the project is currently saving
+            isSaving ?
+              (
+                // Just here for blank space and to prevent 
+                // accidental deletion while a project is saving
+                ""
+              ) : (
+                <DeleteProjectButton
+                  projectID={unmodifiedProject.projectId}
+                  projectTitle={unmodifiedProject.title}
+                />
+              )
           }
         </div>
       </div>

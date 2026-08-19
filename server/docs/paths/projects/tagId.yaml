@@ -1,0 +1,99 @@
+patch:
+  summary: Updates the order of a tag in the list
+  security:
+    - googleOAuth: []
+  tags:
+    - Projects
+  parameters:
+    - in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: The ID of the project
+    - in: path
+      name: tagId
+      schema:
+        type: integer
+      required: true
+      description: The ID of the tag
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../swagger.yaml#/components/schemas/UpdateProjectTagInput'
+  responses:
+    '200':
+      description: Tag updated successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: object
+                $ref: '../../swagger.yaml#/components/schemas/ProjectTag'
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '401':
+      $ref: '../../swagger.yaml#/components/responses/Unauthorized'
+    '409':
+      $ref: '../../swagger.yaml#/components/responses/Conflict'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+delete:
+  summary: Deletes a project tag
+  security:
+    - googleOAuth: []
+  tags:
+    - Projects
+  parameters:
+    - in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: The ID of the project
+    - in: path
+      name: tagId
+      schema:
+        type: integer
+      required: true
+      description: The ID of the tag
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  responses:
+    '200':
+      description: Tags deleted successfully
+      content:
+        application/json:
+          example:
+            status: 200
+            error: null
+            data: null
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

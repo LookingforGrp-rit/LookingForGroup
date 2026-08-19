@@ -8,7 +8,7 @@ import { Medium, Skill, Tag } from "@looking-for-group/shared";
  * @param type - the broader grouper, in a string format to allow for all type data types
  * @param category - the more specific grouper, in a string format to allow for all category data types
 */
-type TagOrSkill = {
+export type TagOrSkill = {
   label: string;
   id: number;
   type: string;
@@ -114,8 +114,8 @@ const CatOrder: Record<string, number> = {
  * @param searchValue - the value of the search bar present in the tag/skill menu
  * @param searchData - the returned array of tags/skills found by the search bar
 */
-interface TagDisplayProps {
-  selected: TagOrSkill[][];
+export interface TagDisplayProps {
+  selected: TagOrSkill[];
   toggleTag: (id: number, type: string) => void;
   tabs: string[];
   tabId: number;
@@ -181,12 +181,7 @@ const TagDisplay: React.FC<TagDisplayProps> = ({ selected, toggleTag, tabs, tabI
     return tagsToDisplay.map((tag, index, array) => {
       //Because .includes doesn't work for some reason.
       //And not using every detail leads to false positives for reasons I can't comprehend.
-      const selectedInclude = selected[0].some(
-        t => t.id === tag.id && 
-        t.label === tag.label && 
-        t.category === tag.category && 
-        t.type === tag.type);
-      const selectedExlude = selected[1].some(
+      const includes = selected.some(
         t => t.id === tag.id && 
         t.label === tag.label && 
         t.category === tag.category && 
@@ -208,9 +203,9 @@ const TagDisplay: React.FC<TagDisplayProps> = ({ selected, toggleTag, tabs, tabI
           <TagElement
             type={tag.type.toLowerCase()}
             onClick={() => toggleTag(tag.id, tag.type)}
-            selected={selectedInclude || selectedExlude}
+            selected={includes}
           >
-            <i className={selectedInclude ? "fa fa-check" : selectedExlude ? "fa fa-close" : "fa fa-plus"}></i>
+            <i className={includes ? "fa fa-close" : "fa fa-plus"}></i>
             <p>{tag.label}</p>
           </TagElement>
         </Fragment>

@@ -28,6 +28,16 @@ const deleteBlacklistService = async (
       },
     });
 
+    // make the user's account public again
+    await prisma.users.update({
+      where: {
+        userId: id,
+      },
+      data: {
+        privacy: 'public',
+      },
+    });
+
     //Send email to user
     const html = await pretty(
       await render(

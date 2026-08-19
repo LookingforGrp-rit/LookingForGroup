@@ -1,0 +1,65 @@
+get:
+  summary: Get all projects
+  tags:
+    - Projects
+  description: Retrieves a list of all projects.
+  responses:
+    '200':
+      description: A list of projects
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: array
+                items:
+                  $ref: '../../swagger.yaml#/components/schemas/ProjectPreview'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
+post:
+  summary: Create a new project
+  description: Creates a new project using the request body
+  tags:
+    - Projects
+  security:
+    - googleOAuth: []
+  parameters:
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  requestBody:
+    required: true
+    content:
+      multipart/form-data:
+        schema:
+          $ref: '../../swagger.yaml#/components/schemas/CreateProjectInput'
+  responses:
+    '201':
+      description: Project created successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 201
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                $ref: '../../swagger.yaml#/components/schemas/ProjectDetail'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, ChangeEvent } from 'react';
+import React, { useMemo, useState, useCallback, useRef } from 'react';
 // import { DiscoverFilters } from '../DiscoverFilters';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
@@ -20,8 +20,6 @@ enum sortModes {
   "Z-A" = "Z-A",
   "Newest" = "Newest",
   "Oldest" = "Oldest",
-  "Followers" = "Followers",
-  "Followers Ascending" = "Followers Ascending",
 }
 
 type FilterData = {
@@ -88,10 +86,12 @@ export const ProfileMeetPage = () => {
   //all of the needed states
   const [loaded, setLoaded] = useState<boolean>(false);
   const [currentSearch, setCurrentSearch] = useState('');
+  const searchRef = useRef('');
   const [fullUserList, setFullUserList] = useState<UserPreview[]>([]);
   const [userCache, setUserCache] = useState<NumberDictionary<StructuredUserInfo>>({});
 
   const [filteredUserList, setFilteredUserList] = useState<UserPreview[]>([]);
+  const [searchedUserList, setSearchedUserList] = useState<UserPreview[]>([]);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
   const userDataSet = useMemo(() => {
@@ -167,14 +167,14 @@ export const ProfileMeetPage = () => {
       }
     }
 
-    setFilteredUserList(matches);
+    setSearchedUserList(matches);
   }, [fullUserList]);
 
   /**
  * Changes what items are shown to the user whenever a filter has been added or changed
  * @param activeTagFilters Tags that are shown to the user now
  */
-  const updateUserList = async (activeSkillFilters: Skill[], activeExclusionFilters: Skill[], filterMode: "Match All" | "Match Any", sortMode: sortModes) => {
+  const updateUserList = async (activeSkillFilters: Skill[], filterMode: "Match All" | "Match Any", sortMode: sortModes) => {
     if (filterData.sortMode !== sortMode) {
       sortPeople(sortMode);
     }
@@ -202,13 +202,6 @@ export const ProfileMeetPage = () => {
     }
 
     let tagFilteredList = items.filter((item) => {
-      for (let tag of activeExclusionFilters) {
-        if ((item.title === tag.label && tag.type === "Role") ||
-          item.majors.some(major => major.label === tag.label && major.majorId === tag.skillId) ||
-          item.skills.some(skill => skill.type === tag.type && tag.category ==="Other") || //.type used instead of .skillId to accomodate for people tab filters, which reference general types and not specific skillIds
-          item.skills.some(skill => skill.skillId === tag.skillId)) 
-          return false;
-      }
       if (activeSkillFilters.length === 0) return true;
       let matchesAny = false;
       let matchesAll = true;
@@ -288,7 +281,7 @@ export const ProfileMeetPage = () => {
 
     // If no tags are currently selected, render all projects
     // !! Needs to be skipped if searchbar has any input !!
-    if (activeExclusionFilters.length === 0 && activeSkillFilters.length === 0) {
+    if (activeSkillFilters.length === 0) {
       tagFilteredList = JSON.parse(JSON.stringify(fullUserList));
 
       setFilteredUserList(fullUserList);
@@ -319,14 +312,6 @@ export const ProfileMeetPage = () => {
         // Compare age inverted
         setupUserData("Newest", true);
         break;
-      case 'Followers':
-        // TO IMPLIMENT once backend 
-        setupUserData("A-Z", false);
-        break;
-      case "Followers Ascending":
-        // TO IMPLIMENT
-        setupUserData("A-Z", true);
-        break;
       default:
         //default to newest first
         setupUserData("Newest", false);
@@ -345,7 +330,17 @@ export const ProfileMeetPage = () => {
       </div>
     );
   } else {
-    discoverPanelContents = (<PanelBox category={'profiles'} itemList={filteredUserList} userId={currentUserId ?? -1} />);
+    discoverPanelContents = (
+      <PanelBox 
+        category={'profiles'} 
+        itemList={
+          searchRef.current.length === 0
+          ? filteredUserList 
+          : searchedUserList.filter(a => filteredUserList.some(b => a.userId === b.userId))
+        }
+        userId={currentUserId ?? -1}
+      />
+    );
   }
 
   return (
@@ -353,7 +348,11 @@ export const ProfileMeetPage = () => {
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={userDataSet}
         onSearch={searchUsers}
-        value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
+        value={currentSearch}
+        setSearch={(value) => {
+          setCurrentSearch(value)
+          searchRef.current = value.toString();
+        }}
         setCurrentUserId={getAuth}
         placeholderText="Search by Name"
         mobilePlaceholderText="People"

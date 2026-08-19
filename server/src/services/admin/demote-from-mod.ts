@@ -66,7 +66,7 @@ export const demoteModService = async (
         lastName: '',
       } as UserEmail,
       receiver: result,
-      subject: `[DO NOT REPLY] You have been promoted to Moderator`,
+      subject: `[DO NOT REPLY] You have been demoted from Moderator`,
       textBody: text,
       HTMLBody: html,
     };
@@ -77,7 +77,7 @@ export const demoteModService = async (
 
     return 'OK';
   } catch (e) {
-    console.error('There was an error is promoteUserToModService: ', e);
+    console.error('There was an error is demoteModService: ', e);
     return 'INTERNAL_ERROR';
   }
 };

@@ -172,6 +172,49 @@
   display: none;
 }
 
+#credit-members-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  margin: 20px clamp(20px, 5vw, 50px);
+  padding: 0;
+  list-style: none;
+
+  .project-contributor-info {
+    flex-direction: column;
+    margin-top: 10px;
+  }
+
+  .team-member-role {
+    margin: 0;
+  }
+}
+
+.lfg-contributor {
+  flex: 0 1 clamp(180px, 45vw, 200px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--header-color);
+  padding: 20px 15px;
+  border-radius: 10px;
+  text-align: center;
+
+  .project-contributor-profile {
+    margin-right: 0;
+
+    .team-member-name {
+      overflow-wrap: break-word;
+    }
+  }
+}
+
+.no-members {
+  margin-left: clamp(20px, 5vw, 50px);
+}
+
 @media (max-width: 1830px) {
   .features-list {
     flex-direction: column;
@@ -375,6 +418,8 @@
     }
   }
 
+  .project-contributor-info {}
+
   #credit-members-container {
     gap: 20px !important;
     margin: 20px 5px !important;
@@ -400,6 +445,45 @@
   #purpose-box,
   #management-box {
     margin: 10px auto !important;
+  }
+}
+
+@media only screen and (max-width: 799px) {
+  #credit-members-container {
+    gap: 20px;
+  }
+
+  .lfg-contributor {
+    flex-grow: 1;
+  }
+
+  .lfg-contributor {
+    flex: 0 1 clamp(100px, 30vw, 120px);
+    padding: 15px;
+
+    .project-contributor-profile {
+      width: 45px;
+      height: 45px;
+    }
+
+    .team-member-name {
+      font-size: .825rem !important;
+
+      overflow-wrap: break-word !important;
+    }
+
+    .team-member-role {
+      font-size: .625rem !important;
+    }
+  }
+
+  .about-container {
+    padding: 0 !important;
+
+    #credits {
+      padding: 0 !important;
+      margin: 0;
+    }
   }
 }
 
@@ -509,7 +593,23 @@
   }
 }
 
-@media (max-width:400px) {
+@media only screen and (max-width: 550px) {}
+
+@media only screen and (max-width: 500px) {
+  .lfg-contributor {
+    padding: 10px 5px;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  .about-container {
+    width: 100% !important;
+  }
+
+  #credit-members-container {
+    gap: 10px;
+  }
+
   .about-box {
     width: auto;
   }

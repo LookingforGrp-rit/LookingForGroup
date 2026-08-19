@@ -51,7 +51,7 @@ const deleteMemberRequestService = async (
 
     return 'NO_CONTENT';
   } catch (e) {
-    console.error(`Error in getApplicationsService: ${e as Error}`);
+    console.error(`Error in deleteMemberRequestService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }

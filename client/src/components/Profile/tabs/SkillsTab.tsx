@@ -383,7 +383,7 @@ export const SkillsTab = ({
         </div>
         <div id="project-editor-tag-search-container">
           <TagDisplay
-            selected={[skillToTagOrSkill(selectedSkills), []]}
+            selected={skillToTagOrSkill(selectedSkills)}
             toggleTag={handleSkillToggle}
             tabs={skillTabs}
             tabId={currentSkillsTab}

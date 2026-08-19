@@ -48,6 +48,8 @@ describe('getUserByUsernameService', () => {
       title: '',
       location: '',
       majors: [],
+      skills: [],
+      ritStatus: 'FourthYear',
     };
 
     vi.mocked(prisma.users.findFirst).mockResolvedValue(prismaUser as any);

@@ -117,7 +117,7 @@ export const projectDataManager = async (projectId: number) => {
         jobSkills: [],
         members: [],
         memberRequests: [],
-        ownerChanges: [],
+        ownerChange: {} as CRUDRequest<number>,
       },
       delete: {
         tags: [],
@@ -238,11 +238,15 @@ export const projectDataManager = async (projectId: number) => {
 
     // project fields
     try {
-      await runAndCollectErrors<UpdateProjectInput>(
-        "Updating project",
-        [updates.fields],
-        ({ data }) => updateProject(projectId, data)
-      );
+      const hasProjectFieldChanges = Object.keys(updates.fields.data ?? {}).length > 0;
+
+      if (hasProjectFieldChanges) {
+        await runAndCollectErrors<UpdateProjectInput>(
+          "Updating project",
+          [updates.fields],
+          ({ data }) => updateProject(projectId, data)
+        );
+      }
     } catch (error) {
       errorMessage += (error as { message: string }).message;
     }
@@ -348,11 +352,8 @@ export const projectDataManager = async (projectId: number) => {
 
     // change owner requests
     try {
-      await runAndCollectErrors<number>(
-        "Changing owner",
-        updates.ownerChanges,
-        ({data}) => changeOwner(projectId, data)
-      );
+      if (updates.ownerChange.data)
+        await changeOwner(projectId, updates.ownerChange.data);
     } catch (error) {
       errorMessage += (error as { message: string}).message;
     }
@@ -1297,7 +1298,7 @@ export const projectDataManager = async (projectId: number) => {
   };
   
   const swapOwner = (request: CRUDRequest<number>) => {
-    changes.update.ownerChanges.push(request);
+    changes.update.ownerChange = request;
   };
 
   return {

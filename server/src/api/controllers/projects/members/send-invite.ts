@@ -1,7 +1,5 @@
 import type { ApiResponse, SendProjectInviteInput } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { InviteReceivedNotificationBuilder } from '#notification-templates/invite-received-notification-builder.ts';
-import sendNotificationService from '#services/notifications/send-notification.ts';
 import sendInviteService from '#services/projects/members/send-invite.ts';
 
 //POST api/projects/{id}/members/send-invite
@@ -48,8 +46,6 @@ const sendInviteController = async (req: Request, res: Response) => {
     data: null,
   };
   res.status(200).json(resBody);
-
-  sendNotificationService(new InviteReceivedNotificationBuilder(), req).catch(() => {});
 };
 
 export default sendInviteController;

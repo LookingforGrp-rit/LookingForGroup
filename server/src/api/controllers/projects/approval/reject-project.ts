@@ -1,7 +1,5 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { ProjectRejectedNotificationBuilder } from '#notification-templates/project-rejected-notification-builder.ts';
-import sendNotificationService from '#services/notifications/send-notification.ts';
 import { rejectProjectService } from '#services/projects/approval/reject-project.ts';
 
 //deletes a project from the list of projects awaiting approval
@@ -33,8 +31,6 @@ const rejectProjectController = async (req: Request, res: Response) => {
     data: null,
   };
   res.status(204).json(resBody);
-
-  sendNotificationService(new ProjectRejectedNotificationBuilder(), req).catch(() => {});
 };
 
 export default rejectProjectController;

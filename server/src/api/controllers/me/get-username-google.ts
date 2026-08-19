@@ -3,9 +3,9 @@ import type { Response } from 'express';
 import { getUserByGoogleService } from '#services/me/get-user-google.ts';
 
 //GET api/me/get-username
-//get username by shibboleth
+//get username by googleAuth
 //this probably won't be used
-//we have some code for implementing shibboleth but we weren't allowed to use it
+//we have some code for implementing googleAuth but we weren't allowed to use it
 //and we were working on an alternative for user sign in
 export const getUsernameByGoogle = async (
   req: AuthenticatedRequest,

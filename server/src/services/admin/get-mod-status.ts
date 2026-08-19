@@ -12,7 +12,7 @@ export const getAccessLevelService = async (
     const accessLevel = await getUserAccessLevel(userId);
     return accessLevel;
   } catch (e) {
-    console.error('Error in getUserByIdService:', e);
+    console.error('Error in getAccessLevelService:', e);
     return 'INTERNAL_ERROR';
   }
 };

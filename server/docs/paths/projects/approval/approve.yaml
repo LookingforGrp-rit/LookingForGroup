@@ -1,0 +1,41 @@
+patch:
+  summary: Approves a project awaiting approval.
+  tags:
+    - Unapproved Projects
+  description: Removes a project from the list of projects awaiting approval and sets its approval status as 'true'.
+  parameters:
+    - name: id
+      in: path
+      schema:
+        type: integer
+      required: true
+      description: Project to be approved
+    - name: devId
+      in: query
+      schema:
+        type: integer
+      required: true
+      description: User id to be used. Use a user id from a moderator.
+  responses:
+    '204':
+      description: Project approved
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 204
+              error:
+                nullable: true
+                example: null
+              data:
+                type: string
+                example: Project Approved
+    '400':
+      $ref: '../../../swagger.yaml#/components/responses/BadRequest'
+    '403':
+      $ref: '../../../swagger.yaml#/components/responses/Forbidden'
+    '500':
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'

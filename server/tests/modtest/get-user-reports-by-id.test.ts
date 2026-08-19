@@ -32,7 +32,7 @@ const transformedReport = {
   active: false,
 };
 
-describe('getProjectReportsService', async () => {
+describe('getUserReportByIdService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

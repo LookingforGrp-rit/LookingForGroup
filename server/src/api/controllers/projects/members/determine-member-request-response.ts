@@ -1,9 +1,10 @@
-import type { AuthenticatedRequest, UpdateMemberRequestInput } from '@looking-for-group/shared';
+import type {
+  AuthenticatedRequest,
+  MembershipRequestResponseType,
+  UpdateMemberRequestInput,
+} from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { MemberRequestStatus } from '#prisma-models/index.js';
-
-type MembershipRequestResponseType =
-  'REQUEST-ACCEPTED' | 'REQUEST-REJECTED' | 'INVITE-ACCEPTED' | 'INVITE-REJECTED';
 
 // Not an endpoint, but a helper function
 // Since there is only one endpoint (PATCH api/projects/members/requests)

@@ -72,6 +72,7 @@ export const requestToJoinService = async (
       sentFromProject: boolean;
       requestStatus: MemberRequestStatus;
     };
+
     // if there was a request exist before, update that
     if (req) {
       result = await prisma.memberRequests.update({

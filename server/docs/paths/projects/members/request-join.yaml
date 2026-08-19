@@ -1,0 +1,51 @@
+post:
+  summary: Request to join from a prospective member
+  description: Sends a request to join a project
+  tags:
+    - Project Members
+  security:
+    - googleOAuth: []
+  parameters:
+    - in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: The ID of the project
+    - in: query
+      name: devId
+      schema:
+        type: integer
+      required: false
+      description: The user ID to be used as the current user
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../../swagger.yaml#/components/schemas/CreateMemberRequestInput'
+  responses:
+    '201':
+      description: Request Successful
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 201
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                type: string
+                nullable: true
+                example: null
+    '404':
+      $ref: '../../../swagger.yaml#/components/responses/NotFound'
+    '409':
+      $ref: '../../../swagger.yaml#/components/responses/Conflict'
+    '500':
+      $ref: '../../../swagger.yaml#/components/responses/InternalServerError'

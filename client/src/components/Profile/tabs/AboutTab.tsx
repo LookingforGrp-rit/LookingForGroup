@@ -83,7 +83,7 @@ export const AboutTab = ({
 	const handleFileSelected = useCallback(async (file: File) => {
 		if (!["image/jpeg", "image/png"].includes(file.type)) return;
 		else if (file.size > 1000000) {
-			setImageError("File too large");
+			setImageError("File too large (max: 1mb)");
 			return;
 		}
 

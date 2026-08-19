@@ -1,0 +1,34 @@
+get:
+  tags:
+    - Users
+  summary: Get list of users that the specified user is following
+  parameters:
+    - name: id
+      in: path
+      description: User ID
+      required: true
+      schema:
+        type: integer
+  responses:
+    '200':
+      description: List of users the current user is following
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                type: string
+                nullable: true
+                example: null
+              data:
+                $ref: '../../swagger.yaml#/components/schemas/UserFollowsList'
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'
