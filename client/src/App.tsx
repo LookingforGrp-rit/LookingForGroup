@@ -33,7 +33,7 @@ function App() {
   const [profileImage, setProfileImage] = useState<File>();
 
   // https://css-tricks.com/easy-dark-mode-and-multiple-color-themes-in-react/
-  const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const defaultDark = true;
   const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
 
   const location = useLocation();
