@@ -7,9 +7,19 @@ from this folder of the monorepo.
 
 ## 1. Create the API token
 
-Railway account (top-right avatar) -> Account Settings -> Tokens -> create
-a new token. A project-scoped token limited to this one project is safer
-than an account-wide token, if that option is available to you.
+Create a **Project Token** (not an Account Token) — scoped to just this
+one project/environment rather than your whole Railway account. In the
+Railway dashboard: open the project -> Settings -> Tokens -> create a
+Project Token.
+
+Important: Railway has multiple token types with different auth headers.
+A Project Token authenticates via the `Project-Access-Token` header,
+*not* `Authorization: Bearer` (that header is for the broader Account
+Token type instead). `restart-mysql.js` is written specifically for a
+Project Token and sends it via `Project-Access-Token` - if you ever
+regenerate this token, make sure it's still a Project Token, not an
+Account Token, or auth will silently fail with a "Not Authorized" error
+on the `deployments` field even though the token itself is valid.
 
 ## 2. Find the three IDs
 
