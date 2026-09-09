@@ -33,7 +33,11 @@ async function railwayGraphQL(query, variables) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${RAILWAY_API_TOKEN}`,
+      // Project Tokens (the narrowly-scoped, single-environment token type
+      // this script is meant to use) authenticate via this header, NOT
+      // `Authorization: Bearer` — that header is for broader Account
+      // Tokens instead. See SETUP.md.
+      'Project-Access-Token': RAILWAY_API_TOKEN,
     },
     body: JSON.stringify({ query, variables }),
   });
