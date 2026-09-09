@@ -1,0 +1,12 @@
+{
+  "name": "mysql-restart-cron",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node restart-mysql.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
