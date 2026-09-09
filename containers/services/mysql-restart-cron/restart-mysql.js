@@ -49,10 +49,10 @@ async function railwayGraphQL(query, variables) {
   return body.data;
 }
 
-async function getLatestSuccessfulDeploymentId() {
+async function getLatestDeploymentId() {
   const query = `
-    query latestDeployment($input: DeploymentListInput!) {
-      deployments(input: $input, first: 1) {
+    query latestDeployment($input: DeploymentListInput!, $first: Int) {
+      deployments(input: $input, first: $first) {
         edges {
           node {
             id
@@ -69,15 +69,15 @@ async function getLatestSuccessfulDeploymentId() {
       projectId: TARGET_PROJECT_ID,
       serviceId: TARGET_SERVICE_ID,
       environmentId: TARGET_ENVIRONMENT_ID,
-      status: { successfulOnly: true },
     },
+    first: 1,
   };
 
   const data = await railwayGraphQL(query, variables);
   const deployment = data.deployments.edges[0]?.node;
 
   if (!deployment) {
-    throw new Error('No successful deployment found for the target service.');
+    throw new Error('No deployment found for the target service.');
   }
 
   return deployment.id;
@@ -95,7 +95,7 @@ async function restartDeployment(deploymentId) {
 
 async function main() {
   console.log(`[${new Date().toISOString()}] Looking up latest deployment...`);
-  const deploymentId = await getLatestSuccessfulDeploymentId();
+  const deploymentId = await getLatestDeploymentId();
 
   console.log(`[${new Date().toISOString()}] Restarting deployment ${deploymentId}...`);
   await restartDeployment(deploymentId);
