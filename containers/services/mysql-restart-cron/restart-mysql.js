@@ -107,7 +107,15 @@ async function main() {
   console.log(`[${new Date().toISOString()}] Restart triggered successfully.`);
 }
 
-main().catch((error) => {
-  console.error(`[${new Date().toISOString()}] Restart failed:`, error.message);
-  process.exit(1);
-});
+main()
+  .then(() => {
+    // Node doesn't always exit on its own once an async script finishes —
+    // fetch's underlying HTTP client can leave a keep-alive connection
+    // open in its pool, which keeps the event loop from ever going empty.
+    // Exit explicitly rather than relying on that.
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error(`[${new Date().toISOString()}] Restart failed:`, error.message);
+    process.exit(1);
+  });
