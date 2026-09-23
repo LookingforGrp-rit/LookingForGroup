@@ -33,11 +33,7 @@ const addGalleryImageController = async (req: AuthenticatedRequest, res: Respons
   }
 
   //upload the file to the db
-  const dbResult = await uploadImageService(
-    req.file.buffer,
-    req.file.originalname,
-    req.file.mimetype,
-  );
+  const dbResult = await uploadImageService(req.file.buffer, req.file.originalname);
 
   if (dbResult === 'CONTENT_TOO_LARGE') {
     const resBody: ApiResponse = {
