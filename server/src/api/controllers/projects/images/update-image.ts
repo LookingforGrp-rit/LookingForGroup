@@ -25,11 +25,7 @@ const updateImageController = async (req: Request, res: Response): Promise<void>
 
   //check if they sent over a new image, and upload it to the db
   if (req.file) {
-    const dbImage = await uploadImageService(
-      req.file.buffer,
-      req.file.originalname,
-      req.file.mimetype,
-    );
+    const dbImage = await uploadImageService(req.file.buffer, req.file.originalname);
 
     if (dbImage === 'CONTENT_TOO_LARGE') {
       const resBody: ApiResponse = {

@@ -224,6 +224,14 @@ Profile Panel component style rules
   margin-top: 10px;
 }
 
+/* Smaller tags specifically on the People page's cards, without affecting
+   .skill-tag-label elsewhere (Settings, the individual Profile page, team
+   tools) where it's reused at its normal size. */
+.profile-panel-skills .skill-tag-label {
+  font-size: 0.75rem;
+  padding: 3px 10px;
+}
+
 @media screen and (max-width:1460px) {
   #quote {
     display: none;

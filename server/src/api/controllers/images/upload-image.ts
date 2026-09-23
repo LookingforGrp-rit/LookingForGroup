@@ -9,6 +9,6 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
     return;
   }
 
-  const result = await uploadImageService(req.file.buffer, 'test.png', 'image/png');
+  const result = await uploadImageService(req.file.buffer, 'test.png');
   res.status(200).json({ result });
 };
