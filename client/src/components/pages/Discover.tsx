@@ -2,6 +2,7 @@ import React, { useMemo, useState, useCallback, useEffect, useEffectEvent, useRe
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
+import { ThemeImage } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
 import { getByID, getProjectFollowers } from '../../api/projects';
 import { getProjectFollowing } from '../../api/users';
@@ -72,6 +73,39 @@ export const DiscoverPage = () => {
   const projectDataSet = useMemo(() => {
     return [{ data: fullProjectList }];
   }, [fullProjectList]);
+
+  // Header banner for the projects page. Unlike heroContent below, this stays
+  // visible during an active search, matching the People page's hero.
+  const projectsHero = (
+    <div id='discover-hero'>
+      <div id="project-hero">
+        <div id="project-hero-blurb-1" className="project-hero-blurb">
+          <ThemeImage
+            lightSrc={'/assets/bannerImages/project1_light.png'}
+            darkSrc={'/assets/bannerImages/project1_dark.png'}
+            id={'project-hero-img-1'}
+            alt={'"Discover Projects"'}
+          />
+        </div>
+        <div id="project-hero-blurb-2" className="project-hero-blurb">
+          <ThemeImage
+            lightSrc={'/assets/bannerImages/project2_light.png'}
+            darkSrc={'/assets/bannerImages/project2_dark.png'}
+            id={'project-hero-img-2'}
+            alt={'"Follow Projects"'}
+          />
+        </div>
+        <div id="project-hero-blurb-3" className="project-hero-blurb">
+          <ThemeImage
+            lightSrc={'/assets/bannerImages/project3_light.png'}
+            darkSrc={'/assets/bannerImages/project3_dark.png'}
+            id={'project-hero-img-3'}
+            alt={'"Find your Group!"'}
+          />
+        </div>
+      </div>
+    </div>
+  );
 
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)
@@ -587,6 +621,8 @@ export const DiscoverPage = () => {
         mobilePlaceholderText="Projects"
         searchBlocklist={["username", "createdat", "updatedat"]}
       />
+      {/* Header banner image, always visible */}
+      {projectsHero}
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {heroContent}
 

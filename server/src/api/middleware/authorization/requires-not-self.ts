@@ -1,4 +1,4 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { ApiResponse, AuthenticatedRequest, UserAccessLevel } from '@looking-for-group/shared';
 import type { NextFunction, Response } from 'express';
 import type { ParameterLocation } from '#middleware/validators/parameter-location/parameter-location.ts';
 
@@ -6,9 +6,18 @@ import type { ParameterLocation } from '#middleware/validators/parameter-locatio
  * Checks if the subject of the action being performed is the same person as the one performing the action.
  *  (e.g. moderator approving their own project)
  * @param subjectParamLocations A map of parameter locations (path, body, etc.) to parameter keys ("id", "userId", etc)
+ * @param exemptRoles Roles that skip this check entirely (e.g. Administrators approving their own project)
  */
-export const requiresNotSelf = (subjectParamLocations: Map<ParameterLocation, string>) => {
+export const requiresNotSelf = (
+  subjectParamLocations: Map<ParameterLocation, string>,
+  exemptRoles: UserAccessLevel[] = [],
+) => {
   return async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
+    if (exemptRoles.includes(request.currentUser.accessLevel)) {
+      next();
+      return;
+    }
+
     // Getting all ids
     const promises: Promise<number[] | ApiResponse>[] = [];
 
