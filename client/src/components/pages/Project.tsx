@@ -66,6 +66,10 @@ const Project = () => {
   const [user, setUser] = useState<MePrivate | null>();
   const [userID, setUserID] = useState<number>(0);
   const [isUserAdmin, setIsUserAdmin] = useState<boolean>();
+  // Specifically Administrator (not Moderator) - Administrators can approve
+  // their own projects, Moderators still can't. Mirrors the exemption in
+  // requiresNotSelf on the server for the /:id/approve route.
+  const [isUserAdministrator, setIsUserAdministrator] = useState<boolean>();
 
   const [displayedProject, setDisplayedProject] =
     useState<ProjectWithFollowers>();
@@ -103,6 +107,9 @@ const Project = () => {
       const accessLevel = await getUserAccessLevel(userAccount.data.userId);
       if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator') {
         setIsUserAdmin(true);
+      }
+      if (accessLevel.data?.toString() == 'Administrator') {
+        setIsUserAdministrator(true);
       }
     }
   };
@@ -1031,7 +1038,7 @@ const Project = () => {
             </div>
 
             {/* Mod options to approveor reject a project request (request edits in order to approve) */}
-            {isUserAdmin && approvalStatus == 'under-review' && userID !== displayedProject.owner.userId
+            {isUserAdmin && approvalStatus == 'under-review' && (userID !== displayedProject.owner.userId || isUserAdministrator)
               ? <div className="mod-project-options">
                 <h4>Project Review Request</h4>
                 <p>You can approve this project to make it publicly visible, or decline the request.

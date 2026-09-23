@@ -142,6 +142,7 @@ router.patch(
         [new ProjectOwnerInPathParameterLocation(), 'id'],
         [new ProjectMemberInPathParameterLocation(), 'id'],
       ]),
+      ['Administrator'],
     ),
   ),
   sendNotificationAfterAll(new ProjectApprovedNotificationBuilder(), false),
