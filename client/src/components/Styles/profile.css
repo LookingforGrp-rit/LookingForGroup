@@ -173,7 +173,7 @@ Profile Panel component style rules
 
   img {
     aspect-ratio: 1/1;
-    width: 100px;
+    width: 120px;
     border-radius: 10px;
   }
 
@@ -218,18 +218,23 @@ Profile Panel component style rules
 
 .profile-panel-skills {
   display: flex;
-  gap: 5px;
+  gap: 10px;
   flex-wrap: wrap;
-  row-gap: 5px;
+  row-gap: 10px;
   margin-top: 10px;
+  width: 120px;
+  justify-content: center;
 }
 
-/* Smaller tags specifically on the People page's cards, without affecting
-   .skill-tag-label elsewhere (Settings, the individual Profile page, team
-   tools) where it's reused at its normal size. */
-.profile-panel-skills .skill-tag-label {
-  font-size: 0.75rem;
-  padding: 3px 10px;
+/* Small solid-color dot representing a skill's type - color comes from the
+   existing .label-{color} rules (background-color + matching border), this
+   just constrains them to a small circle instead of a text pill. */
+.skill-color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  padding: 0;
 }
 
 @media screen and (max-width:1460px) {
@@ -325,6 +330,10 @@ Profile Panel component style rules
       width: 100%;
       margin: 0;
     }
+  }
+
+  .profile-panel-skills {
+    width: 100%;
   }
 }
 
