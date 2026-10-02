@@ -143,7 +143,7 @@ const ModeratorPage = () => {
     };
 
     /**
-     * Gets the user's account and sets the user ID. 
+     * Gets the user's account and sets the user ID.
      * Checks for mod permissions and redirects user when necessary
      * @returns void
      */
@@ -280,10 +280,10 @@ const ModeratorPage = () => {
     // Final Component ========================================================
     return (
         <div className="page mod-page">
-            <Header /* bypassing search bar */
+            <Header /* Search lives inside individual tabs (e.g. Pending Projects) instead of the page header */
                 dataSets={[]}
-                onSearch={() => { true }}
-                placeholderText="Search by Name"    /* change later */
+                onSearch={() => {}}
+                placeholderText="Search"
                 value={""}
                 hideSearchBar={true}
                 hideBackButton={false}
@@ -296,7 +296,7 @@ const ModeratorPage = () => {
                         <div className='placeholder-spacing'>
                             <div className='spinning-loader'></div>
                         </div>
-                    </> 
+                    </>
                     : userIsMod ? <>
                         <div id="mod-tools">
                             <div id="mod-actions-block">
