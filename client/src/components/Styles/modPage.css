@@ -3,6 +3,11 @@
     Most of the css styling rules for the Moderator page and mod options
 
 ================== */
+
+.pending-projects-search {
+    margin-bottom: 16px;
+}
+
 #mod-tools {
     display: flex;
     flex-wrap: wrap;

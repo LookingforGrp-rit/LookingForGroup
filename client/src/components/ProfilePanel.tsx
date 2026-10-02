@@ -6,7 +6,6 @@ import usePreloadedImage from '../functions/imageLoad';
 import { UserPreview } from '@looking-for-group/shared';
 import { useEffect, useState, useRef } from 'react';
 import { addUserFollowing, deleteUserFollowing, getUsersById } from '../api/users';
-import { Tag as TagElement } from './Tag';
 import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 
 
@@ -44,9 +43,56 @@ export const ProfilePanel = ({ profileData, currentUserId, onUnfollow }: Profile
 
   const MAX_SKILLS_TO_SHOW = 3;
 
+  /**
+   * Maps a skill's type to the color used to represent it (both here as a
+   * dot and in the filter/tag system elsewhere on the People page).
+   */
+  const getSkillColor = (type: string): string => {
+    switch (type) {
+      case "Designer":
+        return "red";
+      case "Developer":
+        return "yellow";
+      case "Soft":
+        return "purple";
+      case "Audio":
+        return "periwinkle";
+      case "Engineer":
+        return "cyan";
+      default:
+        return "grey";
+    }
+  };
 
-  const shownSkills = allSkills.slice(0, MAX_SKILLS_TO_SHOW);
-  const overflowCount = allSkills.length - MAX_SKILLS_TO_SHOW;
+  /**
+   * Picks up to `max` skills, preferring one of each distinct color first so
+   * the preview reflects the range of a person's skills rather than several
+   * of the same type. If there aren't enough distinct colors to fill `max`,
+   * the remaining slots are filled from whatever's left over, in order.
+   */
+  const pickDiverseSkills = (skills: typeof allSkills, max: number) => {
+    const seenColors = new Set<string>();
+    const diverse: typeof allSkills = [];
+    const rest: typeof allSkills = [];
+
+    for (const skill of skills) {
+      const color = getSkillColor(skill.type);
+      if (diverse.length < max && !seenColors.has(color)) {
+        seenColors.add(color);
+        diverse.push(skill);
+      } else {
+        rest.push(skill);
+      }
+    }
+
+    if (diverse.length < max) {
+      diverse.push(...rest.slice(0, max - diverse.length));
+    }
+
+    return diverse;
+  };
+
+  const shownSkills = pickDiverseSkills(allSkills, MAX_SKILLS_TO_SHOW);
 
   /**
    * useEffect to fetch follow information:
@@ -158,48 +204,18 @@ export const ProfilePanel = ({ profileData, currentUserId, onUnfollow }: Profile
 
       <div className="profile-panel-skills">
         {
-          /*copy pasted from Profile.tsx, doesnt work until filter tab is clicked at least once */
-          /* Will take in a list of tags the user has selected, then */
-          /* use a map function to generate tags to fill this div */
-          shownSkills.map((tag) => {
-            let category: string;
-
-            switch (tag.type) {
-              case "Designer":
-                category = "red";
-                break;
-              case "Developer":
-                category = "yellow";
-                break;
-              case "Soft":
-                category = "purple";
-                break;
-              case "Audio":
-                category = "periwinkle";
-                break;
-              case "Engineer":
-                category = "cyan";
-                break;
-              default:
-                category = "grey";
-            }
-            return (
-              <div
-                key={`${tag.skillId}`}
-                className={`skill-tag-label label-${category}`}
-              >
-                {tag.label}
-              </div>
-            );
-          }
-          )}
-
-
-        {overflowCount > 0 ? (
-          <TagElement selected={true} className='project-panel-meta-plus'>
-            <p>+{overflowCount}</p>
-          </TagElement>
-        ) : ""}
+          /* Shows a small colored dot per skill (color = skill type) rather
+             than the full label, so 3 skills take up minimal space. Hover/
+             screen readers still get the actual skill name via title/aria-label. */
+          shownSkills.map((tag) => (
+            <div
+              key={`${tag.skillId}`}
+              className={`skill-color-dot label-${getSkillColor(tag.type)}`}
+              title={tag.label}
+              aria-label={tag.label}
+            />
+          ))
+        }
       </div>
 
 
