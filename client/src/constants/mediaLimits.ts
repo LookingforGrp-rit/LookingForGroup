@@ -28,3 +28,11 @@ export const MAX_GALLERY_IMAGES = 30;
 
 /** Maximum linked videos in a single project gallery or profile gallery. */
 export const MAX_GALLERY_VIDEOS = 15;
+
+/**
+ * Largest image file (in bytes) a gallery accepts. The upload handlers in
+ * MediaTab and GalleryTab enforce the same 2 MB; this lets the multi-image
+ * button tell the user which files it skipped, since those handlers can only
+ * show one error at a time.
+ */
+export const MAX_GALLERY_IMAGE_BYTES = 2000000;

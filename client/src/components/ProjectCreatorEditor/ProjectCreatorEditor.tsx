@@ -24,8 +24,30 @@ import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, Proj
 import { useNavigate } from "react-router-dom";
 import { setIsSaving, getIsSaving } from "../pages/MyProjects";
 import { NEW_PROJECT_NOTICE_KEY } from "../NewProjectReviewNotice";
+import { blockedFieldMessage, firstBlockedField } from "../../functions/blockedWords";
 
 type ApprovalStatusKey = keyof typeof ApprovalStatus;
+
+/**
+ * Finds the first piece of text in the project that contains a word or phrase
+ * from the blocked list (the server refuses to save these).
+ * @param project - The project being edited
+ * @returns the name of the field as the user knows it, or null if every field is fine
+ */
+const blockedProjectField = (project: PendingProject | undefined): string | null => {
+  if (!project) return null;
+
+  return firstBlockedField([
+    ["title", project.title],
+    ["short description", project.hook],
+    ["project overview", project.description],
+    ["target audience", project.audience],
+    ...(project.jobs ?? []).map((job): [string, string | undefined] => ["position description", job.description]),
+    ...(project.projectSocials ?? []).map((link): [string, string | undefined] => ["link name", link.alias]),
+    ...(project.projectImages ?? []).map((image): [string, string | undefined] => ["image description", image.altText]),
+    ...(project.projectVideos ?? []).map((video): [string, string | undefined] => ["video title", video.title]),
+  ]);
+};
 
 // NO COMMENTS FOR WHAT THESE ARE??????
 interface Props {
@@ -136,7 +158,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     && (modifiedProject?.hook != "" && modifiedProject?.hook != undefined)
     && (modifiedProject?.description != "" && modifiedProject?.description != undefined)
     && (modifiedProject?.tags?.length !== 0)
-    && (modifiedProject?.mediums?.length !== 0)) {
+    && (modifiedProject?.mediums?.length !== 0)
+    && (blockedProjectField(modifiedProject) === null)) {
     valid = true;
   }
 
@@ -166,7 +189,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
    */
   const updateMessage = async () => {
     let newMessage = "";
-    if (modifiedProject?.title === "" || modifiedProject?.title === undefined) newMessage = "Project is missing a title!";
+    const blockedField = blockedProjectField(modifiedProject);
+    if (blockedField) newMessage = blockedFieldMessage(blockedField);
+    else if (modifiedProject?.title === "" || modifiedProject?.title === undefined) newMessage = "Project is missing a title!";
     else if (modifiedProject?.mediums.length == 0) newMessage = "Project is missing a project type!";
     else if (modifiedProject?.tags.length == 0) newMessage = "Project is missing tags!";
     else if (modifiedProject?.hook === "" || modifiedProject?.hook === undefined) newMessage = "Project is missing a short description!";
@@ -190,7 +215,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     }
     else {
       newMessage = "Project cannot have same title as existing project!"; //for some reason, the initial newMessage value pops up if you've met all the requirements *and then* change title to a duplicate name. so, default value is now the duplicate title error text
-      if (updatedPendingProject.title === "" || updatedPendingProject.title === undefined) newMessage = "Project is missing a title!";
+      const blockedField = blockedProjectField(updatedPendingProject);
+      if (blockedField) newMessage = blockedFieldMessage(blockedField);
+      else if (updatedPendingProject.title === "" || updatedPendingProject.title === undefined) newMessage = "Project is missing a title!";
       else if (!isUniqueTitle) newMessage = "Project cannot have same title as existing project!";
       else if (updatedPendingProject.hook === "" || updatedPendingProject.hook === undefined) newMessage = "Project is missing a Short Description!";
       else if (updatedPendingProject.description === "" || updatedPendingProject.description === undefined) newMessage = "Project is missing a Project Overview!";
@@ -549,6 +576,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
     //Error Handling
     if (errorAddMember !== "" || errorAddPosition !== "" || errorLinks !== "") {
+      await setFailCheck(true);
+      return;
+    }
+
+    // The server refuses to save blocked words, so don't send them. The message
+    // naming the field is already showing, and the Save button is disabled.
+    if (blockedProjectField(modifiedProject)) {
       await setFailCheck(true);
       return;
     }

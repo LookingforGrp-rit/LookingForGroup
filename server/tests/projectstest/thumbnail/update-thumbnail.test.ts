@@ -78,6 +78,15 @@ describe('updateThumbnailService', async () => {
 
     expect(result).toBe('NOT_FOUND');
   });
+  it("returns NOT_FOUND and doesn't change the thumbnail if the image belongs to another project", async () => {
+    vi.mocked(prisma.projectImages.findUnique).mockResolvedValue({ ...thumbImage, projectId: 200 });
+    vi.mocked(prisma.projects.update).mockResolvedValue(prismaProject);
+    vi.mocked(transformProjectImage).mockReturnValue(transformedThumb);
+    const result = await updateThumbnailService(100, 8);
+
+    expect(result).toBe('NOT_FOUND');
+    expect(prisma.projects.update).not.toHaveBeenCalled();
+  });
   it('returns INTERNAL_ERROR if prisma throws', async () => {
     vi.mocked(prisma.projectImages.findUnique).mockRejectedValue(new Error('womp womp'));
     vi.mocked(prisma.projects.update).mockResolvedValue(prismaProject);

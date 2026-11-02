@@ -26,6 +26,9 @@ const updateThumbnailService = async (
 
     if (!image) return 'NOT_FOUND';
 
+    //a project can only use one of its own images, never another project's
+    if (image.projectId !== projectId) return 'NOT_FOUND';
+
     const proj = await prisma.projects.update({
       //set it as the thumbnail
       where: {

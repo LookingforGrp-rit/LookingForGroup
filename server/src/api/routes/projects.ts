@@ -5,9 +5,11 @@ import PROJECT from '#controllers/projects/index.ts';
 import { requiresNotSelf } from '#middleware/authorization/requires-not-self.ts';
 import { sendNotificationAfterAll } from '#middleware/send-notification-after-all.ts';
 import { isUserBlocked } from '#middleware/validators/is-user-blocked.ts';
+import { noBlockedWords } from '#middleware/validators/no-blocked-words.ts';
 import { BodyParameterLocation } from '#middleware/validators/parameter-location/body-param-location.ts';
 import { ProjectMemberInPathParameterLocation } from '#middleware/validators/parameter-location/project-member-in-path-parameter.ts';
 import { ProjectOwnerInPathParameterLocation } from '#middleware/validators/parameter-location/project-owner-in-path-param-location.ts';
+import { validateBody } from '#middleware/validators/validate-body.ts';
 import { InviteReceivedNotificationBuilder } from '#notification-templates/invite-received-notification-builder.ts';
 import { MemberRequestUpdatedNotificationBuilder } from '#notification-templates/member-request-updated.ts';
 import { ProjectApprovedNotificationBuilder } from '#notification-templates/project-approved-notification-builder.ts';
@@ -44,7 +46,13 @@ export const authenticated = (
 router.get('/', PROJECT.getProjects);
 
 // Create a new project
-router.post('/', requiresLogin, injectCurrentUser, authenticated(PROJECT.createProject));
+router.post(
+  '/',
+  requiresLogin,
+  injectCurrentUser,
+  noBlockedWords('title', 'hook', 'description', 'audience'),
+  authenticated(PROJECT.createProject),
+);
 
 // Receive paginated projects
 router.get('/paginated/:count/:id/:method', PROJECT.getPaginatedProjects);
@@ -79,6 +87,8 @@ router.patch(
   '/members/requests/:id',
   requiresLogin,
   injectCurrentUser,
+  // Only these two fields may change; the body goes to the database as-is
+  validateBody({ requestStatus: ['Accepted', 'Declined', 'Pending'], roleId: 'integer' }),
   sendNotificationAfterAll(new MemberRequestUpdatedNotificationBuilder(), false),
   authenticated(PROJECT.updateMemberRequest),
 );
@@ -168,6 +178,7 @@ router.patch(
   injectCurrentUser,
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
+  noBlockedWords('title', 'hook', 'description', 'audience'),
   authenticated(PROJECT.updateProject),
 );
 
@@ -199,6 +210,7 @@ router.post(
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   upload.single('image'),
+  noBlockedWords('altText'),
   PROJECT.addImage,
 );
 
@@ -221,6 +233,7 @@ router.patch(
   projectAttributeExistsAt('image', { type: 'path', key: 'id' }, { type: 'path', key: 'imageId' }),
   authenticated(requiresProjectOwner),
   upload.single('image'),
+  noBlockedWords('altText'),
   PROJECT.updateImage,
 );
 
@@ -243,6 +256,7 @@ router.post(
   injectCurrentUser,
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
+  noBlockedWords('title'),
   PROJECT.addVideo,
 );
 
@@ -392,6 +406,8 @@ router.patch(
   '/:id/members/:userId',
   requiresLogin,
   injectCurrentUser,
+  // Only these two fields may change; the body goes to the database as-is
+  validateBody({ roleId: 'integer', profileVisibility: ['public', 'private'] }),
   projectExistsAt('path', 'id'),
   userExistsAt('path', 'userId'),
   projectAttributeExistsAt('member', { type: 'path', key: 'id' }, { type: 'path', key: 'userId' }),
@@ -436,6 +452,7 @@ router.post(
   projectExistsAt('path', 'id'),
   attributeExistsAt('social', 'body', 'websiteId'),
   authenticated(requiresProjectOwner),
+  noBlockedWords('alias'),
   PROJECT.addProjectSocial,
 );
 
@@ -451,6 +468,10 @@ router.patch(
     { type: 'path', key: 'socialId' },
   ),
   authenticated(requiresProjectOwner),
+  // Only these fields may change; the body goes to the database as-is (so
+  // `projectId` can't be used to move a link onto another project)
+  validateBody({ url: 'string', alias: 'string', websiteId: 'integer' }),
+  noBlockedWords('alias'),
   PROJECT.updateProjectSocial,
 );
 
@@ -526,6 +547,7 @@ router.post(
     { type: 'body', key: 'contactUserId' },
   ),
   authenticated(requiresProjectOwner),
+  noBlockedWords('description'),
   PROJECT.addJobController,
 );
 
@@ -548,6 +570,7 @@ router.patch(
     ),
   ),
   authenticated(requiresProjectOwner),
+  noBlockedWords('description'),
   PROJECT.updateJobController,
 );
 

@@ -1,0 +1,6 @@
+# Words and phrases the team has added to the blocked list, on top of
+# blocked-words.en.txt (the upstream list, which should be left as it is).
+#
+# One word or phrase per line. Matching ignores case. Blank lines and lines
+# starting with # are ignored. Both the server and the editors use this list, so
+# restart the server and rebuild the client after changing this file.

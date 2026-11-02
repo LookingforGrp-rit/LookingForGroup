@@ -60,8 +60,7 @@ export const userDataManager = async () => {
    * Creates a new blank object for storing future changes.
    * @returns A {@link UserChanges} object with no changes.
    */
-  const getEmptyChanges = async () => {
-    const savedUser = await downloadUser();
+  const buildEmptyChanges = (userId: number) => {
     const emptyChanges: UserChanges = {
       create: {
         majors: [],
@@ -74,7 +73,7 @@ export const userDataManager = async () => {
         fields: {
           id: {
             type: "canon",
-            value: savedUser.userId,
+            value: userId,
           },
           data: {},
         },
@@ -93,6 +92,11 @@ export const userDataManager = async () => {
     };
 
     return emptyChanges;
+  };
+
+  const getEmptyChanges = async () => {
+    const savedUser = await downloadUser();
+    return buildEmptyChanges(savedUser.userId);
   };
 
   let savedUser: MePrivate = await downloadUser();
@@ -123,40 +127,46 @@ export const userDataManager = async () => {
   };
 
   /**
-   * Uploads changes to the server, reloads the {@link savedUser}, and clears the {@link changes} object.
+   * Uploads changes to the server and reloads the {@link savedUser}.
    * Attempts all changes, even if some error.
+   *
+   * The queued changes are taken and the {@link changes} object is emptied before
+   * anything is sent, so a second call made while this one is still uploading
+   * (e.g. Save pressed twice) finds nothing left to send instead of uploading
+   * every item again. Changes made while a save is running stay queued for the next one.
    * @throws Throws an error if any change failed. Error message includes the failed changes.
    * Failed changes do not return to the {@link changes} object.
    */
   const saveChanges = async () => {
     let errorMessage = "";
 
+    // take the queued changes and empty the queue right away, before any await
+    const queued = changes;
+    changes = buildEmptyChanges(savedUser.userId);
+
     // first delete all existing resources
     try {
-      await saveDeletes(changes.delete);
+      await saveDeletes(queued.delete);
     } catch (error) {
       errorMessage += (error as Error).message;
     }
 
     // then create any new resources
     try {
-      await saveCreates(changes.create);
+      await saveCreates(queued.create);
     } catch (error) {
       errorMessage += (error as Error).message;
     }
 
     // then perform updates on new and existing resources
     try {
-      await saveUpdates(changes.update);
+      await saveUpdates(queued.update);
     } catch (error) {
       errorMessage += (error as Error).message;
     }
 
     // fetch new canonical data
     await reloadSavedUser();
-
-    // clear changes object
-    await resetChanges();
 
     if (errorMessage != "") {
       throw new Error(`Some changes failed: ${errorMessage}. `);
