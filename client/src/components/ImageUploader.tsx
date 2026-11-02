@@ -4,6 +4,7 @@ import { Popup, PopupButton, PopupContent } from './Popup';
 import { Select, SelectButton, SelectOptions } from './Select';
 import placeholder from "../images/lfrog.png"
 import { AspectRatios } from '@looking-for-group/shared/enums';
+import { MAX_GALLERY_IMAGE_BYTES } from '../constants/mediaLimits';
 //import { sendPost } from '../functions/fetch'; //Not fixing, is this something to be implemented later?
 
 interface ImageUploaderProps {
@@ -14,7 +15,7 @@ interface ImageUploaderProps {
   // If true, only allow image files
   keepImage?: boolean;
   // Callback triggered when the user selects a valid file
-  onFileSelected?: (file: File, altText?: string) => void;
+  onFileSelected?: (file: File, altText?: string) => void | Promise<void>;
   // Determines styling and behavior
   type?: 'profile' | 'project';
 }
@@ -377,7 +378,11 @@ const ImageUploader = ({
       // and picking the exact same files again fires no change event at all,
       // so the second attempt silently does nothing.
       input.value = "";
-      alert("Only one image can be uploaded at a time.");
+      alert(
+        type === "project"
+          ? 'Only one image can be cropped at a time. To add several at once, use "Upload multiple images (no cropping)".'
+          : "Only one image can be uploaded at a time."
+      );
       return;
     }
 
@@ -792,7 +797,7 @@ const ImageUploader = ({
           </svg>
           <p className="project-editor-extra-info">Drop your image here, or <span id="browse-link">browse</span></p>
           <p className="project-editor-extra-info">Supports: JPG/JPEG, PNG</p>
-          <p className="project-editor-extra-info">Upload one image at a time</p>
+          <p className="project-editor-extra-info">One image at a time, with cropping</p>
         </div>
       </label>
     </>
@@ -801,4 +806,94 @@ const ImageUploader = ({
   return type === 'profile' ? profileVariant : projectVariant;
 };
 
-export { ProfileImageUploader, ProjectImageUploader };
+interface MultiImageUploadButtonProps {
+  // Called once for each chosen image, with the original file (no cropping)
+  onFileSelected: (file: File) => void | Promise<void>;
+  // How many more images the gallery has room for
+  remainingSlots: number;
+}
+
+/**
+ * A button for adding several images at once. Unlike the drop area above it,
+ * the images are added exactly as they are, with no cropping step, so the
+ * label says so. Each image goes through the same add-image handler a cropped
+ * one does, one after another, so duplicate checks, the size limit and the
+ * thumbnail rule all apply the same way.
+ *
+ * Files that can't be added (wrong type, over the size limit, or no room left
+ * in the gallery) are skipped, and one message at the end says how many.
+ *
+ * @param onFileSelected - Adds one image to the gallery
+ * @param remainingSlots - How many more images fit in the gallery
+ */
+const MultiImageUploadButton = ({ onFileSelected, remainingSlots }: MultiImageUploadButtonProps) => {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [adding, setAdding] = useState(false);
+
+  const handleChange = async () => {
+    const input = inputRef.current;
+    if (!input?.files || input.files.length === 0) return;
+
+    const chosen = Array.from(input.files);
+    // Cleared so choosing the same files again still fires a change event
+    input.value = "";
+
+    const images = chosen.filter((file) => file.type === "image/png" || file.type === "image/jpeg");
+    const withinSize = images.filter((file) => file.size <= MAX_GALLERY_IMAGE_BYTES);
+    const toAdd = withinSize.slice(0, Math.max(remainingSlots, 0));
+
+    setAdding(true);
+    try {
+      // One at a time, since each add reads and updates the gallery's current list
+      for (const file of toAdd) {
+        await onFileSelected(file);
+      }
+    } finally {
+      setAdding(false);
+    }
+
+    const skipped: string[] = [];
+    if (images.length < chosen.length) {
+      skipped.push(`${(chosen.length - images.length).toString()} not a PNG or JPG/JPEG`);
+    }
+    if (withinSize.length < images.length) {
+      skipped.push(
+        `${(images.length - withinSize.length).toString()} over ${(MAX_GALLERY_IMAGE_BYTES / 1000000).toString()} MB`
+      );
+    }
+    if (toAdd.length < withinSize.length) {
+      skipped.push(
+        `${(withinSize.length - toAdd.length).toString()} didn't fit (room for ${Math.max(remainingSlots, 0).toString()} more)`
+      );
+    }
+    if (skipped.length > 0) {
+      alert(`Added ${toAdd.length.toString()} of ${chosen.length.toString()} images. Skipped: ${skipped.join(", ")}.`);
+    }
+  };
+
+  return (
+    <div className="multi-image-upload">
+      <input
+        type="file"
+        ref={inputRef}
+        multiple
+        accept="image/png, image/jpeg"
+        onChange={() => {
+          void handleChange();
+        }}
+        hidden
+      />
+      <button
+        type="button"
+        className="multi-image-upload-btn"
+        disabled={adding}
+        title="Choose several images at once. They're added as they are, without the cropping step."
+        onClick={() => inputRef.current?.click()}
+      >
+        {adding ? "Adding images..." : "Upload multiple images (no cropping)"}
+      </button>
+    </div>
+  );
+};
+
+export { ProfileImageUploader, ProjectImageUploader, MultiImageUploadButton };

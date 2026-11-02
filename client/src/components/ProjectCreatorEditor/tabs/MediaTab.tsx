@@ -13,6 +13,7 @@ import { projectDataManager } from "../../../api/data-managers/project-data-mana
 import { PendingProject, PendingProjectImage } from "@looking-for-group/client";
 import { getVideos } from "../../../api/projects";
 import { getYouTubeEmbedURL } from "../../../functions/parseYoutube";
+import { blockedFieldMessage, firstBlockedField } from "../../../functions/blockedWords";
 import ImageVideoDisplay from "../../ImageVideoDisplay";
 
 let projectAfterMediaChanges: PendingProject;
@@ -142,6 +143,12 @@ export const MediaTab = ({
       return;
     }
 
+    // The server refuses to save blocked words, so say so now
+    if (firstBlockedField([["image description", altText]])) {
+      setImageError(blockedFieldMessage("image description"));
+      return;
+    }
+
     // Check if it is a duplicate image
     for (const image of projectAfterMediaChanges.projectImages) {
       if (typeof image.image === 'string') {
@@ -196,8 +203,12 @@ export const MediaTab = ({
       //this will always be localId, it's using the recently created image
       if (!projectAfterMediaChanges.thumbnail || projectAfterMediaChanges.projectImages.length == 1) {
         // Update dataManager
+        // The thumbnail must reuse the new image's own localId. When the changes are saved,
+        // the data manager swaps this id for the image's real id by matching it against the
+        // localId the image was created with; a fresh id here matches nothing, so the server
+        // is asked to use an image that doesn't exist and the thumbnail is never set.
         const thumbObj = {
-          localId: ++localIdIncrement,
+          localId,
           image: fullImg.image,
           altText: fullImg.altText,
         } as PendingProjectImage;
@@ -225,6 +236,12 @@ export const MediaTab = ({
   const handleAddVideo = useCallback((newVideo: ProjectVideo) => {
     if (!newVideo.title.trim() || !newVideo.videoUrl.trim()) return;
     if (!getYouTubeEmbedURL(newVideo.videoUrl)) return;
+
+    // The server refuses to save blocked words, so say so now
+    if (firstBlockedField([["video title", newVideo.title]])) {
+      setImageError(blockedFieldMessage("video title"));
+      return;
+    }
 
     const localId = ++localIdIncrement;
 
@@ -419,7 +436,9 @@ export const MediaTab = ({
         // Handle File type
         else {
           const image = projectAfterMediaChanges.projectImages[0].image as File;
-          const thumbId = (projectImage as PendingProjectImage).localId ?? ++localIdIncrement
+          // The thumbnail is the first remaining image, so use that image's own localId
+          // (not the deleted image's, and not a new id that no image has)
+          const thumbId = (projectAfterMediaChanges.projectImages[0] as PendingProjectImage).localId as number;
 
           // Update dataManager
           dataManager?.updateThumbnail({

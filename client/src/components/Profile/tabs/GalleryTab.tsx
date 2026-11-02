@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { GalleryImage, GalleryVideo, PendingGalleryImage } from "@looking-for-group/shared";
 import { getGalleryImages, getGalleryVideos, } from "../../../api/users";
 import ImageVideoDisplay from "../../ImageVideoDisplay";
 import { PendingUserProfile } from "../../../../types/types";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
+import { blockedFieldMessage, firstBlockedField } from "../../../functions/blockedWords";
 
 let localIdIncrement = 1;
 
@@ -22,6 +23,14 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
   const [galleryVideos, setGalleryVideos] = useState<GalleryVideo[]>([]);
 
   const [newImages, setNewImages] = useState<(PendingGalleryImage)[]>([]);
+  // Always the latest list of new images. Images can be added several at once
+  // (the multi-image button), and each add would otherwise work from the list as
+  // it was at the last render, so every add but the last would be lost from view.
+  const newImagesRef = useRef<PendingGalleryImage[]>([]);
+  const setNewImagesList = useCallback((list: PendingGalleryImage[]) => {
+    newImagesRef.current = list;
+    setNewImages(list);
+  }, []);
   const [newVideos, setNewVideos] = useState<GalleryVideo[]>([]);
 
   const [deleteImages, setDeleteImages] = useState<GalleryImage[]>([]);
@@ -52,7 +61,7 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
    */
   const handleImageDelete = useCallback((image: GalleryImage | PendingGalleryImage) => {
     if ((image as PendingGalleryImage).localId) {
-      setNewImages(newImages.filter(i => i !== image));
+      setNewImagesList(newImagesRef.current.filter(i => i !== image));
       dataManager.removeGalleryImage({
         id: {
           type: "local",
@@ -71,7 +80,7 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
         data: null
       });
     }
-  }, [newImages, deleteImages]);
+  }, [deleteImages, setNewImagesList]);
 
   /**
    * adds a new image to the new image array, for uploading after saving
@@ -83,8 +92,14 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
       return;
     }
 
+    // The server refuses to save blocked words, so say so now
+    if (firstBlockedField([["image description", altText]])) {
+      setUploadError(blockedFieldMessage("image description"));
+      return;
+    }
+
     // Check if it is a duplicate image
-    for (const i of newImages) {
+    for (const i of newImagesRef.current) {
       // convert to file
       const imageFile = i.image;
       // compare
@@ -97,11 +112,11 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
 
     setUploadError("");
 
-    setNewImages([
-      ...newImages, 
-      { 
-        image, 
-        altText: (altText?.length !== undefined && altText.length > 0 ? altText : "Gallery Image"), 
+    setNewImagesList([
+      ...newImagesRef.current,
+      {
+        image,
+        altText: (altText?.length !== undefined && altText.length > 0 ? altText : "Gallery Image"),
         localId: localIdIncrement,
       }
     ]);
@@ -116,7 +131,7 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
       }
     });
     localIdIncrement++;
-  }, [newImages, galleryImages]);
+  }, [galleryImages, setNewImagesList]);
 
   /**
    * if the video has yet to be uploaded remove it from the new videos array, otherwise add it to the deletion queue
@@ -150,6 +165,12 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
    * @param video a reference of the video that is to be added after saving
    */
   const handleAddVideo = useCallback((video: GalleryVideo) => {
+    // The server refuses to save blocked words, so say so now
+    if (firstBlockedField([["video title", video.title]])) {
+      setUploadError(blockedFieldMessage("video title"));
+      return;
+    }
+
     setNewVideos([...newVideos, {...video, galleryVideoId: localIdIncrement}]);
     dataManager.addGalleryVideo({
       id: {
