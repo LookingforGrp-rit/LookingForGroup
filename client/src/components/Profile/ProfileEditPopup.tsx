@@ -18,6 +18,28 @@ import { DeleteAccountButton } from "./DeleteAccountButton";
 import { PendingUserProfile } from "../../../types/types";
 import { MePrivate } from "@looking-for-group/shared";
 import { GalleryTab } from "./tabs/GalleryTab";
+import { blockedFieldMessage, firstBlockedField } from "../../functions/blockedWords";
+
+/**
+ * Finds the first piece of text in the profile that contains a word or phrase
+ * from the blocked list (the server refuses to save these).
+ * @param profile - The profile being edited
+ * @returns the name of the field as the user knows it, or null if every field is fine
+ */
+const blockedProfileField = (profile: PendingUserProfile | null | undefined): string | null => {
+  if (!profile) return null;
+
+  return firstBlockedField([
+    ["preferred name", profile.firstName],
+    ["last name", profile.lastName],
+    ["personal quote", profile.headline],
+    ["pronouns", profile.pronouns],
+    ["title", profile.title],
+    ["location", profile.location],
+    ["about me", profile.bio],
+    ...(profile.socials ?? []).map((link): [string, string | undefined] => ["link name", link.alias]),
+  ]);
+};
 
 // The profile to view is independent upon the site's state changes
 const pageTabs = ["About", "Projects", "Skills", "Gallery", "Links"];
@@ -49,6 +71,8 @@ export const ProfileEditPopup = ({ editSkills = false, editContact = false, edit
 
   const isOpening = useRef(true);
   const isSaving = useRef(false);
+  // Mirrors isSaving for rendering (a ref change doesn't re-render): shows a spinner while saving
+  const [savingNow, setSavingNow] = useState(false);
   const navigate = useNavigate();
 
   /**
@@ -145,14 +169,24 @@ export const ProfileEditPopup = ({ editSkills = false, editContact = false, edit
    * @param e Event
    */
   const onSaveClicked = async (e: React.FormEvent<HTMLFormElement>) => {
-    isSaving.current = true;
-    navigate(-1);
     e.preventDefault(); // prevents any default calls
 
-    console.log('Saving...'); //yo having this like change the button as feedback for the user that it's saving could be amazing holup
+    // A save is already running. Pressing Save again (or Enter) would start a
+    // second save, and uploads can be slow, so ignore it rather than letting
+    // everything be added twice.
+    if (isSaving.current) return;
+
+    isSaving.current = true;
+    setSavingNow(true); // swaps the Save button for a spinner so it's clear something is happening
+    navigate(-1);
 
     try {
-      if (!dataManager) return;
+      if (!dataManager) {
+        // nothing to save with, so don't leave the editor stuck on the spinner
+        isSaving.current = false;
+        setSavingNow(false);
+        return;
+      }
       await dataManager.saveChanges();
       setErrorVisible(false);
     } catch (e) {
@@ -182,6 +216,11 @@ export const ProfileEditPopup = ({ editSkills = false, editContact = false, edit
     //   return false;
     // }
 
+    // The server refuses to save blocked words, so hold the Save button back
+    if (blockedProfileField(pendingProfile)) {
+      return false;
+    }
+
     return true;
   }
 
@@ -194,6 +233,9 @@ export const ProfileEditPopup = ({ editSkills = false, editContact = false, edit
   }
 
   const validData = modifiedProfile ? checkValidData(modifiedProfile as PendingUserProfile) : false;
+
+  // Which field (if any) has a blocked word in it, to tell the user why they can't save
+  const blockedField = blockedProfileField(modifiedProfile as PendingUserProfile | undefined);
 
   /**
    * Component to organize the main tab content and handle switching tabs.
@@ -296,16 +338,25 @@ export const ProfileEditPopup = ({ editSkills = false, editContact = false, edit
           <div id="project-editor-tabs">{editorTabs}</div>
           <div id="project-editor-content" key={editorKey}>{renderTabContent()}</div>
           <div className="editor-save-actions">
+            {blockedField && (
+              <div className="save-error-msg-general">
+                <p>*{blockedFieldMessage(blockedField)}*</p>
+              </div>
+            )}
             <form
               //id="project-creator-editor"
               onSubmit={onSaveClicked}
               encType="multipart/form-data">
-              <input
-                type="submit"
-                id="project-editor-save"
-                className={"profile-editor-save " + (validData ? "" : "hidden")}
-                value="Save Changes"
-              />
+              {savingNow ? (
+                <div className="spinning-loader" role="status" aria-label="Saving"></div>
+              ) : (
+                <input
+                  type="submit"
+                  id="project-editor-save"
+                  className={"profile-editor-save " + (validData ? "" : "hidden")}
+                  value="Save Changes"
+                />
+              )}
             </form>
 
             <DeleteAccountButton />

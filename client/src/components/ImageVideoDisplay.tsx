@@ -4,7 +4,7 @@ import { PendingProject, PendingProjectImage } from "../../types/types";
 import placeholder from "../../src/images/lfrog.png";
 import { FileImage } from "./FileImage";
 import { ThemeIcon } from "./ThemeIcon";
-import { ProjectImageUploader } from "./ImageUploader";
+import { MultiImageUploadButton, ProjectImageUploader } from "./ImageUploader";
 import { getYouTubeEmbedURL } from "../functions/parseYoutube";
 import { Popup, PopupButton, PopupContent } from "./Popup";
 import { DeleteProjectButton } from "./ProjectCreatorEditor/DeleteProjectButton";
@@ -21,7 +21,7 @@ interface ImageVideoDisplayProps<Image, Video> {
 
   handleThumbnailChange?: (image: ProjectImage | PendingProjectImage) => void,
   handleImageDelete: ((image: Image) => void),
-  handleImageUpload: (file: File, altText?: string) => void,
+  handleImageUpload: (file: File, altText?: string) => void | Promise<void>,
 
   handleDeleteVideo: (video: Video) => void,
   handleAddVideo: (video: Video) => void,
@@ -80,9 +80,9 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
    * @param file the uploaded image
    * @param altText optional caption entered in the crop popup
    */
-  const handleImageUploadWithinLimit = (file: File, altText?: string) => {
+  const handleImageUploadWithinLimit = (file: File, altText?: string): void | Promise<void> => {
     if (imageLimitReached) return;
-    handleImageUpload(file, altText);
+    return handleImageUpload(file, altText);
   };
 
   /**
@@ -205,6 +205,14 @@ const ImageVideoDisplay = <Image extends (ProjectImage | PendingProjectImage) | 
           )}
         </div>
       </div>
+
+      {/* Adds several images at once, skipping the crop step. Gone once the gallery is full. */}
+      {!imageLimitReached && (
+        <MultiImageUploadButton
+          onFileSelected={(file) => handleImageUploadWithinLimit(file)}
+          remainingSlots={MAX_GALLERY_IMAGES - imageCount}
+        />
+      )}
 
       <label>{thumbnail ? "Project" : "Gallery"} Videos</label>
       <div className="project-editor-extra-info">

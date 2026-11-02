@@ -66,6 +66,35 @@
     text-align: center;
 }
 
+/* "Upload multiple images (no cropping)" button, under the image grid
+   (see MultiImageUploadButton in ImageUploader.tsx) */
+.multi-image-upload {
+    margin: 0 0 12px;
+}
+
+.multi-image-upload-btn {
+    padding: 8px 16px;
+    border: 2px solid var(--primary-color);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--primary-color);
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.multi-image-upload-btn:hover:not(:disabled) {
+    background-color: var(--primary-color);
+    color: var(--invert-text);
+}
+
+.multi-image-upload-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
 .drop-area-drag-over {
     height: 100%;
     width: 100%;

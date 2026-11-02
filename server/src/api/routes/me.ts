@@ -46,9 +46,11 @@ import { updateTagBlacklist } from '#controllers/me/tag-blacklist/update-tag-bla
 import { updateUserInfo } from '#controllers/me/update-info.ts';
 import { updateProjectProfileVisibilityController } from '#controllers/me/update-project-profile-visibility.ts';
 import { isUserBlocked } from '#middleware/validators/is-user-blocked.ts';
+import { noBlockedWords } from '#middleware/validators/no-blocked-words.ts';
 import { MeParameterLocation } from '#middleware/validators/parameter-location/me-param-location.ts';
 import { PathParameterLocation } from '#middleware/validators/parameter-location/path-param-location.ts';
 import { ProjectOwnerInPathParameterLocation } from '#middleware/validators/parameter-location/project-owner-in-path-param-location.ts';
+import { validateBody } from '#middleware/validators/validate-body.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
@@ -198,12 +200,21 @@ router.patch(
 router.get('/socials', authenticated(getSocials));
 
 //Adds a social
-router.post('/socials', attributeExistsAt('social', 'body', 'websiteId'), authenticated(addSocial));
+router.post(
+  '/socials',
+  attributeExistsAt('social', 'body', 'websiteId'),
+  noBlockedWords('alias'),
+  authenticated(addSocial),
+);
 
 //Updates a social
 router.patch(
   '/socials/:id',
   authenticated(userAttributeExistsAt('social', 'path', 'id')),
+  // Only these fields may change; the body goes to the database as-is (so
+  // `userId` can't be used to move a link onto another user's profile)
+  validateBody({ url: 'string', alias: 'string', websiteId: 'integer' }),
+  noBlockedWords('alias'),
   authenticated(updateSocial),
 );
 
@@ -223,10 +234,15 @@ router.get('/gallery/:userId/videos', authenticated(getGalleryVideoController));
 router.post(
   '/gallery/:userId/images',
   upload.single('file'),
+  noBlockedWords('altText'),
   authenticated(addGalleryImageController),
 );
 
-router.post('/gallery/:userId/videos', authenticated(addGalleryVideoController));
+router.post(
+  '/gallery/:userId/videos',
+  noBlockedWords('title'),
+  authenticated(addGalleryVideoController),
+);
 
 router.delete('/gallery/:userId/images/:imageId', authenticated(deleteGalleryImageController));
 
@@ -257,7 +273,12 @@ router.get('/blocklist', authenticated(getBlocklist));
 router.get('/', authenticated(getAccount));
 
 //Updates users information
-router.patch('/', upload.single('profileImage'), authenticated(updateUserInfo));
+router.patch(
+  '/',
+  upload.single('profileImage'),
+  noBlockedWords('firstName', 'lastName', 'headline', 'pronouns', 'title', 'location', 'bio'),
+  authenticated(updateUserInfo),
+);
 
 //Delete user
 router.delete('/', authenticated(deleteUser));
