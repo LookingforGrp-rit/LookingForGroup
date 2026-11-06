@@ -82,6 +82,22 @@ export const CarouselButton = ({
 export const CarouselTabs = ({ className = '', children}: { className?: string, children?: ReactNode[] }) => {
     const { currentIndex, handleStep, handleIndexChange, dataList } = useContext(CarouselContext);
     const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+    const stripRef = useRef<HTMLDivElement>(null);
+
+    // When the tabs overflow and scroll (e.g. gallery previews on mobile), keep the
+    // active one centered. Only the strip scrolls, never the page.
+    useEffect(() => {
+        const strip = stripRef.current;
+        const tab = tabRefs.current[currentIndex];
+        if (!strip || !tab || strip.scrollWidth <= strip.clientWidth) return;
+
+        const tabLeft = tab.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        strip.scrollTo({
+            left: tabLeft - (strip.clientWidth - tab.offsetWidth) / 2,
+            behavior: reduceMotion ? 'auto' : 'smooth',
+        });
+    }, [currentIndex]);
 
     const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
         let direction = 0;
@@ -111,7 +127,8 @@ export const CarouselTabs = ({ className = '', children}: { className?: string, 
     };
 
     return (
-        <div 
+        <div
+            ref={stripRef}
             className={`carousel-tabs ${className}`}
             role="tablist"
             aria-label="Carousel slides"

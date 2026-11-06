@@ -1,0 +1,52 @@
+get:
+  summary: Gets all gallery images for a user.
+  tags:
+    - Users
+  description: Retrieves all images stored in a user's gallery. Public, no login required.
+  parameters:
+    - in: path
+      name: userId
+      required: true
+      schema:
+        type: integer
+      description: ID of the user whose gallery to view.
+  responses:
+    '200':
+      description: Gallery images retrieved successfully.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                nullable: true
+                example: null
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    galleryImageId:
+                      type: integer
+                      example: 12
+                    image:
+                      type: string
+                      example: 'https://cdn.example.com/gallery/img123.png'
+                    altText:
+                      type: string
+                      example: 'My gallery image'
+                    position:
+                      type: integer
+                      example: 0
+                    userId:
+                      type: integer
+                      example: 42
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

@@ -5,6 +5,7 @@ import type { ImageUploadResult } from '@looking-for-group/shared';
 import sharp from 'sharp';
 import envConfig from '#config/env.ts';
 import s3 from '#config/s3.ts';
+import { runImageJob } from '#services/images/image-queue.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type UploadImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONTENT_TOO_LARGE'>;
@@ -26,15 +27,19 @@ export const uploadImageService = async (
   filename: string,
 ): Promise<ImageUploadResult | UploadImageServiceError> => {
   try {
-    const compressedBuffer = await sharp(buffer)
-      .resize({
-        width: MAX_DIMENSION,
-        height: MAX_DIMENSION,
-        fit: 'inside',
-        withoutEnlargement: true,
-      })
-      .webp({ quality: WEBP_QUALITY })
-      .toBuffer();
+    // Decoding and re-encoding is where the memory goes, so images wait their
+    // turn (see image-queue.ts) instead of being processed all at once
+    const compressedBuffer = await runImageJob(() =>
+      sharp(buffer)
+        .resize({
+          width: MAX_DIMENSION,
+          height: MAX_DIMENSION,
+          fit: 'inside',
+          withoutEnlargement: true,
+        })
+        .webp({ quality: WEBP_QUALITY })
+        .toBuffer(),
+    );
 
     // transform filename - always .webp now, regardless of what was uploaded
     const ext = path.extname(filename);

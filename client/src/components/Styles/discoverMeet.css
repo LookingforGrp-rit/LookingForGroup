@@ -355,10 +355,45 @@ Meet page hero style rules
       display: flex;
       flex-direction: row;
       align-items: center;
+      /* "safe" keeps the first thumbnail reachable once the strip overflows */
+      justify-content: safe center;
       gap: 10px;
       margin-top: 8px;
       margin-left: 36px;
       margin-right: 36px;
+      /* Stay between the arrows and scroll sideways when the thumbnails don't fit */
+      min-width: 0;
+      padding: 2px 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+    }
+
+    .gallery-carousel-tabs::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+/* On smaller screens the thumbnails keep a readable size instead of shrinking to
+   slivers; the strip scrolls (see .gallery-carousel-tabs) and follows the selection */
+@media screen and (max-width: 1020px) {
+  #user-gallery .gallery-carousel .gallery-carousel-tabs {
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+
+  #user-gallery .gallery-carousel .carousel-tab {
+    flex: 0 0 auto;
+    min-width: 50px;
+
+    img {
+      display: block;
+      width: auto;
+      height: 42px;
+      min-width: 42px;
+      max-width: 96px;
+      max-height: none;
     }
   }
 }

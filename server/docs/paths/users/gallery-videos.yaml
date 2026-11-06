@@ -1,0 +1,52 @@
+get:
+  summary: Gets all gallery videos for a user.
+  tags:
+    - Users
+  description: Retrieves all videos stored in a user's gallery. Public, no login required.
+  parameters:
+    - in: path
+      name: userId
+      required: true
+      schema:
+        type: integer
+      description: ID of the user whose gallery to view.
+  responses:
+    '200':
+      description: Gallery videos retrieved successfully.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              error:
+                nullable: true
+                example: null
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    galleryVideoId:
+                      type: integer
+                      example: 5
+                    videoUrl:
+                      type: string
+                      example: 'https://youtube.com/watch?v=abc123'
+                    title:
+                      type: string
+                      example: 'My gallery video'
+                    position:
+                      type: integer
+                      example: 1
+                    userId:
+                      type: integer
+                      example: 42
+    '400':
+      $ref: '../../swagger.yaml#/components/responses/BadRequest'
+    '404':
+      $ref: '../../swagger.yaml#/components/responses/NotFound'
+    '500':
+      $ref: '../../swagger.yaml#/components/responses/InternalServerError'

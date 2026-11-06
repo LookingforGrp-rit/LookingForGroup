@@ -224,6 +224,10 @@ paths:
     $ref: './paths/users/followings-people.yaml'
   /api/users/{id}/followers:
     $ref: './paths/users/followers.yaml'
+  /api/users/{userId}/gallery/images:
+    $ref: './paths/users/gallery-images.yaml'
+  /api/users/{userId}/gallery/videos:
+    $ref: './paths/users/gallery-videos.yaml'
   /api/users/blacklist:
     $ref: './paths/users/blacklist.yaml'
   /api/users/blacklist/{id}:

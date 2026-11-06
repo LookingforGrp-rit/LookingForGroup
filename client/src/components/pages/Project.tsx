@@ -4,7 +4,7 @@ import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { ProjectCreatorEditor } from "../ProjectCreatorEditor/ProjectCreatorEditor.tsx";
 import { Popup, PopupButton, PopupContent, PopupContext } from "../Popup";
-import profileImage from "../../images/lfrog.png";
+import profileImage from "../../images/default-profile.svg";
 import { ProjectCarousel } from "../ProjectCarousel";
 import * as paths from "../../constants/routes";
 import { TeamPositionsPanel } from "../TeamPositionsPanel";
