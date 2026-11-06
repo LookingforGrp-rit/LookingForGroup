@@ -2,8 +2,8 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import getGalleryVideosService from '#services/me/gallery/get-videos.ts';
 
-//GET api/me/gallery/{userId}/videos
-//adds a video to the project
+//GET api/users/{userId}/gallery/videos
+//gets the videos in a user's gallery (public)
 const getGalleryVideoController = async (req: Request, res: Response) => {
   const userId = parseInt(req.params.userId as string);
 

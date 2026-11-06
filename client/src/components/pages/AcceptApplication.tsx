@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import usePreloadedImage from "../../functions/imageLoad";
-import profilePicture from "../../images/lfrog.png";
+import profilePicture from "../../images/default-profile.svg";
 import { Tag } from '../Tag';
 import * as paths from '../../constants/routes';
 import { getByID, updateMemberRequest, getMemberRequest } from '../../api/projects';

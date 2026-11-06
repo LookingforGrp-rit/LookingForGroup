@@ -13,8 +13,6 @@ import addGalleryImageController from '#controllers/me/gallery/add-image.ts';
 import addGalleryVideoController from '#controllers/me/gallery/add-video.ts';
 import deleteGalleryImageController from '#controllers/me/gallery/delete-image.ts';
 import deleteGalleryVideoController from '#controllers/me/gallery/delete-video.ts';
-import getGalleryImageController from '#controllers/me/gallery/get-images.ts';
-import getGalleryVideoController from '#controllers/me/gallery/get-videos.ts';
 import { getAccount } from '#controllers/me/get-acc.ts';
 import { getMyProjects } from '#controllers/me/get-my-proj.ts';
 import { getUsernameByGoogle } from '#controllers/me/get-username-google.ts';
@@ -227,10 +225,7 @@ router.delete(
 //#endregion
 
 //#region Gallery routes
-router.get('/gallery/:userId/images', authenticated(getGalleryImageController));
-
-router.get('/gallery/:userId/videos', authenticated(getGalleryVideoController));
-
+//Viewing a gallery is public, see GET /api/users/:userId/gallery/images and /videos
 router.post(
   '/gallery/:userId/images',
   upload.single('file'),

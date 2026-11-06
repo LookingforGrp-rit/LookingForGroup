@@ -2,8 +2,8 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import getProjectImagesService from '#services/me/gallery/get-images.ts';
 
-//GET api/me/gallery/{userId}/images
-//gets the images in gallery
+//GET api/users/{userId}/gallery/images
+//gets the images in a user's gallery (public)
 const getGalleryImagesController = async (req: Request, res: Response): Promise<void> => {
   const userId = parseInt(req.params.userId as string);
 

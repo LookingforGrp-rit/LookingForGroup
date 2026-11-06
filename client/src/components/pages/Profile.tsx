@@ -21,7 +21,7 @@ import { ThemeIcon } from "../ThemeIcon";
 import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import Reporter from "../Reporter";
-import profilePicture from "../../images/lfrog.png";
+import profilePicture from "../../images/default-profile.svg";
 import {
   getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing,
   getJobTitles,

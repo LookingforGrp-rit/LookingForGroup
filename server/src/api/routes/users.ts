@@ -1,5 +1,7 @@
 import type { AuthenticatedRequest } from '@looking-for-group/shared';
 import { Router, type Request, type Response, type NextFunction } from 'express';
+import getGalleryImageController from '#controllers/me/gallery/get-images.ts';
+import getGalleryVideoController from '#controllers/me/gallery/get-videos.ts';
 import { getBanDetail } from '#controllers/users/blacklist/get-ban-detail.ts';
 import { createUser } from '#controllers/users/create-user.ts';
 import { getProjectsFollowing } from '#controllers/users/followings/get-proj-following.ts';
@@ -75,6 +77,11 @@ router.get('/:id', getUserById);
 //#region Sub id routes (/:id/...)
 //Gets another user's projects
 router.get('/:id/projects/', getOtherUserProjects);
+
+//Gets a user's gallery images and videos. Public, so people who aren't logged in can look at profiles
+router.get('/:userId/gallery/images', userExistsAt('path', 'userId'), getGalleryImageController);
+
+router.get('/:userId/gallery/videos', userExistsAt('path', 'userId'), getGalleryVideoController);
 
 //Gets projects user is following
 router.get(
