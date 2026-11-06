@@ -146,7 +146,7 @@ export const getCurrentAccount = async (): Promise<ApiResponse<MePrivate>> => {
  * @returns an array of all the images from a user gallery
  */
 export const getGalleryImages = async (userId: number): Promise<ApiResponse<GalleryImage[]>> => {
-  const apiURL = `/me/gallery/${userId}/images`;
+  const apiURL = `/users/${userId}/gallery/images`;
   const response = await GET(apiURL);
 
   if (response.error) console.log(`Error in addPic: ${response.error}`);
@@ -159,7 +159,7 @@ export const getGalleryImages = async (userId: number): Promise<ApiResponse<Gall
  * @returns an array of all the videos from a user gallery
  */
 export const getGalleryVideos = async (userId: number): Promise<ApiResponse<GalleryVideo[]>> => {
-  const apiURL = `/me/gallery/${userId}/videos`;
+  const apiURL = `/users/${userId}/gallery/videos`;
   const response = await GET(apiURL);
 
   if (response.error) console.log(`Error in addPic: ${response.error}`);

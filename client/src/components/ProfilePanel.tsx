@@ -1,4 +1,4 @@
-import profilePicture from '../images/lfrog.png';
+import profilePicture from '../images/default-profile.svg';
 import { useNavigate } from 'react-router-dom';
 import { ThemeIcon } from './ThemeIcon';
 import * as paths from '../constants/routes';

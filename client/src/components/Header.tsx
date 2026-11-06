@@ -7,7 +7,7 @@ import * as paths from '../constants/routes';
 import { ThemeIcon } from './ThemeIcon';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { useLocation } from 'react-router-dom'; // Hook to access the current location
-import profilePicture from '../images/lfrog.png';
+import profilePicture from '../images/default-profile.svg';
 import { getUserAccessLevel } from '../api/mod-tools.ts';
 import { PagePopup } from './PagePopup.tsx';
 

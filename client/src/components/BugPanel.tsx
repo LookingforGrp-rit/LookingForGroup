@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getUsersById } from '../api/users.ts';
 import { Popup } from './Popup.tsx';
-import profilePicture from '../images/lfrog.png';
+import profilePicture from '../images/default-profile.svg';
 import { PagePopup } from './PagePopup.tsx';
 import { ApiResponse } from '@looking-for-group/shared';
 

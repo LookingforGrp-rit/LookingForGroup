@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { ProjectWithFollowers } from "@looking-for-group/shared";
-import profileImage from "../images/lfrog.png";
+import profileImage from "../images/default-profile.svg";
 import { PopupButton } from "./Popup";
 import * as paths from "../constants/routes";
 import { requestToJoin, getMemberRequest, getMembers } from '../api/projects.ts';

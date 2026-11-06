@@ -9,6 +9,7 @@ import { RitStatus as RitStatusLabel } from "@looking-for-group/shared/enums";
 import { RitStatus } from "@looking-for-group/shared/types";
 import { Major, MePrivate, Role } from "@looking-for-group/shared";
 import { getJobTitles, getMajors } from "../../../api/users";
+import defaultProfilePicture from "../../../images/default-profile.svg";
 
 let profileAfterAboutChanges: PendingUserProfile;
 
@@ -42,7 +43,7 @@ export const AboutTab = ({
 	const [previewUrl, setPreviewUrl] = useState<string>(
 		usePreloadedImage(
 			`${profile.profileImage}`,
-			"/src/images/lfrog.png"
+			defaultProfilePicture
 		)
 	);
 

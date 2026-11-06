@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import profilePicture from "../images/lfrog.png";
+import profilePicture from "../images/default-profile.svg";
 import { ThemeIcon } from './ThemeIcon';
 import usePreloadedImage from "../functions/imageLoad";
 import { routes } from "../constants/routes";
