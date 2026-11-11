@@ -418,6 +418,11 @@ Project Panel component style rules
 }
 
 @media screen and (max-width: 800px) {
+  /* Narrow screens keep the card short: no description (the hook) under the thumbnail */
+  .project-panel .project-panel-hover {
+    display: none;
+  }
+
   #discover-panel-box {
     margin: 0;
     width: 100%;
@@ -436,6 +441,23 @@ Project Panel component style rules
 }
 
 @media only screen and (max-width: 550px) {
+  /* The title gets the whole top row, on one line, with the likes underneath (cards are
+     too narrow on phones to share the row). A long title is shrunk to fit by useFitText
+     (functions/useFitText.ts); the ellipsis is only the last resort */
+  .project-panel .project-title-likes-tabs .project-title-likes {
+    flex-wrap: wrap;
+
+    h2 {
+      flex: 1 0 100%;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      overflow-wrap: normal;
+      word-break: normal;
+    }
+  }
+
   #discover-panel-box {
     .project-title-likes-tabs {
       padding: 8px 13px !important;
