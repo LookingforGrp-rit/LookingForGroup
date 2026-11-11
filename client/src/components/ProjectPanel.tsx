@@ -13,6 +13,7 @@ import { ProjectWithFollowers, ProjectMedium } from '@looking-for-group/shared';
 import React from 'react';
 import { getByID } from '../api/projects.ts';
 import { ThemeIcon } from './ThemeIcon.tsx';
+import { useFitText } from '../functions/useFitText.ts';
 
 //Component that will contain info about a project, used in the discovery page
 //Takes in a 'project' value which contains info on the project it will display
@@ -38,6 +39,8 @@ interface ProjectPanelProps {
 export const ProjectPanel = ({ project, initialIsFollowing, currentUserId, onUnfollow }: ProjectPanelProps) => {
   const navigate = useNavigate();
   const projectURL = `${paths.routes.PROJECT}?projectID=${project.projectId}`;
+  // On phones a long title shrinks to stay on one line
+  const titleRef = useFitText<HTMLHeadingElement>(project.title);
 
   // Current user ID (for follow logic)
   const [userId, setUserId] = useState<number>(currentUserId);
@@ -174,7 +177,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId, onUnf
 
       <div className='project-title-likes-tabs'>
         <div className="project-title-likes">
-          <h2>{project.title}</h2>
+          <h2 ref={titleRef}>{project.title}</h2>
           <div className='project-likes'>
             <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
               {formatFollowCount(followCount)}

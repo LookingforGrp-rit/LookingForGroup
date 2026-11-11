@@ -1751,6 +1751,7 @@ const Profile = (/*userProfile: any*/) => {
                           category={"projects"}
                           itemList={followedProjectsList}
                           userId={userID as number}
+                          fitColumnsToWidth={280}
                           followedProjectIds={followedProjectsIds}
                           onUnfollow={(id) => {
                             setFollowedProjectsList((list) => list.filter((p) => p.projectId !== id));

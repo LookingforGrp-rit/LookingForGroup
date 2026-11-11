@@ -2394,6 +2394,19 @@ New Profile page style rules
   }
 }
 
+/* Liked projects on tablets and phones: PanelBox gives each one the full row (or two side
+   by side when the box is wide enough), so there is room for the description (the hook)
+   under the thumbnail even though other project cards hide it at this size */
+@media only screen and (max-width: 1000px) {
+  #likes-container .project-panel .project-panel-hover {
+    display: flex;
+    position: static;
+    visibility: visible;
+    opacity: 1;
+    height: auto;
+  }
+}
+
 #profile-menu-dropdown,
 #project-info-dropdown {
   display: flex;
