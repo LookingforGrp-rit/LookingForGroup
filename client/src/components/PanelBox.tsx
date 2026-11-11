@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from 'react';
 import { VirtuosoMasonry } from '@virtuoso.dev/masonry';
 import { ProjectPanel } from './ProjectPanel';
 import { ProfilePanel } from './ProfilePanel';
@@ -69,16 +70,37 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
  *
  * @param category - Determines what type of items to display (projects, bugs, profiles)
  * @param itemList - List of items (projects or profiles) to render.
+ * @param fitColumnsToWidth - Smallest width (px) an item may have. On tablets and phones
+ * (1000px and under) the column count then comes from the box's real width, so items fill
+ * the whole row until there is room for two side by side. Leave out to keep the default.
  * @returns The rendered panel box containing the items.
  */
-export const PanelBox = ({ category, itemList, projectCache, followedProjectIds, userId, onUnfollow, onResolved }:
-  { category: string, itemList: unknown[], projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, onUnfollow?: (id: number) => void, onResolved?: (reportId: number) => void }) => {
+export const PanelBox = ({ category, itemList, projectCache, followedProjectIds, userId, onUnfollow, onResolved, fitColumnsToWidth }:
+  { category: string, itemList: unknown[], projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, onUnfollow?: (id: number) => void, onResolved?: (reportId: number) => void, fitColumnsToWidth?: number }) => {
   // Test these
   const isMobile = useMediaQuery('(max-width: 500px)');
   const isTablet = useMediaQuery('(max-width: 1000px)');
   const isTabletProfile = useMediaQuery('(max-width: 1050px)');
   const isSmallDesktop = useMediaQuery('(max-width: 1360px');
   const isMediumDesktop = useMediaQuery('(max-width: 1640px');
+
+  // Width of the box, only measured when fitColumnsToWidth is used
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [boxWidth, setBoxWidth] = useState(0);
+  const hasItems = !!itemList && itemList.length > 0;
+
+  useLayoutEffect(() => {
+    const box = boxRef.current;
+    if (!box) return;
+
+    const measure = () => setBoxWidth(box.clientWidth);
+    measure();
+
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, [fitColumnsToWidth, hasItems]);
 
   // Sanitize the list
   const validItemList = itemList?.filter(item => item !== undefined) || [];
@@ -108,6 +130,11 @@ export const PanelBox = ({ category, itemList, projectCache, followedProjectIds,
     else if (isTablet) columns = 2;
   }
 
+  // As many columns as fit at the minimum item width, never more than the default above
+  if (fitColumnsToWidth && isTablet && boxWidth > 0) {
+    columns = Math.max(1, Math.min(columns, Math.floor(boxWidth / fitColumnsToWidth)));
+  }
+
   const masonryContext: MasonryContext = {
     category,
     projectCache,
@@ -125,7 +152,7 @@ export const PanelBox = ({ category, itemList, projectCache, followedProjectIds,
   const masonryKey = `${category}-grid-${validItemList.length}-${firstItemId}`;
 
   // Finally! A masonry grid!
-  return (
+  const masonry = (
     <VirtuosoMasonry
       key={masonryKey}
       data={itemList}
@@ -135,4 +162,7 @@ export const PanelBox = ({ category, itemList, projectCache, followedProjectIds,
       ItemContent={MasonryItem}
     />
   );
+
+  // The wrapper is only there to measure the width, so other lists keep their markup
+  return fitColumnsToWidth ? <div ref={boxRef}>{masonry}</div> : masonry;
 };
