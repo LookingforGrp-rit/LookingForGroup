@@ -506,6 +506,71 @@ Profile Panel component style rules
   }
 }
 
+/* Phones: one person per row (PanelBox uses a single column at this width), with the
+   avatar on the left and the rest of the info on the right. The skill dots sit under
+   the avatar. This is after the rules above so it overrides them. */
+@media screen and (max-width: 500px) {
+  .profile-panel {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    column-gap: 12px;
+    align-items: start;
+    width: 100% !important;
+    max-width: none;
+    box-sizing: border-box;
+    margin: 0 auto 1em;
+    padding: 12px;
+
+    /* The wrapper stops being a box so the avatar and the text become grid items */
+    .profile-panel-img-info {
+      display: contents;
+    }
+
+    .profile-panel-img {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .profile-panel-img img {
+      display: block;
+      width: 96px;
+      height: 96px;
+      aspect-ratio: 1 / 1;
+      object-fit: cover !important;
+      border-radius: 10px !important;
+      margin: 0 !important;
+    }
+
+    .profile-panel-info {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      min-width: 0;
+      margin: 0;
+      gap: 4px;
+      justify-content: flex-start !important;
+    }
+
+    .profile-panel-info #quote {
+      margin: 4px 0 0 !important;
+      padding: 0 !important;
+    }
+
+    .profile-panel-skills {
+      grid-column: 1;
+      grid-row: 2;
+      width: 100%;
+      margin-top: 4px;
+      gap: 6px;
+    }
+
+    /* Empty and hidden, but its display rule would still make it a grid item */
+    .profile-panel-extras {
+      display: none;
+    }
+  }
+}
+
 
 
 /* #endregion */
@@ -1632,14 +1697,49 @@ New Profile page style rules
 
     #skill-block {
       display: flex;
-      gap: 7px;
-      flex-wrap: wrap;
+      /* One section per skill type, stacked (see .skill-group) */
+      flex-direction: column;
+      gap: 14px;
       overflow-y: auto;
       margin-top: -30px;
       padding: 15px 0;
-      max-height: 200px;
-      --webkit--mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
-      mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+      max-height: 300px;
+      /* The top fade stays inside the 15px of padding so the first header is not dimmed */
+      --webkit--mask-image: linear-gradient(to bottom, transparent, black 5%, black 90%, transparent);
+      mask-image: linear-gradient(to bottom, transparent, black 5%, black 90%, transparent);
+    }
+
+    /* A skill type: a header saying what the tag color means, then the tags in that color */
+    .skill-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .skill-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--main-text);
+    }
+
+    /* Small dot in the group's tag color, next to the header */
+    .skill-group-dot {
+      box-sizing: border-box;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .skill-group-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
     }
 
     #profile-number {

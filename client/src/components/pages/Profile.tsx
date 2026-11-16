@@ -53,6 +53,7 @@ import {
 import { getYouTubeEmbedID, getYouTubeEmbedURL } from "../../functions/parseYoutube";
 import { Carousel, CarouselButton, CarouselContent, CarouselTabs } from "../ImageCarousel";
 import { canViewProjectOnProfile } from "../../functions/profileProjectVisibility";
+import { groupSkillsByType } from "../../functions/skillGroups";
 import { getByID as getProjectById } from "../../api/projects";
 
 type Profile = MeDetail;
@@ -1697,39 +1698,26 @@ const Profile = (/*userProfile: any*/) => {
                   {isViewingOwnProfile ? <ProfileEditPopup editSkills={true} />
                     : ""}</div>
                 <div id="skill-block">
+                  {/* One section per skill type: a header saying what the color means, then its tags */}
                   {displayedProfile?.skills !== undefined && (
-                    /* Will take in a list of tags the user has selected, then */
-                    /* use a map function to generate tags to fill this div */
-                    displayedProfile?.skills.sort((a, b) => a.position - b.position).map((tag) => {
-                      let category: string;
-                      switch (tag.type) {
-                        case "Designer":
-                          category = "red";
-                          break;
-                        case "Developer":
-                          category = "yellow";
-                          break;
-                        case "Soft":
-                          category = "purple";
-                          break;
-                        case "Audio":
-                          category = "periwinkle";
-                          break;
-                        case "Engineer":
-                          category = "cyan";
-                          break;
-                        default:
-                          category = "grey";
-                      }
-                      return (
-                        <div
-                          key={`${tag.skillId}`}
-                          className={`skill-tag-label label-${category}`}
-                        >
-                          {tag.label}
+                    groupSkillsByType(displayedProfile.skills).map((group) => (
+                      <div className="skill-group" key={group.label}>
+                        <h3 className="skill-group-title">
+                          <span className={`skill-group-dot label-${group.color}`} aria-hidden="true" />
+                          {group.label}
+                        </h3>
+                        <div className="skill-group-tags">
+                          {group.skills.map((tag) => (
+                            <div
+                              key={`${tag.skillId}`}
+                              className={`skill-tag-label label-${group.color}`}
+                            >
+                              {tag.label}
+                            </div>
+                          ))}
                         </div>
-                      );
-                    })
+                      </div>
+                    ))
                   )}
                 </div>
               </div>

@@ -2621,9 +2621,12 @@ Image Carousel style rules
   /* color: green; */
 }
 
-@media (max-width: 800px) {
+/* The bottom nav bar shows at 1024px and under. Sit 15px above it: its height is 61px plus
+   the phone's bottom safe area (same formula as .sideBarContainer), so the button is
+   never covered when the safe area makes the bar taller. */
+@media (max-width: 1024px) {
   .ToTopContainer {
-    bottom: 70px;
+    bottom: calc(61px + env(safe-area-inset-bottom, 0px) + 15px);
   }
 }
 
