@@ -51,6 +51,9 @@ Settings page style rules
   scrollbar-width: none;
   /* Firefox */
   max-height: 100vh;
+  /* dvh follows the visible screen. On phones 100vh is taller than what you can see
+     (the address bar takes space), so the bottom of the page ended off screen. */
+  max-height: 100dvh;
 }
 
 #settings-page::-webkit-scrollbar {
@@ -753,6 +756,15 @@ input:checked+.slider:before {
   outline-offset: 2px;
   outline: 3px solid var(--primary-color);
   transition: 0s;
+}
+
+/* Where the bottom nav bar shows, leave room under the last button (Delete Account) so it
+   is not covered. border-box keeps the padding inside the 100dvh height cap. */
+@media screen and (max-width: 1024px) {
+  #settings-page {
+    box-sizing: border-box;
+    padding-bottom: 100px;
+  }
 }
 
 /* Settings page mobile css */

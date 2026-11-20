@@ -117,7 +117,7 @@ export const PanelBox = ({ category, itemList, projectCache, followedProjectIds,
     columns = 4; // large desktop
     if (isMediumDesktop) columns = 3;
     if (isSmallDesktop) columns = 2;
-    if (isMobile) columns = 2; //changed from 1 to 2 
+    if (isMobile) columns = 1; // one person per row on phones (see the phone layout in profile.css)
     else if (isTabletProfile) columns = 2;
   }
   else if (category == 'bugs') {
