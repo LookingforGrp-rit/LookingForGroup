@@ -1,6 +1,7 @@
 import profilePicture from '../images/default-profile.svg';
 import { useNavigate } from 'react-router-dom';
 import { ThemeIcon } from './ThemeIcon';
+import { TagDot } from './TagDot';
 import * as paths from '../constants/routes';
 import usePreloadedImage from '../functions/imageLoad';
 import { UserPreview } from '@looking-for-group/shared';
@@ -30,6 +31,9 @@ export const ProfilePanel = ({ profileData, currentUserId, onUnfollow }: Profile
 
   const navigate = useNavigate();
   const profileURL = `${paths.routes.PROFILE}?userID=${profileData.userId}`;
+  // Which of the shown skills is open. One is always open: clicking another switches to it,
+  // and the open one can't be closed on its own.
+  const [openSkill, setOpenSkill] = useState(0);
   // Array of major labels extracted from profileData
   const majorsArr = profileData.majors?.map((maj) => maj.label);
 
@@ -204,15 +208,17 @@ export const ProfilePanel = ({ profileData, currentUserId, onUnfollow }: Profile
 
       <div className="profile-panel-skills">
         {
-          /* Shows a small colored dot per skill (color = skill type) rather
-             than the full label, so 3 skills take up minimal space. Hover/
-             screen readers still get the actual skill name via title/aria-label. */
-          shownSkills.map((tag) => (
-            <div
+          /* One dot per skill (color = skill type). The open one shows its label; clicking
+             another switches to it, so one skill is always showing. Clicking a dot never
+             opens the profile. */
+          shownSkills.map((tag, index) => (
+            <TagDot
               key={`${tag.skillId}`}
-              className={`skill-color-dot label-${getSkillColor(tag.type)}`}
-              title={tag.label}
-              aria-label={tag.label}
+              type={tag.type.toLowerCase()}
+              label={tag.label}
+              inline
+              open={index === Math.min(openSkill, shownSkills.length - 1)}
+              onSelect={() => setOpenSkill(index)}
             />
           ))
         }
