@@ -216,25 +216,17 @@ Profile Panel component style rules
   }
 }
 
+/* The skills (TagDot pills, one always open) run across the bottom of the card, centered.
+   The open pill grows in this row, so it can use the card's whole width. */
 .profile-panel-skills {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
   row-gap: 10px;
   margin-top: 10px;
-  width: 120px;
+  width: 100%;
+  align-items: center;
   justify-content: center;
-}
-
-/* Small solid-color dot representing a skill's type - color comes from the
-   existing .label-{color} rules (background-color + matching border), this
-   just constrains them to a small circle instead of a text pill. */
-.skill-color-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  padding: 0;
 }
 
 @media screen and (max-width:1460px) {
@@ -427,6 +419,15 @@ Profile Panel component style rules
   }
 }
 
+/* The hover details cover the card, but stop above the skills row so its dots stay visible
+   and can be clicked while the mouse is over the card (about 52px: pill + gap + padding) */
+.profile-panel:has(.tag-dot-wrap):hover .profile-panel-hover {
+  top: 0;
+  bottom: 52px;
+  height: auto;
+  border-radius: 10px 10px 0 0;
+}
+
 .profile-panel:hover .profile-panel-extras {
   cursor: pointer;
 }
@@ -507,13 +508,14 @@ Profile Panel component style rules
 }
 
 /* Phones: one person per row (PanelBox uses a single column at this width), with the
-   avatar on the left and the rest of the info on the right. The skill dots sit under
-   the avatar. This is after the rules above so it overrides them. */
+   avatar on the left and the rest of the info on the right. There is no bio quote here;
+   the skills (tappable pills, see TagDot) take its place, centered under the job title.
+   This is after the rules above so it overrides them. */
 @media screen and (max-width: 500px) {
   .profile-panel {
     display: grid;
     grid-template-columns: 96px minmax(0, 1fr);
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto auto;
     column-gap: 12px;
     align-items: start;
     width: 100% !important;
@@ -529,7 +531,7 @@ Profile Panel component style rules
 
     .profile-panel-img {
       grid-column: 1;
-      grid-row: 1;
+      grid-row: 1 / span 2;
     }
 
     .profile-panel-img img {
@@ -544,24 +546,26 @@ Profile Panel component style rules
 
     .profile-panel-info {
       grid-column: 2;
-      grid-row: 1 / span 2;
+      grid-row: 1;
       min-width: 0;
       margin: 0;
       gap: 4px;
       justify-content: flex-start !important;
     }
 
+    /* The bio message is not shown on phones */
     .profile-panel-info #quote {
-      margin: 4px 0 0 !important;
-      padding: 0 !important;
+      display: none;
     }
 
     .profile-panel-skills {
-      grid-column: 1;
+      grid-column: 2;
       grid-row: 2;
       width: 100%;
-      margin-top: 4px;
-      gap: 6px;
+      margin-top: 8px;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
     }
 
     /* Empty and hidden, but its display rule would still make it a grid item */
